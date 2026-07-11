@@ -207,6 +207,8 @@ const actionTypes = ["normal", "progress", "limited", "multipart"];
  *     unlocked(): boolean,
  *     finish(): void,
  *     skills?: Partial<Record<SkillName, number | (() => number)>>,
+ *     skillPrereqs?: readonly SkillName[],
+ *     grantsSkillExp?: boolean,
  *     grantsBuff?: BuffName,
  *     affectedBy?: readonly string[],
  *     progressScaling?: ProgressScalingType,
@@ -284,8 +286,8 @@ class Action extends Localizable {
     teachesSkill(skill) {
         // if we don't give exp in the skill we don't teach it
         if (this.skills?.[skill] === undefined) return false;
-        // if we have an unlock function and it references the skill, we don't teach it
-        if (this.unlocked?.toString().search(`getSkillLevel\\("${skill}"\\)`) >= 0) return false;
+        // if the skill is a prerequisite of our unlock condition, we don't teach it
+        if (this.skillPrereqs?.includes(skill)) return false;
         // if this is combat or magic and this isn't town 0, we don't teach it
         if ((skill === "Combat" || skill === "Magic") && this.townNum > 0) return false;
         // otherwise we do (as long as we actually give exp in it and it isn't zeroed out)
@@ -556,6 +558,7 @@ class AssassinAction extends MultipartAction {
             expMult: 1,
             stats: {Per: 0.2, Int: 0.1, Dex: 0.3, Luck: 0.2, Spd: 0.2},
             loopStats: ["Per", "Int", "Dex", "Luck", "Spd"],
+            skillPrereqs: ["Assassin"],
         });
 
     manaCost() {return 50000;}
@@ -1494,6 +1497,7 @@ Action.HealTheSick = new MultipartAction("Heal The Sick", {
     visible() {
         return towns[0].getLevel("Secrets") >= 20;
     },
+    skillPrereqs: ["Magic"],
     unlocked() {
         return getSkillLevel("Magic") >= 12;
     },
@@ -1568,6 +1572,7 @@ Action.FightMonsters = new MultipartAction("Fight Monsters", {
     visible() {
         return towns[0].getLevel("Secrets") >= 20;
     },
+    skillPrereqs: ["Combat"],
     unlocked() {
         return getSkillLevel("Combat") >= 10;
     },
@@ -1635,6 +1640,7 @@ Action.SmallDungeon = new DungeonAction("Small Dungeon", 0, {
     visible() {
         return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 15;
     },
+    skillPrereqs: ["Combat", "Magic"],
     unlocked() {
         return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 35;
     },
@@ -1700,6 +1706,7 @@ Action.BuySupplies = new Action("Buy Supplies", {
     visible() {
         return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 15;
     },
+    skillPrereqs: ["Combat", "Magic"],
     unlocked() {
         return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 35;
     },
@@ -1744,6 +1751,7 @@ Action.Haggle = new Action("Haggle", {
     visible() {
         return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 15;
     },
+    skillPrereqs: ["Combat", "Magic"],
     unlocked() {
         return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 35;
     },
@@ -1792,6 +1800,7 @@ Action.StartJourney = new Action("Start Journey", {
     visible() {
         return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 15;
     },
+    skillPrereqs: ["Combat", "Magic"],
     unlocked() {
         return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 35;
     },
@@ -1866,6 +1875,7 @@ Action.OpenRift = new Action("Open Rift", {
     visible() {
         return towns[5].getLevel("Meander") >= 1;
     },
+    skillPrereqs: ["Dark", "Spatiomancy"],
     unlocked() {
         return getSkillLevel("Dark") >= 300 && getSkillLevel("Spatiomancy") >= 100;
     },
@@ -2175,6 +2185,7 @@ Action.TalkToHermit = new Action("Talk To Hermit", {
     visible() {
         return true;
     },
+    skillPrereqs: ["Magic"],
     unlocked() {
         return towns[1].getLevel("Shortcut") >= 20 && getSkillLevel("Magic") >= 40;
     },
@@ -2215,6 +2226,7 @@ Action.PracticalMagic = new Action("Practical Magic", {
     visible() {
         return towns[1].getLevel("Hermit") >= 10;
     },
+    skillPrereqs: ["Magic"],
     unlocked() {
         return towns[1].getLevel("Hermit") >= 20 && getSkillLevel("Magic") >= 50;
     },
@@ -2264,6 +2276,7 @@ Action.LearnAlchemy = new Action("Learn Alchemy", {
     visible() {
         return towns[1].getLevel("Hermit") >= 10;
     },
+    skillPrereqs: ["Magic"],
     unlocked() {
         return towns[1].getLevel("Hermit") >= 40 && getSkillLevel("Magic") >= 60;
     },
@@ -2311,6 +2324,7 @@ Action.BrewPotions = new Action("Brew Potions", {
     visible() {
         return getSkillLevel("Alchemy") >= 1;
     },
+    skillPrereqs: ["Alchemy"],
     unlocked() {
         return getSkillLevel("Alchemy") >= 10;
     },
@@ -2559,6 +2573,7 @@ Action.TalkToWitch = new Action("Talk To Witch", {
     visible() {
         return towns[1].getLevel("Thicket") >= 20;
     },
+    skillPrereqs: ["Magic"],
     unlocked() {
         return towns[1].getLevel("Thicket") >= 60 && getSkillLevel("Magic") >= 80;
     },
@@ -2608,6 +2623,7 @@ Action.DarkMagic = new Action("Dark Magic", {
     visible() {
         return towns[1].getLevel("Witch") >= 10;
     },
+    skillPrereqs: ["Magic"],
     unlocked() {
         return towns[1].getLevel("Witch") >= 20 && getSkillLevel("Magic") >= 100;
     },
@@ -2671,6 +2687,7 @@ Action.DarkRitual = new MultipartAction("Dark Ritual", {
     visible() {
         return towns[1].getLevel("Witch") >= 20;
     },
+    skillPrereqs: ["Dark"],
     unlocked() {
         return towns[1].getLevel("Witch") >= 50 && getSkillLevel("Dark") >= 50;
     },
@@ -3308,6 +3325,7 @@ Action.CraftingGuild = new MultipartAction("Crafting Guild", {
     skills: {
         Crafting: 50
     },
+    grantsSkillExp: false,
     loopStats: ["Int", "Per", "Dex"],
     manaCost() {
         return 3000;
@@ -3981,6 +3999,7 @@ Action.Chronomancy = new Action("Chronomancy", {
     visible() {
         return towns[3].getLevel("Runes") >= 8;
     },
+    skillPrereqs: ["Magic"],
     unlocked() {
         return towns[3].getLevel("Runes") >= 30 && getSkillLevel("Magic") >= 150;
     },
@@ -4020,6 +4039,7 @@ Action.LoopingPotion = new Action("Looping Potion", {
     visible() {
         return getSkillLevel("Spatiomancy") >= 1;
     },
+    skillPrereqs: ["Alchemy"],
     unlocked() {
         return getSkillLevel("Alchemy") >= 200;
     },
@@ -4066,6 +4086,7 @@ Action.Pyromancy = new Action("Pyromancy", {
     visible() {
         return towns[3].getLevel("Runes") >= 16;
     },
+    skillPrereqs: ["Magic"],
     unlocked() {
         return towns[3].getLevel("Runes") >= 60 && getSkillLevel("Magic") >= 200;
     },
@@ -4370,6 +4391,7 @@ Action.ImbueMind = new MultipartAction("Imbue Mind", {
     visible() {
         return towns[3].getLevel("Illusions") >= 50;
     },
+    skillPrereqs: ["Magic"],
     unlocked() {
         return towns[3].getLevel("Illusions") >= 70 && getSkillLevel("Magic") >= 300;
     },
@@ -5365,6 +5387,7 @@ Action.CollectTaxes = new Action("Collect Taxes", {
     visible() {
         return towns[4].getLevel("Citizen") >= 60;
     },
+    skillPrereqs: ["Mercantilism"],
     unlocked() {
         return towns[4].getLevel("Citizen") >= 100 && getSkillLevel("Mercantilism") > 0;
     },
@@ -5451,6 +5474,7 @@ Action.FightFrostGiants = new MultipartAction("Fight Frost Giants", {
     skills: {
         Combat: 1500
     },
+    grantsSkillExp: false,
     loopStats: ["Per", "Con", "Str"],
     manaCost() {
         return 20000;
@@ -5665,6 +5689,7 @@ Action.FallFromGrace = new Action("Fall From Grace", {
     visible() {
         return true;
     },
+    skillPrereqs: ["Pyromancy"],
     unlocked() {
         return getSkillLevel("Pyromancy") >= 200;
     },
@@ -5843,6 +5868,7 @@ Action.RaiseZombie = new Action("Raise Zombie", {
     visible() {
         return towns[5].getLevel("Meander") >= 15;
     },
+    skillPrereqs: ["Dark"],
     unlocked() {
         return getSkillLevel("Dark") >= 1000;
     },
@@ -5948,6 +5974,7 @@ Action.TheSpire = new DungeonAction("The Spire", 2, {
     visible() {
         return towns[5].getLevel("Meander") >= 5;
     },
+    skillPrereqs: ["Combat", "Magic"],
     unlocked() {
         return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 35;
     },
@@ -6157,6 +6184,7 @@ Action.FightJungleMonsters = new MultipartAction("Fight Jungle Monsters", {
     skills: {
         Combat: 2000
     },
+    grantsSkillExp: false,
     loopStats: ["Dex", "Str", "Per"],
     manaCost() {
         return 30000;
@@ -6458,6 +6486,7 @@ Action.OpenPortal = new Action("Open Portal", {
     visible() {
         return getExploreProgress() > 50;
     },
+    skillPrereqs: ["Restoration"],
     unlocked() {
         return getExploreProgress() >= 75 && getSkillLevel("Restoration") >= 1000;
     },
@@ -6839,6 +6868,7 @@ Action.PickPockets = new Action("Pick Pockets", {
     visible() {
         return getSkillLevel("Thievery") > 0;
     },
+    skillPrereqs: ["Thievery"],
     unlocked() {
         return getSkillLevel("Thievery") > 0;
     },

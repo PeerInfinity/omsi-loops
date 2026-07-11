@@ -1003,12 +1003,14 @@ class View {
                 }
             }
         }
-        if (totalActionList.filter(action => action.finish.toString().includes("handleSkillExp")).filter(action => action.unlocked()).length > 0) {
+        // an action grants skill exp from finish() unless it opts out with
+        // grantsSkillExp: false (guild multiparts grant exp per segment instead)
+        if (totalActionList.filter(action => action.grantsSkillExp ?? action.skills !== undefined).filter(action => action.unlocked()).length > 0) {
             document.getElementById("skillList").style.display = "";
         } else {
             document.getElementById("skillList").style.display = "none";
         }
-        if (totalActionList.filter(action => action.finish.toString().includes("updateBuff")).filter(action => action.unlocked()).length > 0 ||
+        if (totalActionList.filter(action => action.grantsBuff !== undefined).filter(action => action.unlocked()).length > 0 ||
             prestigeValues["completedAnyPrestige"]) {
             document.getElementById("buffList").style.display = "";
         } else {

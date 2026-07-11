@@ -40,6 +40,29 @@ function currentRows(ctx) {
     }))`));
 }
 
+test("explicit metadata matches the golden's grep-frozen answers", () => {
+    // The metadata that replaced the greps (skillPrereqs, grantsSkillExp,
+    // grantsBuff) must answer exactly what the source-text greps answered
+    // when the golden was frozen.
+    const rows = JSON.parse(makeContext().ev(`JSON.stringify(totalActionList.map(a => ({
+        name: a.name,
+        skillPrereqs: [...(a.skillPrereqs ?? [])].sort(),
+        grantsSkillExpPredicate: a.grantsSkillExp ?? a.skills !== undefined,
+        grantsBuffPredicate: a.grantsBuff !== undefined,
+    })))`));
+    const byName = new Map(golden.map(g => [g.name, g]));
+    for (const a of rows) {
+        const g = byName.get(a.name);
+        assert.ok(g, `action "${a.name}" is not in the golden`);
+        assert.deepEqual(a.skillPrereqs, g.unlockSkillRefs,
+            `"${a.name}".skillPrereqs disagrees with the frozen unlocked() skill refs`);
+        assert.equal(a.grantsSkillExpPredicate, g.finishGrantsSkillExp,
+            `"${a.name}" skills-column predicate disagrees with the frozen handleSkillExp grep`);
+        assert.equal(a.grantsBuffPredicate, g.finishGrantsBuff,
+            `"${a.name}" buffs-column predicate disagrees with the frozen updateBuff grep`);
+    }
+});
+
 test("teachesSkill and the view-column predicates match the committed golden", () => {
     const current = currentRows(makeContext());
     assert.equal(current.length, golden.length,
