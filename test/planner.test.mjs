@@ -7,6 +7,7 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { makeContext } from "./harness.mjs";
 
 function makePlanner(seed) {
@@ -162,6 +163,128 @@ test("buildPushes is destination-aware: Continue On (1->2) yields a two-hop push
     assert.ok(twoHop, `two-hop push generated (got: ${pushes.map(c => c.label).join(", ")})`);
     assert.deepEqual(j(twoHop.q).slice(-3), [["Buy Supplies", 1], ["Start Journey", 1], ["Continue On", 1]],
         "grantor precedes the hops; the travel chain is queue-terminal");
+});
+
+test("travel-prefixed measurement: town-1 profiles form (the Round-5 wall falls)", () => {
+    const ctx = makePlanner(783);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    sess.setQueue([["Wander", 1]]);
+    sess.restart();
+    ctx.ev("townsUnlocked = [0, 1]");
+    const th = sess.probe();
+    for (const r of th["Start Journey"]?.requires ?? []) {
+        assert.equal(r.kind, "s", "Start Journey requirement probed as a skill dim");
+        ctx.ev(`skills[${JSON.stringify(r.v)}].levelExp.level = ${r.need}`);
+    }
+    ctx.ev("adjustAll()");
+    const state = sess.read();
+    const snap = sess.save();
+    const ef = state.actions.find(a => a.name === "Explore Forest");
+    assert.ok(ef, "Explore Forest in read state once town 1 unlocks");
+    const know = new Map();
+    const cache = new Map();
+    const p = IP.measureAction(sess, snap, state, know, ef, sess.needs("Explore Forest"), { baselineCache: cache });
+    assert.equal(p.exec, 12, "prefixed probe executes (v0 single-action probes measured exec=0 here)");
+    assert.equal(p.townNum, 1);
+    assert.equal(p.routeKey, "Start Journey");
+    assert.equal(cache.size, 1, "prefix baseline cached per (route, injection-signature)");
+    // prefix-baseline subtraction: only the action's own deltas survive
+    assert.ok(p.progressExpPerExec > 0, `Forest progress attributed to the action (${p.progressExpPerExec})`);
+    assert.ok(Math.abs(p.manaPerExec) < 1, `travel prefix does not leak into manaPerExec (${p.manaPerExec})`);
+    assert.ok(Object.keys(p.discovers).length > 0, "town-1 pool discovery attributed");
+    // a second same-town probe with the same injections reuses the baseline
+    IP.measureAction(sess, snap, state, know, ef, sess.needs("Explore Forest"), { baselineCache: cache });
+    assert.equal(cache.size, 1, "baseline cache hit on re-measure");
+});
+
+test("measureAction degrades gracefully when no usable route exists", () => {
+    const ctx = makePlanner(784);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    sess.setQueue([["Wander", 1]]);
+    sess.restart();
+    // town 1 nominally unlocked but the whole travel chain still locked
+    ctx.ev("townsUnlocked = [0, 1]");
+    const state = sess.read();
+    const snap = sess.save();
+    const ef = state.actions.find(a => a.name === "Explore Forest");
+    const p = IP.measureAction(sess, snap, state, new Map(), ef, []);
+    assert.equal(p.exec, 0, "unroutable town measures as a failed probe, not a crash");
+    assert.equal(p.routeKey, null);
+});
+
+test("composed multi-town queue order survives plSetQueue (tail-pinning)", () => {
+    const ctx = makePlanner(785);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    sess.setQueue([["Wander", 1]]);
+    sess.restart();
+    ctx.ev("townsUnlocked = [0, 1]");
+    // grantor -> hop -> town-1 work -> hop: addAction's addAtClosestValidIndex
+    // must not relocate anything when the queue is built in route order
+    const composed = [["Wander", 2], ["Buy Supplies", 1], ["Start Journey", 1], ["Explore Forest", 4], ["Continue On", 1]];
+    sess.setQueue(composed);
+    assert.deepEqual(j(sess.getQueue()), composed, "engine kept the composed order verbatim");
+});
+
+test("inertness: candidate labels+queues at townsUnlocked=[0] equal the v0 golden", async () => {
+    // golden captured from the pre-multi-town planner (automation @ 4e664d6)
+    // by NewDocs gen-candidates-golden procedure; inertness is a STATE
+    // property — while only town 0 is unlocked every candidate must be
+    // byte-identical to v0's
+    const golden = JSON.parse(fs.readFileSync(new URL("./goldens/candidates-town0.json", import.meta.url), "utf8"));
+    const ctx = makePlanner(31337);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    const play = (queues) => { for (const q of queues) { sess.setQueue(q); sess.restart(); sess.runLoop(); } };
+    play(Array.from({ length: 12 }, () => [["Wander", 5], ["Smash Pots", 6]]));
+    play(Array.from({ length: 12 }, (_, i) => [["Wander", 3 + (i % 3)], ["Smash Pots", 8]]));
+    const states = [
+        ["plain", null],
+        ["travelReady", () => {
+            const th = sess.probe();
+            for (const name of ["Start Journey", "Buy Supplies"])
+                for (const r of th[name]?.requires ?? [])
+                    ctx.ev(`skills[${JSON.stringify(r.v)}].levelExp.level = ${r.need}`);
+            ctx.ev("adjustAll()");
+        }],
+    ];
+    for (const [key, prep] of states) {
+        if (prep) prep();
+        const pre = sess.read();
+        const snap = sess.save();
+        const thresholds = sess.probe();
+        const P = IP.newPlanningState();
+        await IP.refreshKnowledge(sess, snap, pre, P.know, {});
+        sess.restore(snap);
+        const cands = IP.generateCandidates(pre, P.know, thresholds, sess, [["Wander", 3]]);
+        assert.deepEqual(j(cands.map(c => ({ label: c.label, q: c.q }))), golden[key],
+            `candidate set '${key}' byte-equal to v0`);
+        sess.restore(snap);
+    }
+});
+
+test("multiTown=false forces the v0 town-0-only paths (A/B gate)", () => {
+    const ctx = makePlanner(786);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    sess.setQueue([["Wander", 1]]);
+    sess.restart();
+    ctx.ev("townsUnlocked = [0, 1]");
+    const th = sess.probe();
+    for (const r of th["Start Journey"]?.requires ?? []) ctx.ev(`skills[${JSON.stringify(r.v)}].levelExp.level = ${r.need}`);
+    ctx.ev("adjustAll()");
+    const state = sess.read();
+    const snap = sess.save();
+    const ef = state.actions.find(a => a.name === "Explore Forest");
+    // measurement: no travel prefix under the v0 mode -> the Round-5 wall
+    const pOff = IP.measureAction(sess, snap, state, new Map(), ef, [], { multiTown: false });
+    assert.equal(pOff.exec, 0, "v0 mode reproduces the wall (exec=0 for town-1 actions)");
+    // generation: no multi-hop pushes / expeditions under the v0 mode
+    sess.restore(snap);
+    const candsOff = IP.generateCandidates(state, new Map(), th, sess, null, { multiTown: false });
+    assert.ok(candsOff.every(c => !c.label.startsWith("push2:") && !c.label.startsWith("xp:")),
+        `v0 mode generates no multi-town candidates (got: ${candsOff.map(c => c.label).join(", ")})`);
 });
 
 test("short standalone planner run is deterministic and makes progress", async () => {

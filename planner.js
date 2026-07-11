@@ -535,18 +535,62 @@ function execCountOf(r, name) {
 // This is what makes investment (checking items -> banked goods) visible to
 // the otherwise one-loop-greedy objective: banked pots/quests only pay off in
 // the NEXT loop's budget.
-function probeCapacity(sess, postSnap, post, know) {
-    const q = [];
-    const pools = [];
+// Multi-town: the harvest walk visits banked towns in route order (town 0
+// first — loops are forward-only), harvesting by manaPer within each town,
+// buying the next hop's needs BEFORE the town's own spend-all converter
+// runs, and skipping towns whose banked value is below the hop cost. With
+// banks only in town 0 this reduces to the v0 queue exactly. Injects
+// NOTHING: capacity probes model real next-loop play.
+function probeCapacity(sess, postSnap, post, know, multiTown = true) {
+    const byTown = new Map();
     for (const a of post.actions) {
         if (!(a.visible && a.unlocked) || a.type !== "limited") continue;
         const lim = post.towns[a.townNum]?.limited[a.varName];
-        if (lim?.good > 0) pools.push({ a, good: lim.good, manaPer: know.get(a.name)?.manaPerExec ?? 0 });
+        if (lim?.good > 0) {
+            if (!byTown.has(a.townNum)) byTown.set(a.townNum, []);
+            byTown.get(a.townNum).push({ a, good: lim.good, manaPer: know.get(a.name)?.manaPerExec ?? 0 });
+        }
     }
-    pools.sort((x, y) => y.manaPer - x.manaPer);
-    for (const p of pools) q.push([p.a.name, p.good]);
-    const conv = converterOf(post, know);
-    if (conv && pools.length) q.push([conv.name, 1]);
+    const q = [];
+    if (!multiTown) {
+        // v0 path: one global harvest list + the single best converter
+        const pools = [...byTown.values()].flat();
+        pools.sort((x, y) => y.manaPer - x.manaPer);
+        for (const p of pools) q.push([p.a.name, p.good]);
+        const conv = converterOf(post, know);
+        if (conv && pools.length) q.push([conv.name, 1]);
+        if (!q.length) return null;
+        sess.restore(postSnap);
+        sess.setQueue(q);
+        sess.restart();
+        const r = sess.runLoop();
+        return r.degenerate ? null : r.lastTimeNeeded;
+    }
+    // a town's spend-all converter is DEFERRED until the next journey's
+    // grantors (Buy Supplies etc.) have bought from the wallet, then flushed
+    // before the hop; with no further journey it flushes at the end
+    let cur = 0, pendingConv = null;
+    for (const t of [...byTown.keys()].sort((x, y) => x - y)) {
+        const pools = byTown.get(t);
+        pools.sort((x, y) => y.manaPer - x.manaPer);
+        if (t !== cur) {
+            const route = routeTo(post, sess, t, cur);
+            if (!route) continue;
+            const banked = pools.reduce((s, p) => s + p.good * Math.max(0, p.manaPer), 0);
+            if (banked < route.ticksEst) continue;   // not worth the journey
+            const resolved = resolveRouteGrantors(post, know, sess, route.hops, null,
+                { startTown: cur, allowCostedAnywhere: true });
+            if (!resolved) continue;
+            for (const g of resolved.inline) q.push([g.name, 1]);
+            if (pendingConv) { q.push([pendingConv.name, 1]); pendingConv = null; }
+            q.push(...routeTailEntries(route.hops, resolved.segGrantors));
+            cur = t;
+        }
+        for (const p of pools) q.push([p.a.name, p.good]);
+        const conv = converterOf(post, know, t);
+        if (conv && pools.length) pendingConv = conv;
+    }
+    if (pendingConv) q.push([pendingConv.name, 1]);
     if (!q.length) return null;
     sess.restore(postSnap);
     sess.setQueue(q);
@@ -559,8 +603,19 @@ function probeCapacity(sess, postSnap, post, know) {
 // budget (so nothing starves) plus any canStart-gating resources (so
 // converters, purchases and reducers are measurable long before they are
 // affordable in play).
+//
+// Multi-town: every loop starts at town 0, so an out-of-town action is
+// unreachable from loop start (the Round-5 wall: town-1 actions measured
+// exec=0 forever). Town-N probes get the committed-play route as a queue
+// PREFIX and are differenced against a prefix-only BASELINE run under
+// identical injections — the subtraction isolates the action's own deltas
+// from the prefix's side effects (travel mana cost, hop effects, story
+// flags) and makes profiles route-independent by construction. Town-0
+// actions take the v0 path verbatim (no route call, no baseline loop).
 const MEASURE_MANA = 25_000;
-function measureAction(sess, snap, state, know, a, needs = []) {
+function measureAction(sess, snap, state, know, a, needs = [], opts = {}) {
+    const baselineCache = opts.baselineCache ?? null;
+    const multiTown = opts.multiTown ?? true;
     const lim = a.type === "limited" ? state.towns[a.townNum]?.limited[a.varName] : null;
     const bank = lim?.good ?? 0;
     // limited: pure-harvest profile when a bank exists (checks are valued via
@@ -573,20 +628,66 @@ function measureAction(sess, snap, state, know, a, needs = []) {
     const inject = { mana: MEASURE_MANA };
     for (const res of needs) if (res !== "mana") inject[res] = 1000;
     if ((a.goldCost ?? 0) > 0 && inject.gold === undefined) inject.gold = 1000 + a.goldCost;
-    const { r, post } = evalLoop(sess, snap, [[a.name, Math.max(1, loops)]], inject);
-    const exec = execCountOf(r, a.name);
+
     const p = know.get(a.name) ?? emptyProfile();
     p.measuredAtLoop = state.loops;
     p.bankAtMeasure = bank;
+    p.townNum = a.townNum;
+
+    let route = null;
+    if (a.townNum !== 0 && multiTown) {
+        route = routeTo(state, sess, a.townNum);
+        if (!route) {
+            // No usable route. Should not happen for an unlocked town (it was
+            // reached via a real travel), but degrade to a failed measurement
+            // rather than crash a live planning round — the exec-0 staleness
+            // retry re-attempts on later rounds.
+            p.exec = 0;
+            p.routeKey = null;
+            know.set(a.name, p);
+            return p;
+        }
+        // hop canStart needs ride along with the standard injections
+        for (const res of route.needs) if (res !== "mana" && inject[res] === undefined) inject[res] = 1000;
+    }
+    p.routeKey = route ? route.entries.map(e => e[0]).join(">") : "";
+
+    // prefix-only baseline, cached per (route, injection-signature) — most
+    // same-town probes share {mana} ∪ route.needs, so a refresh wave runs
+    // 1-3 baseline loops per town, not one per action
+    let baseRun = null;
+    if (route) {
+        const cacheKey = p.routeKey + "|" + JSON.stringify(inject);
+        baseRun = baselineCache?.get(cacheKey);
+        if (!baseRun) {
+            baseRun = evalLoop(sess, snap, route.entries, inject);
+            baselineCache?.set(cacheKey, baseRun);
+        }
+    }
+
+    const probeQueue = route ? [...route.entries, [a.name, Math.max(1, loops)]] : [[a.name, Math.max(1, loops)]];
+    const { r, post } = evalLoop(sess, snap, probeQueue, inject);
+    const exec = execCountOf(r, a.name);
     p.exec = exec;
     if (exec > 0) {
-        const base = {
+        // deltas are taken against `base`/`pre`: for town-0 probes these are
+        // the v0 values (injections + pre-round state); for prefixed probes
+        // they come from the baseline run (full - baseline = the action's own
+        // contribution)
+        const base = route ? {
+            mana: baseRun.r.lastTimeNeeded,
+            gold: baseRun.r.lastResources?.gold ?? 0,
+            rep: baseRun.r.lastResources?.reputation ?? 0,
+            resources: baseRun.r.lastResources ?? {},
+            goldCosts: baseRun.r.lastGoldCosts ?? {},
+        } : {
             mana: state.baseMana + MEASURE_MANA,
             gold: inject.gold ?? 0,
             rep: inject.reputation ?? 0,
             resources: inject,
             goldCosts: Object.fromEntries(state.actions.filter(x => x.goldCost > 0).map(x => [x.name, x.goldCost])),
         };
+        const pre = route ? baseRun.post : state;
         let manaUsed = 0;
         for (const e of r.lastExec ?? []) if (e.name === a.name) manaUsed += e.manaUsed;
         p.ticksPerExec = manaUsed / exec || 1;
@@ -616,7 +717,7 @@ function measureAction(sess, snap, state, know, a, needs = []) {
         // pool (e.g. Wander levels -> more pots/locks exist). This is the
         // future bank.
         p.discovers = {};
-        const preTown = state.towns[a.townNum], postTown = post.towns[a.townNum];
+        const preTown = pre.towns[a.townNum], postTown = post.towns[a.townNum];
         if (preTown && postTown) {
             for (const [v, lim2] of Object.entries(postTown.limited)) {
                 const d = lim2.total - (preTown.limited[v]?.total ?? 0);
@@ -625,9 +726,9 @@ function measureAction(sess, snap, state, know, a, needs = []) {
         }
         // skill/talent training rates (also feeds vacuous-execution detection)
         let dSkill = 0;
-        for (const [sName, sv] of Object.entries(post.skills)) dSkill += (sv.exp ?? 0) - (state.skills[sName]?.exp ?? 0);
+        for (const [sName, sv] of Object.entries(post.skills)) dSkill += (sv.exp ?? 0) - (pre.skills[sName]?.exp ?? 0);
         p.skillExpPerExec = dSkill / exec;
-        p.talentPerExec = ((post.talentTotal ?? 0) - (state.talentTotal ?? 0)) / exec;
+        p.talentPerExec = ((post.talentTotal ?? 0) - (pre.talentTotal ?? 0)) / exec;
         let dProg = 0;
         if (preTown && postTown) {
             for (const [v, pv] of Object.entries(postTown.progress)) dProg += (pv.exp ?? 0) - (preTown.progress[v]?.exp ?? 0);
@@ -654,7 +755,7 @@ function measureAction(sess, snap, state, know, a, needs = []) {
 // engine divergence is RECORDED (the "third oracle": it flags predictor
 // model bugs, engine changes, and — later — AP-randomized data the
 // compile-time model can't know about).
-function seedPredictorPrior(sess, snap, know, a) {
+function seedPredictorPrior(sess, snap, know, a, state = null) {
     const p = know.get(a.name) ?? emptyProfile();
     if (p.predictorPrior) return;
     if (!plPredictor) plInitPredictor();
@@ -670,6 +771,12 @@ function seedPredictorPrior(sess, snap, know, a) {
             // project the deltas the engine measurement realizes
             const goldBase = (a.goldCost ?? 0) > 0 ? 1000 + a.goldCost : 1000;
             const r = { mana: MEASURE_MANA, gold: goldBase, rep: 1000, town: a.townNum, guild: "" };
+            // out-of-town probes also inject the route's hop needs — mirror
+            // them so priors and measurements stay like-for-like comparable
+            if (state && a.townNum !== 0) {
+                const route = routeTo(state, sess, a.townNum);
+                for (const res of route?.needs ?? []) if (!(res in r)) r[res] = 1000;
+            }
             const k = Object.entries(skills).reduce(
                 (o, [n, s]) => (o[n.toLowerCase()] = s.exp ?? 0, o), {});
             pred.effect(r, k);
@@ -711,6 +818,7 @@ function recordDivergence(divergenceLog, state, a, p) {
 
 async function refreshKnowledge(sess, snap, state, know, opts = {}) {
     const staleAfter = opts.staleAfter ?? 40;
+    const multiTown = opts.multiTown ?? true;
     const unlocked = state.actions.filter(x => x.visible && x.unlocked && x.travelNum === 0);
     const needsMeasure = unlocked.filter(a => {
         const p = know.get(a.name);
@@ -728,6 +836,9 @@ async function refreshKnowledge(sess, snap, state, know, opts = {}) {
     });
     if (!needsMeasure.length) return;
 
+    // prefix-baseline cache for this refresh wave (see measureAction)
+    const baselineCache = new Map();
+
     // "vacuous" ignoring talent noise (every exec trains talent a little)
     const isVacuous = (p) => p.exec > 0
         && Math.abs(p.manaPerExec) < 0.01 && Math.abs(p.goldPerExec) < 0.01
@@ -739,12 +850,12 @@ async function refreshKnowledge(sess, snap, state, know, opts = {}) {
     for (const a of needsMeasure) {
         sess.restore(snap);
         const needs = sess.needs(a.name);
-        if (opts.seedFromPredictor) await seedPredictorPrior(sess, snap, know, a);
-        const p = measureAction(sess, snap, state, know, a, needs);
+        if (opts.seedFromPredictor) await seedPredictorPrior(sess, snap, know, a, multiTown ? state : null);
+        const p = measureAction(sess, snap, state, know, a, needs, { baselineCache, multiTown });
         p.gatedOn = needs;
         // still gated or vacuous: retry with the universal consumable injected
         if (p.exec === 0 || isVacuous(p)) {
-            const p2 = measureAction(sess, snap, state, know, a, [...needs, "gold", "reputation"]);
+            const p2 = measureAction(sess, snap, state, know, a, [...needs, "gold", "reputation"], { baselineCache, multiTown });
             p2.gatedOn = needs;
         }
         const pf = know.get(a.name);
@@ -775,11 +886,23 @@ async function refreshKnowledge(sess, snap, state, know, opts = {}) {
         ps.pairProbed = ps.pairProbed ?? {};
         for (const g of purchases) {
             if (ps.pairProbed[g.name] !== undefined) continue;
+            // cross-town pairs (e.g. a town-0 reducer for a town-1 purchase)
+            // are deferred in v1; same-town pairs in town N > 0 carry the
+            // town's route prefix exactly like single-action probes
+            if (s.townNum !== g.townNum) continue;
+            let pairPrefix = [];
             const baseCost = -know.get(g.name).goldPerExec;
             const k = 8;
             const inject = { mana: MEASURE_MANA, gold: 1000 + baseCost };
             for (const res of ps.gatedOn ?? []) if (res !== "gold" && res !== "mana") inject[res] = 1000;
-            const { r } = evalLoop(sess, snap, [[s.name, k], [g.name, 1]], inject);
+            if (s.townNum !== 0) {
+                if (!multiTown) continue;
+                const route = routeTo(state, sess, s.townNum);
+                if (!route) continue;
+                pairPrefix = route.entries;
+                for (const res of route.needs) if (res !== "mana" && inject[res] === undefined) inject[res] = 1000;
+            }
+            const { r } = evalLoop(sess, snap, [...pairPrefix, [s.name, k], [g.name, 1]], inject);
             const sExec = execCountOf(r, s.name), gExec = execCountOf(r, g.name);
             ps.pairProbed[g.name] = 0;
             if (sExec > 0 && gExec > 0) {
@@ -803,11 +926,16 @@ const MARGIN = 150;
 function unlockedOf(state) {
     return state.actions.filter(a => a.visible && a.unlocked);
 }
-function limitedPools(state, know) {
+// Per-town filtered views over the ONE name-keyed knowledge Map: an action
+// belongs to exactly one town, so "per-town knowledge" is a townNum filter,
+// not a keying change. town = null means all towns (legacy/global view);
+// segment builders pass their own town.
+function limitedPools(state, know, town = null) {
     // unlocked limited actions with a bank, annotated with measured yields
     const pools = [];
     for (const a of unlockedOf(state)) {
         if (a.type !== "limited") continue;
+        if (town != null && a.townNum !== town) continue;
         const lim = state.towns[a.townNum]?.limited[a.varName];
         if (!lim) continue;
         const p = know.get(a.name);
@@ -820,9 +948,12 @@ function limitedPools(state, know) {
     }
     return pools;
 }
-function converterOf(state, know) {
+// A converter is usable only in the segment of its own town (the queue
+// visits towns forward-only within a loop).
+function converterOf(state, know, town = null) {
     let best = null;
     for (const a of unlockedOf(state)) {
+        if (town != null && a.townNum !== town) continue;
         const p = know.get(a.name);
         if (p?.manaPerGold > 0 && (!best || p.manaPerGold > best.rate)) {
             best = { name: a.name, rate: p.manaPerGold, ticks: Math.max(1, p.ticksPerExec || 30) };
@@ -839,9 +970,13 @@ function buildEconomy(state, know, opts = {}) {
     const reserveGold = opts.reserveGold ?? 0;
     const reserveRep = opts.reserveRep ?? 0;
     const cheapPurchases = opts.cheapPurchases ?? false;
+    // segment town: pools/converters/purchases are filtered to it, and the
+    // cushion STARTS from what previous segments left (v0 semantics = town 0
+    // from the loop's base mana)
+    const town = opts.town ?? 0;
     const q = [];
-    let cushion = state.baseMana, gold = 0, rep = 0;
-    const pools = limitedPools(state, know);
+    let cushion = opts.startCushion ?? state.baseMana, gold = 0, rep = 0;
+    const pools = limitedPools(state, know, town);
 
     // 1. mana engines: net-positive mana harvests, full bank, best first
     for (const pool of pools.filter(p => p.good > 0 && p.manaPer > p.ticks).sort((x, y) => (y.manaPer - y.ticks) - (x.manaPer - x.ticks))) {
@@ -852,6 +987,7 @@ function buildEconomy(state, know, opts = {}) {
 
     // cheap lasting-boost purchases (e.g. glasses): inserted as soon as affordable
     const purchases = !cheapPurchases ? [] : unlockedOf(state).filter(a => {
+        if (a.townNum !== town) return false;
         const p = know.get(a.name);
         return p && p.exec > 0 && a.goldCost > 0 && a.goldCost <= 30 && Object.keys(p.grants).length && !p.manaPerGold;
     });
@@ -865,7 +1001,7 @@ function buildEconomy(state, know, opts = {}) {
     //    anyway (converters don't consume it), so rep-yielding pools go first
     //    when rep is needed. With no known converter and no reserve, gold has
     //    no sink (it evaporates at loop end) — skip gold harvesting entirely.
-    const convKnown = converterOf(state, know);
+    const convKnown = converterOf(state, know, town);
     const goldPools = (!convKnown && reserveGold <= 0) ? []
         : pools.filter(p => p.goldPer > 0.5 && !(p.manaPer > p.ticks)).sort((x, y) => y.goldPer / y.ticks - x.goldPer / x.ticks);
     if (reserveRep > 0 || (opts.purchaseInline?.repNeed ?? 0) > 0)
@@ -894,7 +1030,7 @@ function buildEconomy(state, know, opts = {}) {
     const reservedTicks = reservedList.reduce((s, { pool, units }) => s + units * pool.ticks, 0);
     const marginEff = MARGIN + reservedTicks + (opts.extraTailTicks ?? 0);
 
-    const conv = converterOf(state, know);
+    const conv = converterOf(state, know, town);
     const futureGold = () => gold + goldPools.reduce((s, p) => s + (p.good - (p.used ?? 0) - (p.reservedUnits ?? 0)) * p.goldPer, 0);
     let guard = 0;
     while (guard++ < 300) {
@@ -965,11 +1101,11 @@ function buildEconomy(state, know, opts = {}) {
 
 // Investment: spend a share of remaining cushion checking unchecked items,
 // weighted by each bank's measured per-item value.
-function appendInvest(q, cushion, state, know, share) {
-    const pools = limitedPools(state, know).filter(p => p.unchecked > 0);
+function appendInvest(q, cushion, state, know, share, town = 0) {
+    const pools = limitedPools(state, know, town).filter(p => p.unchecked > 0);
     if (!pools.length) return cushion;
     const value = (p) => {
-        const measured = Math.max(p.manaPer - p.ticks, p.goldPer * (converterOf(state, know)?.rate ?? 50));
+        const measured = Math.max(p.manaPer - p.ticks, p.goldPer * (converterOf(state, know, town)?.rate ?? 50));
         // never-harvested banks have unmeasurable yields: explore optimistically
         const neverHarvested = (know.get(p.name)?.bankAtMeasure ?? 0) === 0;
         return neverHarvested ? Math.max(measured, 100) : Math.max(measured, 1);
@@ -993,16 +1129,19 @@ function appendInvest(q, cushion, state, know, share) {
 }
 
 // Grind: pour a share of the cushion into an action that raises `dim`.
-function grindActionFor(state, dim) {
+// Progress dims are town-bound already (dim.town); skill dims may have
+// trainers in several towns — `town` picks the segment's own trainer.
+function grindActionFor(state, dim, town = null) {
     const cands = unlockedOf(state).filter(a =>
-        dim.kind === "p" ? (a.type === "progress" && a.varName === dim.v && a.townNum === dim.town)
-                         : a.skillsGained.includes(dim.v));
+        (town == null || a.townNum === town)
+        && (dim.kind === "p" ? (a.type === "progress" && a.varName === dim.v && a.townNum === dim.town)
+                             : a.skillsGained.includes(dim.v)));
     cands.sort((x, y) => x.cost - y.cost);
     return cands[0] ?? null;
 }
 
-function cheapestProgressBackstop(state) {
-    const cands = unlockedOf(state).filter(a => a.type === "progress");
+function cheapestProgressBackstop(state, town = null) {
+    const cands = unlockedOf(state).filter(a => a.type === "progress" && (town == null || a.townNum === town));
     cands.sort((x, y) => x.cost - y.cost);
     return cands[0] ?? null;
 }
@@ -1057,17 +1196,19 @@ function travelEdges(state) {
 }
 
 // BFS shortest route (by hop count; ties broken by lowest estimated mana
-// cost, then lowest hop-name path for stability) from town 0 to `town` over
-// planner-usable edges. Usable = visible && unlocked && !dynamic: committed
-// play must respect the game's own gating even though the runtime would not
-// stop a locked travel (it checks only townNum + canStart).
+// cost, then lowest hop-name path for stability) from town `from` (default
+// 0 = loop start) to `town` over planner-usable edges. Usable = visible &&
+// unlocked && !dynamic: committed play must respect the game's own gating
+// even though the runtime would not stop a locked travel (it checks only
+// townNum + canStart). Pass sess = null to skip needs probing (pure-state
+// contexts like scoring).
 // Returns { hops, entries, needs, ticksEst } or null when unreachable.
-function routeTo(state, sess, town) {
-    if (town === 0) return { hops: [], entries: [], needs: [], ticksEst: 0 };
+function routeTo(state, sess, town, from = 0) {
+    if (town === from) return { hops: [], entries: [], needs: [], ticksEst: 0 };
     const edges = travelEdges(state).filter(e => e.action.visible && e.action.unlocked && !e.dynamic);
     const nameKey = (hops) => hops.map(e => e.action.name).join(">");
-    const best = new Map([[0, { hops: [], cost: 0 }]]);
-    let frontier = [0];
+    const best = new Map([[from, { hops: [], cost: 0 }]]);
+    let frontier = [from];
     while (frontier.length) {
         const next = [];
         for (const t of frontier) {
@@ -1089,7 +1230,7 @@ function routeTo(state, sess, town) {
     const r = best.get(town);
     if (!r) return null;
     const needs = [];
-    for (const e of r.hops) needs.push(...sess.needs(e.action.name).filter(k => k !== "mana"));
+    if (sess) for (const e of r.hops) needs.push(...sess.needs(e.action.name).filter(k => k !== "mana"));
     return {
         hops: r.hops,
         entries: r.hops.map(e => [e.action.name, 1]),
@@ -1098,9 +1239,68 @@ function routeTo(state, sess, town) {
     };
 }
 
+// Resolve each hop's canStart resource needs to measured grantors placeable
+// BEFORE that hop (grantors are town-bound; the loop visits route towns
+// forward-only). Returns { grantors, inline, segGrantors, needCount } or
+// null when some need has no placeable grantor.
+//   - inline: grantors of the start town (for pushes: town 0, funded by the
+//     economy's inline-purchase machinery);
+//   - segGrantors: routeHops index -> entries placed right after that hop
+//     (grantors living in mid-route towns);
+//   - opts.allowCostedAnywhere: capacity probes model real play and pay from
+//     harvested gold, so costed mid-route grantors are fine there; push
+//     economics cannot yet fund a costed purchase past their final
+//     conversion, so pushes keep costed grantors inline-only.
+function resolveRouteGrantors(state, know, sess, routeHops, finalHop = null, opts = {}) {
+    const startTown = opts.startTown ?? 0;
+    const allowCosted = opts.allowCostedAnywhere ?? false;
+    const hops = finalHop ? [...routeHops, finalHop] : routeHops;
+    const townsBefore = (i) => [startTown, ...routeHops.slice(0, i).map(e => e.to)];
+    const grantors = [], inline = [];
+    const segGrantors = new Map();
+    let needCount = 0;
+    for (let i = 0; i < hops.length; i++) {
+        const hopNeeds = sess.needs(hops[i].action.name).filter(k => k !== "mana");
+        for (const res of hopNeeds) {
+            needCount++;
+            const g = unlockedOf(state)
+                .map(a => ({ a, p: know.get(a.name) }))
+                .filter(({ a, p }) => p && p.exec > 0 && (p.grants[res] ?? 0) > 0
+                    && townsBefore(i).includes(a.townNum)
+                    && (allowCosted || a.townNum === startTown
+                        || (!(a.goldCost > 0) && ((p.goldPerExec ?? 0) > -0.5))))
+                .sort((x, y) => (x.a.goldCost || 0) - (y.a.goldCost || 0))[0];
+            if (!g) return null;
+            grantors.push(g.a);
+            if (g.a.townNum === startTown) inline.push(g.a);
+            else {
+                // latest route hop landing in the grantor's town before hop i
+                let at = -1;
+                for (let jj = 0; jj < i && jj < routeHops.length; jj++)
+                    if (routeHops[jj].to === g.a.townNum) at = jj;
+                if (!segGrantors.has(at)) segGrantors.set(at, []);
+                segGrantors.get(at).push([g.a.name, 1]);
+            }
+        }
+    }
+    return { grantors, inline, segGrantors, needCount };
+}
+
+// Assemble route hop entries with mid-route grantors interleaved (each
+// grantor right after the hop landing in its town).
+function routeTailEntries(routeHops, segGrantors, finalName = null) {
+    const tail = [];
+    routeHops.forEach((e, jj) => {
+        tail.push([e.action.name, 1]);
+        for (const entry of segGrantors.get(jj) ?? []) tail.push(entry);
+    });
+    if (finalName) tail.push([finalName, 1]);
+    return tail;
+}
+
 // Push candidates: economy with reserve -> price reducers -> resource
 // grantors -> route hops -> travel.
-function buildPushes(state, know, sess) {
+function buildPushes(state, know, sess, multiTown = true) {
     const out = [];
     // Destination-aware targets: v0 filtered by the travel DELTA
     // (`!townsUnlocked.includes(a.travelNum)`), which coincides with the
@@ -1108,8 +1308,13 @@ function buildPushes(state, know, sess) {
     // was never generated as a candidate (the Round-5 wall). A target is an
     // edge whose DESTINATION is still locked; multi-hop pushes route to the
     // edge's origin first (empty route for town-0 origins = v0 code path).
-    const targets = travelEdges(state).filter(e =>
-        e.action.visible && e.action.unlocked && !e.dynamic && !state.townsUnlocked.includes(e.to));
+    // multiTown=false restores the v0 enumeration verbatim (A/B sweeps).
+    const targets = multiTown
+        ? travelEdges(state).filter(e =>
+            e.action.visible && e.action.unlocked && !e.dynamic && !state.townsUnlocked.includes(e.to))
+        : state.actions
+            .filter(a => a.visible && a.unlocked && a.travelNum > 0 && !state.townsUnlocked.includes(a.travelNum))
+            .map(a => ({ action: a, from: 0, to: a.townNum + a.travelNum, dynamic: false }));
     for (const target of targets) {
         const travel = target.action;
         const route = routeTo(state, sess, target.from);
@@ -1118,20 +1323,9 @@ function buildPushes(state, know, sess) {
             ? `push2:${route.hops.map(e => e.action.name).join(">")}>` : "push:";
         // canStart resource needs resolved PER HOP (route hops + the final
         // travel), in hop order; a resource needed by two hops appears twice
-        // and gets a grantor exec per hop.
-        const needs = [...route.needs, ...sess.needs(travel.name).filter(k => k !== "mana")];
-        // map each needed resource to a measured grantor
-        const grantors = [];
-        let resolvable = true;
-        for (const res of needs) {
-            const g = unlockedOf(state)
-                .map(a => ({ a, p: know.get(a.name) }))
-                .filter(({ p }) => p && p.exec > 0 && (p.grants[res] ?? 0) > 0)
-                .sort((x, y) => (x.a.goldCost || 0) - (y.a.goldCost || 0))[0];
-            if (!g) { resolvable = false; break; }
-            grantors.push(g.a);
-        }
-        if (needs.length && !resolvable) {
+        // and gets a grantor exec per hop
+        const resolved = resolveRouteGrantors(state, know, sess, route.hops, target);
+        if (!resolved) {
             // grantor unknown: offer exploratory pushes with each unmeasured
             // purchase action
             const candidates = unlockedOf(state).filter(a => a.goldCost > 30 && (know.get(a.name)?.exec ?? 0) === 0);
@@ -1141,19 +1335,22 @@ function buildPushes(state, know, sess) {
             }
             continue;
         }
+        const { grantors, inline, segGrantors } = resolved;
         // grantor gold cost: prefer the measured spend (some purchases, e.g.
         // Buy Supplies, have no goldCost() method — the price lives in
         // canStart/finish)
         const costOf = (g) => Math.max(g.goldCost || 0, -(know.get(g.name)?.goldPerExec ?? 0));
         const totalCost = grantors.reduce((s, g) => s + costOf(g), 0);
-        // price reducers measured against any grantor
+        // price reducers measured against any grantor; reducers execute in
+        // the town-0 economy segment (v1), so only town-0 reducers qualify
         const reducers = unlockedOf(state)
             .map(a => ({ a, p: know.get(a.name) }))
-            .filter(({ a, p }) => p && grantors.some(g => (p.costReductions[g.name] ?? 0) > 0));
+            .filter(({ a, p }) => a.townNum === 0 && p && grantors.some(g => (p.costReductions[g.name] ?? 0) > 0));
         // reducer count capped by what the rep-yielding banks can actually
         // fund (each Haggle-like exec consumes rep; rep comes from harvesting
-        // e.g. LQs)
-        const repCapacity = limitedPools(state, know)
+        // e.g. LQs). Reducers run in the town-0 economy segment (v1), so
+        // only town-0 pools fund them.
+        const repCapacity = limitedPools(state, know, 0)
             .filter(p => p.repPer > 0.1 && p.good > 0)
             .reduce((s, p) => s + Math.floor(p.good * p.repPer), 0);
         const hVariants = new Set([0]);
@@ -1173,31 +1370,37 @@ function buildPushes(state, know, sess) {
                 repNeed = h * Math.max(0, -p.repPerExec);
                 reducerEntries.push([a.name, h]);
             }
-            const entries = [...reducerEntries, ...grantors.map(g => [g.name, 1])];
-            const entryTicks = entries.reduce((s, [n, l]) => s + l * (know.get(n)?.ticksPerExec || 150), 0);
+            const entries = [...reducerEntries, ...inline.map(g => [g.name, 1])];
+            const segEntries = [...segGrantors.values()].flat();
+            const entryTicks = [...entries, ...segEntries].reduce((s, [n, l]) => s + l * (know.get(n)?.ticksPerExec || 150), 0);
             const eco = buildEconomy(state, know, {
                 purchaseInline: { entries, price, repNeed },
                 extraTailTicks: entryTicks + route.ticksEst + travel.cost + 300,
                 optimisticTail: true,
             });
             if (!eco) continue;
-            out.push({ label: `${labelHead}${travel.name}:h${h}`, q: [...eco.q, ...route.entries, [travel.name, 1]] });
+            out.push({ label: `${labelHead}${travel.name}:h${h}`,
+                       q: [...eco.q, ...routeTailEntries(route.hops, segGrantors, travel.name)] });
         }
     }
     return out;
 }
 
-function generateCandidates(state, know, thresholds, sess, lastCommitted) {
+function generateCandidates(state, know, thresholds, sess, lastCommitted, opts = {}) {
+    const multiTown = opts.multiTown ?? true;
     const cands = [];
     const add = (label, q) => { if (q && q.length) cands.push({ label, q }); };
 
-    // only dims we can actually grind right now (an unlocked action raises them)
-    const dims = rankFrontierDims(state, thresholds).filter(d => grindActionFor(state, d));
-    const backstop = cheapestProgressBackstop(state);
+    // The v0 candidate backbone is the TOWN-0 segment (every loop starts
+    // there); out-of-town dims get expedition candidates below. only dims we
+    // can actually grind right now (an unlocked town-0 action raises them)
+    const allDims = rankFrontierDims(state, thresholds);
+    const dims = allDims.filter(d => grindActionFor(state, d, 0));
+    const backstop = cheapestProgressBackstop(state, 0);
 
     // grind candidates along the top frontier dims
     for (const [di, dim] of dims.slice(0, 4).entries()) {
-        const target = grindActionFor(state, dim);
+        const target = grindActionFor(state, dim, 0);
         if (!target) continue;
         for (const share of di < 2 ? [0.5, 1.0] : [1.0]) {
             const eco = buildEconomy(state, know, { cheapPurchases: true });
@@ -1215,7 +1418,7 @@ function generateCandidates(state, know, thresholds, sess, lastCommitted) {
     }
     // split grind across the top two dims
     if (dims.length >= 2) {
-        const t1 = grindActionFor(state, dims[0]), t2 = grindActionFor(state, dims[1]);
+        const t1 = grindActionFor(state, dims[0], 0), t2 = grindActionFor(state, dims[1], 0);
         if (t1 && t2) {
             const eco = buildEconomy(state, know, { cheapPurchases: true });
             if (eco) {
@@ -1244,6 +1447,7 @@ function generateCandidates(state, know, thresholds, sess, lastCommitted) {
     // discovery grind: actions measured to grow limited-item pools (future banks)
     {
         const discoverers = unlockedOf(state)
+            .filter(a => a.townNum === 0)
             .map(a => ({ a, p: know.get(a.name) }))
             .filter(({ p }) => p && p.exec > 0 && Object.values(p.discovers ?? {}).some(x => x > 0))
             .sort((x, y) => {
@@ -1271,7 +1475,87 @@ function generateCandidates(state, know, thresholds, sess, lastCommitted) {
     if (lastCommitted) add("repeat", lastCommitted);
 
     // travel pushes
-    for (const p of buildPushes(state, know, sess)) add(p.label, p.q);
+    for (const p of buildPushes(state, know, sess, multiTown)) add(p.label, p.q);
+
+    // expedition candidates: travel to an unlocked town t > 0 and work THERE
+    // (new candidate types append after the v0 ones — inertness order rule).
+    // Bounded to frontier towns: towns owning a global-top-4 probed-unmet dim,
+    // plus always the highest unlocked town (§6.4 of the multi-town plan);
+    // no screen exemption — expeditions must earn engine confirmation.
+    if (multiTown) {
+        const expeditionTowns = new Set();
+        for (const d of allDims.slice(0, 4)) if (d.kind === "p" && (d.town ?? 0) > 0) expeditionTowns.add(d.town);
+        const maxTown = Math.max(...state.townsUnlocked);
+        if (maxTown > 0) expeditionTowns.add(maxTown);
+        for (const t of [...expeditionTowns].sort((x, y) => x - y)) {
+            if (!state.townsUnlocked.includes(t)) continue;
+            const route = routeTo(state, sess, t);
+            if (!route || !route.hops.length) continue;
+            const resolved = resolveRouteGrantors(state, know, sess, route.hops);
+            if (!resolved) continue;
+            const { grantors, inline, segGrantors } = resolved;
+            const costOf = (g) => Math.max(g.goldCost || 0, -(know.get(g.name)?.goldPerExec ?? 0));
+            const price = grantors.reduce((s, g) => s + costOf(g), 0);
+            const inlineEntries = inline.map(g => [g.name, 1]);
+            const segEntries = [...segGrantors.values()].flat();
+            const entryTicks = [...inlineEntries, ...segEntries].reduce((s, [n, l]) => s + l * (know.get(n)?.ticksPerExec || 150), 0);
+            const eco = buildEconomy(state, know, {
+                cheapPurchases: true,
+                purchaseInline: (inlineEntries.length || price > 0) ? { entries: inlineEntries, price, repNeed: 0 } : null,
+                extraTailTicks: entryTicks + route.ticksEst + 300,
+                optimisticTail: true,
+            });
+            if (!eco) continue;
+            const head = [...eco.q, ...routeTailEntries(route.hops, segGrantors)];
+            // whatever cushion survives town 0's economy minus the journey is
+            // the town-t working budget
+            const cushionAtTown = Math.max(0, eco.cushion - entryTicks - route.ticksEst);
+            const tBackstop = cheapestProgressBackstop(state, t);
+            const tDims = allDims.filter(d => (d.kind === "p" ? d.town === t : true) && grindActionFor(state, d, t));
+            // grind on the town's top frontier dims
+            for (const dim of tDims.slice(0, 2)) {
+                const target = grindActionFor(state, dim, t);
+                const q = [...head];
+                let cushion = cushionAtTown;
+                const n = Math.floor(cushion / target.cost);
+                if (n < 1) continue;
+                q.push([target.name, Math.min(n, target.allowed ?? n)]);
+                cushion -= n * target.cost;
+                appendInvest(q, Math.max(0, cushion), state, know, 0.9, t);
+                if (tBackstop) q.push([tBackstop.name, 99]);
+                add(`xp:${t}:grind:${dim.v}`, q);
+            }
+            // investment in the town's measured pools
+            if (limitedPools(state, know, t).some(p => p.unchecked > 0)) {
+                const q = [...head];
+                appendInvest(q, cushionAtTown, state, know, 1.0, t);
+                if (tBackstop) q.push([tBackstop.name, 99]);
+                add(`xp:${t}:invest`, q);
+            }
+            // discovery grind on the town's best measured discoverer
+            const disc = unlockedOf(state)
+                .filter(a => a.townNum === t)
+                .map(a => ({ a, p: know.get(a.name) }))
+                .filter(({ p }) => p && p.exec > 0 && Object.values(p.discovers ?? {}).some(x => x > 0))
+                .sort((x, y) => {
+                    const rate = ({ p }) => Object.values(p.discovers).reduce((s, d) => s + d, 0) / Math.max(1, p.ticksPerExec);
+                    return rate(y) - rate(x);
+                })[0];
+            if (disc) {
+                const q = [...head];
+                const n = Math.floor(cushionAtTown * 0.7 / Math.max(1, disc.a.cost));
+                if (n >= 1) {
+                    q.push([disc.a.name, Math.min(n, disc.a.allowed ?? n)]);
+                    appendInvest(q, Math.max(0, cushionAtTown - n * disc.a.cost), state, know, 0.9, t);
+                    if (tBackstop) q.push([tBackstop.name, 99]);
+                    add(`xp:${t}:discover:${disc.a.name}`, q);
+                }
+            }
+            // bare expedition (fresh town, no knowledge yet): backstop only —
+            // the tail must never idle mid-town
+            if (tBackstop) add(`xp:${t}:bare`, [...head, [tBackstop.name, 99]]);
+        }
+    }
 
     // dedupe by queue content
     const seen = new Set();
@@ -1401,10 +1685,11 @@ async function planRound(sess, P) {
     if ((P.loop - 1) % (P.probeEvery ?? 1) === 0) P.thresholds = sess.probe();
     await refreshKnowledge(sess, snap, pre, P.know, {
         seedFromPredictor: P.seedFromPredictor, divergenceLog: P.divergenceLog,
+        multiTown: P.multiTown,
     });
     sess.restore(snap);
 
-    const cands = generateCandidates(pre, P.know, P.thresholds, sess, P.lastCommitted);
+    const cands = generateCandidates(pre, P.know, P.thresholds, sess, P.lastCommitted, { multiTown: P.multiTown });
     if (!cands.length) throw new Error(`loop ${P.loop}: no candidates`);
     sess.restore(snap);
     const screened = await screenCandidates(sess, snap, cands, P.screenK ?? 8);
@@ -1415,7 +1700,7 @@ async function planRound(sess, P) {
         const { r, post } = evalLoop(sess, snap, c.q);
         if (r.degenerate) { evals.push({ label: c.label, score: null }); continue; }
         const postSnap = sess.save();
-        const capacity = probeCapacity(sess, postSnap, post, P.know) ?? Math.max(post.baseMana, r.lastTimeNeeded);
+        const capacity = probeCapacity(sess, postSnap, post, P.know, P.multiTown) ?? Math.max(post.baseMana, r.lastTimeNeeded);
         const { score, parts } = scoreOutcome(pre, post, P.thresholds, r, P.prevTimeNeeded, P.know, P.weights, capacity);
         evals.push({ label: c.label, score: Math.round(score * 10) / 10, capacity });
         const rec = { c, r, post, score, parts, postSnap, capacity };
@@ -1440,6 +1725,7 @@ function newPlanningState(opts = {}) {
         screenK: opts.screenK ?? 8,
         probeEvery: opts.probeEvery ?? 1,
         seedFromPredictor: opts.seedFromPredictor ?? false,
+        multiTown: opts.multiTown ?? true,
         divergenceLog: [],
     };
 }
@@ -1450,11 +1736,11 @@ function newPlanningState(opts = {}) {
 // post-loop snapshot) so results are directly comparable.
 // ---------------------------------------------------------------------------
 async function runStandalone({ maxLoops = 1200, weights, screenK = 8, probeEvery = 1,
-                               seedFromPredictor = false, targetTown = 1, verbose = false,
-                               onLoop = null } = {}) {
+                               seedFromPredictor = false, multiTown = true, targetTown = 1,
+                               verbose = false, onLoop = null } = {}) {
     const t0 = Date.now();
     const sess = new Session();
-    const P = newPlanningState({ weights, screenK, probeEvery, seedFromPredictor });
+    const P = newPlanningState({ weights, screenK, probeEvery, seedFromPredictor, multiTown });
     const trace = [];
     const milestones = {};
     let cumTicks = 0;

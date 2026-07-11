@@ -1,0 +1,107 @@
+{
+  "plain": [
+    {
+      "label": "invest:0.6",
+      "q": [
+        [
+          "Smash Pots",
+          3
+        ],
+        [
+          "Wander",
+          99
+        ]
+      ]
+    },
+    {
+      "label": "invest:1",
+      "q": [
+        [
+          "Smash Pots",
+          5
+        ],
+        [
+          "Wander",
+          99
+        ]
+      ]
+    },
+    {
+      "label": "bare:Wander",
+      "q": [
+        [
+          "Wander",
+          99
+        ]
+      ]
+    },
+    {
+      "label": "repeat",
+      "q": [
+        [
+          "Wander",
+          3
+        ]
+      ]
+    }
+  ],
+  "travelReady": [
+    {
+      "label": "invest:0.6",
+      "q": [
+        [
+          "Smash Pots",
+          3
+        ],
+        [
+          "Wander",
+          99
+        ]
+      ]
+    },
+    {
+      "label": "invest:1",
+      "q": [
+        [
+          "Smash Pots",
+          5
+        ],
+        [
+          "Wander",
+          99
+        ]
+      ]
+    },
+    {
+      "label": "bare:Wander",
+      "q": [
+        [
+          "Wander",
+          99
+        ]
+      ]
+    },
+    {
+      "label": "repeat",
+      "q": [
+        [
+          "Wander",
+          3
+        ]
+      ]
+    },
+    {
+      "label": "push:Start Journey:h0",
+      "q": [
+        [
+          "Buy Supplies",
+          1
+        ],
+        [
+          "Start Journey",
+          1
+        ]
+      ]
+    }
+  ]
+}
