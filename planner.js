@@ -547,10 +547,14 @@ function execCountOf(r, name) {
 // runs, and skipping towns whose banked value is below the hop cost. With
 // banks only in town 0 this reduces to the v0 queue exactly. Injects
 // NOTHING: capacity probes model real next-loop play.
-// `out` (optional): out.ticks = the probe loop's spent ticks — the cost of
-// running the pump, so (capacity - out.ticks) is the loop's disposable
-// headroom. Purely an extra readout; no numeric path changes.
+// `out` (optional): out.ticks = the pump's cost — mana consumed by the probe
+// queue's ACTIONS (sum of lastExec manaUsed), so (capacity - out.ticks) is
+// the loop's disposable headroom. NOT the chunk driver's `spent`: a completed
+// loop always consumes its whole budget (idle ticks included), so spent ==
+// lastTimeNeeded identically and the difference would be 0 by construction.
+// Purely an extra readout; no numeric path changes.
 function probeCapacity(sess, postSnap, post, know, multiTown = true, out = {}) {
+    const pumpCost = (r) => (r.lastExec ?? []).reduce((s, e) => s + (e.manaUsed ?? 0), 0);
     const byTown = new Map();
     for (const a of post.actions) {
         if (!(a.visible && a.unlocked) || a.type !== "limited") continue;
@@ -573,7 +577,7 @@ function probeCapacity(sess, postSnap, post, know, multiTown = true, out = {}) {
         sess.setQueue(q);
         sess.restart();
         const r = sess.runLoop();
-        if (!r.degenerate) out.ticks = r.ticks;
+        if (!r.degenerate) out.ticks = pumpCost(r);
         return r.degenerate ? null : r.lastTimeNeeded;
     }
     // a town's spend-all converter is DEFERRED until the next journey's
@@ -596,9 +600,47 @@ function probeCapacity(sess, postSnap, post, know, multiTown = true, out = {}) {
             q.push(...routeTailEntries(route.hops, resolved.segGrantors));
             cur = t;
         }
-        for (const p of pools) q.push([p.a.name, p.good]);
-        const conv = converterOf(post, know, t);
-        if (conv && pools.length) pendingConv = conv;
+        // Multi-town states harvest gold pools in cushion-sized CHUNKS with
+        // conversion between (the committed queues' interleave): an
+        // end-loaded spend-all converter starves once banks outgrow the base
+        // budget — the probe loop dies mid-harvest with its gold unconverted,
+        // understating capacity and reading headroom == 0 by construction
+        // (found at 10x L140: probe 5,250 vs realized 21,250). STATE-GATED so
+        // the townsUnlocked=[0] probe queue stays v0 byte-exact. The final
+        // chunk is deliberately NOT converted: its gold funds the next
+        // journey's grantors, and pendingConv flushes it after them (or at
+        // the end) exactly as before. The modeled cushion only shapes the
+        // queue — the probe run realizes real values.
+        const interleave = post.townsUnlocked.length > 1;
+        const convT = converterOf(post, know, t);
+        if (!interleave || !convT) {
+            for (const p of pools) q.push([p.a.name, p.good]);
+        } else {
+            let cushion = post.baseMana;
+            for (const p of pools) {
+                const kp = know.get(p.a.name);
+                const ticks = Math.max(1, kp?.ticksPerExec || 30);
+                if (p.manaPer > ticks) {   // self-funding mana engine: whole bank
+                    q.push([p.a.name, p.good]);
+                    cushion += p.good * (p.manaPer - ticks);
+                    continue;
+                }
+                const goldPer = Math.max(0, kp?.goldPerExec ?? 0);
+                let left = p.good;
+                while (left > 0) {
+                    const fit = Math.max(1, Math.floor((cushion - MARGIN) / ticks));
+                    const n = Math.min(left, fit);
+                    q.push([p.a.name, n]);
+                    left -= n;
+                    cushion -= n * ticks;
+                    if (left > 0) {
+                        q.push([convT.name, 1]);
+                        cushion += n * goldPer * convT.rate - convT.ticks;
+                    }
+                }
+            }
+        }
+        if (convT && pools.length) pendingConv = convT;
     }
     if (pendingConv) q.push([pendingConv.name, 1]);
     if (!q.length) return null;
@@ -606,7 +648,7 @@ function probeCapacity(sess, postSnap, post, know, multiTown = true, out = {}) {
     sess.setQueue(q);
     sess.restart();
     const r = sess.runLoop();
-    if (!r.degenerate) out.ticks = r.ticks;
+    if (!r.degenerate) out.ticks = pumpCost(r);
     return r.degenerate ? null : r.lastTimeNeeded;
 }
 
@@ -1792,7 +1834,8 @@ async function planRound(sess, P) {
         const capacity = probeCapacity(sess, postSnap, post, P.know, P.multiTown, capOut) ?? Math.max(post.baseMana, r.lastTimeNeeded);
         const { score, parts } = scoreOutcome(pre, post, P.thresholds, r, P.prevTimeNeeded, P.know, P.weights, capacity,
             { probeTicks: capOut.ticks, prevProbeTicks: P.prevProbeTicks });
-        evals.push({ label: c.label, score: Math.round(score * 10) / 10, capacity });
+        evals.push({ label: c.label, score: Math.round(score * 10) / 10, capacity,
+                     probeTicks: capOut.ticks ?? null, parts });
         const rec = { c, r, post, score, parts, postSnap, capacity, probeTicks: capOut.ticks ?? null };
         if (!best || score > best.score) best = rec;
     }
