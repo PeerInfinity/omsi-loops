@@ -636,37 +636,61 @@ function measureAction(sess, snap, state, know, a, needs = []) {
 // Predictor-model priors (Stage-1 info-boundary relaxation, RULED
 // 2026-07-10): the Koviko predictor ships a hand-maintained per-action
 // effect model for all 9 towns — a fork feature legitimately reads its own
-// game's data. Operationally we run the predictor on a single-action queue
-// and record the projected mana/resource deltas as a PRIOR on the profile.
+// game's data. The prior is extracted from the entry's effect() applied to
+// SYNTHETIC accumulators that mirror measureAction's resource injections
+// (a queue-simulation probe from the live state was tried first, but the
+// predictor models a fresh loop — gold/rep start at 0 — so every gated or
+// costed action projected zero: extraction blind spot, omsi-stats Round 2).
+// Effects read live globals (town banks, goldCost(), buffs), so the
+// snapshot is restored first. Loop-model entries (multiparts) carry their
+// rewards in per-segment handlers, not a flat effect() — marked
+// unsupported rather than compared apples-to-oranges.
 // Empirical measurement stays authoritative for planning; predictor-vs-
 // engine divergence is RECORDED (the "third oracle": it flags predictor
 // model bugs, engine changes, and — later — AP-randomized data the
 // compile-time model can't know about).
-async function seedPredictorPrior(sess, snap, know, a) {
+function seedPredictorPrior(sess, snap, know, a) {
     const p = know.get(a.name) ?? emptyProfile();
     if (p.predictorPrior) return;
-    sess.restore(snap);
-    const pr = await sess.predict([[a.name, 1]]);
-    if (pr.ok) {
-        p.predictorPrior = {
-            totalMana: pr.totalMana ?? null,
-            gold: pr.resources?.gold ?? 0,
-            reputation: pr.resources?.reputation ?? 0,
-            mana: pr.resources?.mana ?? null,
-        };
+    if (!plPredictor) plInitPredictor();
+    const pred = plPredictor.predictions?.[a.name];
+    if (!pred) {
+        p.predictorPrior = { error: "no predictor entry" };
+    } else if (pred.loop || typeof pred.effect !== "function") {
+        p.predictorPrior = { unsupported: pred.loop ? "loop-model" : "no-effect" };
     } else {
-        p.predictorPrior = { error: pr.error };
+        sess.restore(snap);
+        try {
+            // same injections as measureAction, so spend-all/gated effects
+            // project the deltas the engine measurement realizes
+            const goldBase = (a.goldCost ?? 0) > 0 ? 1000 + a.goldCost : 1000;
+            const r = { mana: MEASURE_MANA, gold: goldBase, rep: 1000, town: a.townNum, guild: "" };
+            const k = Object.entries(skills).reduce(
+                (o, [n, s]) => (o[n.toLowerCase()] = s.exp ?? 0, o), {});
+            pred.effect(r, k);
+            p.predictorPrior = {
+                gold: (r.gold ?? goldBase) - goldBase,
+                reputation: (r.rep ?? 1000) - 1000,
+                mana: (r.mana ?? MEASURE_MANA) - MEASURE_MANA,
+                // converters (Buy Mana) zero the wallet in ONE exec; the
+                // engine measurement averages that single spend across its
+                // whole batch, so the comparison must be against the total
+                goldSpendAll: r.gold === 0 && goldBase > 0,
+            };
+        } catch (e) {
+            p.predictorPrior = { error: e.message };
+        }
     }
     know.set(a.name, p);
 }
 function recordDivergence(divergenceLog, state, a, p) {
     const prior = p.predictorPrior;
-    if (!prior || prior.error || p.exec <= 0) return;
+    if (!prior || prior.error || prior.unsupported || p.exec <= 0) return;
     // Compare the engine-measured per-exec gold/rep deltas against the
     // predictor's single-exec projection. Coarse tolerance: this is a smoke
     // alarm, not a spec.
     const checks = [
-        ["gold", p.goldPerExec, prior.gold],
+        ["gold", prior.goldSpendAll ? p.goldPerExec * p.exec : p.goldPerExec, prior.gold],
         ["reputation", p.repPerExec, prior.reputation],
     ];
     for (const [field, measured, predicted] of checks) {
