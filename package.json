@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
   "devDependencies": {
     "@types/d3": "^7.4.3",
     "@types/gapi": "^0.0.47",

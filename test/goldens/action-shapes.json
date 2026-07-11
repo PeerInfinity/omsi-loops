@@ -1,0 +1,2369 @@
+[
+  {
+    "name": "SurveyZ0",
+    "varName": "SurveyZ0",
+    "type": "progress",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "SurveyZ1",
+    "varName": "SurveyZ1",
+    "type": "progress",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "SurveyZ2",
+    "varName": "SurveyZ2",
+    "type": "progress",
+    "townNum": 2,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "SurveyZ3",
+    "varName": "SurveyZ3",
+    "type": "progress",
+    "townNum": 3,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "SurveyZ4",
+    "varName": "SurveyZ4",
+    "type": "progress",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "SurveyZ5",
+    "varName": "SurveyZ5",
+    "type": "progress",
+    "townNum": 5,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "SurveyZ6",
+    "varName": "SurveyZ6",
+    "type": "progress",
+    "townNum": 6,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "SurveyZ7",
+    "varName": "SurveyZ7",
+    "type": "progress",
+    "townNum": 7,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "SurveyZ8",
+    "varName": "SurveyZ8",
+    "type": "progress",
+    "townNum": 8,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "RuinsZ1",
+    "varName": "RuinsZ1",
+    "type": "progress",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": [
+      "SurveyZ1"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "RuinsZ3",
+    "varName": "RuinsZ3",
+    "type": "progress",
+    "townNum": 3,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": [
+      "SurveyZ1"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "RuinsZ5",
+    "varName": "RuinsZ5",
+    "type": "progress",
+    "townNum": 5,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": [
+      "SurveyZ1"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "RuinsZ6",
+    "varName": "RuinsZ6",
+    "type": "progress",
+    "townNum": 6,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Spd": 0.2,
+      "Con": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": [
+      "SurveyZ1"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "HaulZ1",
+    "varName": "StonesZ1",
+    "type": "limited",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.4,
+      "Con": 0.6
+    },
+    "affectedBy": [
+      "SurveyZ1"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "HaulZ3",
+    "varName": "StonesZ3",
+    "type": "limited",
+    "townNum": 3,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.4,
+      "Con": 0.6
+    },
+    "affectedBy": [
+      "SurveyZ1"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "HaulZ5",
+    "varName": "StonesZ5",
+    "type": "limited",
+    "townNum": 5,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.4,
+      "Con": 0.6
+    },
+    "affectedBy": [
+      "SurveyZ1"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "HaulZ6",
+    "varName": "StonesZ6",
+    "type": "limited",
+    "townNum": 6,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.4,
+      "Con": 0.6
+    },
+    "affectedBy": [
+      "SurveyZ1"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "AssassinZ0",
+    "varName": "AssassinZ0",
+    "type": "multipart",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Int": 0.1,
+      "Dex": 0.3,
+      "Luck": 0.2,
+      "Spd": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "AssassinZ1",
+    "varName": "AssassinZ1",
+    "type": "multipart",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Int": 0.1,
+      "Dex": 0.3,
+      "Luck": 0.2,
+      "Spd": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "AssassinZ2",
+    "varName": "AssassinZ2",
+    "type": "multipart",
+    "townNum": 2,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Int": 0.1,
+      "Dex": 0.3,
+      "Luck": 0.2,
+      "Spd": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "AssassinZ3",
+    "varName": "AssassinZ3",
+    "type": "multipart",
+    "townNum": 3,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Int": 0.1,
+      "Dex": 0.3,
+      "Luck": 0.2,
+      "Spd": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "AssassinZ4",
+    "varName": "AssassinZ4",
+    "type": "multipart",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Int": 0.1,
+      "Dex": 0.3,
+      "Luck": 0.2,
+      "Spd": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "AssassinZ5",
+    "varName": "AssassinZ5",
+    "type": "multipart",
+    "townNum": 5,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Int": 0.1,
+      "Dex": 0.3,
+      "Luck": 0.2,
+      "Spd": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "AssassinZ6",
+    "varName": "AssassinZ6",
+    "type": "multipart",
+    "townNum": 6,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Int": 0.1,
+      "Dex": 0.3,
+      "Luck": 0.2,
+      "Spd": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "AssassinZ7",
+    "varName": "AssassinZ7",
+    "type": "multipart",
+    "townNum": 7,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Int": 0.1,
+      "Dex": 0.3,
+      "Luck": 0.2,
+      "Spd": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Map",
+    "varName": "Map",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.8,
+      "Luck": 0.1,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Wander",
+    "varName": "Wander",
+    "type": "progress",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Con": 0.2,
+      "Cha": 0.2,
+      "Spd": 0.3,
+      "Luck": 0.1
+    },
+    "affectedBy": [
+      "Buy Glasses"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Smash Pots",
+    "varName": "Pots",
+    "type": "limited",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.2,
+      "Per": 0.2,
+      "Spd": 0.6
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Pick Locks",
+    "varName": "Locks",
+    "type": "limited",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Dex": 0.5,
+      "Per": 0.3,
+      "Spd": 0.1,
+      "Luck": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Buy Glasses",
+    "varName": "BuyGlasses",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.7,
+      "Spd": 0.3
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Found Glasses",
+    "varName": "FoundGlasses",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 0,
+    "stats": {},
+    "affectedBy": [
+      "SurveyZ1"
+    ],
+    "allowed": 0
+  },
+  {
+    "name": "Buy Mana Z1",
+    "varName": "BuyManaZ1",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.7,
+      "Int": 0.2,
+      "Luck": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Meet People",
+    "varName": "Met",
+    "type": "progress",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Int": 0.1,
+      "Cha": 0.8,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Train Strength",
+    "varName": "TrainStrength",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 4,
+    "stats": {
+      "Str": 0.8,
+      "Con": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 10
+  },
+  {
+    "name": "Short Quest",
+    "varName": "SQuests",
+    "type": "limited",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.2,
+      "Dex": 0.1,
+      "Cha": 0.3,
+      "Spd": 0.2,
+      "Luck": 0.1,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Investigate",
+    "varName": "Secrets",
+    "type": "progress",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.3,
+      "Cha": 0.4,
+      "Spd": 0.2,
+      "Luck": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Long Quest",
+    "varName": "LQuests",
+    "type": "limited",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.2,
+      "Int": 0.2,
+      "Con": 0.4,
+      "Spd": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Throw Party",
+    "varName": "ThrowParty",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 2,
+    "stats": {
+      "Cha": 0.8,
+      "Soul": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Warrior Lessons",
+    "varName": "WarriorLessons",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 1.5,
+    "stats": {
+      "Str": 0.5,
+      "Dex": 0.3,
+      "Con": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Mage Lessons",
+    "varName": "MageLessons",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 1.5,
+    "stats": {
+      "Per": 0.3,
+      "Int": 0.5,
+      "Con": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Heal The Sick",
+    "varName": "Heal",
+    "type": "multipart",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Int": 0.2,
+      "Cha": 0.2,
+      "Soul": 0.4
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Fight Monsters",
+    "varName": "Fight",
+    "type": "multipart",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.3,
+      "Spd": 0.3,
+      "Con": 0.3,
+      "Luck": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Small Dungeon",
+    "varName": "SDungeon",
+    "type": "multipart",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.1,
+      "Dex": 0.4,
+      "Con": 0.3,
+      "Cha": 0.1,
+      "Luck": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Buy Supplies",
+    "varName": "BuySupplies",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.8,
+      "Luck": 0.1,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Haggle",
+    "varName": "Haggle",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.8,
+      "Luck": 0.1,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Start Journey",
+    "varName": "StartJourney",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 2,
+    "stats": {
+      "Con": 0.4,
+      "Per": 0.3,
+      "Spd": 0.3
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Hitch Ride",
+    "varName": "HitchRide",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.5,
+      "Per": 0.5
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Open Rift",
+    "varName": "OpenRift",
+    "type": "normal",
+    "townNum": 0,
+    "expMult": 1,
+    "stats": {
+      "Int": 0.2,
+      "Luck": 0.1,
+      "Soul": 0.7
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Explore Forest",
+    "varName": "Forest",
+    "type": "progress",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Con": 0.2,
+      "Spd": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": [
+      "Buy Glasses"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Wild Mana",
+    "varName": "WildMana",
+    "type": "limited",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Con": 0.2,
+      "Int": 0.6,
+      "Soul": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Gather Herbs",
+    "varName": "Herbs",
+    "type": "limited",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.4,
+      "Dex": 0.3,
+      "Int": 0.3
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Hunt",
+    "varName": "Hunt",
+    "type": "limited",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Dex": 0.2,
+      "Con": 0.2,
+      "Per": 0.2,
+      "Spd": 0.4
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Sit By Waterfall",
+    "varName": "SitByWaterfall",
+    "type": "normal",
+    "townNum": 1,
+    "expMult": 4,
+    "stats": {
+      "Con": 0.2,
+      "Soul": 0.8
+    },
+    "affectedBy": null,
+    "allowed": 10
+  },
+  {
+    "name": "Old Shortcut",
+    "varName": "Shortcut",
+    "type": "progress",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.3,
+      "Con": 0.4,
+      "Spd": 0.2,
+      "Luck": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Talk To Hermit",
+    "varName": "Hermit",
+    "type": "progress",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Con": 0.5,
+      "Cha": 0.3,
+      "Soul": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Practical Magic",
+    "varName": "PracticalMagic",
+    "type": "normal",
+    "townNum": 1,
+    "expMult": 1.5,
+    "stats": {
+      "Per": 0.3,
+      "Con": 0.2,
+      "Int": 0.5
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Learn Alchemy",
+    "varName": "LearnAlchemy",
+    "type": "normal",
+    "townNum": 1,
+    "expMult": 1.5,
+    "stats": {
+      "Con": 0.3,
+      "Per": 0.1,
+      "Int": 0.6
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Brew Potions",
+    "varName": "BrewPotions",
+    "type": "normal",
+    "townNum": 1,
+    "expMult": 1.5,
+    "stats": {
+      "Dex": 0.3,
+      "Int": 0.6,
+      "Luck": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Train Dexterity",
+    "varName": "TrainDexterity",
+    "type": "normal",
+    "townNum": 1,
+    "expMult": 4,
+    "stats": {
+      "Dex": 0.8,
+      "Con": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 10
+  },
+  {
+    "name": "Train Speed",
+    "varName": "TrainSpeed",
+    "type": "normal",
+    "townNum": 1,
+    "expMult": 4,
+    "stats": {
+      "Spd": 0.8,
+      "Con": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 10
+  },
+  {
+    "name": "Follow Flowers",
+    "varName": "Flowers",
+    "type": "progress",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.7,
+      "Con": 0.1,
+      "Spd": 0.2
+    },
+    "affectedBy": [
+      "Buy Glasses"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Bird Watching",
+    "varName": "BirdWatching",
+    "type": "normal",
+    "townNum": 1,
+    "expMult": 4,
+    "stats": {
+      "Per": 0.8,
+      "Int": 0.2
+    },
+    "affectedBy": [
+      "Buy Glasses"
+    ],
+    "allowed": 10
+  },
+  {
+    "name": "Clear Thicket",
+    "varName": "Thicket",
+    "type": "progress",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Dex": 0.1,
+      "Str": 0.2,
+      "Per": 0.3,
+      "Con": 0.2,
+      "Spd": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Talk To Witch",
+    "varName": "Witch",
+    "type": "progress",
+    "townNum": 1,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.3,
+      "Int": 0.2,
+      "Soul": 0.5
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Dark Magic",
+    "varName": "DarkMagic",
+    "type": "normal",
+    "townNum": 1,
+    "expMult": 1.5,
+    "stats": {
+      "Con": 0.2,
+      "Int": 0.5,
+      "Soul": 0.3
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Dark Ritual",
+    "varName": "DarkRitual",
+    "type": "multipart",
+    "townNum": 1,
+    "expMult": 10,
+    "stats": {
+      "Spd": 0.1,
+      "Int": 0.1,
+      "Soul": 0.8
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Continue On",
+    "varName": "ContinueOn",
+    "type": "normal",
+    "townNum": 1,
+    "expMult": 2,
+    "stats": {
+      "Con": 0.4,
+      "Per": 0.2,
+      "Spd": 0.4
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Explore City",
+    "varName": "City",
+    "type": "progress",
+    "townNum": 2,
+    "expMult": 1,
+    "stats": {
+      "Con": 0.1,
+      "Per": 0.3,
+      "Cha": 0.2,
+      "Spd": 0.3,
+      "Luck": 0.1
+    },
+    "affectedBy": [
+      "Buy Glasses"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Gamble",
+    "varName": "Gamble",
+    "type": "limited",
+    "townNum": 2,
+    "expMult": 2,
+    "stats": {
+      "Cha": 0.2,
+      "Luck": 0.8
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Get Drunk",
+    "varName": "Drunk",
+    "type": "progress",
+    "townNum": 2,
+    "expMult": 3,
+    "stats": {
+      "Str": 0.1,
+      "Cha": 0.5,
+      "Con": 0.2,
+      "Soul": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Buy Mana Z3",
+    "varName": "BuyManaZ3",
+    "type": "normal",
+    "townNum": 2,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.7,
+      "Int": 0.2,
+      "Luck": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Sell Potions",
+    "varName": "SellPotions",
+    "type": "normal",
+    "townNum": 2,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.7,
+      "Int": 0.2,
+      "Luck": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Adventure Guild",
+    "varName": "AdvGuild",
+    "type": "multipart",
+    "townNum": 2,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.4,
+      "Dex": 0.3,
+      "Con": 0.3
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Gather Team",
+    "varName": "GatherTeam",
+    "type": "normal",
+    "townNum": 2,
+    "expMult": 3,
+    "stats": {
+      "Per": 0.2,
+      "Cha": 0.5,
+      "Int": 0.2,
+      "Luck": 0.1
+    },
+    "affectedBy": [
+      "Adventure Guild"
+    ],
+    "allowed": 5
+  },
+  {
+    "name": "Large Dungeon",
+    "varName": "LDungeon",
+    "type": "multipart",
+    "townNum": 2,
+    "expMult": 2,
+    "stats": {
+      "Str": 0.2,
+      "Dex": 0.2,
+      "Con": 0.2,
+      "Cha": 0.3,
+      "Luck": 0.1
+    },
+    "affectedBy": [
+      "Gather Team"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Crafting Guild",
+    "varName": "CraftGuild",
+    "type": "multipart",
+    "townNum": 2,
+    "expMult": 1,
+    "stats": {
+      "Dex": 0.3,
+      "Per": 0.3,
+      "Int": 0.4
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Craft Armor",
+    "varName": "CraftArmor",
+    "type": "normal",
+    "townNum": 2,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.1,
+      "Dex": 0.3,
+      "Con": 0.3,
+      "Int": 0.3
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Apprentice",
+    "varName": "Apprentice",
+    "type": "progress",
+    "townNum": 2,
+    "expMult": 1.5,
+    "stats": {
+      "Dex": 0.2,
+      "Int": 0.4,
+      "Cha": 0.4
+    },
+    "affectedBy": [
+      "Crafting Guild"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Mason",
+    "varName": "Mason",
+    "type": "progress",
+    "townNum": 2,
+    "expMult": 2,
+    "stats": {
+      "Dex": 0.2,
+      "Int": 0.5,
+      "Cha": 0.3
+    },
+    "affectedBy": [
+      "Crafting Guild"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Architect",
+    "varName": "Architect",
+    "type": "progress",
+    "townNum": 2,
+    "expMult": 2.5,
+    "stats": {
+      "Dex": 0.2,
+      "Int": 0.6,
+      "Cha": 0.2
+    },
+    "affectedBy": [
+      "Crafting Guild"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Read Books",
+    "varName": "ReadBooks",
+    "type": "normal",
+    "townNum": 2,
+    "expMult": 4,
+    "stats": {
+      "Int": 0.8,
+      "Soul": 0.2
+    },
+    "affectedBy": [
+      "Buy Glasses"
+    ],
+    "allowed": 10
+  },
+  {
+    "name": "Buy Pickaxe",
+    "varName": "BuyPickaxe",
+    "type": "normal",
+    "townNum": 2,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.8,
+      "Int": 0.1,
+      "Spd": 0.1
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Heroes Trial",
+    "varName": "HTrial",
+    "type": "multipart",
+    "townNum": 2,
+    "expMult": 0.2,
+    "stats": {
+      "Dex": 0.11,
+      "Str": 0.11,
+      "Con": 0.11,
+      "Spd": 0.11,
+      "Per": 0.11,
+      "Cha": 0.11,
+      "Int": 0.11,
+      "Luck": 0.11,
+      "Soul": 0.11
+    },
+    "affectedBy": [
+      "Team"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Start Trek",
+    "varName": "StartTrek",
+    "type": "normal",
+    "townNum": 2,
+    "expMult": 2,
+    "stats": {
+      "Con": 0.7,
+      "Per": 0.2,
+      "Spd": 0.1
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Underworld",
+    "varName": "Underworld",
+    "type": "normal",
+    "townNum": 2,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.5,
+      "Per": 0.5
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Climb Mountain",
+    "varName": "Mountain",
+    "type": "progress",
+    "townNum": 3,
+    "expMult": 1,
+    "stats": {
+      "Dex": 0.1,
+      "Str": 0.2,
+      "Con": 0.4,
+      "Per": 0.2,
+      "Spd": 0.1
+    },
+    "affectedBy": [
+      "Buy Pickaxe"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Mana Geyser",
+    "varName": "Geysers",
+    "type": "limited",
+    "townNum": 3,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.6,
+      "Per": 0.3,
+      "Int": 0.1
+    },
+    "affectedBy": [
+      "Buy Pickaxe"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Decipher Runes",
+    "varName": "Runes",
+    "type": "progress",
+    "townNum": 3,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.3,
+      "Int": 0.7
+    },
+    "affectedBy": [
+      "Buy Glasses"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Chronomancy",
+    "varName": "Chronomancy",
+    "type": "normal",
+    "townNum": 3,
+    "expMult": 2,
+    "stats": {
+      "Soul": 0.1,
+      "Spd": 0.3,
+      "Int": 0.6
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Looping Potion",
+    "varName": "LoopingPotion",
+    "type": "normal",
+    "townNum": 3,
+    "expMult": 2,
+    "stats": {
+      "Dex": 0.2,
+      "Int": 0.7,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Pyromancy",
+    "varName": "Pyromancy",
+    "type": "normal",
+    "townNum": 3,
+    "expMult": 2,
+    "stats": {
+      "Per": 0.2,
+      "Int": 0.7,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Explore Cavern",
+    "varName": "Cavern",
+    "type": "progress",
+    "townNum": 3,
+    "expMult": 1,
+    "stats": {
+      "Dex": 0.1,
+      "Str": 0.3,
+      "Con": 0.2,
+      "Per": 0.3,
+      "Spd": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Mine Soulstones",
+    "varName": "MineSoulstones",
+    "type": "limited",
+    "townNum": 3,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.6,
+      "Dex": 0.1,
+      "Con": 0.3
+    },
+    "affectedBy": [
+      "Buy Pickaxe"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Hunt Trolls",
+    "varName": "HuntTrolls",
+    "type": "multipart",
+    "townNum": 3,
+    "expMult": 1.5,
+    "stats": {
+      "Str": 0.3,
+      "Dex": 0.3,
+      "Con": 0.2,
+      "Per": 0.1,
+      "Int": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Check Walls",
+    "varName": "Illusions",
+    "type": "progress",
+    "townNum": 3,
+    "expMult": 1,
+    "stats": {
+      "Spd": 0.1,
+      "Dex": 0.1,
+      "Per": 0.4,
+      "Int": 0.4
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Take Artifacts",
+    "varName": "Artifacts",
+    "type": "limited",
+    "townNum": 3,
+    "expMult": 1,
+    "stats": {
+      "Spd": 0.2,
+      "Per": 0.6,
+      "Int": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Imbue Mind",
+    "varName": "ImbueMind",
+    "type": "multipart",
+    "townNum": 3,
+    "expMult": 5,
+    "stats": {
+      "Spd": 0.1,
+      "Per": 0.1,
+      "Int": 0.8
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Imbue Body",
+    "varName": "ImbueBody",
+    "type": "multipart",
+    "townNum": 3,
+    "expMult": 5,
+    "stats": {
+      "Dex": 0.1,
+      "Str": 0.1,
+      "Con": 0.8
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Face Judgement",
+    "varName": "FaceJudgement",
+    "type": "normal",
+    "townNum": 3,
+    "expMult": 2,
+    "stats": {
+      "Cha": 0.3,
+      "Luck": 0.2,
+      "Soul": 0.5
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Guru",
+    "varName": "Guru",
+    "type": "normal",
+    "townNum": 3,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.5,
+      "Soul": 0.5
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Guided Tour",
+    "varName": "Tour",
+    "type": "progress",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.3,
+      "Con": 0.2,
+      "Cha": 0.3,
+      "Int": 0.1,
+      "Luck": 0.1
+    },
+    "affectedBy": [
+      "Buy Glasses"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Canvass",
+    "varName": "Canvassed",
+    "type": "progress",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Con": 0.1,
+      "Cha": 0.5,
+      "Spd": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Donate",
+    "varName": "Donate",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Cha": 0.2,
+      "Spd": 0.2,
+      "Int": 0.4
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Accept Donations",
+    "varName": "Donations",
+    "type": "limited",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Con": 0.1,
+      "Cha": 0.2,
+      "Spd": 0.3,
+      "Luck": 0.4
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Tidy Up",
+    "varName": "Tidy",
+    "type": "multipart",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Spd": 0.3,
+      "Dex": 0.3,
+      "Str": 0.2,
+      "Con": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Buy Mana Z5",
+    "varName": "BuyManaZ5",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.7,
+      "Int": 0.2,
+      "Luck": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Sell Artifact",
+    "varName": "SellArtifact",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.4,
+      "Per": 0.3,
+      "Luck": 0.2,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Gift Artifact",
+    "varName": "GiftArtifact",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.6,
+      "Luck": 0.3,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Mercantilism",
+    "varName": "Mercantilism",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Int": 0.7,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Charm School",
+    "varName": "CharmSchool",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 4,
+    "stats": {
+      "Cha": 0.8,
+      "Int": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 10
+  },
+  {
+    "name": "Oracle",
+    "varName": "Oracle",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 4,
+    "stats": {
+      "Luck": 0.8,
+      "Soul": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 10
+  },
+  {
+    "name": "Enchant Armor",
+    "varName": "EnchantArmor",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.6,
+      "Int": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Wizard College",
+    "varName": "wizCollege",
+    "type": "multipart",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Int": 0.5,
+      "Soul": 0.3,
+      "Cha": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Restoration",
+    "varName": "Restoration",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Int": 0.5,
+      "Soul": 0.3,
+      "Con": 0.2
+    },
+    "affectedBy": [
+      "Wizard College"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Spatiomancy",
+    "varName": "Spatiomancy",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Int": 0.6,
+      "Con": 0.2,
+      "Per": 0.1,
+      "Spd": 0.1
+    },
+    "affectedBy": [
+      "Wizard College"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Seek Citizenship",
+    "varName": "Citizen",
+    "type": "progress",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.5,
+      "Int": 0.2,
+      "Luck": 0.2,
+      "Per": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Build Housing",
+    "varName": "BuildHousing",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.4,
+      "Con": 0.3,
+      "Dex": 0.2,
+      "Spd": 0.1
+    },
+    "affectedBy": [
+      "Crafting Guild"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Collect Taxes",
+    "varName": "CollectTaxes",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.4,
+      "Spd": 0.2,
+      "Per": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": [
+      "Build Housing"
+    ],
+    "allowed": 1
+  },
+  {
+    "name": "Pegasus",
+    "varName": "Pegasus",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Soul": 0.3,
+      "Cha": 0.2,
+      "Luck": 0.2,
+      "Int": 0.3
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Fight Frost Giants",
+    "varName": "FightFrostGiants",
+    "type": "multipart",
+    "townNum": 4,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.5,
+      "Con": 0.3,
+      "Per": 0.2
+    },
+    "affectedBy": [
+      "Pegasus"
+    ],
+    "allowed": 1
+  },
+  {
+    "name": "Seek Blessing",
+    "varName": "SeekBlessing",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 5,
+    "stats": {
+      "Cha": 0.5,
+      "Luck": 0.5
+    },
+    "affectedBy": [
+      "Pegasus"
+    ],
+    "allowed": 1
+  },
+  {
+    "name": "Great Feast",
+    "varName": "GreatFeast",
+    "type": "multipart",
+    "townNum": 4,
+    "expMult": 5,
+    "stats": {
+      "Spd": 0.1,
+      "Int": 0.1,
+      "Soul": 0.8
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Fall From Grace",
+    "varName": "FallFromGrace",
+    "type": "normal",
+    "townNum": 4,
+    "expMult": 2,
+    "stats": {
+      "Dex": 0.4,
+      "Luck": 0.3,
+      "Spd": 0.2,
+      "Int": 0.1
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Meander",
+    "varName": "Meander",
+    "type": "progress",
+    "townNum": 5,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Con": 0.2,
+      "Cha": 0.2,
+      "Spd": 0.3,
+      "Luck": 0.1
+    },
+    "affectedBy": [
+      "Imbue Mind"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Mana Well",
+    "varName": "Wells",
+    "type": "limited",
+    "townNum": 5,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.6,
+      "Per": 0.3,
+      "Int": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Destroy Pylons",
+    "varName": "Pylons",
+    "type": "limited",
+    "townNum": 5,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.4,
+      "Dex": 0.3,
+      "Int": 0.3
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Raise Zombie",
+    "varName": "RaiseZombie",
+    "type": "normal",
+    "townNum": 5,
+    "expMult": 1,
+    "stats": {
+      "Con": 0.4,
+      "Int": 0.3,
+      "Soul": 0.3
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Dark Sacrifice",
+    "varName": "DarkSacrifice",
+    "type": "normal",
+    "townNum": 5,
+    "expMult": 1,
+    "stats": {
+      "Int": 0.2,
+      "Soul": 0.8
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "The Spire",
+    "varName": "TheSpire",
+    "type": "multipart",
+    "townNum": 5,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.1,
+      "Dex": 0.1,
+      "Spd": 0.1,
+      "Con": 0.1,
+      "Per": 0.2,
+      "Int": 0.2,
+      "Soul": 0.2
+    },
+    "affectedBy": [
+      "Team"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Purchase Supplies",
+    "varName": "PurchaseSupplies",
+    "type": "normal",
+    "townNum": 5,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.8,
+      "Luck": 0.1,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Dead Trial",
+    "varName": "DeadTrial",
+    "type": "multipart",
+    "townNum": 5,
+    "expMult": 0.25,
+    "stats": {
+      "Cha": 0.25,
+      "Int": 0.25,
+      "Luck": 0.25,
+      "Soul": 0.25
+    },
+    "affectedBy": [
+      "RaiseZombie"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Journey Forth",
+    "varName": "JourneyForth",
+    "type": "normal",
+    "townNum": 5,
+    "expMult": 2,
+    "stats": {
+      "Con": 0.4,
+      "Per": 0.3,
+      "Spd": 0.3
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Explore Jungle",
+    "varName": "ExploreJungle",
+    "type": "progress",
+    "townNum": 6,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Con": 0.2,
+      "Cha": 0.2,
+      "Spd": 0.3,
+      "Luck": 0.1
+    },
+    "affectedBy": [
+      "Fight Jungle Monsters"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Fight Jungle Monsters",
+    "varName": "FightJungleMonsters",
+    "type": "multipart",
+    "townNum": 6,
+    "expMult": 1,
+    "stats": {
+      "Str": 0.3,
+      "Dex": 0.3,
+      "Per": 0.4
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Rescue Survivors",
+    "varName": "Rescue",
+    "type": "multipart",
+    "townNum": 6,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.4,
+      "Dex": 0.2,
+      "Cha": 0.2,
+      "Spd": 0.2
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Prepare Buffet",
+    "varName": "PrepareBuffet",
+    "type": "normal",
+    "townNum": 6,
+    "expMult": 1,
+    "stats": {
+      "Con": 0.3,
+      "Per": 0.1,
+      "Int": 0.6
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Totem",
+    "varName": "Totem",
+    "type": "normal",
+    "townNum": 6,
+    "expMult": 1,
+    "stats": {
+      "Con": 0.3,
+      "Per": 0.2,
+      "Soul": 0.5
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Escape",
+    "varName": "Escape",
+    "type": "normal",
+    "townNum": 6,
+    "expMult": 2,
+    "stats": {
+      "Dex": 0.2,
+      "Spd": 0.8
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Open Portal",
+    "varName": "OpenPortal",
+    "type": "normal",
+    "townNum": 6,
+    "expMult": 1,
+    "stats": {
+      "Int": 0.2,
+      "Luck": 0.1,
+      "Soul": 0.7
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Excursion",
+    "varName": "Excursion",
+    "type": "progress",
+    "townNum": 7,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.2,
+      "Con": 0.2,
+      "Cha": 0.2,
+      "Spd": 0.3,
+      "Luck": 0.1
+    },
+    "affectedBy": [
+      "Buy Glasses"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Explorers Guild",
+    "varName": "ExplorersGuild",
+    "type": "normal",
+    "townNum": 7,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.3,
+      "Cha": 0.3,
+      "Int": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Thieves Guild",
+    "varName": "ThievesGuild",
+    "type": "multipart",
+    "townNum": 7,
+    "expMult": 2,
+    "stats": {
+      "Dex": 0.4,
+      "Per": 0.3,
+      "Spd": 0.3
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Pick Pockets",
+    "varName": "PickPockets",
+    "type": "progress",
+    "townNum": 7,
+    "expMult": 1.5,
+    "stats": {
+      "Dex": 0.4,
+      "Spd": 0.4,
+      "Luck": 0.2
+    },
+    "affectedBy": [
+      "Thieves Guild"
+    ]
+  },
+  {
+    "name": "Rob Warehouse",
+    "varName": "RobWarehouse",
+    "type": "progress",
+    "townNum": 7,
+    "expMult": 2,
+    "stats": {
+      "Dex": 0.4,
+      "Spd": 0.2,
+      "Int": 0.2,
+      "Luck": 0.2
+    },
+    "affectedBy": [
+      "Thieves Guild"
+    ]
+  },
+  {
+    "name": "Insurance Fraud",
+    "varName": "InsuranceFraud",
+    "type": "progress",
+    "townNum": 7,
+    "expMult": 2.5,
+    "stats": {
+      "Dex": 0.2,
+      "Spd": 0.2,
+      "Int": 0.3,
+      "Luck": 0.3
+    },
+    "affectedBy": [
+      "Thieves Guild"
+    ]
+  },
+  {
+    "name": "Guild Assassin",
+    "varName": "GuildAssassin",
+    "type": "normal",
+    "townNum": 7,
+    "expMult": 1,
+    "stats": {
+      "Per": 0.1,
+      "Cha": 0.3,
+      "Dex": 0.4,
+      "Luck": 0.2
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Invest",
+    "varName": "Invest",
+    "type": "normal",
+    "townNum": 7,
+    "expMult": 1,
+    "stats": {
+      "Con": 0.4,
+      "Per": 0.3,
+      "Spd": 0.3
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Collect Interest",
+    "varName": "CollectInterest",
+    "type": "normal",
+    "townNum": 7,
+    "expMult": 1,
+    "stats": {
+      "Con": 0.4,
+      "Per": 0.3,
+      "Spd": 0.3
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Seminar",
+    "varName": "Seminar",
+    "type": "normal",
+    "townNum": 7,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.8,
+      "Luck": 0.1,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Purchase Key",
+    "varName": "PurchaseKey",
+    "type": "normal",
+    "townNum": 7,
+    "expMult": 1,
+    "stats": {
+      "Cha": 0.8,
+      "Luck": 0.1,
+      "Soul": 0.1
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Secret Trial",
+    "varName": "STrial",
+    "type": "multipart",
+    "townNum": 7,
+    "expMult": 0,
+    "stats": {
+      "Dex": 0.11,
+      "Str": 0.11,
+      "Con": 0.11,
+      "Spd": 0.11,
+      "Per": 0.11,
+      "Cha": 0.11,
+      "Int": 0.11,
+      "Luck": 0.11,
+      "Soul": 0.11
+    },
+    "affectedBy": [
+      "Team"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Leave City",
+    "varName": "LeaveCity",
+    "type": "normal",
+    "townNum": 7,
+    "expMult": 2,
+    "stats": {
+      "Con": 0.4,
+      "Per": 0.3,
+      "Spd": 0.3
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Imbue Soul",
+    "varName": "ImbueSoul",
+    "type": "multipart",
+    "townNum": 8,
+    "expMult": 5,
+    "stats": {
+      "Soul": 1
+    },
+    "affectedBy": null,
+    "allowed": 1
+  },
+  {
+    "name": "Build Tower",
+    "varName": "BuildTower",
+    "type": "progress",
+    "townNum": 8,
+    "expMult": 1,
+    "stats": {
+      "Dex": 0.1,
+      "Str": 0.3,
+      "Con": 0.3,
+      "Per": 0.2,
+      "Spd": 0.1
+    },
+    "affectedBy": [
+      "Temporal Stone"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Gods Trial",
+    "varName": "GTrial",
+    "type": "multipart",
+    "townNum": 8,
+    "expMult": 0.2,
+    "stats": {
+      "Dex": 0.11,
+      "Str": 0.11,
+      "Con": 0.11,
+      "Spd": 0.11,
+      "Per": 0.11,
+      "Cha": 0.11,
+      "Int": 0.11,
+      "Luck": 0.11,
+      "Soul": 0.11
+    },
+    "affectedBy": [
+      "Team"
+    ],
+    "allowed": null
+  },
+  {
+    "name": "Challenge Gods",
+    "varName": "GFight",
+    "type": "multipart",
+    "townNum": 8,
+    "expMult": 0.5,
+    "stats": {
+      "Dex": 0.11,
+      "Str": 0.11,
+      "Con": 0.11,
+      "Spd": 0.11,
+      "Per": 0.11,
+      "Cha": 0.11,
+      "Int": 0.11,
+      "Luck": 0.11,
+      "Soul": 0.11
+    },
+    "affectedBy": null,
+    "allowed": null
+  },
+  {
+    "name": "Restore Time",
+    "varName": "RestoreTime",
+    "type": "normal",
+    "townNum": 8,
+    "expMult": 0,
+    "stats": {
+      "Luck": 0.5,
+      "Soul": 0.5
+    },
+    "affectedBy": null,
+    "allowed": 1
+  }
+]
