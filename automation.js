@@ -103,6 +103,10 @@ function requestPlan(reason) {
             probeEvery: options.plannerProbeEvery,
             seedFromPredictor: options.plannerSeedFromPredictor,
             multiTown: options.plannerMultiTown,
+            // game-sim option, not planner state: the worker's engine copy
+            // must gain exp at the live game's rate or measured profiles
+            // diverge from committed play
+            expGainMultiplier: options.expGainMultiplier ?? 1,
         },
         actualQueue: currentQueuePairs(),
     });

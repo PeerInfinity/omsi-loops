@@ -79,6 +79,9 @@ class Town {
     };
 
     finishProgress(varName, expGain) {
+        // fork: testing gain multiplier (Extras menu). All town progress exp
+        // funnels through here; 1 leaves expGain untouched (byte-inert).
+        if ((options.expGainMultiplier ?? 1) !== 1) expGain *= options.expGainMultiplier;
         // return if capped, for performance
         if (this[`exp${varName}`] === 505000) {
             if (options.pauseOnComplete) pauseGame(true, "Progress complete! (Game paused)");

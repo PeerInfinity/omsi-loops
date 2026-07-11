@@ -653,6 +653,13 @@ const options = {
     predictorSlowTimer: 1,
     predictorTrackedStat: "Rsoul",
     predictorBackgroundThread: true,
+    // ---- fork: testing aids ----
+    // Multiplies experience/progress gains ONLY (town progress exp, skill
+    // exp, stat exp + talent) at the three engine funnels (finishProgress /
+    // addSkillExp / addExp). Resources — gold, mana, reputation, items,
+    // multipart/dungeon progress, buffs, soulstones — are deliberately NOT
+    // multiplied: the game's economy stays real. 1 = byte-exact vanilla.
+    expGainMultiplier: 1,
     // ---- fork: Advanced Automation (queue planner) — everything off by default ----
     advancedAutomation: false,
     plannerMode: "off",
@@ -692,6 +699,7 @@ const numericOptions = [
     "predictorNextPrecision",
     "predictorActionWidth",
     "predictorSlowTimer",
+    "expGainMultiplier",
     "plannerScreenK",
     "plannerProbeEvery",
     "plannerWeightTown",
@@ -803,6 +811,7 @@ const isStandardOption = {
     predictorSlowTimer: false,
     predictorTrackedStat: false,
     predictorBackgroundThread: false,
+    expGainMultiplier: false,
     advancedAutomation: false,
     plannerMode: false,
     plannerPauseWhilePlanning: false,

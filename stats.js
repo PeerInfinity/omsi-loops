@@ -526,6 +526,9 @@ function getPrcToNextSkillLevel(skill) {
 
 /** @param {SkillName} name */
 function addSkillExp(name, amount) {
+    // fork: testing gain multiplier (Extras menu). All skill exp funnels
+    // through here; 1 leaves amount untouched (byte-inert).
+    if ((options.expGainMultiplier ?? 1) !== 1) amount *= options.expGainMultiplier;
     if (name === "Combat" || name === "Pyromancy" || name === "Restoration") amount *= 1 + getBuffLevel("Heroism") * 0.02;
     const oldLevel = getSkillLevel(name);
     skills[name].levelExp.addExp(amount);
@@ -598,6 +601,9 @@ function getExpToLevel(name, talentOnly=false) {
 
 /** @param {StatName} name */
 function addExp(name, amount) {
+    // fork: testing gain multiplier (Extras menu). All stat exp funnels
+    // through here; talent derives from amount below, so it scales too.
+    if ((options.expGainMultiplier ?? 1) !== 1) amount *= options.expGainMultiplier;
     stats[name].statLevelExp.addExp(amount);
     stats[name].soullessLevelExp.addExp(amount / stats[name].soulstoneMult);
     let talentGain = amount * getTalentMultiplier();

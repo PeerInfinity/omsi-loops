@@ -84,6 +84,9 @@ onmessage = async (e) => {
                     P.probeEvery = data.params.probeEvery ?? P.probeEvery;
                     P.seedFromPredictor = data.params.seedFromPredictor ?? P.seedFromPredictor;
                     P.multiTown = data.params.multiTown ?? P.multiTown;
+                    // sim option (plRestoreSave never loads options): keep the
+                    // worker's engine gaining exp at the live game's rate
+                    if (data.params.expGainMultiplier !== undefined) options.expGainMultiplier = data.params.expGainMultiplier;
                 }
                 if (data.actualQueue) P.lastCommitted = data.actualQueue;
                 IdlePlanner._internals.plRestoreSave(

@@ -351,6 +351,18 @@ const menuView = Views.registerView("menu", {
                         Status: <span id='plannerStatus'>idle</span>
                     </div>
                 </div>
+                <div id='forkTestingSection'>
+                    <br>
+                    <b>Testing (fork)</b>
+                    <br>
+                    <label class='showthat' for='expGainMultiplierInput'>Experience gain multiplier
+                        <div class='showthis'>Fork testing aid: multiplies experience/progress gains — town progress exp,
+                        skill exp, stat exp and talent — so threshold grinds compress in test runs. Resources (gold, mana,
+                        reputation, items) and multipart/dungeon progress are deliberately NOT multiplied; the game's
+                        economy stays real. 1 = exactly vanilla behavior.</div>
+                    </label>
+                    <input id='expGainMultiplierInput' type='number' value='1' min='0.1' step='1' style='width: 60px;' oninput='setOption("expGainMultiplier", parseFloat(this.value) || 1)'>
+                </div>
             </div>
         </li>`;
         return html;
