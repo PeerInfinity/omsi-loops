@@ -344,6 +344,9 @@ const menuView = Views.registerView("menu", {
                         Pool discovery <input id='plannerWeightBankPotInput' type='number' value='15' style='width: 60px;' oninput='setOption("plannerWeightBankPot", parseFloat(this.value))'>
                         Talent <input id='plannerWeightTalentInput' type='number' value='0.01' step='0.01' style='width: 60px;' oninput='setOption("plannerWeightTalent", parseFloat(this.value))'>
                         <br>
+                        Travel relief <input id='plannerWeightTravelReliefInput' type='number' value='3' style='width: 60px;' oninput='setOption("plannerWeightTravelRelief", parseFloat(this.value))'>
+                        Headroom <input id='plannerWeightHeadroomInput' type='number' value='1' style='width: 60px;' oninput='setOption("plannerWeightHeadroom", parseFloat(this.value))'>
+                        <br>
                         <button class='button control' onclick='AdvancedAutomation.planNow()'>Plan Now</button>
                         <button class='button control' onclick='AdvancedAutomation.applySuggestion()'>Apply Suggestion</button>
                         <button class='button control' onclick='AdvancedAutomation.showDivergences()'>Divergences</button>

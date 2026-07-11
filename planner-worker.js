@@ -94,6 +94,7 @@ onmessage = async (e) => {
                 P.pre = null;   // always re-read from the restored live state
                 const { best, evals, nCands, nScreened } = await IdlePlanner.planRound(sess, P);
                 P.prevTimeNeeded = best.capacity;
+                P.prevProbeTicks = best.probeTicks;
                 P.lastCommitted = best.c.q;
                 postMessage({
                     type: "result", reqId: data.reqId,

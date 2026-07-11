@@ -62,6 +62,12 @@ const DEFAULT_WEIGHTS = {
     bank: 30,          // measured mana-equivalent value of newly banked good items (a bank pays out EVERY future loop)
     bankPot: 15,       // newly DISCOVERED items (total pool growth = future banks)
     talent: 0.01,      // total talent exp (long-horizon tie-break)
+    // §11.5 scoring-horizon terms — both ONLY computed when the PRE state has
+    // more than one town unlocked (byte-inert at townsUnlocked=[0], where the
+    // planner must reproduce v0 exactly). Both are in mana units, the same
+    // scale the Round-6 wall arithmetic used (price 18.6k vs headroom 10.8k):
+    travelRelief: 3,   // permanent cheapening of routes to other towns (Old Shortcut -> Continue On); valued per mana like banked items (W.bank/10)
+    headroom: 1,       // growth of disposable per-loop mana (capacity minus the capacity probe's pump ticks) vs the last committed loop
 };
 
 // RNG snapshot hooks: headless harnesses install get/set over their seeded
@@ -541,7 +547,10 @@ function execCountOf(r, name) {
 // runs, and skipping towns whose banked value is below the hop cost. With
 // banks only in town 0 this reduces to the v0 queue exactly. Injects
 // NOTHING: capacity probes model real next-loop play.
-function probeCapacity(sess, postSnap, post, know, multiTown = true) {
+// `out` (optional): out.ticks = the probe loop's spent ticks — the cost of
+// running the pump, so (capacity - out.ticks) is the loop's disposable
+// headroom. Purely an extra readout; no numeric path changes.
+function probeCapacity(sess, postSnap, post, know, multiTown = true, out = {}) {
     const byTown = new Map();
     for (const a of post.actions) {
         if (!(a.visible && a.unlocked) || a.type !== "limited") continue;
@@ -564,6 +573,7 @@ function probeCapacity(sess, postSnap, post, know, multiTown = true) {
         sess.setQueue(q);
         sess.restart();
         const r = sess.runLoop();
+        if (!r.degenerate) out.ticks = r.ticks;
         return r.degenerate ? null : r.lastTimeNeeded;
     }
     // a town's spend-all converter is DEFERRED until the next journey's
@@ -596,6 +606,7 @@ function probeCapacity(sess, postSnap, post, know, multiTown = true) {
     sess.setQueue(q);
     sess.restart();
     const r = sess.runLoop();
+    if (!r.degenerate) out.ticks = r.ticks;
     return r.degenerate ? null : r.lastTimeNeeded;
 }
 
@@ -1606,10 +1617,50 @@ function generateCandidates(state, know, thresholds, sess, lastCommitted, opts =
 // ---------------------------------------------------------------------------
 // Objective scoring (engine ground truth): pre vs post persistent state.
 // ---------------------------------------------------------------------------
-function scoreOutcome(pre, post, thresholds, r, prevCapacity, know, W, capacity) {
+function scoreOutcome(pre, post, thresholds, r, prevCapacity, know, W, capacity, extra = {}) {
     let s = 0;
     const parts = {};
     parts.town = W.town * (post.townsUnlocked.length - pre.townsUnlocked.length);
+
+    // §11.5 scoring-horizon terms. GATED ON THE PRE STATE: at townsUnlocked=
+    // [0] neither branch runs, so the v0 byte-exact acceptance holds (stat
+    // drift changes town-0 travel costs every loop — an ungated relief term
+    // would re-rank v0 candidates). Activates from the first planning round
+    // AFTER town 1 unlocks.
+    if (pre.townsUnlocked.length > 1) {
+        // Travel relief: the summed cost of the cheapest routes to every
+        // reachable town is a PRICE the run pays again and again (commute
+        // tolls now, the town-2 unlock price soon). Persistent reductions —
+        // Old Shortcut cheapening Continue On (8000 - 60/level), stat growth
+        // cheapening every hop — are pure plAdjCost arithmetic, visible in
+        // the read states. Grantor tolls (supplies gold) are deliberately NOT
+        // priced: pre and post share one knowledge Map, so their delta is
+        // identically zero. Pure state + routeTo(state, null, t): no engine
+        // work, deterministic.
+        const reliefOf = (state) => {
+            let sum = 0;
+            const dests = new Set();
+            for (const e of travelEdges(state)) {
+                if (!e.dynamic && e.action.visible && e.action.unlocked && e.to !== 0) dests.add(e.to);
+            }
+            for (const t of dests) {
+                const rt = routeTo(state, null, t);
+                if (rt) sum += rt.ticksEst;
+            }
+            return sum;
+        };
+        parts.travelRelief = W.travelRelief * (reliefOf(pre) - reliefOf(post));
+        // Headroom: capacity is bank-limited at the plateau (log-growth term
+        // reads 0) while stat growth keeps cutting the PUMP's tick cost —
+        // the disposable slice (capacity minus the capacity probe's spent
+        // ticks) is what actually funds expeditions and the town-2 push
+        // (Round 6: headroom 10,782 vs price 18.6k). The probe loop already
+        // runs per candidate; its tick count rides along in `extra`.
+        if (extra.probeTicks != null && extra.prevProbeTicks != null) {
+            parts.headroom = W.headroom *
+                ((capacity - extra.probeTicks) - (prevCapacity - extra.prevProbeTicks));
+        }
+    }
 
     const preAvail = new Map(pre.actions.map(a => [a.name, a.visible ? (a.unlocked ? 2 : 1) : 0]));
     let newUnlocked = 0, newVisible = 0;
@@ -1737,10 +1788,12 @@ async function planRound(sess, P) {
         const { r, post } = evalLoop(sess, snap, c.q);
         if (r.degenerate) { evals.push({ label: c.label, score: null }); continue; }
         const postSnap = sess.save();
-        const capacity = probeCapacity(sess, postSnap, post, P.know, P.multiTown) ?? Math.max(post.baseMana, r.lastTimeNeeded);
-        const { score, parts } = scoreOutcome(pre, post, P.thresholds, r, P.prevTimeNeeded, P.know, P.weights, capacity);
+        const capOut = {};
+        const capacity = probeCapacity(sess, postSnap, post, P.know, P.multiTown, capOut) ?? Math.max(post.baseMana, r.lastTimeNeeded);
+        const { score, parts } = scoreOutcome(pre, post, P.thresholds, r, P.prevTimeNeeded, P.know, P.weights, capacity,
+            { probeTicks: capOut.ticks, prevProbeTicks: P.prevProbeTicks });
         evals.push({ label: c.label, score: Math.round(score * 10) / 10, capacity });
-        const rec = { c, r, post, score, parts, postSnap, capacity };
+        const rec = { c, r, post, score, parts, postSnap, capacity, probeTicks: capOut.ticks ?? null };
         if (!best || score > best.score) best = rec;
     }
     if (!best) throw new Error(`loop ${P.loop}: all candidates degenerate`);
@@ -1750,11 +1803,41 @@ async function planRound(sess, P) {
     return { best, snap, pre, nCands: cands.length, nScreened: screened.length, evals };
 }
 
+// ---- planning-state serialization (snapshot-start iteration) --------------
+// Everything planRound accumulates across loops, JSON-safe (the knowledge
+// Map flattens to entries; JS numbers round-trip JSON exactly). Weights and
+// knobs are deliberately NOT serialized — the resuming caller's own params
+// win, which is the point: iterate on scorer/weights from a saved wall
+// state without replaying hundreds of loops. Measurement is deterministic
+// given state, so a carried knowledge table is exactly what a continuous
+// run would hold (staleness re-measures on the normal cadence).
+function serializePlanningState(P) {
+    return {
+        loop: P.loop,
+        prevTimeNeeded: P.prevTimeNeeded,
+        prevProbeTicks: P.prevProbeTicks ?? null,
+        lastCommitted: P.lastCommitted,
+        thresholds: P.thresholds,
+        pre: P.pre,
+        know: [...P.know.entries()],
+    };
+}
+function restorePlanningState(P, s) {
+    P.loop = s.loop ?? 0;
+    P.prevTimeNeeded = s.prevTimeNeeded ?? null;
+    P.prevProbeTicks = s.prevProbeTicks ?? null;
+    P.lastCommitted = s.lastCommitted ?? null;
+    P.thresholds = s.thresholds ?? {};
+    P.pre = s.pre ?? null;
+    P.know = new Map(s.know ?? []);
+}
+
 function newPlanningState(opts = {}) {
     return {
         know: new Map(),
         lastCommitted: null,
         prevTimeNeeded: null,
+        prevProbeTicks: null,
         thresholds: {},
         pre: null,
         loop: 0,
@@ -1774,14 +1857,29 @@ function newPlanningState(opts = {}) {
 // ---------------------------------------------------------------------------
 async function runStandalone({ maxLoops = 1200, weights, screenK = 8, probeEvery = 1,
                                seedFromPredictor = false, multiTown = true, targetTown = 1,
-                               verbose = false, onLoop = null } = {}) {
+                               verbose = false, onLoop = null, resume = null } = {}) {
     const t0 = Date.now();
     const sess = new Session();
     const P = newPlanningState({ weights, screenK, probeEvery, seedFromPredictor, multiTown });
     const trace = [];
     const milestones = {};
     let cumTicks = 0;
-    P.pre = sess.read();
+    if (resume) {
+        // Snapshot-start: continue from a prior run's end state (its last
+        // committed postSnap). A continuous run reaches each planning round
+        // with per-loop state normalized by the last eval loop's restart()
+        // (resources reset, suppliesCost initialized — the §10a.8 gotcha);
+        // a fresh context has none of that, so restart() once against the
+        // save's own restored queue to match. maxLoops stays TOTAL loops
+        // (P.loop resumes where the donor run stopped).
+        plRestoreSave(resume.save);
+        rngHooks.set(resume.rng ?? null);
+        restorePlanningState(P, resume.planning ?? {});
+        if (actions.next.length) sess.restart();
+        P.pre = P.pre ?? sess.read();
+    } else {
+        P.pre = sess.read();
+    }
 
     while (P.loop < maxLoops) {
         const { best, pre } = await planRound(sess, P);
@@ -1790,6 +1888,7 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, probeEvery
         sess.restore(best.postSnap);
         cumTicks += best.r.ticks;
         P.prevTimeNeeded = best.capacity;
+        P.prevProbeTicks = best.probeTicks;
         P.lastCommitted = best.c.q;
 
         // milestones: newly unlocked/visible actions + towns
@@ -1829,12 +1928,16 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, probeEvery
         divergences: P.divergenceLog,
         finalSnapshot: plSnapshot(),
         wallSeconds: (Date.now() - t0) / 1000,
+        // resume blob: feed back via runStandalone({resume}) to continue
+        // this run (snapshot-start iteration)
+        resume: { save: plSaveClone(), rng: rngHooks.get(), planning: serializePlanningState(P) },
     };
 }
 
 return {
     DEFAULT_WEIGHTS, MEASURE_MANA,
     Session, newPlanningState, planRound, runStandalone,
+    serializePlanningState, restorePlanningState,
     setRngHooks,
     // exposed for tests and the automation controller
     emptyProfile, measureAction, refreshKnowledge, generateCandidates,

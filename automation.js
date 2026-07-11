@@ -50,6 +50,8 @@ function currentWeights() {
         bank: options.plannerWeightBank,
         bankPot: options.plannerWeightBankPot,
         talent: options.plannerWeightTalent,
+        travelRelief: options.plannerWeightTravelRelief,
+        headroom: options.plannerWeightHeadroom,
     };
 }
 

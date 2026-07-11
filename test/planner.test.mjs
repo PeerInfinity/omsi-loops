@@ -287,6 +287,57 @@ test("multiTown=false forces the v0 town-0-only paths (A/B gate)", () => {
         `v0 mode generates no multi-town candidates (got: ${candsOff.map(c => c.label).join(", ")})`);
 });
 
+test("scoring-horizon terms: gated off at townsUnlocked=[0], exact when active", () => {
+    const ctx = makePlanner(786);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    const state = sess.read();
+    const W = { ...IP.DEFAULT_WEIGHTS };
+    const r = { lastExec: [] };
+
+    // [0] state: neither term may even appear in parts (byte-inert path)
+    const s0 = IP.scoreOutcome(state, state, {}, r, 250, new Map(), W, 250,
+        { probeTicks: 100, prevProbeTicks: 120 });
+    assert.ok(!("travelRelief" in s0.parts), "travelRelief absent at [0]");
+    assert.ok(!("headroom" in s0.parts), "headroom absent at [0]");
+
+    // multi-town pre state: terms compute, in mana units
+    const pre = JSON.parse(JSON.stringify(state));
+    pre.townsUnlocked = [0, 1];
+    const post = JSON.parse(JSON.stringify(pre));
+    const edge = (st, cost) => {
+        const a = st.actions.find(x => x.name === "Start Journey");
+        a.visible = true; a.unlocked = true; a.cost = cost;
+    };
+    edge(pre, 2000); edge(post, 1500);   // the route 0->1 got 500 mana cheaper
+    const s1 = IP.scoreOutcome(pre, post, {}, r, 25000, new Map(), W, 25000,
+        { probeTicks: 100, prevProbeTicks: 120 });
+    assert.equal(s1.parts.travelRelief, W.travelRelief * 500, "relief = route cost delta");
+    assert.equal(s1.parts.headroom, W.headroom * 20, "headroom = d(capacity - probe ticks)");
+});
+
+test("planning-state serialization round-trips through JSON", () => {
+    const ctx = makePlanner(787);
+    const IP = ctx.ev("IdlePlanner");
+    const P = IP.newPlanningState();
+    P.loop = 42; P.prevTimeNeeded = 25250; P.prevProbeTicks = 17303;
+    P.lastCommitted = [["Wander", 3]];
+    P.thresholds = { "Pick Locks": { probeable: true, requires: [] } };
+    P.pre = { townsUnlocked: [0, 1] };
+    P.know.set("Wander", { ...IP.emptyProfile(), exec: 3, manaPerExec: 1.5 });
+    const blob = JSON.parse(JSON.stringify(IP.serializePlanningState(P)));
+    const P2 = IP.newPlanningState();
+    IP.restorePlanningState(P2, blob);
+    for (const k of ["loop", "prevTimeNeeded", "prevProbeTicks"]) assert.equal(P2[k], P[k], k);
+    // JSON-compare: restored objects live in the vm realm (deepEqual would
+    // trip on differing Object prototypes, not real differences)
+    const J = JSON.stringify;
+    assert.equal(J(P2.lastCommitted), J(P.lastCommitted));
+    assert.equal(J(P2.thresholds), J(P.thresholds));
+    assert.equal(J(P2.pre), J(P.pre));
+    assert.equal(J([...P2.know.entries()]), J([...P.know.entries()]));
+});
+
 test("short standalone planner run is deterministic and makes progress", async () => {
     const run = async () => {
         const ctx = makePlanner(12345);

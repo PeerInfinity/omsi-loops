@@ -680,6 +680,10 @@ const options = {
     plannerWeightBank: 30,
     plannerWeightBankPot: 15,
     plannerWeightTalent: 0.01,
+    // §11.5 scoring-horizon terms (only computed once >1 town is unlocked;
+    // byte-inert at townsUnlocked=[0] regardless of value)
+    plannerWeightTravelRelief: 3,
+    plannerWeightHeadroom: 1,
 };
 
 /** @satisfies {readonly {[K in OptionName]: OptionType<K> extends number ? K : never}[OptionName][]} */
@@ -710,6 +714,8 @@ const numericOptions = [
     "plannerWeightBank",
     "plannerWeightBankPot",
     "plannerWeightTalent",
+    "plannerWeightTravelRelief",
+    "plannerWeightHeadroom",
 ];
 /** @satisfies {readonly StringOptionName[]} */
 const stringOptions = [
@@ -827,6 +833,8 @@ const isStandardOption = {
     plannerWeightBank: false,
     plannerWeightBankPot: false,
     plannerWeightTalent: false,
+    plannerWeightTravelRelief: false,
+    plannerWeightHeadroom: false,
 };
 
 // Some options set or clear an indicator class on the root element so CSS can respond. Record these here.
