@@ -83,6 +83,7 @@ onmessage = async (e) => {
                     P.screenK = data.params.screenK ?? P.screenK;
                     P.probeEvery = data.params.probeEvery ?? P.probeEvery;
                     P.seedFromPredictor = data.params.seedFromPredictor ?? P.seedFromPredictor;
+                    P.multiTown = data.params.multiTown ?? P.multiTown;
                 }
                 if (data.actualQueue) P.lastCommitted = data.actualQueue;
                 IdlePlanner._internals.plRestoreSave(

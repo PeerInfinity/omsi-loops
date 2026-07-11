@@ -660,6 +660,11 @@ const options = {
     plannerSeedFromPredictor: true,
     plannerScreenK: 8,
     plannerProbeEvery: 1,
+    // multi-town planning (travel-prefixed measurement, expedition/multi-hop
+    // push candidates). Stored default ON is save-compat-safe: the planner
+    // master gate above is default-off, so this does nothing until the
+    // planner runs; OFF forces the v0 town-0-only filters (A/B sweeps).
+    plannerMultiTown: true,
     plannerWeightTown: 1e12,
     plannerWeightUnlockAction: 1000,
     plannerWeightVisibleAction: 300,
@@ -804,6 +809,7 @@ const isStandardOption = {
     plannerSeedFromPredictor: false,
     plannerScreenK: false,
     plannerProbeEvery: false,
+    plannerMultiTown: false,
     plannerWeightTown: false,
     plannerWeightUnlockAction: false,
     plannerWeightVisibleAction: false,

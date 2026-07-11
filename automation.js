@@ -102,6 +102,7 @@ function requestPlan(reason) {
             screenK: options.plannerScreenK,
             probeEvery: options.plannerProbeEvery,
             seedFromPredictor: options.plannerSeedFromPredictor,
+            multiTown: options.plannerMultiTown,
         },
         actualQueue: currentQueuePairs(),
     });

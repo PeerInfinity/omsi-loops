@@ -317,6 +317,14 @@ const menuView = Views.registerView("menu", {
                             predictor-vs-engine divergences (a correctness canary; engine measurement stays authoritative).</div>
                         </label>
                         <br>
+                        <input id='plannerMultiTownInput' type='checkbox' checked onchange='setOption("plannerMultiTown", this.checked)'>
+                        <label class='showthat' for='plannerMultiTownInput'>Multi-town planning
+                            <div class='showthis'>Plan past town 1: measure out-of-town actions through travel-prefixed probes and
+                            generate expedition / multi-hop travel candidates. Off = the original town-0-only planner (A/B
+                            comparisons). Note: later towns' reward paths can roll dice; the live game cannot roll those back,
+                            so plans touching them are advisory rather than exactly replayed.</div>
+                        </label>
+                        <br>
                         Candidates kept after predictor screen:
                         <input id='plannerScreenKInput' type='number' value='8' min='1' max='20' style='width: 40px;' oninput='setOption("plannerScreenK", parseInt(this.value))'>
                         <br>
