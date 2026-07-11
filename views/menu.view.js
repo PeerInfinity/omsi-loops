@@ -287,6 +287,62 @@ const menuView = Views.registerView("menu", {
                         )
                     }</label>
                 </div>
+                <div id='advancedAutomationSection'>
+                    <br>
+                    <b>Advanced Automation (fork)</b>
+                    <br>
+                    <input id='advancedAutomationInput' type='checkbox' onchange='setOption("advancedAutomation", this.checked)'>
+                    <label class='showthat' for='advancedAutomationInput'>Enable Advanced Automation
+                        <div class='showthis'>Fork addition: a generic queue planner that learns the game by probing and
+                        measurement in a background worker, then builds the action queue for you. All sub-features stay
+                        inert until a mode is selected below. Manual queue editing always wins.</div>
+                    </label>
+                    <div id='advancedAutomationSettings' style='display:none'>
+                        Planner mode:
+                        <select id='plannerModeInput' onchange='setOption("plannerMode", this.value)'>
+                            <option value='off'>Off</option>
+                            <option value='suggest'>Suggest (show plans, never install)</option>
+                            <option value='auto'>Auto (planner owns the queue)</option>
+                        </select>
+                        <br>
+                        <input id='plannerPauseWhilePlanningInput' type='checkbox' onchange='setOption("plannerPauseWhilePlanning", this.checked)'>
+                        <label class='showthat' for='plannerPauseWhilePlanningInput'>Pause while planning (Auto)
+                            <div class='showthis'>Pause at each loop boundary until the plan for the next loop arrives, so the
+                            planner plays exactly the loop it planned. Off = plans install one loop behind.</div>
+                        </label>
+                        <br>
+                        <input id='plannerSeedFromPredictorInput' type='checkbox' onchange='setOption("plannerSeedFromPredictor", this.checked)'>
+                        <label class='showthat' for='plannerSeedFromPredictorInput'>Cross-check with predictor model
+                            <div class='showthis'>Also run the Koviko predictor's effect model on each measured action and record
+                            predictor-vs-engine divergences (a correctness canary; engine measurement stays authoritative).</div>
+                        </label>
+                        <br>
+                        Candidates kept after predictor screen:
+                        <input id='plannerScreenKInput' type='number' value='8' min='1' max='20' style='width: 40px;' oninput='setOption("plannerScreenK", parseInt(this.value))'>
+                        <br>
+                        Re-probe unlock thresholds every N loops:
+                        <input id='plannerProbeEveryInput' type='number' value='1' min='1' max='50' style='width: 40px;' oninput='setOption("plannerProbeEvery", parseInt(this.value))'>
+                        <br>
+                        <b>Objective weights</b> (what the planner values each loop):
+                        <br>
+                        Town unlock <input id='plannerWeightTownInput' type='number' value='1000000000000' style='width: 100px;' oninput='setOption("plannerWeightTown", parseFloat(this.value))'>
+                        Action unlock <input id='plannerWeightUnlockActionInput' type='number' value='1000' style='width: 60px;' oninput='setOption("plannerWeightUnlockAction", parseFloat(this.value))'>
+                        Action visible <input id='plannerWeightVisibleActionInput' type='number' value='300' style='width: 60px;' oninput='setOption("plannerWeightVisibleAction", parseFloat(this.value))'>
+                        <br>
+                        Frontier progress <input id='plannerWeightFrontierInput' type='number' value='4000' style='width: 60px;' oninput='setOption("plannerWeightFrontier", parseFloat(this.value))'>
+                        Mana growth <input id='plannerWeightManaInput' type='number' value='800' style='width: 60px;' oninput='setOption("plannerWeightMana", parseFloat(this.value))'>
+                        <br>
+                        Banked items <input id='plannerWeightBankInput' type='number' value='30' style='width: 60px;' oninput='setOption("plannerWeightBank", parseFloat(this.value))'>
+                        Pool discovery <input id='plannerWeightBankPotInput' type='number' value='15' style='width: 60px;' oninput='setOption("plannerWeightBankPot", parseFloat(this.value))'>
+                        Talent <input id='plannerWeightTalentInput' type='number' value='0.01' step='0.01' style='width: 60px;' oninput='setOption("plannerWeightTalent", parseFloat(this.value))'>
+                        <br>
+                        <button class='button control' onclick='AdvancedAutomation.planNow()'>Plan Now</button>
+                        <button class='button control' onclick='AdvancedAutomation.applySuggestion()'>Apply Suggestion</button>
+                        <button class='button control' onclick='AdvancedAutomation.showDivergences()'>Divergences</button>
+                        <br>
+                        Status: <span id='plannerStatus'>idle</span>
+                    </div>
+                </div>
             </div>
         </li>`;
         return html;

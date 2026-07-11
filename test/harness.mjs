@@ -157,6 +157,8 @@ export function makeContext(seed = 12345, extraFiles = []) {
     return {
         sandbox, ev,
         rngCount: () => rng.n,
+        getRng: () => ({ s: rng.s, n: rng.n }),
+        setRng: (st) => { if (st) { rng.s = st.s; rng.n = st.n; } },
         setQueue: (q) => sandbox.__setQueue(q),
         step: (cap) => JSON.parse(sandbox.__stepLoop(cap)),
         restart: () => ev("restart()"),

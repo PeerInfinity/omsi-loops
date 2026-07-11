@@ -305,6 +305,10 @@ function loopEnd() {
 
 function prepareRestart() {
     const curAction = actions.getNextValidAction();
+    // fork: Advanced Automation may take over the restart (pause until the
+    // planner's queue for the next loop arrives). Undefined in workers and
+    // headless harnesses, where the original flow must be untouched.
+    if (typeof AdvancedAutomation !== "undefined" && AdvancedAutomation?.interceptPrepareRestart?.(curAction)) return;
     if (options.pauseBeforeRestart ||
         (options.pauseOnFailedLoop &&
          (actions.current.filter(action => action.loopsLeft - action.extraLoops > 0).length > 0))) {

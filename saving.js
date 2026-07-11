@@ -653,6 +653,21 @@ const options = {
     predictorSlowTimer: 1,
     predictorTrackedStat: "Rsoul",
     predictorBackgroundThread: true,
+    // ---- fork: Advanced Automation (queue planner) — everything off by default ----
+    advancedAutomation: false,
+    plannerMode: "off",
+    plannerPauseWhilePlanning: true,
+    plannerSeedFromPredictor: true,
+    plannerScreenK: 8,
+    plannerProbeEvery: 1,
+    plannerWeightTown: 1e12,
+    plannerWeightUnlockAction: 1000,
+    plannerWeightVisibleAction: 300,
+    plannerWeightFrontier: 4000,
+    plannerWeightMana: 800,
+    plannerWeightBank: 30,
+    plannerWeightBankPot: 15,
+    plannerWeightTalent: 0.01,
 };
 
 /** @satisfies {readonly {[K in OptionName]: OptionType<K> extends number ? K : never}[OptionName][]} */
@@ -672,12 +687,23 @@ const numericOptions = [
     "predictorNextPrecision",
     "predictorActionWidth",
     "predictorSlowTimer",
+    "plannerScreenK",
+    "plannerProbeEvery",
+    "plannerWeightTown",
+    "plannerWeightUnlockAction",
+    "plannerWeightVisibleAction",
+    "plannerWeightFrontier",
+    "plannerWeightMana",
+    "plannerWeightBank",
+    "plannerWeightBankPot",
+    "plannerWeightTalent",
 ];
 /** @satisfies {readonly StringOptionName[]} */
 const stringOptions = [
     "theme",
     "themeVariant",
     "predictorTrackedStat",
+    "plannerMode",
 ];
 
 /** @param {string} option @returns {option is NumericOptionName} */
@@ -772,6 +798,20 @@ const isStandardOption = {
     predictorSlowTimer: false,
     predictorTrackedStat: false,
     predictorBackgroundThread: false,
+    advancedAutomation: false,
+    plannerMode: false,
+    plannerPauseWhilePlanning: false,
+    plannerSeedFromPredictor: false,
+    plannerScreenK: false,
+    plannerProbeEvery: false,
+    plannerWeightTown: false,
+    plannerWeightUnlockAction: false,
+    plannerWeightVisibleAction: false,
+    plannerWeightFrontier: false,
+    plannerWeightMana: false,
+    plannerWeightBank: false,
+    plannerWeightBankPot: false,
+    plannerWeightTalent: false,
 };
 
 // Some options set or clear an indicator class on the root element so CSS can respond. Record these here.
