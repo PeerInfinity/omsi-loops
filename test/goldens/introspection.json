@@ -1,0 +1,1492 @@
+[
+  {
+    "name": "SurveyZ0",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "SurveyZ1",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "SurveyZ2",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "SurveyZ3",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "SurveyZ4",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "SurveyZ5",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "SurveyZ6",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "SurveyZ7",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "SurveyZ8",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "RuinsZ1",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "RuinsZ3",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "RuinsZ5",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "RuinsZ6",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "HaulZ1",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "HaulZ3",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "HaulZ5",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "HaulZ6",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "AssassinZ0",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Assassin"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "AssassinZ1",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Assassin"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "AssassinZ2",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Assassin"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "AssassinZ3",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Assassin"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "AssassinZ4",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Assassin"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "AssassinZ5",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Assassin"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "AssassinZ6",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Assassin"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "AssassinZ7",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Assassin"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Map",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Wander",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Smash Pots",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Pick Locks",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Buy Glasses",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Found Glasses",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Buy Mana Z1",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Meet People",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Train Strength",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Short Quest",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Investigate",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Long Quest",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Throw Party",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Warrior Lessons",
+    "skills": [
+      "Combat"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Combat"
+    ]
+  },
+  {
+    "name": "Mage Lessons",
+    "skills": [
+      "Magic"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Magic"
+    ]
+  },
+  {
+    "name": "Heal The Sick",
+    "skills": [
+      "Magic"
+    ],
+    "unlockSkillRefs": [
+      "Magic"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Fight Monsters",
+    "skills": [
+      "Combat"
+    ],
+    "unlockSkillRefs": [
+      "Combat"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Small Dungeon",
+    "skills": [
+      "Combat",
+      "Magic"
+    ],
+    "unlockSkillRefs": [
+      "Combat",
+      "Magic"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Buy Supplies",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Combat",
+      "Magic"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Haggle",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Combat",
+      "Magic"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Start Journey",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Combat",
+      "Magic"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Hitch Ride",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Open Rift",
+    "skills": [
+      "Dark"
+    ],
+    "unlockSkillRefs": [
+      "Dark",
+      "Spatiomancy"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Explore Forest",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Wild Mana",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Gather Herbs",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Hunt",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Sit By Waterfall",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Old Shortcut",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Talk To Hermit",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Magic"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Practical Magic",
+    "skills": [
+      "Practical"
+    ],
+    "unlockSkillRefs": [
+      "Magic"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Practical"
+    ]
+  },
+  {
+    "name": "Learn Alchemy",
+    "skills": [
+      "Alchemy",
+      "Magic"
+    ],
+    "unlockSkillRefs": [
+      "Magic"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Alchemy"
+    ]
+  },
+  {
+    "name": "Brew Potions",
+    "skills": [
+      "Alchemy",
+      "Magic"
+    ],
+    "unlockSkillRefs": [
+      "Alchemy"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Train Dexterity",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Train Speed",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Follow Flowers",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Bird Watching",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Clear Thicket",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Talk To Witch",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Magic"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Dark Magic",
+    "skills": [
+      "Dark"
+    ],
+    "unlockSkillRefs": [
+      "Magic"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Dark"
+    ]
+  },
+  {
+    "name": "Dark Ritual",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Dark"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": true,
+    "teaches": []
+  },
+  {
+    "name": "Continue On",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Explore City",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Gamble",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Get Drunk",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Buy Mana Z3",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Sell Potions",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Adventure Guild",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Gather Team",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Large Dungeon",
+    "skills": [
+      "Combat",
+      "Magic"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Crafting Guild",
+    "skills": [
+      "Crafting"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Crafting"
+    ]
+  },
+  {
+    "name": "Craft Armor",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Apprentice",
+    "skills": [
+      "Crafting"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Crafting"
+    ]
+  },
+  {
+    "name": "Mason",
+    "skills": [
+      "Crafting"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Crafting"
+    ]
+  },
+  {
+    "name": "Architect",
+    "skills": [
+      "Crafting"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Crafting"
+    ]
+  },
+  {
+    "name": "Read Books",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Buy Pickaxe",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Heroes Trial",
+    "skills": [
+      "Combat",
+      "Pyromancy",
+      "Restoration"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": true,
+    "teaches": [
+      "Pyromancy",
+      "Restoration"
+    ]
+  },
+  {
+    "name": "Start Trek",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Underworld",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Climb Mountain",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Mana Geyser",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Decipher Runes",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Chronomancy",
+    "skills": [
+      "Chronomancy"
+    ],
+    "unlockSkillRefs": [
+      "Magic"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Chronomancy"
+    ]
+  },
+  {
+    "name": "Looping Potion",
+    "skills": [
+      "Alchemy"
+    ],
+    "unlockSkillRefs": [
+      "Alchemy"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Pyromancy",
+    "skills": [
+      "Pyromancy"
+    ],
+    "unlockSkillRefs": [
+      "Magic"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Pyromancy"
+    ]
+  },
+  {
+    "name": "Explore Cavern",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Mine Soulstones",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Hunt Trolls",
+    "skills": [
+      "Combat"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Check Walls",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Take Artifacts",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Imbue Mind",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Magic"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": true,
+    "teaches": []
+  },
+  {
+    "name": "Imbue Body",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": true,
+    "teaches": []
+  },
+  {
+    "name": "Face Judgement",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Guru",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Guided Tour",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Canvass",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Donate",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Accept Donations",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Tidy Up",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Buy Mana Z5",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Sell Artifact",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Gift Artifact",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Mercantilism",
+    "skills": [
+      "Mercantilism"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Mercantilism"
+    ]
+  },
+  {
+    "name": "Charm School",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Oracle",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Enchant Armor",
+    "skills": [
+      "Crafting"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Crafting"
+    ]
+  },
+  {
+    "name": "Wizard College",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Restoration",
+    "skills": [
+      "Restoration"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Restoration"
+    ]
+  },
+  {
+    "name": "Spatiomancy",
+    "skills": [
+      "Spatiomancy"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Spatiomancy"
+    ]
+  },
+  {
+    "name": "Seek Citizenship",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Build Housing",
+    "skills": [
+      "Crafting"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Crafting"
+    ]
+  },
+  {
+    "name": "Collect Taxes",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Mercantilism"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Pegasus",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Fight Frost Giants",
+    "skills": [
+      "Combat"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Seek Blessing",
+    "skills": [
+      "Divine"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Divine"
+    ]
+  },
+  {
+    "name": "Great Feast",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": true,
+    "teaches": []
+  },
+  {
+    "name": "Fall From Grace",
+    "skills": null,
+    "unlockSkillRefs": [
+      "Pyromancy"
+    ],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Meander",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Mana Well",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Destroy Pylons",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Raise Zombie",
+    "skills": [
+      "Dark"
+    ],
+    "unlockSkillRefs": [
+      "Dark"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Dark Sacrifice",
+    "skills": [
+      "Commune"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Commune"
+    ]
+  },
+  {
+    "name": "The Spire",
+    "skills": [
+      "Combat"
+    ],
+    "unlockSkillRefs": [
+      "Combat",
+      "Magic"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": true,
+    "teaches": []
+  },
+  {
+    "name": "Purchase Supplies",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Dead Trial",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Journey Forth",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Explore Jungle",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Fight Jungle Monsters",
+    "skills": [
+      "Combat"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Rescue Survivors",
+    "skills": [
+      "Restoration"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Restoration"
+    ]
+  },
+  {
+    "name": "Prepare Buffet",
+    "skills": [
+      "Alchemy",
+      "Gluttony"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Alchemy",
+      "Gluttony"
+    ]
+  },
+  {
+    "name": "Totem",
+    "skills": [
+      "Wunderkind"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Wunderkind"
+    ]
+  },
+  {
+    "name": "Escape",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Open Portal",
+    "skills": [
+      "Restoration"
+    ],
+    "unlockSkillRefs": [
+      "Restoration"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Excursion",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Explorers Guild",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Thieves Guild",
+    "skills": [
+      "Practical",
+      "Thievery"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Practical",
+      "Thievery"
+    ]
+  },
+  {
+    "name": "Pick Pockets",
+    "skills": [
+      "Thievery"
+    ],
+    "unlockSkillRefs": [
+      "Thievery"
+    ],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Rob Warehouse",
+    "skills": [
+      "Thievery"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Thievery"
+    ]
+  },
+  {
+    "name": "Insurance Fraud",
+    "skills": [
+      "Thievery"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Thievery"
+    ]
+  },
+  {
+    "name": "Guild Assassin",
+    "skills": [
+      "Assassin"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Assassin"
+    ]
+  },
+  {
+    "name": "Invest",
+    "skills": [
+      "Mercantilism"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Mercantilism"
+    ]
+  },
+  {
+    "name": "Collect Interest",
+    "skills": [
+      "Mercantilism"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Mercantilism"
+    ]
+  },
+  {
+    "name": "Seminar",
+    "skills": [
+      "Leadership"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Leadership"
+    ]
+  },
+  {
+    "name": "Purchase Key",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Secret Trial",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Leave City",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Imbue Soul",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": true,
+    "teaches": []
+  },
+  {
+    "name": "Build Tower",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Gods Trial",
+    "skills": [
+      "Combat",
+      "Pyromancy",
+      "Restoration"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": [
+      "Pyromancy",
+      "Restoration"
+    ]
+  },
+  {
+    "name": "Challenge Gods",
+    "skills": [
+      "Combat"
+    ],
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": true,
+    "finishGrantsBuff": false,
+    "teaches": []
+  },
+  {
+    "name": "Restore Time",
+    "skills": null,
+    "unlockSkillRefs": [],
+    "finishGrantsSkillExp": false,
+    "finishGrantsBuff": false,
+    "teaches": []
+  }
+]
