@@ -1032,8 +1032,17 @@ function buildEconomy(state, know, opts = {}) {
 
     const conv = converterOf(state, know, town);
     const futureGold = () => gold + goldPools.reduce((s, p) => s + (p.good - (p.used ?? 0) - (p.reservedUnits ?? 0)) * p.goldPer, 0);
+    // tailReserve: stop the pump once the modeled in-hand cushion covers the
+    // caller's tail budget — the economy deliberately UNDERCOMMITS so the
+    // realized loop has headroom for out-of-town work. This is the only
+    // reservation that actually binds under optimisticTail: extraTailTicks
+    // feeds a feasibility check that optimistic candidates skip, and the
+    // interleave's own gate is plain MARGIN (the pump must bootstrap from
+    // the tiny initial cushion — conversions replenish it). 0 = v0 verbatim.
+    const tailReserve = opts.tailReserve ?? 0;
     let guard = 0;
     while (guard++ < 300) {
+        if (tailReserve > 0 && cushion >= tailReserve + MARGIN) break;
         // affordable cheap boost purchase?
         if (pendingPurchases.length && gold >= pendingPurchases[0].goldCost && cushion >= know.get(pendingPurchases[0].name).ticksPerExec + 30) {
             const a = pendingPurchases.shift();
@@ -1376,6 +1385,10 @@ function buildPushes(state, know, sess, multiTown = true) {
             const eco = buildEconomy(state, know, {
                 purchaseInline: { entries, price, repNeed },
                 extraTailTicks: entryTicks + route.ticksEst + travel.cost + 300,
+                // multi-hop only: the later hops' mana must survive the
+                // economy (single-hop keeps the v0 code path byte-exactly);
+                // 2x = drift buffer for the pump's optimistic cushion model
+                tailReserve: route.hops.length ? 2 * (entryTicks + route.ticksEst + travel.cost + 300) : 0,
                 optimisticTail: true,
             });
             if (!eco) continue;
@@ -1495,65 +1508,88 @@ function generateCandidates(state, know, thresholds, sess, lastCommitted, opts =
             if (!resolved) continue;
             const { grantors, inline, segGrantors } = resolved;
             const costOf = (g) => Math.max(g.goldCost || 0, -(know.get(g.name)?.goldPerExec ?? 0));
-            const price = grantors.reduce((s, g) => s + costOf(g), 0);
-            const inlineEntries = inline.map(g => [g.name, 1]);
-            const segEntries = [...segGrantors.values()].flat();
-            const entryTicks = [...inlineEntries, ...segEntries].reduce((s, [n, l]) => s + l * (know.get(n)?.ticksPerExec || 150), 0);
-            const eco = buildEconomy(state, know, {
-                cheapPurchases: true,
-                purchaseInline: (inlineEntries.length || price > 0) ? { entries: inlineEntries, price, repNeed: 0 } : null,
-                extraTailTicks: entryTicks + route.ticksEst + 300,
-                optimisticTail: true,
-            });
-            if (!eco) continue;
-            const head = [...eco.q, ...routeTailEntries(route.hops, segGrantors)];
-            // whatever cushion survives town 0's economy minus the journey is
-            // the town-t working budget
-            const cushionAtTown = Math.max(0, eco.cushion - entryTicks - route.ticksEst);
+            const totalCost = grantors.reduce((s, g) => s + costOf(g), 0);
+            // The journey toll DOMINATES expedition economics (Round 6): gold
+            // reserved for supplies forgoes its converter value (~50 mana per
+            // gold), so price reducers (Haggle) are what buy town-t time.
+            // Mirror buildPushes' reducer machinery (kept duplicated — the
+            // push code path must stay byte-identical): h0 plus the deepest
+            // fundable reduction.
+            const reducers = unlockedOf(state)
+                .map(a => ({ a, p: know.get(a.name) }))
+                .filter(({ a, p }) => a.townNum === 0 && p && grantors.some(g => (p.costReductions[g.name] ?? 0) > 0));
+            const repCapacity = limitedPools(state, know, 0)
+                .filter(p => p.repPer > 0.1 && p.good > 0)
+                .reduce((s, p) => s + Math.floor(p.good * p.repPer), 0);
+            const hVariants = new Set([0]);
+            for (const { a, p } of reducers) {
+                const red = Math.max(...grantors.map(g => p.costReductions[g.name] ?? 0));
+                const repPerUse = Math.max(0.01, -(p.repPerExec ?? -1));
+                const hMax = Math.min(15, Math.ceil(totalCost / red), Math.floor(repCapacity / repPerUse));
+                if (hMax >= 1) hVariants.add(hMax);
+            }
             const tBackstop = cheapestProgressBackstop(state, t);
             const tDims = allDims.filter(d => (d.kind === "p" ? d.town === t : true) && grindActionFor(state, d, t));
-            // grind on the town's top frontier dims
-            for (const dim of tDims.slice(0, 2)) {
-                const target = grindActionFor(state, dim, t);
-                const q = [...head];
-                let cushion = cushionAtTown;
-                const n = Math.floor(cushion / target.cost);
-                if (n < 1) continue;
-                q.push([target.name, Math.min(n, target.allowed ?? n)]);
-                cushion -= n * target.cost;
-                appendInvest(q, Math.max(0, cushion), state, know, 0.9, t);
-                if (tBackstop) q.push([tBackstop.name, 99]);
-                add(`xp:${t}:grind:${dim.v}`, q);
-            }
-            // investment in the town's measured pools
-            if (limitedPools(state, know, t).some(p => p.unchecked > 0)) {
-                const q = [...head];
-                appendInvest(q, cushionAtTown, state, know, 1.0, t);
-                if (tBackstop) q.push([tBackstop.name, 99]);
-                add(`xp:${t}:invest`, q);
-            }
-            // discovery grind on the town's best measured discoverer
-            const disc = unlockedOf(state)
-                .filter(a => a.townNum === t)
-                .map(a => ({ a, p: know.get(a.name) }))
-                .filter(({ p }) => p && p.exec > 0 && Object.values(p.discovers ?? {}).some(x => x > 0))
-                .sort((x, y) => {
-                    const rate = ({ p }) => Object.values(p.discovers).reduce((s, d) => s + d, 0) / Math.max(1, p.ticksPerExec);
-                    return rate(y) - rate(x);
-                })[0];
-            if (disc) {
-                const q = [...head];
-                const n = Math.floor(cushionAtTown * 0.7 / Math.max(1, disc.a.cost));
-                if (n >= 1) {
-                    q.push([disc.a.name, Math.min(n, disc.a.allowed ?? n)]);
-                    appendInvest(q, Math.max(0, cushionAtTown - n * disc.a.cost), state, know, 0.9, t);
-                    if (tBackstop) q.push([tBackstop.name, 99]);
-                    add(`xp:${t}:discover:${disc.a.name}`, q);
+            // generous tail batches: entries past the realized budget simply
+            // never run (the loop ends when mana ends), so overrun is free —
+            // n<1 skipping is what silently killed variants in Round 6
+            const tailN = (cost) => Math.max(1, Math.floor(0.5 * (opts.capacityHint ?? 25000) / Math.max(1, cost)));
+            for (const h of [...hVariants]) {
+                let price = totalCost, repNeed = 0;
+                const reducerEntries = [];
+                if (h > 0 && reducers.length) {
+                    const { a, p } = reducers[0];
+                    const red = Math.max(...grantors.map(g => p.costReductions[g.name] ?? 0));
+                    price = Math.max(0, totalCost - h * red);
+                    repNeed = h * Math.max(0, -p.repPerExec);
+                    reducerEntries.push([a.name, h]);
                 }
+                const entries = [...reducerEntries, ...inline.map(g => [g.name, 1])];
+                const segEntries = [...segGrantors.values()].flat();
+                const entryTicks = [...entries, ...segEntries].reduce((s, [n, l]) => s + l * (know.get(n)?.ticksPerExec || 150), 0);
+                const eco = buildEconomy(state, know, {
+                    cheapPurchases: true,
+                    purchaseInline: (entries.length || price > 0) ? { entries, price, repNeed } : null,
+                    extraTailTicks: entryTicks + route.ticksEst + 300,
+                    optimisticTail: true,
+                });
+                if (!eco) continue;
+                const head = [...eco.q, ...routeTailEntries(route.hops, segGrantors)];
+                // grind on the town's top frontier dims
+                for (const dim of tDims.slice(0, 2)) {
+                    const target = grindActionFor(state, dim, t);
+                    const q = [...head];
+                    q.push([target.name, Math.min(tailN(target.cost), target.allowed ?? Infinity)]);
+                    appendInvest(q, tailN(1) / 4, state, know, 0.9, t);
+                    if (tBackstop) q.push([tBackstop.name, 99]);
+                    add(`xp:${t}:grind:${dim.v}:h${h}`, q);
+                }
+                // investment in the town's measured pools
+                if (limitedPools(state, know, t).some(p => p.unchecked > 0)) {
+                    const q = [...head];
+                    appendInvest(q, tailN(1) / 2, state, know, 1.0, t);
+                    if (tBackstop) q.push([tBackstop.name, 99]);
+                    add(`xp:${t}:invest:h${h}`, q);
+                }
+                // discovery grind on the town's best measured discoverer
+                const disc = unlockedOf(state)
+                    .filter(a => a.townNum === t)
+                    .map(a => ({ a, p: know.get(a.name) }))
+                    .filter(({ p }) => p && p.exec > 0 && Object.values(p.discovers ?? {}).some(x => x > 0))
+                    .sort((x, y) => {
+                        const rate = ({ p }) => Object.values(p.discovers).reduce((s, d) => s + d, 0) / Math.max(1, p.ticksPerExec);
+                        return rate(y) - rate(x);
+                    })[0];
+                if (disc) {
+                    const q = [...head];
+                    q.push([disc.a.name, Math.min(tailN(disc.a.cost), disc.a.allowed ?? Infinity)]);
+                    if (tBackstop) q.push([tBackstop.name, 99]);
+                    add(`xp:${t}:discover:${disc.a.name}:h${h}`, q);
+                }
+                // bare expedition (fresh town, no knowledge yet): backstop
+                // only — the tail must never idle mid-town
+                if (tBackstop) add(`xp:${t}:bare:h${h}`, [...head, [tBackstop.name, 99]]);
             }
-            // bare expedition (fresh town, no knowledge yet): backstop only —
-            // the tail must never idle mid-town
-            if (tBackstop) add(`xp:${t}:bare`, [...head, [tBackstop.name, 99]]);
         }
     }
 
@@ -1689,7 +1725,8 @@ async function planRound(sess, P) {
     });
     sess.restore(snap);
 
-    const cands = generateCandidates(pre, P.know, P.thresholds, sess, P.lastCommitted, { multiTown: P.multiTown });
+    const cands = generateCandidates(pre, P.know, P.thresholds, sess, P.lastCommitted,
+        { multiTown: P.multiTown, capacityHint: P.prevTimeNeeded });
     if (!cands.length) throw new Error(`loop ${P.loop}: no candidates`);
     sess.restore(snap);
     const screened = await screenCandidates(sess, snap, cands, P.screenK ?? 8);
