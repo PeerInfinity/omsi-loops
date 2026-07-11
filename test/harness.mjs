@@ -34,7 +34,7 @@ export const SIM_FILES = ["data.js", "localization.js", "helpers.js", "actionLis
 
 const noopProxy = () => new Proxy({}, { get: (t, p) => (p in t ? t[p] : () => {}) });
 
-export function makeContext(seed = 12345) {
+export function makeContext(seed = 12345, extraFiles = []) {
     const sandbox = {
         console: { log() {}, warn() {}, error() {}, debug() {}, info() {} },
         $: Object.assign(() => ({ length: 0, find: () => ({ text: () => "" }), each() {} }), { get() {}, param() {} }),
@@ -61,7 +61,7 @@ export function makeContext(seed = 12345) {
     };
     sandbox.self = sandbox; sandbox.globalThis = sandbox;
     vm.createContext(sandbox);
-    for (const f of SIM_FILES) {
+    for (const f of [...SIM_FILES, ...extraFiles]) {
         new vm.Script(fs.readFileSync(path.join(ROOT, f), "utf8"), { filename: f })
             .runInContext(sandbox);
     }

@@ -555,13 +555,15 @@
     <script src="views/timecontrols.view.js"></script>
     <script src="views/buffs.view.js"></script>
     <script src="views/talenttree.view.js"></script>
+    <script src="managed.js"></script>
     <script>
         loadDefaults();
         Localization.ready.then(() => {
             Views.draw();
             Localization.localizePage("game");
             localStorage["loadingText"] = document.getElementById("loadingText").textContent;
-            startGame();
+            if (IdleLoopsManaged.active) IdleLoopsManaged.boot();
+            else startGame();
         });
     </script>
 </body>

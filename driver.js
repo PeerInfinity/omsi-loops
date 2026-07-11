@@ -229,6 +229,9 @@ function executeGameTicks(deadline) {
 
 function recalcInterval(fps) {
     windowFps = fps;
+    // fork: in managed mode the host owns time — the clock never starts.
+    // Undefined in workers and headless harnesses (managed.js is page-only).
+    if (typeof IdleLoopsManaged !== "undefined" && IdleLoopsManaged.active) return;
     if (mainTickLoop !== undefined) {
         clearInterval(mainTickLoop);
     }
@@ -345,6 +348,8 @@ function restart() {
     if (needsDataSnapshots()) {
         Data.updateSnapshot("restart", "base");
     }
+    // fork: loop-reset callback for the substrate host (page-only; see above)
+    if (typeof IdleLoopsManaged !== "undefined") IdleLoopsManaged._onRestart();
 }
 
 function manualRestart() {
