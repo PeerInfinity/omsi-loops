@@ -125,6 +125,11 @@ function plReadState() {
             actionsOut.push({
                 name: a.name, townNum: a.townNum, type: a.type, varName: a.varName ?? null,
                 travelNum: getTravelNum(a.name), expMult: a.expMult ?? 1,
+                // travel DESTINATIONS (getPossibleTravel returns deltas; Face
+                // Judgement returns two — its destination is reputation-
+                // dependent). travelNum stays for compatibility (the
+                // measurement filter keys on it); graph code uses travelDests.
+                travelDests: getPossibleTravel(a.name).map(d => d + a.townNum),
                 visible, unlocked, allowed, goldCost,
                 cost: plAdjCost(a.name),
                 skillsGained: a.skills ? Object.keys(a.skills) : [],
@@ -1030,13 +1035,91 @@ function reqFraction(state, req) {
     return needExp > 0 ? Math.min(1, cur / needExp) : 1;
 }
 
+// ---------------------------------------------------------------------------
+// Travel graph: nodes = towns, edges = travel actions (destination = townNum
+// + delta from getPossibleTravel). Pure planning data over the read state —
+// no engine writes. Backward edges (Open Portal 6->1) and skip edges (Hitch
+// Ride 0->2, Open Rift 0->5, Underworld 2->7) fall out of the representation
+// for free. Dynamic edges (Face Judgement: getPossibleTravel returns >1
+// delta; destination is reputation-dependent) are flagged and EXCLUDED from
+// v1 deterministic routing/pushes — Guru (3->4) and Fall From Grace (4->5)
+// cover the same destinations.
+// ---------------------------------------------------------------------------
+function travelEdges(state) {
+    const out = [];
+    for (const a of state.actions) {
+        const dests = a.travelDests ?? [];
+        for (const to of dests) {
+            out.push({ action: a, from: a.townNum, to, dynamic: dests.length > 1 });
+        }
+    }
+    return out;
+}
+
+// BFS shortest route (by hop count; ties broken by lowest estimated mana
+// cost, then lowest hop-name path for stability) from town 0 to `town` over
+// planner-usable edges. Usable = visible && unlocked && !dynamic: committed
+// play must respect the game's own gating even though the runtime would not
+// stop a locked travel (it checks only townNum + canStart).
+// Returns { hops, entries, needs, ticksEst } or null when unreachable.
+function routeTo(state, sess, town) {
+    if (town === 0) return { hops: [], entries: [], needs: [], ticksEst: 0 };
+    const edges = travelEdges(state).filter(e => e.action.visible && e.action.unlocked && !e.dynamic);
+    const nameKey = (hops) => hops.map(e => e.action.name).join(">");
+    const best = new Map([[0, { hops: [], cost: 0 }]]);
+    let frontier = [0];
+    while (frontier.length) {
+        const next = [];
+        for (const t of frontier) {
+            const cur = best.get(t);
+            for (const e of edges) {
+                if (e.from !== t) continue;
+                const cand = { hops: [...cur.hops, e], cost: cur.cost + e.action.cost };
+                const prev = best.get(e.to);
+                if (!prev) { best.set(e.to, cand); next.push(e.to); }
+                else if (prev.hops.length === cand.hops.length
+                         && (cand.cost < prev.cost
+                             || (cand.cost === prev.cost && nameKey(cand.hops) < nameKey(prev.hops)))) {
+                    best.set(e.to, cand);
+                }
+            }
+        }
+        frontier = next;
+    }
+    const r = best.get(town);
+    if (!r) return null;
+    const needs = [];
+    for (const e of r.hops) needs.push(...sess.needs(e.action.name).filter(k => k !== "mana"));
+    return {
+        hops: r.hops,
+        entries: r.hops.map(e => [e.action.name, 1]),
+        needs,
+        ticksEst: r.cost,
+    };
+}
+
 // Push candidates: economy with reserve -> price reducers -> resource
-// grantors -> travel.
+// grantors -> route hops -> travel.
 function buildPushes(state, know, sess) {
     const out = [];
-    const travels = state.actions.filter(a => a.visible && a.unlocked && a.travelNum > 0 && !state.townsUnlocked.includes(a.travelNum));
-    for (const travel of travels) {
-        const needs = sess.needs(travel.name).filter(k => k !== "mana");
+    // Destination-aware targets: v0 filtered by the travel DELTA
+    // (`!townsUnlocked.includes(a.travelNum)`), which coincides with the
+    // destination only for town-0 travels — Continue On (1->2, delta +1)
+    // was never generated as a candidate (the Round-5 wall). A target is an
+    // edge whose DESTINATION is still locked; multi-hop pushes route to the
+    // edge's origin first (empty route for town-0 origins = v0 code path).
+    const targets = travelEdges(state).filter(e =>
+        e.action.visible && e.action.unlocked && !e.dynamic && !state.townsUnlocked.includes(e.to));
+    for (const target of targets) {
+        const travel = target.action;
+        const route = routeTo(state, sess, target.from);
+        if (!route) continue;   // origin town unreachable over usable edges
+        const labelHead = route.hops.length
+            ? `push2:${route.hops.map(e => e.action.name).join(">")}>` : "push:";
+        // canStart resource needs resolved PER HOP (route hops + the final
+        // travel), in hop order; a resource needed by two hops appears twice
+        // and gets a grantor exec per hop.
+        const needs = [...route.needs, ...sess.needs(travel.name).filter(k => k !== "mana")];
         // map each needed resource to a measured grantor
         const grantors = [];
         let resolvable = true;
@@ -1054,7 +1137,7 @@ function buildPushes(state, know, sess) {
             const candidates = unlockedOf(state).filter(a => a.goldCost > 30 && (know.get(a.name)?.exec ?? 0) === 0);
             for (const p of candidates.slice(0, 2)) {
                 const eco = buildEconomy(state, know, { reserveGold: p.goldCost * 1.1 });
-                if (eco) out.push({ label: `push-explore:${travel.name}:${p.name}`, q: [...eco.q, [p.name, 1], [travel.name, 1]] });
+                if (eco) out.push({ label: `push-explore:${travel.name}:${p.name}`, q: [...eco.q, [p.name, 1], ...route.entries, [travel.name, 1]] });
             }
             continue;
         }
@@ -1094,11 +1177,11 @@ function buildPushes(state, know, sess) {
             const entryTicks = entries.reduce((s, [n, l]) => s + l * (know.get(n)?.ticksPerExec || 150), 0);
             const eco = buildEconomy(state, know, {
                 purchaseInline: { entries, price, repNeed },
-                extraTailTicks: entryTicks + travel.cost + 300,
+                extraTailTicks: entryTicks + route.ticksEst + travel.cost + 300,
                 optimisticTail: true,
             });
             if (!eco) continue;
-            out.push({ label: `push:${travel.name}:h${h}`, q: [...eco.q, [travel.name, 1]] });
+            out.push({ label: `${labelHead}${travel.name}:h${h}`, q: [...eco.q, ...route.entries, [travel.name, 1]] });
         }
     }
     return out;
@@ -1434,6 +1517,7 @@ return {
     emptyProfile, measureAction, refreshKnowledge, generateCandidates,
     buildEconomy, limitedPools, rankFrontierDims, grindActionFor,
     scoreOutcome, probeCapacity, screenCandidates,
+    travelEdges, routeTo, buildPushes,
     _internals: { plReadState, plProbeThresholds, plProbeCanStartNeeds, plSaveClone,
                   plRestoreSave, plRunOneLoopChunk, plInjectResources, plSnapshot,
                   plSetQueue, plGetQueue, plPredictQueue },

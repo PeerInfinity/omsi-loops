@@ -76,6 +76,94 @@ test("micro-eval measurement + restore idempotence", () => {
     assert.equal(sess.snapshot(), s1, "restore idempotent");
 });
 
+// vm-returned structures are cross-realm (different Array prototype), so
+// deepStrictEqual needs a JSON round-trip first
+const j = (x) => JSON.parse(JSON.stringify(x));
+
+test("travel graph: destination edges from getPossibleTravel, dynamic flagged", () => {
+    const ctx = makePlanner(781);
+    ctx.ev("townsUnlocked = [0,1,2,3,4,5,6,7,8]");
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    const edges = j(IP.travelEdges(sess.read()));
+    const of = (name) => edges.filter(e => e.action.name === name);
+    // destination = townNum + delta, NOT the delta (the Round-5 wall)
+    assert.deepEqual(of("Continue On").map(e => [e.from, e.to]), [[1, 2]], "Continue On is 1->2");
+    assert.deepEqual(of("Hitch Ride").map(e => [e.from, e.to]), [[0, 2]], "Hitch Ride skips to town 2");
+    assert.deepEqual(of("Open Portal").map(e => [e.from, e.to]), [[6, 1]], "Open Portal travels BACKWARD");
+    const fj = of("Face Judgement");
+    assert.equal(fj.length, 2, "Face Judgement has two possible destinations");
+    assert.deepEqual(fj.map(e => e.to).sort(), [4, 5]);
+    assert.ok(fj.every(e => e.dynamic), "dynamic destinations flagged");
+    assert.ok(edges.filter(e => e.action.name !== "Face Judgement").every(e => !e.dynamic));
+});
+
+test("routeTo: BFS by hop count over usable edges; dynamic edges excluded", () => {
+    const ctx = makePlanner(781);
+    const IP = ctx.ev("IdlePlanner");
+    // routeTo is a pure function of the read-state shape — synthetic fixture
+    const A = (name, townNum, dests, opts = {}) => ({
+        name, townNum, travelDests: dests, visible: opts.visible ?? true,
+        unlocked: opts.unlocked ?? true, cost: opts.cost ?? 100,
+    });
+    const mkState = (hitchUnlocked) => ({ townsUnlocked: [0, 1, 2], actions: [
+        A("Start Journey", 0, [1]),
+        A("Hitch Ride", 0, [2], { unlocked: hitchUnlocked, cost: 5000 }),
+        A("Continue On", 1, [2]),
+        A("Fake Judgement", 2, [3, 4]),        // dynamic (two dests): never routed
+    ] });
+    const sess = { needs: (name) => name === "Start Journey" ? ["supplies", "mana"] : [] };
+
+    const r0 = j(IP.routeTo(mkState(false), sess, 0));
+    assert.deepEqual(r0, { hops: [], entries: [], needs: [], ticksEst: 0 }, "town 0 = empty route");
+    const r2 = j(IP.routeTo(mkState(false), sess, 2));
+    assert.deepEqual(r2.entries, [["Start Journey", 1], ["Continue On", 1]], "two hops when the skip edge is locked");
+    assert.deepEqual(r2.needs, ["supplies"], "hop canStart needs collected, mana filtered");
+    assert.equal(r2.ticksEst, 200);
+    const r2b = j(IP.routeTo(mkState(true), sess, 2));
+    assert.deepEqual(r2b.entries, [["Hitch Ride", 1]], "fewer hops beat lower cost (BFS by hop count)");
+    assert.equal(IP.routeTo(mkState(true), sess, 3), null, "dynamic-only destinations are unroutable in v1");
+});
+
+test("buildPushes is destination-aware: Continue On (1->2) yields a two-hop push", () => {
+    const ctx = makePlanner(782);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    // bootstrap one restart (initializes per-loop state incl. suppliesCost);
+    // restart() needs a non-empty queue headlessly (pauseGame touches the DOM)
+    sess.setQueue([["Wander", 1]]);
+    sess.restart();
+    ctx.ev("townsUnlocked = [0, 1]");
+    // unlock the travel chain the way real play would have: raise exactly the
+    // dims the threshold probe reports (no hand-coded game values)
+    const th = sess.probe();
+    for (const name of ["Start Journey", "Buy Supplies"]) {
+        for (const r of th[name]?.requires ?? []) {
+            assert.equal(r.kind, "s", `${name} requirement probed as a skill dim`);
+            ctx.ev(`skills[${JSON.stringify(r.v)}].levelExp.level = ${r.need}`);
+        }
+    }
+    ctx.ev("adjustAll()");
+    const state = sess.read();
+    const snap = sess.save();
+    // v0's delta filter would have rejected Continue On (delta +1, town 1
+    // already unlocked); the destination filter must admit it
+    const co = state.actions.find(a => a.name === "Continue On");
+    assert.ok(co?.visible && co?.unlocked, "Continue On usable");
+    assert.deepEqual(j(co.travelDests), [2]);
+    // measure the supplies grantor so the push's needs resolve
+    const bs = state.actions.find(a => a.name === "Buy Supplies");
+    const p = IP.measureAction(sess, snap, state, new Map(), bs, sess.needs("Buy Supplies"));
+    assert.ok(p.exec > 0 && (p.grants.supplies ?? 0) > 0, "Buy Supplies grants supplies");
+    const know = new Map([["Buy Supplies", p]]);
+    sess.restore(snap);
+    const pushes = IP.buildPushes(state, know, sess);
+    const twoHop = pushes.find(c => c.label === "push2:Start Journey>Continue On:h0");
+    assert.ok(twoHop, `two-hop push generated (got: ${pushes.map(c => c.label).join(", ")})`);
+    assert.deepEqual(j(twoHop.q).slice(-3), [["Buy Supplies", 1], ["Start Journey", 1], ["Continue On", 1]],
+        "grantor precedes the hops; the travel chain is queue-terminal");
+});
+
 test("short standalone planner run is deterministic and makes progress", async () => {
     const run = async () => {
         const ctx = makePlanner(12345);
