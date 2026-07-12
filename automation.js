@@ -241,6 +241,7 @@ let statsRefreshTimer = null;
 function onViewShown() {
     renderCompactStats();
     renderLastPlan();
+    renderPools();
     refreshInternals();
     if (!statsRefreshTimer) {
         statsRefreshTimer = setInterval(() => {
@@ -282,6 +283,40 @@ function renderLastPlan() {
         : "<div>(no per-candidate evals in this result)</div>");
 }
 
+let lastDumpKnow = null;
+function renderPools() {
+    const el = document.getElementById("autoIntPoolsBody");
+    if (!el) return;
+    // discovery rates come from the worker's measured knowledge (if dumped)
+    const discoverers = new Map();
+    for (const [name, k] of lastDumpKnow ?? []) {
+        for (const [v, r] of Object.entries(k.discovers ?? {})) {
+            const key = `${k.townNum ?? 0}:${v}`;
+            discoverers.set(key, (discoverers.get(key) ?? []).concat(`${name} ${fmt(r)}/exec`));
+        }
+    }
+    const rows = [];
+    for (const t of townsUnlocked) {
+        const seen = new Set();
+        for (const a of towns[t].totalActionList) {
+            if (a.type !== "limited" || seen.has(a.varName)) continue;
+            seen.add(a.varName);
+            const v = a.varName;
+            const total = towns[t][`total${v}`] ?? 0, checked = towns[t][`checked${v}`] ?? 0, good = towns[t][`good${v}`] ?? 0;
+            const lf = document.getElementById(`searchToggler${v}`)?.checked ? "on" : "off";
+            const disc = discoverers.get(`${t}:${v}`);
+            rows.push(`<tr><td>${t}: ${esc(v)}</td><td>${good}</td><td>${checked}</td><td>${total}</td>` +
+                `<td>${total - checked}</td><td>${lf}</td></tr>` +
+                (disc ? `<tr><td colspan="6" style="text-align:left;opacity:0.75">&nbsp;&nbsp;discovered by ${esc(disc.join(", "))}</td></tr>` : ""));
+        }
+    }
+    el.innerHTML = rows.length
+        ? `<div class="auto-scroll"><table class="automation-table"><thead><tr>` +
+          `<th>pool</th><th>good</th><th>checked</th><th>total</th><th>unchecked</th><th>LF</th>` +
+          `</tr></thead><tbody>${rows.join("")}</tbody></table></div>`
+        : "No limited-item pools discovered yet.";
+}
+
 function requestDump() {
     if (!worker) return false;
     worker.postMessage({ type: "dump" });
@@ -298,6 +333,8 @@ function refreshInternals() {
 
 function onDump(msg) {
     const p = msg.planning ?? {};
+    lastDumpKnow = p.know ?? lastDumpKnow;
+    renderPools();
     const status = document.getElementById("autoInternalsStatus");
     if (status) {
         const lc = (p.lastCommitted ?? []).map(([n, l]) => `${n} x${l}`).join(", ");
