@@ -536,6 +536,32 @@ function execCountOf(r, name) {
     return n;
 }
 
+// One candidate's engine confirmation: run its loop from `snap`, then the
+// capacity probe from the post-loop state. This bundles everything
+// SIM-TOUCHING for one candidate so an external eval pool (setEvalPool) can
+// run candidates in parallel sim contexts; scoring stays with the caller
+// (pure arithmetic on the returned states — scoreOutcome never touches the
+// sim: routeTo runs sess-less there). JSON-safe in and out: `snap` and
+// `know` may arrive structured-cloned from another thread.
+function confirmCandidate(sess, snap, q, know, multiTown) {
+    const { r, post } = evalLoop(sess, snap, q);
+    if (r.degenerate) return { degenerate: true };
+    const postSnap = sess.save();
+    const capOut = {};
+    const capacity = probeCapacity(sess, postSnap, post, know, multiTown, capOut)
+        ?? Math.max(post.baseMana, r.lastTimeNeeded);
+    return { degenerate: false, r, post, postSnap, capacity, probeTicks: capOut.ticks ?? null };
+}
+
+// External eval pool: async (jobs) => results, ORDER-PRESERVING; each job is
+// {save, rng, q, know (Map entries array), multiTown} and each result is
+// confirmCandidate's return shape (a worker recreates the Map and calls
+// confirmCandidate in its own context). Default null = in-context serial
+// confirms — the byte-exact reference path. Injected by harnesses only;
+// nothing in the browser/worker automation sets it.
+let plEvalPool = null;
+function setEvalPool(fn) { plEvalPool = fn; }
+
 // Next-loop capacity probe: from a candidate's post-loop snapshot, run one
 // harvest-everything (+ convert) loop and return its realized mana capacity.
 // This is what makes investment (checking items -> banked goods) visible to
@@ -1826,17 +1852,29 @@ async function planRound(sess, P) {
 
     let best = null;
     const evals = [];
-    for (const c of screened) {
-        const { r, post } = evalLoop(sess, snap, c.q);
-        if (r.degenerate) { evals.push({ label: c.label, score: null }); continue; }
-        const postSnap = sess.save();
-        const capOut = {};
-        const capacity = probeCapacity(sess, postSnap, post, P.know, P.multiTown, capOut) ?? Math.max(post.baseMana, r.lastTimeNeeded);
-        const { score, parts } = scoreOutcome(pre, post, P.thresholds, r, P.prevTimeNeeded, P.know, P.weights, capacity,
-            { probeTicks: capOut.ticks, prevProbeTicks: P.prevProbeTicks });
-        evals.push({ label: c.label, score: Math.round(score * 10) / 10, capacity,
-                     probeTicks: capOut.ticks ?? null, parts });
-        const rec = { c, r, post, score, parts, postSnap, capacity, probeTicks: capOut.ticks ?? null };
+    // Confirm all screened candidates, then score. The two phases are
+    // separable because scoreOutcome is pure in the sim (state-object
+    // arithmetic only), which is also what lets an eval pool run the
+    // confirms in parallel contexts. Serial confirms are the reference
+    // path and byte-identical to the historical interleaved loop.
+    let confirms;
+    if (plEvalPool) {
+        const knowSer = [...P.know.entries()];
+        confirms = await plEvalPool(screened.map(c => ({
+            save: snap.save, rng: snap.rng, q: c.q, know: knowSer, multiTown: P.multiTown,
+        })));
+    } else {
+        confirms = screened.map(c => confirmCandidate(sess, snap, c.q, P.know, P.multiTown));
+    }
+    for (let i = 0; i < screened.length; i++) {
+        const c = screened[i], conf = confirms[i];
+        if (conf.degenerate) { evals.push({ label: c.label, score: null }); continue; }
+        const { score, parts } = scoreOutcome(pre, conf.post, P.thresholds, conf.r, P.prevTimeNeeded, P.know, P.weights, conf.capacity,
+            { probeTicks: conf.probeTicks, prevProbeTicks: P.prevProbeTicks });
+        evals.push({ label: c.label, score: Math.round(score * 10) / 10, capacity: conf.capacity,
+                     probeTicks: conf.probeTicks, parts });
+        const rec = { c, r: conf.r, post: conf.post, score, parts, postSnap: conf.postSnap,
+                      capacity: conf.capacity, probeTicks: conf.probeTicks };
         if (!best || score > best.score) best = rec;
     }
     if (!best) throw new Error(`loop ${P.loop}: all candidates degenerate`);
@@ -1981,7 +2019,7 @@ return {
     DEFAULT_WEIGHTS, MEASURE_MANA,
     Session, newPlanningState, planRound, runStandalone,
     serializePlanningState, restorePlanningState,
-    setRngHooks,
+    setRngHooks, setEvalPool, confirmCandidate,
     // exposed for tests and the automation controller
     emptyProfile, measureAction, refreshKnowledge, generateCandidates,
     buildEconomy, limitedPools, rankFrontierDims, grindActionFor,

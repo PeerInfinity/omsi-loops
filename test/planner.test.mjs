@@ -351,3 +351,35 @@ test("short standalone planner run is deterministic and makes progress", async (
     assert.equal(a.snapshot, b.snapshot, "twin runs byte-identical");
     assert.equal(a.ticks, b.ticks, "twin runs same tick count");
 });
+
+test("eval-pool hook: JSON-cloned confirms are byte-identical to serial", async () => {
+    // The pool contract: jobs and results survive a structured-clone
+    // boundary, and pooled confirms must not change planner behavior. The
+    // fake pool JSON-round-trips both directions (a superset of what
+    // worker_threads cloning does to these payloads) and runs the confirms
+    // through a second Session against the same sim, exactly as a worker
+    // context would against its own.
+    const run = async (usePool) => {
+        const ctx = makePlanner(12345);
+        const IP = ctx.ev("IdlePlanner");
+        if (usePool) {
+            const sess2 = ctx.ev("new IdlePlanner.Session()");
+            IP.setEvalPool(async (jobs) => jobs.map((job) => {
+                const j = JSON.parse(JSON.stringify(job));
+                const res = IP.confirmCandidate(
+                    sess2, { save: j.save, rng: j.rng }, j.q, new Map(j.know), j.multiTown);
+                return JSON.parse(JSON.stringify(res));
+            }));
+        }
+        const r = await IP.runStandalone({ maxLoops: 8 });
+        return {
+            snapshot: r.finalSnapshot, ticks: r.cumTicks,
+            trace: JSON.stringify(r.trace.map(t => [t.label, t.ticks, t.score])),
+        };
+    };
+    const serial = await run(false);
+    const pooled = await run(true);
+    assert.equal(pooled.snapshot, serial.snapshot, "pooled final snapshot byte-identical");
+    assert.equal(pooled.ticks, serial.ticks, "pooled tick count identical");
+    assert.equal(pooled.trace, serial.trace, "pooled per-loop decisions identical");
+});
