@@ -364,12 +364,22 @@ test("eval-pool hook: JSON-cloned confirms are byte-identical to serial", async 
         const IP = ctx.ev("IdlePlanner");
         if (usePool) {
             const sess2 = ctx.ev("new IdlePlanner.Session()");
-            IP.setEvalPool(async (jobs) => jobs.map((job) => {
-                const j = JSON.parse(JSON.stringify(job));
-                const res = IP.confirmCandidate(
-                    sess2, { save: j.save, rng: j.rng }, j.q, new Map(j.know), j.multiTown);
-                return JSON.parse(JSON.stringify(res));
-            }));
+            IP.setEvalPool(async (jobs) => {
+                const out = [];
+                for (const job of jobs) {
+                    const j = JSON.parse(JSON.stringify(job));
+                    let res;
+                    if (j.kind === "screen") {
+                        sess2.restore({ save: j.save, rng: j.rng });
+                        res = await sess2.predict(j.q);
+                    } else {
+                        res = IP.confirmCandidate(
+                            sess2, { save: j.save, rng: j.rng }, j.q, new Map(j.know), j.multiTown);
+                    }
+                    out.push(JSON.parse(JSON.stringify(res)));
+                }
+                return out;
+            });
         }
         const r = await IP.runStandalone({ maxLoops: 8 });
         return {

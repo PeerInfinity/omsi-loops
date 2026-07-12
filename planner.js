@@ -553,12 +553,19 @@ function confirmCandidate(sess, snap, q, know, multiTown) {
     return { degenerate: false, r, post, postSnap, capacity, probeTicks: capOut.ticks ?? null };
 }
 
-// External eval pool: async (jobs) => results, ORDER-PRESERVING; each job is
-// {save, rng, q, know (Map entries array), multiTown} and each result is
-// confirmCandidate's return shape (a worker recreates the Map and calls
-// confirmCandidate in its own context). Default null = in-context serial
-// confirms — the byte-exact reference path. Injected by harnesses only;
-// nothing in the browser/worker automation sets it.
+// External eval pool: async (jobs) => results, ORDER-PRESERVING. Two job
+// kinds, dispatched by `kind`:
+//   {kind:"confirm", save, rng, q, know (Map entries array), multiTown}
+//     -> confirmCandidate's return shape (worker recreates the Map and
+//        calls confirmCandidate in its own context)
+//   {kind:"screen", save, rng, q}
+//     -> plPredictQueue's parsed shape ({ok, totalMana, isValid,
+//        resources}); the worker restores the snapshot then predicts.
+// Default null = in-context serial path — the byte-exact reference.
+// Injected by harnesses only; nothing in the browser/worker automation
+// sets it. Profiling note: the predictor screen is ~80% of round wall
+// time early-game, confirms ~14% — pool BOTH or the speedup is Amdahl'd
+// away.
 let plEvalPool = null;
 function setEvalPool(fn) { plEvalPool = fn; }
 
@@ -1805,20 +1812,31 @@ function scoreOutcome(pre, post, thresholds, r, prevCapacity, know, W, capacity,
 // confirmation.
 // ---------------------------------------------------------------------------
 async function screenCandidates(sess, snap, cands, K) {
-    sess.restore(snap);
     const scored = [];
-    for (const c of cands) {
-        let s = 0, ok = true;
-        try {
-            const p = await sess.predict(c.q);
-            if (p.ok) {
-                // productive-mana proxy: mana spent within budget
-                const overdraft = Math.max(0, -(p.resources?.mana ?? 0));
-                s = (p.totalMana ?? 0) - overdraft;
-                c.pred = { totalMana: p.totalMana, isValid: p.isValid };
-            } else ok = false;
-        } catch { ok = false; }
+    const scoreOne = (c, p, ok) => {
+        let s = 0;
+        if (ok && p?.ok) {
+            // productive-mana proxy: mana spent within budget
+            const overdraft = Math.max(0, -(p.resources?.mana ?? 0));
+            s = (p.totalMana ?? 0) - overdraft;
+            c.pred = { totalMana: p.totalMana, isValid: p.isValid };
+        } else ok = false;
         scored.push({ ...c, screen: ok ? s : -1 });
+    };
+    if (plEvalPool) {
+        // pooled: predictions fan out to parallel contexts; each job restores
+        // the snapshot itself. A worker-side failure surfaces as ok:false —
+        // same resilience as the serial catch.
+        const results = await plEvalPool(cands.map(c =>
+            ({ kind: "screen", save: snap.save, rng: snap.rng, q: c.q })));
+        for (let i = 0; i < cands.length; i++) scoreOne(cands[i], results[i], true);
+    } else {
+        sess.restore(snap);
+        for (const c of cands) {
+            let p = null, ok = true;
+            try { p = await sess.predict(c.q); } catch { ok = false; }
+            scoreOne(c, p, ok);
+        }
     }
     scored.sort((x, y) => y.screen - x.screen);
     // always keep pushes and repeat (cheap insurance against predictor model gaps)
@@ -1834,21 +1852,31 @@ async function screenCandidates(sess, snap, cands, K) {
 // ---------------------------------------------------------------------------
 async function planRound(sess, P) {
     P.loop = (P.loop ?? 0) + 1;
+    // Wall-time observability per phase (behavior-inert: clock reads only,
+    // nothing feeds back into planning). Not serialized in planning state;
+    // a resumed run starts fresh accumulators.
+    const perf = P.perf ?? (P.perf = { probe: 0, know: 0, gen: 0, screen: 0, confirm: 0, score: 0, rounds: 0 });
+    perf.rounds++;
+    let tPhase = Date.now();
     const pre = P.pre ?? sess.read();
     if (P.prevTimeNeeded == null) P.prevTimeNeeded = pre.baseMana;
     const snap = sess.save();
     if ((P.loop - 1) % (P.probeEvery ?? 1) === 0) P.thresholds = sess.probe();
+    perf.probe += Date.now() - tPhase; tPhase = Date.now();
     await refreshKnowledge(sess, snap, pre, P.know, {
         seedFromPredictor: P.seedFromPredictor, divergenceLog: P.divergenceLog,
         multiTown: P.multiTown,
     });
     sess.restore(snap);
+    perf.know += Date.now() - tPhase; tPhase = Date.now();
 
     const cands = generateCandidates(pre, P.know, P.thresholds, sess, P.lastCommitted,
         { multiTown: P.multiTown, capacityHint: P.prevTimeNeeded });
     if (!cands.length) throw new Error(`loop ${P.loop}: no candidates`);
     sess.restore(snap);
+    perf.gen += Date.now() - tPhase; tPhase = Date.now();
     const screened = await screenCandidates(sess, snap, cands, P.screenK ?? 8);
+    perf.screen += Date.now() - tPhase; tPhase = Date.now();
 
     let best = null;
     const evals = [];
@@ -1861,11 +1889,12 @@ async function planRound(sess, P) {
     if (plEvalPool) {
         const knowSer = [...P.know.entries()];
         confirms = await plEvalPool(screened.map(c => ({
-            save: snap.save, rng: snap.rng, q: c.q, know: knowSer, multiTown: P.multiTown,
+            kind: "confirm", save: snap.save, rng: snap.rng, q: c.q, know: knowSer, multiTown: P.multiTown,
         })));
     } else {
         confirms = screened.map(c => confirmCandidate(sess, snap, c.q, P.know, P.multiTown));
     }
+    perf.confirm += Date.now() - tPhase; tPhase = Date.now();
     for (let i = 0; i < screened.length; i++) {
         const c = screened[i], conf = confirms[i];
         if (conf.degenerate) { evals.push({ label: c.label, score: null }); continue; }
@@ -1878,6 +1907,7 @@ async function planRound(sess, P) {
         if (!best || score > best.score) best = rec;
     }
     if (!best) throw new Error(`loop ${P.loop}: all candidates degenerate`);
+    perf.score += Date.now() - tPhase;
     // restore the pre-round state; the CALLER decides how to commit (the
     // standalone driver restores best.postSnap; the live game plays the queue)
     sess.restore(snap);
@@ -2006,6 +2036,7 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, probeEvery
         weights: P.weights, loopsRun: trace.length, cumTicks,
         finished: P.pre.townsUnlocked.includes(targetTown),
         milestones, trace,
+        perf: P.perf ?? null,
         divergences: P.divergenceLog,
         finalSnapshot: plSnapshot(),
         wallSeconds: (Date.now() - t0) / 1000,
