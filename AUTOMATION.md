@@ -259,6 +259,18 @@ runs. 1 is byte-inert. Note the predictor's effect model does not know the
 multiplier, so the screen under-ranks exp-heavy candidates at high values;
 engine confirmation remains ground truth.
 
+## 6a. "Lootable first" and the plan/play contract
+
+The per-resource "Lootable first" checkboxes are DOM state the worker cannot
+see, and the engine's fallback without them is loot-first while the browser
+default is check-first — historically the worker could plan a different
+game than the one you play. The `plannerControlLootFirst` option (default
+on) resolves it: ON, the automation sets every box to its own loot-first
+model whenever it plans; OFF, your current checkbox states are forwarded to
+the worker, whose sim honors them (plans are then computed under your
+settings — note the queue-construction heuristics model loot-first, so
+check-first plans lean more on engine confirmation to rank correctly).
+
 ## 7. Known limitations
 
 - **Scoring horizon**: one loop + capacity probe + explicit delayed-payoff
