@@ -393,3 +393,39 @@ test("eval-pool hook: JSON-cloned confirms are byte-identical to serial", async 
     assert.equal(pooled.ticks, serial.ticks, "pooled tick count identical");
     assert.equal(pooled.trace, serial.trace, "pooled per-loop decisions identical");
 });
+
+test("screenMode engine/none: deterministic and pool-equivalent", async () => {
+    const run = async (screenMode, usePool) => {
+        const ctx = makePlanner(12345);
+        const IP = ctx.ev("IdlePlanner");
+        if (usePool) {
+            const sess2 = ctx.ev("new IdlePlanner.Session()");
+            IP.setEvalPool(async (jobs) => {
+                const out = [];
+                for (const job of jobs) {
+                    const j = JSON.parse(JSON.stringify(job));
+                    let res;
+                    if (j.kind === "escreen") {
+                        res = IP.evalLoopOnly(sess2, { save: j.save, rng: j.rng }, j.q);
+                    } else if (j.kind === "screen") {
+                        sess2.restore({ save: j.save, rng: j.rng });
+                        res = await sess2.predict(j.q);
+                    } else {
+                        res = IP.confirmCandidate(
+                            sess2, { save: j.save, rng: j.rng }, j.q, new Map(j.know), j.multiTown);
+                    }
+                    out.push(JSON.parse(JSON.stringify(res)));
+                }
+                return out;
+            });
+        }
+        const r = await IP.runStandalone({ maxLoops: 6, screenMode });
+        return { snap: r.finalSnapshot, ticks: r.cumTicks };
+    };
+    const e1 = await run("engine", false);
+    const e2 = await run("engine", true);
+    assert.equal(e2.snap, e1.snap, "engine screen: pooled == serial");
+    assert.equal(e2.ticks, e1.ticks, "engine screen: tick counts match");
+    const n1 = await run("none", false);
+    assert.ok(n1.ticks > 0, "screenMode none completes real loops");
+});

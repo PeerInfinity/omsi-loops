@@ -1811,8 +1811,51 @@ function scoreOutcome(pre, post, thresholds, r, prevCapacity, know, W, capacity,
 // Predictor screen: rank candidates cheaply; keep top K for engine
 // confirmation.
 // ---------------------------------------------------------------------------
-async function screenCandidates(sess, snap, cands, K) {
+// Loop-only engine eval for the ENGINE screen mode: run the candidate's
+// loop (no capacity probe, no state read) and return the engine-truth
+// analog of the predictor's productive-mana proxy — mana spent on actions
+// (Σ lastExec manaUsed; idle mana excluded). Uniform cost per candidate
+// (every loop is bounded by the same mana budget), so pooled screens have
+// no long pole — unlike the predictor, whose cost scales with queue
+// entry count.
+function evalLoopOnly(sess, snap, q) {
+    try {
+        sess.restore(snap);
+        sess.setQueue(q);
+        sess.restart();
+        const r = sess.runLoop();
+        if (r.degenerate) return { degenerate: true };
+        return { degenerate: false, spent: (r.lastExec ?? []).reduce((s, e) => s + (e.manaUsed ?? 0), 0) };
+    } catch {
+        return { degenerate: true };
+    }
+}
+
+async function screenCandidates(sess, snap, cands, K, mode = "predictor") {
+    // screenMode "none": no cut — every candidate goes to engine
+    // confirmation (the screen-as-regularizer ablation arm).
+    if (mode === "none") return cands.map(c => ({ ...c, screen: 0 }));
     const scored = [];
+    if (mode === "engine") {
+        // screenMode "engine": rank by a real engine loop instead of the
+        // Koviko predictor. Same K-cut and force-keep semantics below.
+        let results;
+        if (plEvalPool) {
+            results = await plEvalPool(cands.map(c =>
+                ({ kind: "escreen", save: snap.save, rng: snap.rng, q: c.q })));
+        } else {
+            results = cands.map(c => evalLoopOnly(sess, snap, c.q));
+        }
+        for (let i = 0; i < cands.length; i++) {
+            const c = cands[i], r = results[i];
+            if (!r.degenerate) c.pred = { totalMana: r.spent, isValid: true };
+            scored.push({ ...c, screen: r.degenerate ? -1 : r.spent });
+        }
+        scored.sort((x, y) => y.screen - x.screen);
+        const keepE = new Set(scored.slice(0, K).map(c => c.label));
+        for (const c of scored) if (c.label.startsWith("push") || c.label === "repeat") keepE.add(c.label);
+        return scored.filter(c => keepE.has(c.label));
+    }
     const scoreOne = (c, p, ok) => {
         let s = 0;
         if (ok && p?.ok) {
@@ -1875,7 +1918,7 @@ async function planRound(sess, P) {
     if (!cands.length) throw new Error(`loop ${P.loop}: no candidates`);
     sess.restore(snap);
     perf.gen += Date.now() - tPhase; tPhase = Date.now();
-    const screened = await screenCandidates(sess, snap, cands, P.screenK ?? 8);
+    const screened = await screenCandidates(sess, snap, cands, P.screenK ?? 8, P.screenMode ?? "predictor");
     perf.screen += Date.now() - tPhase; tPhase = Date.now();
 
     let best = null;
@@ -1954,6 +1997,7 @@ function newPlanningState(opts = {}) {
         loop: 0,
         weights: opts.weights ?? { ...DEFAULT_WEIGHTS },
         screenK: opts.screenK ?? 8,
+        screenMode: opts.screenMode ?? "predictor",
         probeEvery: opts.probeEvery ?? 1,
         seedFromPredictor: opts.seedFromPredictor ?? false,
         multiTown: opts.multiTown ?? true,
@@ -1966,12 +2010,13 @@ function newPlanningState(opts = {}) {
 // Same commit semantics as the v0 experiments harness (restore the winner's
 // post-loop snapshot) so results are directly comparable.
 // ---------------------------------------------------------------------------
-async function runStandalone({ maxLoops = 1200, weights, screenK = 8, probeEvery = 1,
+async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode = "predictor",
+                               probeEvery = 1,
                                seedFromPredictor = false, multiTown = true, targetTown = 1,
                                verbose = false, onLoop = null, resume = null } = {}) {
     const t0 = Date.now();
     const sess = new Session();
-    const P = newPlanningState({ weights, screenK, probeEvery, seedFromPredictor, multiTown });
+    const P = newPlanningState({ weights, screenK, screenMode, probeEvery, seedFromPredictor, multiTown });
     const trace = [];
     const milestones = {};
     let cumTicks = 0;
@@ -2050,7 +2095,7 @@ return {
     DEFAULT_WEIGHTS, MEASURE_MANA,
     Session, newPlanningState, planRound, runStandalone,
     serializePlanningState, restorePlanningState,
-    setRngHooks, setEvalPool, confirmCandidate,
+    setRngHooks, setEvalPool, confirmCandidate, evalLoopOnly,
     // exposed for tests and the automation controller
     emptyProfile, measureAction, refreshKnowledge, generateCandidates,
     buildEconomy, limitedPools, rankFrontierDims, grindActionFor,
