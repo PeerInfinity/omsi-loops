@@ -699,6 +699,55 @@ input[type="checkbox"][disabled] + label {
     }
 }
 
+/* fork: Advanced Automation stat view */
+#automationView {
+    display: none;
+    grid-area: stats;
+    text-align: left;
+    font-size: 0.85rem;
+}
+#statsWindow[data-view=automation] {
+    /* everything except the title, the selector and the automation view is
+       hidden (radar svg, stat rows, skills, buffs) */
+    & > :not(#statsTitle):not(#statViewSelector):not(#automationView) {
+        display: none;
+    }
+    & #automationView {
+        display: block;
+    }
+}
+#automationView > details {
+    margin: 6px 0;
+    border: 1px solid var(--menu-border-color, #999);
+    border-radius: 4px;
+    padding: 4px;
+}
+#automationView summary {
+    cursor: pointer;
+    font-weight: bold;
+}
+#automationView .automation-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+#automationView .automation-table th,
+#automationView .automation-table td {
+    padding: 1px 6px;
+    text-align: right;
+    border-bottom: 1px solid var(--menu-border-color, #ccc);
+}
+#automationView .automation-table th:first-child,
+#automationView .automation-table td:first-child {
+    text-align: left;
+}
+#automationView .auto-scroll {
+    max-height: 260px;
+    overflow: auto;
+}
+#automationInternalsBody details {
+    margin: 4px 0 4px 8px;
+}
+
 /* Regular stat view */
 #statsWindow[data-view=regular] {
     & #radarChart {

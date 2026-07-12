@@ -71,6 +71,7 @@ function ensureWorker() {
         const msg = e.data;
         if (!msg?.type) return;
         if (msg.type === "result") onResult(msg);
+        else if (msg.type === "dumpResult") onDump(msg);
         else if (msg.type === "error") onError(msg);
     };
     worker.onerror = (e) => onError({ message: e.message ?? "worker error" });
@@ -131,6 +132,8 @@ function onResult(msg) {
         installQueue(msg.queue);
         resumeIfPlannerPaused();
     }
+    // keep the Stats-panel Automation view live: new plan -> fresh internals
+    if (isAutomationViewActive()) { renderLastPlan(); refreshInternals(); }
 }
 
 function onError(msg) {
@@ -210,6 +213,128 @@ function showDivergences() {
 function refreshSectionVisibility() {
     const el = document.getElementById("advancedAutomationSettings");
     if (el) el.style.display = options.advancedAutomation ? "" : "none";
+    // Stats-panel Automation view: the radio only exists while the master
+    // gate is on; if it was active when the gate flips off, fall back to the
+    // Regular view.
+    const wrap = document.getElementById("automationStatsWrap");
+    if (wrap) wrap.style.display = options.advancedAutomation ? "" : "none";
+    if (!options.advancedAutomation) {
+        const radio = document.getElementById("automationStats");
+        if (radio?.checked) {
+            radio.checked = false;
+            document.getElementById("regularStats").checked = true;
+            view.changeStatView();
+        }
+    }
+}
+
+// ---- Stats-panel Automation view (compact stats + settings + internals) ----
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = (n) => typeof n === "number" ? (Number.isInteger(n) ? String(n) : n.toFixed(2)) : String(n ?? "");
+const objStr = (o) => Object.entries(o ?? {}).map(([k, v]) => `${k}:${fmt(v)}`).join(" ");
+
+function isAutomationViewActive() {
+    return document.getElementById("statsWindow")?.dataset.view === "automation";
+}
+
+let statsRefreshTimer = null;
+function onViewShown() {
+    renderCompactStats();
+    renderLastPlan();
+    refreshInternals();
+    if (!statsRefreshTimer) {
+        statsRefreshTimer = setInterval(() => {
+            if (isAutomationViewActive()) renderCompactStats();
+            else { clearInterval(statsRefreshTimer); statsRefreshTimer = null; }
+        }, 1000);
+    }
+}
+
+function renderCompactStats() {
+    const body = document.getElementById("autoStatsBody");
+    if (!body) return;
+    const rows = [];
+    let totalLevel = 0;
+    for (const s of statList) {
+        const st = stats[s];
+        totalLevel += st.statLevelExp.level;
+        rows.push(`<tr><td>${esc(s)}</td><td>${st.statLevelExp.level}</td>` +
+            `<td>${st.talentLevelExp.level}</td><td>${fmt(st.soulstones ?? 0)}</td></tr>`);
+    }
+    rows.push(`<tr style="font-weight:bold"><td>Total</td><td>${totalLevel}</td>` +
+        `<td>${fmt(Math.floor(totalTalent))}</td><td></td></tr>`);
+    body.innerHTML = rows.join("");
+}
+
+function renderLastPlan() {
+    const el = document.getElementById("autoIntLastPlanBody");
+    if (!el) return;
+    if (!suggestion) { el.innerHTML = "No plan computed yet."; return; }
+    const head = `<div>loop ${suggestion.loop}: <b>${esc(suggestion.label)}</b> score ${fmt(suggestion.score)}, ` +
+        `${suggestion.nCands} candidates &rarr; ${suggestion.nScreened} confirmed, ${(suggestion.wallMs / 1000).toFixed(1)}s</div>` +
+        `<div>queue: ${esc(suggestion.queue.map(([n, l]) => `${n} x${l}`).join(", "))}</div>`;
+    const evalRows = (suggestion.evals ?? []).map(e =>
+        `<tr><td>${esc(e.label)}</td><td>${fmt(e.score)}</td><td>${fmt(e.capacity ?? "-")}</td><td>${fmt(e.probeTicks ?? "-")}</td></tr>` +
+        (e.parts ? `<tr><td colspan="4" style="text-align:left;opacity:0.75">&nbsp;&nbsp;${esc(objStr(Object.fromEntries(Object.entries(e.parts).filter(([, v]) => v !== 0).map(([k, v]) => [k, Math.round(v * 10) / 10]))))}</td></tr>` : "")
+    ).join("");
+    el.innerHTML = head + (evalRows
+        ? `<div class="auto-scroll"><table class="automation-table"><thead><tr><th>candidate</th><th>score</th><th>capacity</th><th>pump</th></tr></thead><tbody>${evalRows}</tbody></table></div>`
+        : "<div>(no per-candidate evals in this result)</div>");
+}
+
+function requestDump() {
+    if (!worker) return false;
+    worker.postMessage({ type: "dump" });
+    return true;
+}
+
+function refreshInternals() {
+    const status = document.getElementById("autoInternalsStatus");
+    renderLastPlan();
+    if (!requestDump() && status) {
+        status.textContent = "Planner worker not running — pick a mode (Suggest/Auto) or press Plan Now first.";
+    }
+}
+
+function onDump(msg) {
+    const p = msg.planning ?? {};
+    const status = document.getElementById("autoInternalsStatus");
+    if (status) {
+        const lc = (p.lastCommitted ?? []).map(([n, l]) => `${n} x${l}`).join(", ");
+        status.innerHTML =
+            `worker planning round ${p.loop ?? 0}; capacity ${fmt(p.prevTimeNeeded ?? "-")}` +
+            `${p.prevProbeTicks != null ? `, pump ${fmt(p.prevProbeTicks)}, headroom ${fmt((p.prevTimeNeeded ?? 0) - p.prevProbeTicks)}` : ""}; ` +
+            `knowledge: ${(p.know ?? []).length} actions<br>last committed: ${esc(lc || "(none)")}`;
+    }
+    const kb = document.getElementById("autoIntKnowledgeBody");
+    if (kb) {
+        const rows = (p.know ?? []).map(([name, k]) => {
+            const extras = [];
+            if (Object.keys(k.grants ?? {}).length) extras.push("grants " + objStr(k.grants));
+            if (Object.keys(k.costReductions ?? {}).length) extras.push("reduces " + objStr(k.costReductions));
+            if (Object.keys(k.discovers ?? {}).length) extras.push("discovers " + objStr(k.discovers));
+            if (k.manaPerGold > 0) extras.push(`converter ${fmt(k.manaPerGold)}/g`);
+            return `<tr><td>${esc(name)}</td><td>${k.townNum ?? 0}</td><td>${k.exec}</td><td>${fmt(k.ticksPerExec)}</td>` +
+                `<td>${fmt(k.manaPerExec)}</td><td>${fmt(k.goldPerExec)}</td><td>${fmt(k.repPerExec)}</td><td>${k.measuredAtLoop}</td></tr>` +
+                (extras.length ? `<tr><td colspan="8" style="text-align:left;opacity:0.75">&nbsp;&nbsp;${esc(extras.join("; "))}</td></tr>` : "");
+        }).join("");
+        kb.innerHTML = rows
+            ? `<div class="auto-scroll"><table class="automation-table"><thead><tr><th>action</th><th>town</th><th>exec</th><th>ticks</th><th>mana</th><th>gold</th><th>rep</th><th>@loop</th></tr></thead><tbody>${rows}</tbody></table></div>`
+            : "Knowledge table empty (no measurement round yet).";
+    }
+    const tb = document.getElementById("autoIntThresholdsBody");
+    if (tb) {
+        const reqStr = (r) => `${r.kind === "p" ? `town${r.town} ${r.v}` : r.v} &ge; ${r.need} (now ${r.cur})`;
+        const rows = Object.entries(p.thresholds ?? {}).map(([name, t]) =>
+            `<div><b>${esc(name)}</b>: ${t.probeable ? (t.requires ?? []).map(reqStr).join(", ") || "reachable now" : "unprobeable (story-gated)"}</div>`).join("");
+        tb.innerHTML = rows ? `<div class="auto-scroll">${rows}</div>` : "Nothing locked (or no probe round yet).";
+    }
+    const db = document.getElementById("autoIntDivergencesBody");
+    if (db) {
+        const rows = (msg.divergences ?? []).slice(-25).map(d =>
+            `<div>L${d.loop} ${esc(d.action)} ${esc(d.field)}: measured ${fmt(d.measured)} vs predicted ${fmt(d.predicted)}</div>`).join("");
+        db.innerHTML = rows || "None recorded.";
+    }
 }
 
 // ---- option handlers (registered here so saving.js stays untouched beyond
@@ -229,6 +354,8 @@ return {
     applySuggestion,
     showDivergences,
     refreshSectionVisibility,
+    onViewShown,
+    refreshInternals,
     isEnabled,
     _debug: { getSuggestion: () => suggestion, getLastError: () => lastError },
 };

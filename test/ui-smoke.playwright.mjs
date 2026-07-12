@@ -1,0 +1,84 @@
+// Playwright smoke for the Stats-panel Automation view. MANUAL-RUN (not in
+// the npm-test glob): needs a browser, the outer repo's playwright dep, and a
+// dev server serving the outer repo root on :8000.
+//   node test/ui-smoke.playwright.mjs
+// Env overrides: PLAYWRIGHT_PKG (path to playwright's index.mjs), SMOKE_URL.
+const pwPath = process.env.PLAYWRIGHT_PKG
+    ?? new globalThis.URL("../../../../node_modules/playwright/index.mjs", import.meta.url).href;
+const { chromium } = await import(pwPath);
+
+const PAGE_URL = process.env.SMOKE_URL ?? "http://localhost:8000/frontend/modules/omsi-loops/index.html";
+const fails = [];
+const check = (cond, name) => { console.log((cond ? "PASS " : "FAIL ") + name); if (!cond) fails.push(name); };
+
+const browser = await chromium.launch();
+const page = await browser.newPage();
+page.on("pageerror", (e) => fails.push("pageerror: " + e.message));
+await page.goto(PAGE_URL, { waitUntil: "load" });
+await page.waitForFunction(() => typeof options !== "undefined" && typeof view !== "undefined", null, { timeout: 20000 });
+await page.waitForTimeout(1500);
+
+// 1. gate off: radio hidden
+check(await page.$eval("#automationStatsWrap", el => getComputedStyle(el).display === "none"),
+    "automation radio hidden while gate off");
+
+// 2. enable the master gate (as the Extras checkbox would)
+await page.evaluate(() => setOption("advancedAutomation", true));
+await page.evaluate(() => AdvancedAutomation.refreshSectionVisibility());
+check(await page.$eval("#automationStatsWrap", el => getComputedStyle(el).display !== "none"),
+    "automation radio visible while gate on");
+
+// 3. switch to the automation view
+await page.click("#automationStats");
+check(await page.$eval("#statsWindow", el => el.dataset.view === "automation"), "data-view flips to automation");
+check(await page.$eval("#automationView", el => getComputedStyle(el).display !== "none"), "automation view shown");
+check(await page.$eval("#statsContainer", el => getComputedStyle(el).display === "none"), "regular stat rows hidden");
+
+// 4. compact stats table populated
+await page.waitForTimeout(200);
+const statRows = await page.$$eval("#autoStatsBody tr", rr => rr.length);
+check(statRows >= 9, `compact stats rows (${statRows})`);
+
+// 5. settings section holds the moved inputs; Extras hint replaced the block
+for (const id of ["plannerModeInput", "plannerScreenKInput", "plannerWeightTravelReliefInput", "plannerWeightHeadroomInput"]) {
+    check(await page.$eval(`#automationView #${id}`, () => true).catch(() => false), `${id} lives in the automation view`);
+}
+check(await page.$eval("#expGainMultiplierInput", el => !el.closest("#automationView")), "expGainMultiplier stays in Extras");
+
+// 6. option round-trip through the moved input
+await page.evaluate(() => setOption("plannerScreenK", 12));
+check(await page.$eval("#plannerScreenKInput", el => (loadOption("plannerScreenK", options.plannerScreenK), el.value === "12")),
+    "moved input syncs from loadOption");
+await page.evaluate(() => setOption("plannerScreenK", 8));
+
+// 7. internals: no worker yet -> hint text
+await page.evaluate(() => AdvancedAutomation.refreshInternals());
+check(await page.$eval("#autoInternalsStatus", el => /worker not running/i.test(el.textContent)),
+    "internals explain when worker is down");
+
+// 8. run a real plan round (suggest mode) and expect internals to populate
+await page.evaluate(() => { setOption("plannerMode", "suggest"); AdvancedAutomation.planNow(); });
+await page.waitForFunction(() => AdvancedAutomation._debug.getSuggestion() !== null, null, { timeout: 120000 });
+await page.waitForTimeout(500);
+check(await page.$eval("#autoIntLastPlanBody", el => /score/.test(el.textContent)), "last-plan section populated");
+check(await page.$eval("#autoIntKnowledgeBody", el => el.querySelectorAll("tr").length > 3), "knowledge table populated");
+check(await page.$eval("#autoIntThresholdsBody", el => el.textContent.length > 20), "thresholds populated");
+
+// 9. disable gate while automation view active -> falls back to regular
+await page.evaluate(() => { setOption("advancedAutomation", false); AdvancedAutomation.refreshSectionVisibility(); });
+check(await page.$eval("#statsWindow", el => el.dataset.view === "regular"), "gate off falls back to regular view");
+
+// 10. persistence: settings survive save()/reload
+await page.evaluate(() => { setOption("advancedAutomation", true); setOption("plannerWeightHeadroom", 2.5); save(); });
+await page.reload({ waitUntil: "load" });
+await page.waitForFunction(() => typeof options !== "undefined", null, { timeout: 20000 });
+await page.waitForTimeout(1000);
+check(await page.evaluate(() => options.plannerWeightHeadroom === 2.5 && options.advancedAutomation === true),
+    "options persist through reload");
+check(await page.$eval("#plannerWeightHeadroomInput", el => el.value === "2.5"), "moved weight input restored on boot");
+check(await page.$eval("#automationStatsWrap", el => getComputedStyle(el).display !== "none"),
+    "radio visible on boot with gate on");
+
+await browser.close();
+console.log(fails.length ? `\n${fails.length} FAILURES` : "\nALL PASS");
+process.exit(fails.length ? 1 : 0);

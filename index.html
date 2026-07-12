@@ -75,6 +75,169 @@
                     <label for="regularStats" class="localized" data-lockey="stats>view>regular"></label>
                     <input type="radio" id="radarStats" name="statView" onclick="view.changeStatView()" />
                     <label for="radarStats" class="localized" data-lockey="stats>view>radar"></label>
+                    <!-- fork: Advanced Automation view (only shown while the
+                         Extras-menu master gate is on) -->
+                    <span id="automationStatsWrap" style="display:none" class="showthat">
+                        <input type="radio" id="automationStats" name="statView" onclick="view.changeStatView()" />
+                        <label for="automationStats">Automation</label>
+                        <div class="showthis" style="width:250px">Fork addition: compact stats plus the Advanced
+                        Automation planner's settings and live internal data. Appears while Advanced Automation is
+                        enabled in the Extras menu.</div>
+                    </span>
+                </div>
+                <!-- fork: Advanced Automation view -->
+                <div id="automationView">
+                    <details id="autoViewStats" open>
+                        <summary class="showthat">Stats (compact)
+                            <div class="showthis" style="width:250px">Current loop's stat levels, persistent talent
+                            and soulstones — the same numbers as the Regular view, one row per stat.</div>
+                        </summary>
+                        <table class="automation-table" id="autoStatsTable">
+                            <thead><tr>
+                                <th class="showthat">Stat<div class="showthis" style="width:200px">Stat name.</div></th>
+                                <th class="showthat">Lv<div class="showthis" style="width:220px">Current stat level. Resets every loop (to your Imbuement base).</div></th>
+                                <th class="showthat">Talent<div class="showthis" style="width:220px">Persistent talent level. Never resets; multiplies stat exp gain.</div></th>
+                                <th class="showthat">SS<div class="showthis" style="width:220px">Soulstones held for this stat. Persistent; multiplies talent exp gain.</div></th>
+                            </tr></thead>
+                            <tbody id="autoStatsBody"></tbody>
+                        </table>
+                    </details>
+                    <details id="autoViewSettings" open>
+                        <summary class="showthat">Automation settings
+                            <div class="showthis" style="width:250px">All Advanced Automation parameters. The master
+                            on/off switch and the experience gain multiplier stay in the Extras menu.</div>
+                        </summary>
+                        <div id="automationSettingsBody" style="text-align:left">
+                            <label class="showthat" for="plannerModeInput">Planner mode
+                                <div class="showthis" style="width:260px">off = planner idle. Suggest = compute a plan
+                                each loop boundary but only display it (Apply Suggestion installs it). Auto = the
+                                planner owns the queue; manual queue edits disengage back to Suggest.</div>
+                            </label>
+                            <select id='plannerModeInput' onchange='setOption("plannerMode", this.value)'>
+                                <option value='off'>Off</option>
+                                <option value='suggest'>Suggest (show plans, never install)</option>
+                                <option value='auto'>Auto (planner owns the queue)</option>
+                            </select>
+                            <br>
+                            <input id='plannerPauseWhilePlanningInput' type='checkbox' onchange='setOption("plannerPauseWhilePlanning", this.checked)'>
+                            <label class='showthat' for='plannerPauseWhilePlanningInput'>Pause while planning (Auto)
+                                <div class='showthis' style="width:260px">Pause at each loop boundary until the plan for the next loop arrives, so the
+                                planner plays exactly the loop it planned. Off = plans install one loop behind.</div>
+                            </label>
+                            <br>
+                            <input id='plannerSeedFromPredictorInput' type='checkbox' onchange='setOption("plannerSeedFromPredictor", this.checked)'>
+                            <label class='showthat' for='plannerSeedFromPredictorInput'>Cross-check with predictor model
+                                <div class='showthis' style="width:260px">Also run the Koviko predictor's effect model on each measured action and record
+                                predictor-vs-engine divergences (a correctness canary; engine measurement stays authoritative).</div>
+                            </label>
+                            <br>
+                            <input id='plannerMultiTownInput' type='checkbox' checked onchange='setOption("plannerMultiTown", this.checked)'>
+                            <label class='showthat' for='plannerMultiTownInput'>Multi-town planning
+                                <div class='showthis' style="width:260px">Plan past town 1: measure out-of-town actions through travel-prefixed probes and
+                                generate expedition / multi-hop travel candidates. Off = the original town-0-only planner (A/B
+                                comparisons). Note: later towns' reward paths can roll dice; the live game cannot roll those back,
+                                so plans touching them are advisory rather than exactly replayed.</div>
+                            </label>
+                            <br>
+                            <label class="showthat" for="plannerScreenKInput">Screen keep-K
+                                <div class="showthis" style="width:260px">Candidates kept after the cheap predictor screen for full engine
+                                confirmation. 8 is calibrated: wider lets myopic candidates past the screen (the screen is a
+                                regularizer, not just a compute saver).</div>
+                            </label>
+                            <input id='plannerScreenKInput' type='number' value='8' min='1' max='20' style='width: 40px;' oninput='setOption("plannerScreenK", parseInt(this.value))'>
+                            <label class="showthat" for="plannerProbeEveryInput" style="margin-left:8px">Probe every N
+                                <div class="showthis" style="width:260px">Re-probe unlock thresholds every N loops. Stale thresholds mis-time
+                                unlock pushes; 1 (every loop) is calibrated best.</div>
+                            </label>
+                            <input id='plannerProbeEveryInput' type='number' value='1' min='1' max='50' style='width: 40px;' oninput='setOption("plannerProbeEvery", parseInt(this.value))'>
+                            <br>
+                            <b class="showthat">Objective weights
+                                <div class="showthis" style="width:260px">What the planner values when scoring a candidate loop's outcome
+                                (engine ground truth, pre vs post state). Score = sum of weighted terms.</div>
+                            </b>
+                            <br>
+                            <span class="showthat">Town <input id='plannerWeightTownInput' type='number' value='1000000000000' style='width: 90px;' oninput='setOption("plannerWeightTown", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Unlocking a town wins the loop outright (default 1e12).</div></span>
+                            <br>
+                            <span class="showthat">Unlock <input id='plannerWeightUnlockActionInput' type='number' value='1000' style='width: 60px;' oninput='setOption("plannerWeightUnlockAction", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Per action newly unlocked this loop.</div></span>
+                            <span class="showthat">Visible <input id='plannerWeightVisibleActionInput' type='number' value='300' style='width: 60px;' oninput='setOption("plannerWeightVisibleAction", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Per action newly visible this loop.</div></span>
+                            <br>
+                            <span class="showthat">Frontier <input id='plannerWeightFrontierInput' type='number' value='4000' style='width: 60px;' oninput='setOption("plannerWeightFrontier", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Exp-fraction progress toward probed unlock thresholds (the main
+                                grind driver).</div></span>
+                            <span class="showthat">Mana <input id='plannerWeightManaInput' type='number' value='800' style='width: 60px;' oninput='setOption("plannerWeightMana", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Log-growth of realized per-loop mana capacity (measured by a
+                                harvest-everything capacity probe).</div></span>
+                            <br>
+                            <span class="showthat">Bank <input id='plannerWeightBankInput' type='number' value='30' style='width: 60px;' oninput='setOption("plannerWeightBank", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Measured mana-equivalent value of newly banked good items — a bank
+                                pays out every future loop.</div></span>
+                            <span class="showthat">Pool <input id='plannerWeightBankPotInput' type='number' value='15' style='width: 60px;' oninput='setOption("plannerWeightBankPot", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Expected discovery of new limited-pool items (future banks), from
+                                measured per-exec discovery rates.</div></span>
+                            <br>
+                            <span class="showthat">Relief <input id='plannerWeightTravelReliefInput' type='number' value='3' style='width: 60px;' oninput='setOption("plannerWeightTravelRelief", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Permanent cheapening of routes to other towns (e.g. Old Shortcut
+                                reduces Continue On's mana cost). Only active once more than one town is unlocked.</div></span>
+                            <span class="showthat">Headroom <input id='plannerWeightHeadroomInput' type='number' value='1' style='width: 60px;' oninput='setOption("plannerWeightHeadroom", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Growth of disposable per-loop mana (capacity minus the pump's
+                                cost) vs the last committed loop. Only active once more than one town is unlocked.</div></span>
+                            <span class="showthat">Talent <input id='plannerWeightTalentInput' type='number' value='0.01' step='0.01' style='width: 60px;' oninput='setOption("plannerWeightTalent", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Total talent exp gained (long-horizon tie-break).</div></span>
+                            <br>
+                            <button class='button control showthat' onclick='AdvancedAutomation.planNow()'>Plan Now
+                                <div class="showthis" style="width:220px">Compute a plan for the next loop right now (any mode except Off).</div></button>
+                            <button class='button control showthat' onclick='AdvancedAutomation.applySuggestion()'>Apply Suggestion
+                                <div class="showthis" style="width:220px">Install the last computed plan into the action queue.</div></button>
+                            <br>
+                            <span class="showthat">Status: <span id='plannerStatus'>idle</span>
+                                <div class="showthis" style="width:220px">What the planner is doing (planning, last plan's label/score, errors).</div></span>
+                        </div>
+                    </details>
+                    <details id="autoViewInternals" open>
+                        <summary class="showthat">Planner internals
+                            <div class="showthis" style="width:260px">Live view of the planning worker's internal state: the last
+                            plan round's candidates and score breakdown, the measured per-action knowledge table, probed unlock
+                            thresholds, and predictor-vs-engine divergences. Refreshes after each plan; Refresh pulls on demand.</div>
+                        </summary>
+                        <button class="button control showthat" onclick="AdvancedAutomation.refreshInternals()">Refresh
+                            <div class="showthis" style="width:220px">Ask the planning worker for a fresh dump of its internal state.</div></button>
+                        <div id="automationInternalsBody" style="text-align:left">
+                            <div class="small" id="autoInternalsStatus">No data yet — run a plan first.</div>
+                            <details id="autoIntLastPlan">
+                                <summary class="showthat">Last plan round
+                                    <div class="showthis" style="width:260px">Every candidate the last round confirmed with the real engine:
+                                    its score and the per-term breakdown (parts), capacity-probe result and pump cost. The winner is what
+                                    got suggested/installed.</div>
+                                </summary>
+                                <div id="autoIntLastPlanBody" class="small"></div>
+                            </details>
+                            <details id="autoIntKnowledge">
+                                <summary class="showthat">Knowledge table
+                                    <div class="showthis" style="width:260px">Per-action empirical profiles measured by rolled-back engine
+                                    micro-evals: execs, tick cost, mana/gold/reputation per exec, resource grants, price reductions,
+                                    pool discovery. This is everything the planner knows about what actions do.</div>
+                                </summary>
+                                <div id="autoIntKnowledgeBody" class="small"></div>
+                            </details>
+                            <details id="autoIntThresholds">
+                                <summary class="showthat">Unlock thresholds
+                                    <div class="showthis" style="width:260px">Perturbation-probed requirements for locked actions: which
+                                    town-progress/skill dimensions must reach which level. Drives the frontier term and push timing.</div>
+                                </summary>
+                                <div id="autoIntThresholdsBody" class="small"></div>
+                            </details>
+                            <details id="autoIntDivergences">
+                                <summary class="showthat">Predictor divergences
+                                    <div class="showthis" style="width:260px">Cases where the Koviko predictor's model disagreed with engine
+                                    measurement (a correctness canary — engine wins).</div>
+                                </summary>
+                                <div id="autoIntDivergencesBody" class="small"></div>
+                            </details>
+                        </div>
+                    </details>
                 </div>
                 <div class="showthat block" id="radarChart">
                     <svg id="statChart" class="radar-chart" viewBox="-200 -200 400 400" preserveAspectRatio="xMidYMin meet"></svg>

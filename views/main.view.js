@@ -1685,7 +1685,12 @@ class View {
 
     changeStatView() {
         const statsWindow = document.getElementById("statsWindow");
-        if (inputElement("regularStats").checked) {
+        // fork: Advanced Automation view (radio only visible while the
+        // Extras-menu master gate is on)
+        if (inputElement("automationStats", false)?.checked) {
+            statsWindow.dataset.view = "automation";
+            if (typeof AdvancedAutomation !== "undefined") AdvancedAutomation.onViewShown();
+        } else if (inputElement("regularStats").checked) {
             statsWindow.dataset.view = "regular";
         } else {
             statsWindow.dataset.view = "radar";

@@ -75,6 +75,16 @@ onmessage = async (e) => {
             P = IdlePlanner.newPlanningState(data.params ?? {});
             postMessage({ type: "resetDone" });
             break;
+        case "dump":
+            // Introspection for the Stats-panel Automation view: everything
+            // planRound accumulates (knowledge, thresholds, prev capacity/
+            // pump pair, last committed queue) plus the divergence log.
+            postMessage({
+                type: "dumpResult",
+                planning: IdlePlanner.serializePlanningState(P),
+                divergences: P.divergenceLog,
+            });
+            break;
         case "plan": {
             const t0 = Date.now();
             try {
