@@ -22,9 +22,27 @@ self.HTMLSelectElement = class {};
 self.HTMLElement = class {};
 // getElementById -> null is load-bearing: Town.finishRegular probes
 // searchToggler inputs with throwIfMissing=false on every limited-action
-// completion; a truthy stub would change search-toggle semantics.
+// completion, and a null there means LOOT-FIRST (the planner's native
+// model). The one exception: when the main thread forwards the live
+// "Lootable first" checkbox states (plannerControlLootFirst OFF), the sim
+// must honor them — getElement type-checks with instanceof, so the shim
+// returns real HTMLInputElement stub instances. Boot-time behavior is
+// unchanged (lootFirstStates stays null until a plan message sets it).
+let lootFirstStates = null;
 self.document = {
-    title: "", getElementById: () => null, dispatchEvent: () => true,
+    title: "",
+    getElementById: (id) => {
+        if (lootFirstStates && typeof id === "string" && id.startsWith("searchToggler")) {
+            const v = id.slice("searchToggler".length);
+            if (Object.prototype.hasOwnProperty.call(lootFirstStates, v)) {
+                const el = new self.HTMLInputElement();
+                el.checked = lootFirstStates[v];
+                return el;
+            }
+        }
+        return null;
+    },
+    dispatchEvent: () => true,
     documentElement: { style: { setProperty() {}, getPropertyValue: () => "" }, classList: { toggle() {}, add() {}, remove() {} } },
 };
 self.requestAnimationFrame = () => 0;
@@ -98,6 +116,7 @@ onmessage = async (e) => {
                     // worker's engine gaining exp at the live game's rate
                     if (data.params.expGainMultiplier !== undefined) options.expGainMultiplier = data.params.expGainMultiplier;
                 }
+                lootFirstStates = data.lootFirst ?? null;
                 if (data.actualQueue) P.lastCommitted = data.actualQueue;
                 IdlePlanner._internals.plRestoreSave(
                     typeof data.save === "string" ? data.save : JSON.stringify(data.save));

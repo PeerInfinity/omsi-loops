@@ -139,6 +139,16 @@
                                 so plans touching them are advisory rather than exactly replayed.</div>
                             </label>
                             <br>
+                            <input id='plannerControlLootFirstInput' type='checkbox' checked onchange='setOption("plannerControlLootFirst", this.checked)'>
+                            <label class='showthat' for='plannerControlLootFirstInput'>Control "Lootable first" checkboxes
+                                <div class='showthis' style="width:260px">ON: whenever it plans, the planner sets every resource's
+                                "Lootable first" checkbox to match its own model (loot banked items before checking new ones), so
+                                plans and live play stay consistent. OFF: your current checkbox settings are forwarded to the
+                                planning worker and plans are computed under them. Background: the worker has no DOM, and without
+                                this it always simulated loot-first while the game's default is check-first — live play could
+                                realize a different budget than the plan.</div>
+                            </label>
+                            <br>
                             <label class="showthat" for="plannerScreenKInput">Screen keep-K
                                 <div class="showthis" style="width:260px">Candidates kept after the cheap predictor screen for full engine
                                 confirmation. 8 is calibrated: wider lets myopic candidates past the screen (the screen is a

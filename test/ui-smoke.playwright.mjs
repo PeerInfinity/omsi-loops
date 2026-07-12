@@ -64,6 +64,30 @@ check(await page.$eval("#autoIntLastPlanBody", el => /score/.test(el.textContent
 check(await page.$eval("#autoIntKnowledgeBody", el => el.querySelectorAll("tr").length > 3), "knowledge table populated");
 check(await page.$eval("#autoIntThresholdsBody", el => el.textContent.length > 20), "thresholds populated");
 
+// 8b. lootable-first control ON (default): the step-8 plan set every box
+const togglerIds = await page.evaluate(() => {
+    const ids = [];
+    for (const t of townsUnlocked) for (const a of towns[t].totalActionList)
+        if (a.type === "limited" && document.getElementById("searchToggler" + a.varName)) ids.push("searchToggler" + a.varName);
+    return ids;
+});
+check(togglerIds.length > 0, `searchToggler boxes exist (${togglerIds.length})`);
+check(await page.evaluate((ids) => ids.every(id => document.getElementById(id).checked), togglerIds),
+    "control ON: planning set all Lootable-first boxes");
+
+// 8c. control OFF: user's checkbox survives planning (states forwarded instead)
+const prevReqId = await page.evaluate(() => AdvancedAutomation._debug.getSuggestion()?.reqId ?? 0);
+await page.evaluate((id) => {
+    setOption("plannerControlLootFirst", false);
+    document.getElementById(id).checked = false;
+    AdvancedAutomation.planNow();
+}, togglerIds[0]);
+await page.waitForFunction((prev) =>
+    (AdvancedAutomation._debug.getSuggestion()?.reqId ?? 0) > prev, prevReqId, { timeout: 120000 });
+check(await page.evaluate((id) => !document.getElementById(id).checked, togglerIds[0]),
+    "control OFF: planning leaves the user's checkbox alone");
+await page.evaluate(() => setOption("plannerControlLootFirst", true));
+
 // 9. disable gate while automation view active -> falls back to regular
 await page.evaluate(() => { setOption("advancedAutomation", false); AdvancedAutomation.refreshSectionVisibility(); });
 check(await page.$eval("#statsWindow", el => el.dataset.view === "regular"), "gate off falls back to regular view");

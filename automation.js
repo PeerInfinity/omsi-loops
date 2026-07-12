@@ -91,15 +91,50 @@ function resumeIfPlannerPaused() {
     }
 }
 
+// "Lootable first" (searchToggler) checkboxes are DOM-only state the worker
+// cannot see; the engine defaults to check-first with them unchecked but to
+// loot-first when they're absent (the worker's case). Keeping plan and play
+// consistent therefore needs one of two things, per the
+// plannerControlLootFirst option: OWN the checkboxes (set them to the
+// planner's loot-first model), or FORWARD their states so the worker's sim
+// honors them.
+function lootFirstVars() {
+    const vars = new Set();
+    for (const t of townsUnlocked) {
+        for (const a of towns[t].totalActionList) {
+            if (a.type === "limited") vars.add(a.varName);
+        }
+    }
+    return vars;
+}
+function applyLootFirstControl() {
+    for (const v of lootFirstVars()) {
+        const el = inputElement(`searchToggler${v}`, false, false);
+        if (el && !el.checked) el.checked = true;
+    }
+}
+function collectLootFirstStates() {
+    const states = {};
+    for (const v of lootFirstVars()) {
+        const el = inputElement(`searchToggler${v}`, false, false);
+        if (el) states[v] = el.checked;
+    }
+    return states;
+}
+
 function requestPlan(reason) {
     if (!isEnabled() || awaitingPlan) return;
     ensureWorker();
     awaitingPlan = true;
     lastError = null;
+    if (options.plannerControlLootFirst) applyLootFirstControl();
     worker.postMessage({
         type: "plan",
         reqId: ++reqId,
         save: doSave(),
+        // null = worker keeps its native loot-first model (matches the
+        // checkboxes we just set); otherwise the worker honors these states
+        lootFirst: options.plannerControlLootFirst ? null : collectLootFirstStates(),
         params: {
             weights: currentWeights(),
             screenK: options.plannerScreenK,

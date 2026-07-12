@@ -672,6 +672,13 @@ const options = {
     // master gate above is default-off, so this does nothing until the
     // planner runs; OFF forces the v0 town-0-only filters (A/B sweeps).
     plannerMultiTown: true,
+    // ON: the planner OWNS the per-resource "Lootable first" checkboxes,
+    // setting them to its own model (loot-first) whenever it plans. OFF: the
+    // live checkbox states are forwarded to the planning worker and plans are
+    // computed under them. Either way the worker's sim and live play agree —
+    // without this the worker (no DOM) always simulated loot-first while the
+    // browser default is check-first.
+    plannerControlLootFirst: true,
     plannerWeightTown: 1e12,
     plannerWeightUnlockAction: 1000,
     plannerWeightVisibleAction: 300,
@@ -825,6 +832,7 @@ const isStandardOption = {
     plannerScreenK: false,
     plannerProbeEvery: false,
     plannerMultiTown: false,
+    plannerControlLootFirst: false,
     plannerWeightTown: false,
     plannerWeightUnlockAction: false,
     plannerWeightVisibleAction: false,
