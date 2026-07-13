@@ -883,6 +883,24 @@ function measureAction(sess, snap, state, know, a, needs = [], opts = {}) {
             for (const [v, pv] of Object.entries(postTown.progress)) dProg += (pv.exp ?? 0) - (preTown.progress[v]?.exp ?? 0);
         }
         p.progressExpPerExec = dProg / exec;
+        // §11.10 T2 (§4): persistent-field deltas for target-value goals. Difference
+        // the piece-1 persistent read-state fields (buffs / soulstones.total /
+        // goldInvested) across the probe — the identical subtraction `grants`
+        // does, with the same prefix-baseline `pre`. Byte-inert: an additive
+        // profile field read only by targeted-mode kind-b ranking; the heuristic
+        // scorer never touches it. Omit zero deltas to keep profiles compact.
+        const pd = {};
+        const dBuffs = {};
+        for (const [b, amt] of Object.entries(post.buffs ?? {})) {
+            const d = amt - (pre.buffs?.[b] ?? 0);
+            if (d !== 0) dBuffs[b] = d / exec;
+        }
+        if (Object.keys(dBuffs).length) pd.buffs = dBuffs;
+        const dSS = ((post.soulstones?.total ?? 0) - (pre.soulstones?.total ?? 0)) / exec;
+        if (dSS !== 0) pd.soulstones = dSS;
+        const dGI = ((post.goldInvested ?? 0) - (pre.goldInvested ?? 0)) / exec;
+        if (dGI !== 0) pd.goldInvested = dGI;
+        p.persistentDelta = pd;
     }
     know.set(a.name, p);
     return p;
@@ -1671,18 +1689,90 @@ function regressAction(state, know, sess, X, opts = {}) {
     return out;
 }
 
-// Build the targeted candidate list from a priority list of goals (v1 T1: a
-// single action goal). Kind-b (target-value) goals arrive in T2. Returns
-// [{ label, q, goal }] with each goal's h-variants in ascending order
-// (planTargeted installs the smallest achievable h); unreachable goals drop
-// out.
+// Current read-state value of a PERSISTENT target (ruling 6). Used both as the
+// across-rounds stop condition (drop the goal once R >= V) and as the kind-b
+// achievability signal (R advanced this loop).
+function readStateValue(state, t) {
+    if (t.type === "skill") return state.skills?.[t.name]?.level ?? 0;
+    if (t.type === "progress") return state.towns?.[t.town ?? 0]?.progress?.[t.name]?.level ?? 0;
+    if (t.type === "buff") return state.buffs?.[t.name] ?? 0;
+    if (t.type === "soulstones") return state.soulstones?.total ?? 0;
+    if (t.type === "goldInvested") return state.goldInvested ?? 0;
+    return 0;
+}
+
+// Rank providers of a PERSISTENT resource R by measured ΔR per tick, desc.
+// Skill/progress dims use the max-throughput grinder (grindActionFor — the
+// same trainer the frontier grinders rank on, "works today" per §3.2). Buffs /
+// soulstones / goldInvested use the §4 persistentDelta profile field.
+function rankValueProviders(state, know, t) {
+    if (t.type === "skill" || t.type === "progress") {
+        const dim = t.type === "skill" ? { kind: "s", v: t.name }
+                                       : { kind: "p", v: t.name, town: t.town ?? 0 };
+        const g = grindActionFor(state, dim, t.town ?? null);
+        return g ? [{ a: g, rate: 1 / Math.max(1, g.cost) }] : [];
+    }
+    const dR = (p) => {
+        if (!p?.persistentDelta) return 0;
+        if (t.type === "buff") return p.persistentDelta.buffs?.[t.name] ?? 0;
+        return p.persistentDelta[t.type] ?? 0;   // soulstones | goldInvested
+    };
+    return unlockedOf(state)
+        .map(a => ({ a, p: know.get(a.name), d: dR(know.get(a.name)) }))
+        .filter(x => x.d > 0)
+        .map(x => ({ a: x.a, rate: x.d / Math.max(1, x.p.ticksPerExec) }))
+        .sort((x, y) => y.rate - x.rate);
+}
+
+// regressTarget (§3.2, kind-b): FILL the loop with the actions producing the
+// greatest ΔR toward a PERSISTENT target (ruling 6 — skill/talent/progress exp,
+// buffs, soulstones, goldInvested; NOT gold/rep/mana). Reuses regressAction to
+// get the route/gate/economy scaffold for the top provider, then replaces its
+// terminal x1 with a fill count sized to the loop budget and capped by pool
+// availability (§3.2) so the committed queue never runs dry on an exhausted
+// pool. V is the ACROSS-ROUNDS stop condition (tracked by planTargeted), not a
+// within-loop guarantee. Returns [{ label, q, goal }].
+function regressTarget(state, know, sess, goal, opts = {}) {
+    const t = goal.target;
+    const providers = rankValueProviders(state, know, t);
+    if (!providers.length) return [];
+    const top = providers[0].a;
+    // scaffold = [economy, ...route/grantors..., top x1] (h-variants); reuses
+    // ALL of regressAction's route/gate/economy machinery for a routed/gated
+    // provider, and degrades to [economy, top x1] for a plain town-0 grinder.
+    const scaffolds = regressAction(state, know, sess, top, opts);
+    if (!scaffolds.length) return [];
+    const perExec = Math.max(1, know.get(top.name)?.ticksPerExec ?? top.cost ?? 150);
+    // budget: a fraction of the capacity hint (T3 replaces this with the §3.5
+    // per-goal budget share). Partial fill still ADVANCES R, so an over-sized N
+    // is harmless — the confirm just runs fewer reps.
+    let n = Math.max(1, Math.floor((opts.fillShare ?? 0.6) * (opts.capacityHint ?? state.baseMana) / perExec));
+    if (top.type === "limited") {
+        const lim = state.towns[top.townNum]?.limited[top.varName];
+        if (lim) n = Math.min(n, Math.max(1, (lim.good ?? 0) + ((lim.total ?? 0) - (lim.checked ?? 0))));
+    }
+    if (top.allowed != null) n = Math.min(n, top.allowed);
+    const label = `value:${t.type}${t.name ? ":" + t.name : ""}`;
+    // replace the scaffold's terminal provider x1 with the fill count
+    return scaffolds.map(c => ({
+        label: `${label}>${c.label}`,
+        q: [...c.q.slice(0, -1), [top.name, n]],
+        goal,
+    }));
+}
+
+// Build the targeted candidate list from a priority list of goals (T1: action
+// goals; T2: + target-value goals). Returns [{ label, q, goal }] with each
+// goal's h-variants in ascending order (planTargeted installs the smallest
+// achievable h); unreachable goals drop out.
 function generateTargeted(state, know, sess, goals, opts = {}) {
     const cands = [];
     for (const g of goals) {
         if (g.kind === "a") {
             const X = unlockedOf(state).find(a => a.name === g.action);
-            if (!X) continue;
-            cands.push(...regressAction(state, know, sess, X, opts));
+            if (X) cands.push(...regressAction(state, know, sess, X, opts));
+        } else if (g.kind === "b") {
+            cands.push(...regressTarget(state, know, sess, g, opts));
         }
     }
     return cands;
@@ -2102,10 +2192,14 @@ async function screenCandidates(sess, snap, cands, K, mode = "predictor") {
 // budgets, residual fitting and the heuristic tail.
 // ---------------------------------------------------------------------------
 async function planTargeted(sess, P, snap, pre) {
-    const goals = (P.targets && P.targets.length) ? P.targets
+    let goals = (P.targets && P.targets.length) ? P.targets
         : (P.targetAction ? [{ kind: "a", action: P.targetAction }] : []);
+    // drop kind-b goals whose target value V is already reached — the
+    // across-rounds stop condition (§3.2); advance to the next priority.
+    goals = goals.filter(g => g.kind !== "b" || readStateValue(pre, g.target) < (g.value ?? Infinity));
     if (!goals.length) return null;
-    const cands = generateTargeted(pre, P.know, sess, goals, { multiTown: P.multiTown });
+    const cands = generateTargeted(pre, P.know, sess, goals,
+        { multiTown: P.multiTown, capacityHint: P.prevTimeNeeded });
     if (!cands.length) return null;
     sess.restore(snap);
     // confirm in priority order; install the first achievable goal chain
@@ -2114,8 +2208,13 @@ async function planTargeted(sess, P, snap, pre) {
         const conf = confirmCandidate(sess, snap, c.q, P.know, P.multiTown);
         sess.restore(snap);
         if (conf.degenerate) continue;
-        // achievable = the goal's target action actually executed this loop
-        if (execCountOf(conf.r, c.goal.action) <= 0) continue;
+        // achievability: kind-a = the target action executed; kind-b = the
+        // read-state target value ADVANCED this loop (V is the across-rounds
+        // stop condition, not a within-loop guarantee).
+        const achieved = c.goal.kind === "a"
+            ? execCountOf(conf.r, c.goal.action) > 0
+            : readStateValue(conf.post, c.goal.target) > readStateValue(pre, c.goal.target);
+        if (!achieved) continue;
         const { score, parts } = scoreOutcome(pre, conf.post, P.thresholds, conf.r,
             P.prevTimeNeeded, P.know, P.weights, conf.capacity,
             { probeTicks: conf.probeTicks, prevProbeTicks: P.prevProbeTicks });
@@ -2368,7 +2467,8 @@ return {
     scoreOutcome, probeCapacity, screenCandidates,
     travelEdges, routeTo, buildPushes,
     // targeted mode (§11.10)
-    regressAction, generateTargeted, repSinkProvider, planTargeted,
+    regressAction, regressTarget, generateTargeted, repSinkProvider,
+    rankValueProviders, readStateValue, planTargeted,
     _internals: { plReadState, plProbeThresholds, plProbeCanStartNeeds, plSaveClone,
                   plRestoreSave, plRunOneLoopChunk, plInjectResources, plSnapshot,
                   plSetQueue, plGetQueue, plPredictQueue },

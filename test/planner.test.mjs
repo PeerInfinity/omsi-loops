@@ -651,3 +651,107 @@ test("targeted strategy falls back to the heuristic when no goal is achievable (
         "targeted with an unreachable goal commits exactly the heuristic queues");
     assert.ok(heuristic.length === 8, "the run made progress");
 });
+
+// ---- §11.10 targeted mode (T2: target-value goals + §4 measurement) --------
+
+test("§4 measurement: measureAction records persistentDelta (byte-inert empty for a town-0 action)", () => {
+    const ctx = makePlanner(910);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    sess.setQueue([["Wander", 1]]); sess.restart();
+    const pre = sess.read(); const snap = sess.save();
+    const wander = pre.actions.find(a => a.name === "Wander");
+    const p = IP.measureAction(sess, snap, pre, new Map(), wander, []);
+    assert.ok(p.exec > 0, "Wander measured");
+    // the field is ALWAYS populated (additive); a town-0 action touches no
+    // persistent channel, so it is empty — the byte-inertness guarantee.
+    assert.deepEqual(j(p.persistentDelta), {}, "no buff/soulstone/goldInvested change from Wander");
+});
+
+test("rankValueProviders: skill/progress via the grinder; buffs/ss/goldInvested via persistentDelta", () => {
+    const ctx = makePlanner(911);
+    const IP = ctx.ev("IdlePlanner");
+    const state = { townsUnlocked: [0], baseMana: 250, towns: [{ index: 0, limited: {}, progress: {} }], actions: [
+        { name: "Fast", townNum: 0, type: "normal", visible: true, unlocked: true, cost: 100 },
+        { name: "Slow", townNum: 0, type: "normal", visible: true, unlocked: true, cost: 100 },
+        { name: "None", townNum: 0, type: "normal", visible: true, unlocked: true, cost: 100 },
+    ] };
+    const know = new Map([
+        ["Fast", { exec: 1, ticksPerExec: 100, persistentDelta: { buffs: { Ritual: 4 } }, grants: {}, costReductions: {} }],
+        ["Slow", { exec: 1, ticksPerExec: 100, persistentDelta: { buffs: { Ritual: 1 } }, grants: {}, costReductions: {} }],
+        ["None", { exec: 1, ticksPerExec: 100, persistentDelta: {}, grants: {}, costReductions: {} }],
+    ]);
+    const prov = IP.rankValueProviders(state, know, { type: "buff", name: "Ritual" });
+    assert.deepEqual(prov.map(x => x.a.name), ["Fast", "Slow"], "ranked by ΔR/tick desc; non-providers excluded");
+    // soulstones / goldInvested read the top-level persistentDelta field
+    const ss = new Map([["Fast", { exec: 1, ticksPerExec: 50, persistentDelta: { soulstones: 3 }, grants: {}, costReductions: {} }]]);
+    assert.equal(IP.rankValueProviders(state, ss, { type: "soulstones" })[0].a.name, "Fast");
+});
+
+test("regressTarget fills the loop with the max-ΔR provider (progress dim, measured today)", () => {
+    const ctx = makePlanner(912);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    sess.setQueue([["Wander", 1]]); sess.restart();
+    const pre = sess.read(); const snap = sess.save();
+    const P = IP.newPlanningState();
+    // Wander is the town-0 progress grinder for its own dim
+    const goal = { kind: "b", target: { type: "progress", name: "Wander", town: 0 }, value: 20 };
+    const cands = IP.regressTarget(pre, P.know, sess, goal, { capacityHint: 5000, fillShare: 0.6 });
+    assert.equal(cands.length, 1);
+    assert.equal(cands[0].goal.kind, "b");
+    // the terminal x1 scaffold is replaced by a fill count sized to the budget
+    const last = j(cands[0].q[cands[0].q.length - 1]);
+    assert.equal(last[0], "Wander");
+    assert.ok(last[1] > 1, `filled with multiple reps (got ${last[1]})`);
+});
+
+test("regressTarget: a buff goal fills with the §4 persistentDelta provider", () => {
+    const ctx = makePlanner(913);
+    const IP = ctx.ev("IdlePlanner");
+    // synthetic town-0 provider with a measured buff delta
+    const state = { townsUnlocked: [0], baseMana: 1000, towns: [{ index: 0, limited: {}, progress: {} }], actions: [
+        { name: "Chant", townNum: 0, type: "normal", visible: true, unlocked: true, cost: 100 },
+    ] };
+    const know = new Map([["Chant", { exec: 1, ticksPerExec: 100, persistentDelta: { buffs: { Ritual: 2 } },
+        grants: {}, costReductions: {}, goldPerExec: 0, manaPerExec: 0, manaPerGold: 0 }]]);
+    const sess = { needs: () => [] };
+    const goal = { kind: "b", target: { type: "buff", name: "Ritual" }, value: 10 };
+    const cands = IP.regressTarget(state, know, sess, goal, { capacityHint: 2000, fillShare: 0.6 });
+    assert.equal(cands.length, 1);
+    assert.equal(j(cands[0].q[cands[0].q.length - 1])[0], "Chant");
+    assert.ok(cands[0].label.startsWith("value:buff:Ritual"));
+});
+
+test("readStateValue reads each persistent target type", () => {
+    const ctx = makePlanner(914);
+    const IP = ctx.ev("IdlePlanner");
+    const state = {
+        skills: { Magic: { level: 42 } },
+        towns: [{ progress: { Wander: { level: 7 } } }],
+        buffs: { Ritual: 5 },
+        soulstones: { total: 300 },
+        goldInvested: 12345,
+    };
+    assert.equal(IP.readStateValue(state, { type: "skill", name: "Magic" }), 42);
+    assert.equal(IP.readStateValue(state, { type: "progress", name: "Wander", town: 0 }), 7);
+    assert.equal(IP.readStateValue(state, { type: "buff", name: "Ritual" }), 5);
+    assert.equal(IP.readStateValue(state, { type: "soulstones" }), 300);
+    assert.equal(IP.readStateValue(state, { type: "goldInvested" }), 12345);
+});
+
+test("targeted kind-b goal already at its value V falls back to the heuristic (byte-identical)", async () => {
+    // A value goal with V=0 is satisfied at loop start (every persistent field
+    // is >= 0), so planTargeted drops it and runs the heuristic — the trace must
+    // match the pure-heuristic run (the across-rounds stop condition, and the
+    // byte-inertness guard for the kind-b path).
+    const labels = async (targets) => {
+        const ctx = makePlanner(12345);
+        const r = await ctx.ev("IdlePlanner").runStandalone({ maxLoops: 6, targetTown: 9,
+            ...(targets ? { strategy: "targeted", targets } : {}) });
+        return r.trace.map(t => t.label);
+    };
+    const heuristic = j(await labels(null));
+    const satisfied = j(await labels([{ kind: "b", target: { type: "skill", name: "Magic" }, value: 0 }]));
+    assert.deepEqual(satisfied, heuristic, "an already-satisfied value goal is inert");
+});
