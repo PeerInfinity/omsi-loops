@@ -1549,6 +1549,145 @@ function buildPushes(state, know, sess, multiTown = true) {
     return out;
 }
 
+// ---------------------------------------------------------------------------
+// Targeted mode (§11.10 v1): goal-directed backward regression over the
+// already-measured dependency graph — the principled generalization of the ONE
+// hand-wired goal chain (buildPushes, which only ever targets the next town's
+// travel). Selected by `P.strategy === "targeted"`; byte-INERT at the default
+// "heuristic" (none of this code is reached). Guild gates are DEFERRED to v2
+// (T0 §8.1: guild membership is a cheap in-loop rep, but a guild goal only
+// succeeds deep-game — reach+unlock+skill — so v1 covers route + canStart +
+// repMax gates only).
+// ---------------------------------------------------------------------------
+
+// Discover an unlocked rep-sink provider (measured repPerExec < 0), reachable
+// in the given town (0 = the economy segment in v1). Profile-discovered, never
+// hard-coded (§8.2). Returns { a, repPer } (repPer > 0 = rep spent per exec)
+// or null.
+function repSinkProvider(state, know, town = 0) {
+    let best = null;
+    for (const a of unlockedOf(state)) {
+        if (a.townNum !== town) continue;
+        const p = know.get(a.name);
+        if (p && p.exec > 0 && (p.repPerExec ?? 0) < -0.001) {
+            const repPer = -p.repPerExec;
+            if (!best || repPer > best.repPer) best = { a, repPer };
+        }
+    }
+    return best;
+}
+
+// regressAction (§3.1): assemble a within-loop queue that makes an
+// unlocked-but-blocked action X executable this loop. Reuses routeTo /
+// resolveRouteGrantors / buildEconomy / routeTailEntries verbatim. Returns
+// { label, q, goal } or null when the goal is unreachable this loop (the
+// caller skips to the next priority / falls back to the heuristic scorer).
+function regressAction(state, know, sess, X, opts = {}) {
+    const gate = X.gate ?? gateFor(X.name);
+    // guild gates → v2 (T0 §8.1); other declared-but-unsatisfied gates
+    // (soulstoneSac / talent+buff floors / combat-power bounds / timeMax /
+    // skillFloor) also v2 setup chains (§11.8 piece 2) — unreachable in v1.
+    if (gate && (gate.guild || gate.guildEmpty || gate.soulstoneSac || gate.talentFloor
+                 || gate.buffFloor || gate.timeMax || gate.skillFloor
+                 || gate.resourceMax || gate.resourceMin)) return [];
+    // route to X's town (null ⇒ unreachable over usable travel edges)
+    const route = routeTo(state, sess, X.townNum);
+    if (!route) return [];
+    // repMax gate: prepend a rep-sink to drive reputation to <= repMax.
+    // repMax===0 needs nothing (loop-start rep is 0); repMax<0 needs a sink.
+    let repSinkEntries = [], repSinkTicks = 0;
+    if (gate && gate.repMax != null && gate.repMax < 0) {
+        const sink = repSinkProvider(state, know, 0);
+        if (!sink) return [];
+        const nSink = Math.ceil(-gate.repMax / sink.repPer);
+        repSinkEntries = [[sink.a.name, nSink]];
+        repSinkTicks = nSink * Math.max(1, know.get(sink.a.name)?.ticksPerExec ?? 150);
+    }
+    // canStart resource needs of the route hops + X itself → placeable grantors
+    // (resolveRouteGrantors treats X as the finalHop and resolves its own needs)
+    const resolved = resolveRouteGrantors(state, know, sess, route.hops, { action: X });
+    if (!resolved) return [];
+    const { grantors, inline, segGrantors } = resolved;
+    const costOf = (g) => Math.max(g.goldCost || 0, -(know.get(g.name)?.goldPerExec ?? 0));
+    const totalCost = grantors.reduce((s, g) => s + costOf(g), 0);
+    const targetTicks = know.get(X.name)?.ticksPerExec ?? X.cost ?? 300;
+
+    // Price reducers (Haggle→Buy Supplies) — the SAME machinery buildPushes
+    // uses: without it the toll is bought at full price and the chain dies
+    // before the grantor even in a fat economy (Round-6 economics: pure-eco
+    // headroom < full-price supplies; Haggle h-variants are what make the toll
+    // fit). Reducers run in the town-0 economy segment (v1). Emitting one
+    // candidate per h-variant lets planTargeted confirm and INSTALL the
+    // smallest achievable h (§5 failed-link handles the rest).
+    const reducers = unlockedOf(state)
+        .map(a => ({ a, p: know.get(a.name) }))
+        .filter(({ a, p }) => a.townNum === 0 && p && grantors.some(g => (p.costReductions[g.name] ?? 0) > 0));
+    const repCapacity = limitedPools(state, know, 0)
+        .filter(p => p.repPer > 0.1 && p.good > 0)
+        .reduce((s, p) => s + Math.floor(p.good * p.repPer), 0);
+    const hVariants = new Set([0]);
+    for (const { p } of reducers) {
+        const red = Math.max(...grantors.map(g => p.costReductions[g.name] ?? 0));
+        const repPerUse = Math.max(0.01, -(p.repPerExec ?? -1));
+        const hMax = Math.min(15, Math.ceil(totalCost / red), Math.floor(repCapacity / repPerUse));
+        if (hMax >= 1) { hVariants.add(Math.max(1, Math.floor(hMax / 2))); hVariants.add(hMax); }
+    }
+
+    const routeLabel = route.hops.length ? route.hops.map(e => e.action.name).join(">") + ">" : "";
+    const out = [];
+    for (const h of [...hVariants].sort((a, b) => a - b)) {
+        let price = totalCost, repNeed = 0;
+        const reducerEntries = [];
+        if (h > 0 && reducers.length) {
+            const { a, p } = reducers[0];
+            const red = Math.max(...grantors.map(g => p.costReductions[g.name] ?? 0));
+            price = Math.max(0, totalCost - h * red);
+            repNeed = h * Math.max(0, -p.repPerExec);
+            reducerEntries.push([a.name, h]);
+        }
+        const entries = [...reducerEntries, ...inline.map(g => [g.name, 1])];
+        const segEntries = [...segGrantors.values()].flat();
+        const entryTicks = [...entries, ...segEntries].reduce((s, [n, l]) => s + l * (know.get(n)?.ticksPerExec || 150), 0);
+        // reserve tail for the rep-sink + route + grantors + X's own exec
+        const tailBudget = entryTicks + repSinkTicks + route.ticksEst + targetTicks + 300;
+        const eco = buildEconomy(state, know, {
+            purchaseInline: { entries, price, repNeed },
+            extraTailTicks: tailBudget,
+            // Mirror buildPushes' economy EXACTLY (this IS the generalized push):
+            // multi-hop routes reserve the later hops' mana; single-hop town-0
+            // travels (route.hops.length 0) lean on the interleave + optimistic
+            // tail, same as the heuristic push that DOES confirm once the economy
+            // is fat enough. planTargeted's engine confirm is the achievability
+            // gate — it installs the chain the loop it first executes (before the
+            // scorer would pick it), which is targeted mode's whole advantage.
+            tailReserve: route.hops.length ? 2 * tailBudget : 0,
+            optimisticTail: true,
+        });
+        if (!eco) continue;
+        // economy → rep-sink → route hops (+ mid-route grantors) → X (terminal)
+        const q = [...eco.q, ...repSinkEntries, ...routeTailEntries(route.hops, segGrantors, X.name)];
+        out.push({ label: `target:${routeLabel}${X.name}:h${h}`, q, goal: { kind: "a", action: X.name } });
+    }
+    return out;
+}
+
+// Build the targeted candidate list from a priority list of goals (v1 T1: a
+// single action goal). Kind-b (target-value) goals arrive in T2. Returns
+// [{ label, q, goal }] with each goal's h-variants in ascending order
+// (planTargeted installs the smallest achievable h); unreachable goals drop
+// out.
+function generateTargeted(state, know, sess, goals, opts = {}) {
+    const cands = [];
+    for (const g of goals) {
+        if (g.kind === "a") {
+            const X = unlockedOf(state).find(a => a.name === g.action);
+            if (!X) continue;
+            cands.push(...regressAction(state, know, sess, X, opts));
+        }
+    }
+    return cands;
+}
+
 function generateCandidates(state, know, thresholds, sess, lastCommitted, opts = {}) {
     const multiTown = opts.multiTown ?? true;
     const cands = [];
@@ -1953,6 +2092,43 @@ async function screenCandidates(sess, snap, cands, K, mode = "predictor") {
 }
 
 // ---------------------------------------------------------------------------
+// Targeted planning (§11.10): regress the priority list, confirm each chain on
+// the engine, and INSTALL the best achievable one directly — no scoring vs the
+// heuristic pool (ruling 1). Returns a planRound-shaped result, or null when no
+// goal is achievable this loop (the caller falls back to the heuristic scorer —
+// ruling 1's full fallback / ruling 5's residual handoff). The engine confirm
+// IS the achievability oracle: a chain whose target action never executes (ran
+// dry) is not installed. v1 = single-goal-wins (priority order); T3 adds
+// budgets, residual fitting and the heuristic tail.
+// ---------------------------------------------------------------------------
+async function planTargeted(sess, P, snap, pre) {
+    const goals = (P.targets && P.targets.length) ? P.targets
+        : (P.targetAction ? [{ kind: "a", action: P.targetAction }] : []);
+    if (!goals.length) return null;
+    const cands = generateTargeted(pre, P.know, sess, goals, { multiTown: P.multiTown });
+    if (!cands.length) return null;
+    sess.restore(snap);
+    // confirm in priority order; install the first achievable goal chain
+    for (let i = 0; i < cands.length; i++) {
+        const c = cands[i];
+        const conf = confirmCandidate(sess, snap, c.q, P.know, P.multiTown);
+        sess.restore(snap);
+        if (conf.degenerate) continue;
+        // achievable = the goal's target action actually executed this loop
+        if (execCountOf(conf.r, c.goal.action) <= 0) continue;
+        const { score, parts } = scoreOutcome(pre, conf.post, P.thresholds, conf.r,
+            P.prevTimeNeeded, P.know, P.weights, conf.capacity,
+            { probeTicks: conf.probeTicks, prevProbeTicks: P.prevProbeTicks });
+        const best = { c, r: conf.r, post: conf.post, score, parts, postSnap: conf.postSnap,
+                       capacity: conf.capacity, probeTicks: conf.probeTicks,
+                       nCands: cands.length, nScreened: cands.length };
+        return { best, snap, pre, nCands: cands.length, nScreened: cands.length,
+                 evals: [{ label: c.label, score: Math.round(score * 10) / 10, parts }] };
+    }
+    return null;
+}
+
+// ---------------------------------------------------------------------------
 // One planning round: from the CURRENT sim state, produce the best queue for
 // the next loop. `P` is the persistent planning state (knowledge, thresholds,
 // last committed queue, ...) owned by the caller (worker or standalone run).
@@ -1976,6 +2152,17 @@ async function planRound(sess, P) {
     });
     sess.restore(snap);
     perf.know += Date.now() - tPhase; tPhase = Date.now();
+
+    // Targeted strategy: try the goal-directed regression first; a successful
+    // install returns straight away. Falling through to the heuristic scorer is
+    // ruling 1's full fallback (nothing achievable) — byte-inert at the default
+    // "heuristic" strategy (branch never taken).
+    if (P.strategy === "targeted") {
+        const t = await planTargeted(sess, P, snap, pre);
+        perf.gen += Date.now() - tPhase; tPhase = Date.now();
+        if (t) return t;
+        sess.restore(snap);
+    }
 
     const cands = generateCandidates(pre, P.know, P.thresholds, sess, P.lastCommitted,
         { multiTown: P.multiTown, capacityHint: P.prevTimeNeeded });
@@ -2069,6 +2256,14 @@ function newPlanningState(opts = {}) {
         // prefixes; §11.8 piece 2). Not serialized — the resuming caller's
         // param wins, like weights/screenMode.
         vocabulary: opts.vocabulary ?? "empirical",
+        // "heuristic" (default, byte-exact scorer) | "targeted" (§11.10 goal
+        // regression). Orthogonal to plannerMode's display-vs-install axis
+        // (§7 Option X). Not serialized — the resuming caller's param wins.
+        strategy: opts.strategy ?? "heuristic",
+        // T1 headless single-goal driver (--target-action); T3 replaces it with
+        // the user priority list. `targets` = [{kind,action?|target?,value?,budget?}].
+        targetAction: opts.targetAction ?? null,
+        targets: opts.targets ?? [],
         divergenceLog: [],
     };
 }
@@ -2081,11 +2276,13 @@ function newPlanningState(opts = {}) {
 async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode = "predictor",
                                probeEvery = 1,
                                seedFromPredictor = false, multiTown = true, vocabulary = "empirical",
+                               strategy = "heuristic", targetAction = null, targets = [],
                                targetTown = 1,
                                verbose = false, onLoop = null, resume = null } = {}) {
     const t0 = Date.now();
     const sess = new Session();
-    const P = newPlanningState({ weights, screenK, screenMode, probeEvery, seedFromPredictor, multiTown, vocabulary });
+    const P = newPlanningState({ weights, screenK, screenMode, probeEvery, seedFromPredictor, multiTown, vocabulary,
+                                 strategy, targetAction, targets });
     const trace = [];
     const milestones = {};
     let cumTicks = 0;
@@ -2170,6 +2367,8 @@ return {
     buildEconomy, limitedPools, rankFrontierDims, grindActionFor,
     scoreOutcome, probeCapacity, screenCandidates,
     travelEdges, routeTo, buildPushes,
+    // targeted mode (§11.10)
+    regressAction, generateTargeted, repSinkProvider, planTargeted,
     _internals: { plReadState, plProbeThresholds, plProbeCanStartNeeds, plSaveClone,
                   plRestoreSave, plRunOneLoopChunk, plInjectResources, plSnapshot,
                   plSetQueue, plGetQueue, plPredictQueue },

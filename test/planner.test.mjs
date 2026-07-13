@@ -536,3 +536,118 @@ test("informed vocabulary: a negative-reputation action forms a real profile (em
     assert.ok(inf.repPerExec < 0, `Dark Magic spends reputation (repPerExec ${inf.repPerExec})`);
     assert.ok((inf.skillExpPerExec ?? 0) > 0, "Dark skill exp attributed");
 });
+
+// ---- §11.10 targeted mode (T1: action-goal regression) --------------------
+
+test("regressAction assembles route + grantor + queue-terminal target (Continue On)", () => {
+    const ctx = makePlanner(901);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    // same town-1-unlocked fixture as the buildPushes test
+    sess.setQueue([["Wander", 1]]); sess.restart();
+    ctx.ev("townsUnlocked = [0, 1]");
+    const th = sess.probe();
+    for (const name of ["Start Journey", "Buy Supplies"])
+        for (const r of th[name]?.requires ?? [])
+            ctx.ev(`skills[${JSON.stringify(r.v)}].levelExp.level = ${r.need}`);
+    ctx.ev("adjustAll()");
+    let state = sess.read();
+    const snap = sess.save();
+    const bs = state.actions.find(a => a.name === "Buy Supplies");
+    const p = IP.measureAction(sess, snap, state, new Map(), bs, sess.needs("Buy Supplies"));
+    const know = new Map([["Buy Supplies", p]]);
+    sess.restore(snap); state = sess.read();
+    const co = state.actions.find(a => a.name === "Continue On");
+    const cands = IP.regressAction(state, know, sess, co);
+    assert.equal(cands.length, 1, "one h-variant (no Haggle measured in this fixture)");
+    const cand = cands[0];
+    assert.equal(cand.label, "target:Start Journey>Continue On:h0");
+    assert.deepEqual(j(cand.goal), { kind: "a", action: "Continue On" });
+    assert.deepEqual(j(cand.q).slice(-3), [["Buy Supplies", 1], ["Start Journey", 1], ["Continue On", 1]],
+        "grantor precedes the hops; the travel target is queue-terminal");
+});
+
+test("regressAction defers guild gates to v2 (T0 §8.1) — no candidates", () => {
+    const ctx = makePlanner(902);
+    const IP = ctx.ev("IdlePlanner");
+    const state = { townsUnlocked: [0, 1, 2], baseMana: 250, actions: [], towns: [] };
+    const X = { name: "Apprentice", townNum: 2, gate: { guild: "Crafting" } };
+    assert.deepEqual(j(IP.regressAction(state, new Map(), { needs: () => [] }, X)), [],
+        "a guild-gated action is unreachable in v1 (guild join is a v2 setup goal)");
+    // a guild-JOIN action (guildEmpty) is likewise out of v1 scope
+    const J = { name: "Crafting Guild", townNum: 2, gate: { guildEmpty: true } };
+    assert.deepEqual(j(IP.regressAction(state, new Map(), { needs: () => [] }, J)), []);
+});
+
+test("regressAction prepends a profile-discovered rep-sink for a repMax<0 gate", () => {
+    const ctx = makePlanner(903);
+    const IP = ctx.ev("IdlePlanner");
+    // synthetic state: a town-0 rep-sink (repPerExec<0) + a repMax:-3 target
+    const state = { townsUnlocked: [0], baseMana: 250, towns: [{ index: 0, limited: {}, progress: {} }], actions: [
+        { name: "Sink", townNum: 0, type: "normal", visible: true, unlocked: true, cost: 100 },
+        { name: "Goal", townNum: 0, type: "normal", visible: true, unlocked: true, cost: 200, gate: { repMax: -3 } },
+    ] };
+    const know = new Map([["Sink", { exec: 1, repPerExec: -1, ticksPerExec: 100, grants: {},
+        costReductions: {}, goldPerExec: 0, manaPerGold: 0, manaPerExec: 0 }]]);
+    const sess = { needs: () => [] };
+    // discovery is profile-driven, never hard-coded (§8.2)
+    const sink = IP.repSinkProvider(state, know, 0);
+    assert.equal(sink.a.name, "Sink");
+    const cands = IP.regressAction(state, know, sess, state.actions.find(a => a.name === "Goal"));
+    assert.equal(cands.length, 1, "one h-variant (no reducer for a non-purchase target)");
+    // ceil(3 / 1 rep-per-exec) = 3 sink reps prepended; target is terminal
+    assert.deepEqual(j(cands[0].q), [["Sink", 3], ["Goal", 1]]);
+    assert.equal(cands[0].label, "target:Goal:h0");
+});
+
+test("regressAction: repMax===0 needs no sink; repMax<0 with no sink is unreachable", () => {
+    const ctx = makePlanner(904);
+    const IP = ctx.ev("IdlePlanner");
+    const state = { townsUnlocked: [0], baseMana: 250, towns: [{ index: 0, limited: {}, progress: {} }], actions: [
+        { name: "Goal", townNum: 0, type: "normal", visible: true, unlocked: true, cost: 200, gate: { repMax: 0 } },
+    ] };
+    const sess = { needs: () => [] };
+    const c0 = IP.regressAction(state, new Map(), sess, state.actions[0]);
+    assert.deepEqual(j(c0[0].q), [["Goal", 1]], "repMax:0 is satisfied at loop start (rep 0) — no sink");
+    // repMax<0 but no rep-sink in the profile table ⇒ unreachable this loop
+    const state2 = { ...state, actions: [{ ...state.actions[0], gate: { repMax: -1 } }] };
+    assert.deepEqual(j(IP.regressAction(state2, new Map(), sess, state2.actions[0])), []);
+});
+
+test("generateTargeted skips goals whose action is not unlocked; regresses the rest", () => {
+    const ctx = makePlanner(905);
+    const IP = ctx.ev("IdlePlanner");
+    const state = { townsUnlocked: [0], baseMana: 250, towns: [{ index: 0, limited: {}, progress: {} }], actions: [
+        { name: "Open", townNum: 0, type: "normal", visible: true, unlocked: true, cost: 200 },
+        { name: "Locked", townNum: 0, type: "normal", visible: true, unlocked: false, cost: 200 },
+    ] };
+    const sess = { needs: () => [] };
+    const cands = IP.generateTargeted(state, new Map(), sess, [
+        { kind: "a", action: "Locked" },   // dropped (not in unlockedOf)
+        { kind: "a", action: "Open" },
+        { kind: "a", action: "Missing" },  // dropped (not in state)
+    ]);
+    assert.equal(cands.length, 1);
+    assert.equal(cands[0].goal.action, "Open");
+});
+
+test("targeted strategy falls back to the heuristic when no goal is achievable (byte-identical)", async () => {
+    // With a target that isn't unlocked yet (Start Journey unlocks ~L445), the
+    // targeted branch produces no candidates and falls through to the heuristic
+    // scorer (ruling 1's full fallback). The committed queues must match the
+    // pure-heuristic run loop-for-loop — the strategy field is inert until a
+    // goal becomes achievable. (Also the standing byte-inertness guard for the
+    // new planRound branch.)
+    const labelsFor = async (strategy) => {
+        const ctx = makePlanner(12345);
+        const IP = ctx.ev("IdlePlanner");
+        const r = await IP.runStandalone({ maxLoops: 8, targetTown: 9,
+            ...(strategy === "targeted" ? { strategy: "targeted", targetAction: "Start Journey" } : {}) });
+        return r.trace.map(t => t.label);
+    };
+    const heuristic = j(await labelsFor("heuristic"));
+    const targeted = j(await labelsFor("targeted"));
+    assert.deepEqual(targeted, heuristic,
+        "targeted with an unreachable goal commits exactly the heuristic queues");
+    assert.ok(heuristic.length === 8, "the run made progress");
+});
