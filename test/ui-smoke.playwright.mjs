@@ -40,7 +40,9 @@ const statRows = await page.$$eval("#autoStatsBody tr", rr => rr.length);
 check(statRows >= 9, `compact stats rows (${statRows})`);
 
 // 5. settings section holds the moved inputs; Extras hint replaced the block
-for (const id of ["plannerModeInput", "plannerScreenKInput", "plannerWeightTravelReliefInput", "plannerWeightHeadroomInput"]) {
+for (const id of ["plannerModeInput", "plannerScreenKInput", "plannerWeightTravelReliefInput", "plannerWeightHeadroomInput",
+                  // §11.10 targeted mode UI
+                  "plannerStrategyInput", "plannerAutoRankTargetsInput", "plannerTargetsInput"]) {
     check(await page.$eval(`#automationView #${id}`, () => true).catch(() => false), `${id} lives in the automation view`);
 }
 check(await page.$eval("#expGainMultiplierInput", el => !el.closest("#automationView")), "expGainMultiplier stays in Extras");
@@ -92,14 +94,28 @@ await page.evaluate(() => setOption("plannerControlLootFirst", true));
 await page.evaluate(() => { setOption("advancedAutomation", false); AdvancedAutomation.refreshSectionVisibility(); });
 check(await page.$eval("#statsWindow", el => el.dataset.view === "regular"), "gate off falls back to regular view");
 
-// 10. persistence: settings survive save()/reload
+// 9b. §11.10 targeted-mode UI round-trips through setOption + loadOption
+await page.evaluate(() => { setOption("advancedAutomation", true); AdvancedAutomation.refreshSectionVisibility(); });
+const targetsJSON = JSON.stringify([{ kind: "a", action: "Continue On" }, { kind: "b", target: { type: "skill", name: "Magic" }, value: 50, budget: 0.3 }]);
+await page.evaluate((tj) => { setOption("plannerStrategy", "targeted"); setOption("plannerTargets", tj); setOption("plannerAutoRankTargets", true); }, targetsJSON);
+check(await page.$eval("#plannerStrategyInput", el => (loadOption("plannerStrategy", options.plannerStrategy), el.value === "targeted")),
+    "strategy select syncs from loadOption");
+check(await page.$eval("#plannerTargetsInput", (el, tj) => (loadOption("plannerTargets", options.plannerTargets), el.value === tj), targetsJSON),
+    "priority-list textarea syncs from loadOption");
+check(await page.$eval("#plannerAutoRankTargetsInput", el => (loadOption("plannerAutoRankTargets", options.plannerAutoRankTargets), el.checked === true)),
+    "auto-rank checkbox syncs from loadOption");
+
+// 10. persistence: settings survive save()/reload (incl. the targeted list)
 await page.evaluate(() => { setOption("advancedAutomation", true); setOption("plannerWeightHeadroom", 2.5); save(); });
 await page.reload({ waitUntil: "load" });
 await page.waitForFunction(() => typeof options !== "undefined", null, { timeout: 20000 });
 await page.waitForTimeout(1000);
 check(await page.evaluate(() => options.plannerWeightHeadroom === 2.5 && options.advancedAutomation === true),
     "options persist through reload");
+check(await page.evaluate((tj) => options.plannerStrategy === "targeted" && options.plannerTargets === tj && options.plannerAutoRankTargets === true, targetsJSON),
+    "targeted strategy + priority list + auto-rank persist through reload");
 check(await page.$eval("#plannerWeightHeadroomInput", el => el.value === "2.5"), "moved weight input restored on boot");
+check(await page.$eval("#plannerTargetsInput", (el, tj) => el.value === tj, targetsJSON), "priority-list textarea restored on boot");
 check(await page.$eval("#automationStatsWrap", el => getComputedStyle(el).display !== "none"),
     "radio visible on boot with gate on");
 

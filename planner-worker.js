@@ -114,6 +114,10 @@ onmessage = async (e) => {
                     P.seedFromPredictor = data.params.seedFromPredictor ?? P.seedFromPredictor;
                     P.multiTown = data.params.multiTown ?? P.multiTown;
                     P.vocabulary = data.params.vocabulary ?? P.vocabulary;
+                    // §11.10 targeted mode (generator + priority list + auto-rank)
+                    P.strategy = data.params.strategy ?? P.strategy;
+                    P.targets = data.params.targets ?? P.targets;
+                    P.autoRankTargets = data.params.autoRankTargets ?? P.autoRankTargets;
                     // sim option (plRestoreSave never loads options): keep the
                     // worker's engine gaining exp at the live game's rate
                     if (data.params.expGainMultiplier !== undefined) options.expGainMultiplier = data.params.expGainMultiplier;

@@ -122,6 +122,16 @@ function collectLootFirstStates() {
     return states;
 }
 
+// Parse the stored priority list (a JSON string option) into goal specs.
+// Malformed input degrades to an empty list — targeted mode then just falls
+// through to the heuristic scorer (ruling 1's full fallback), never a crash.
+function parsePlannerTargets() {
+    try {
+        const arr = JSON.parse(options.plannerTargets || "[]");
+        return Array.isArray(arr) ? arr : [];
+    } catch { return []; }
+}
+
 function requestPlan(reason) {
     if (!isEnabled() || awaitingPlan) return;
     ensureWorker();
@@ -142,6 +152,13 @@ function requestPlan(reason) {
             seedFromPredictor: options.plannerSeedFromPredictor,
             multiTown: options.plannerMultiTown,
             vocabulary: options.plannerVocabulary,
+            // §11.10 targeted mode: the generator (heuristic|targeted), the
+            // parsed priority list, and the auto-rank toggle. Parse defensively
+            // — a malformed plannerTargets string degrades to an empty list
+            // (the strategy then falls straight through to the heuristic).
+            strategy: options.plannerStrategy,
+            targets: parsePlannerTargets(),
+            autoRankTargets: options.plannerAutoRankTargets,
             // game-sim option, not planner state: the worker's engine copy
             // must gain exp at the live game's rate or measured profiles
             // diverge from committed play

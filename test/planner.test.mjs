@@ -755,3 +755,72 @@ test("targeted kind-b goal already at its value V falls back to the heuristic (b
     const satisfied = j(await labels([{ kind: "b", target: { type: "skill", name: "Magic" }, value: 0 }]));
     assert.deepEqual(satisfied, heuristic, "an already-satisfied value goal is inert");
 });
+
+// ---- §11.10 targeted mode (T3: priority list + budgets + residual) ---------
+
+test("assembleTargetedQueue: budgeted layers + cascade + heuristic residual tail", () => {
+    const ctx = makePlanner(920);
+    const IP = ctx.ev("IdlePlanner");
+    // synthetic town-0 state: two progress providers (A, B) + a frontier grinder
+    // (C) for the residual tail. All plain progress actions (no economy needed).
+    const A = (name, cost) => ({ name, townNum: 0, type: "progress", varName: name, visible: true,
+        unlocked: true, cost, skillsGained: [], travelDests: [] });
+    const state = { townsUnlocked: [0], baseMana: 250, actions: [A("GrindA", 100), A("GrindB", 200), A("GrindC", 50)],
+        towns: [{ index: 0, limited: {}, progress: { GrindA: { level: 0, exp: 0 }, GrindB: { level: 0, exp: 0 }, GrindC: { level: 0, exp: 0 } } }],
+        skills: {} };
+    // measured knowledge: ticksPerExec = cost (real runs always have measured
+    // profiles for the providers, keeping the tick accounting self-consistent)
+    const prof = (t) => ({ exec: 1, ticksPerExec: t, grants: {}, costReductions: {}, goldPerExec: 0, manaPerExec: 0, manaPerGold: 0 });
+    const know = new Map([["GrindA", prof(100)], ["GrindB", prof(200)], ["GrindC", prof(50)]]);
+    const sess = { needs: () => [] };
+    // C is the frontier tail target (a locked action requires it)
+    const thresholds = { Locked: { probeable: true, requires: [{ kind: "p", town: 0, v: "GrindC", need: 50 }] } };
+    const goals = [
+        { kind: "b", target: { type: "progress", name: "GrindA", town: 0 }, value: 100, budget: 0.3 },
+        { kind: "b", target: { type: "progress", name: "GrindB", town: 0 }, value: 100, budget: 0.3 },
+    ];
+    const asm = IP.assembleTargetedQueue(state, know, sess, goals, thresholds, { capacityHint: 10000 });
+    assert.ok(asm, "assembly produced");
+    const q = j(asm.q);
+    const byName = Object.fromEntries(q.map(([n, l]) => [n, l]));
+    // spine GrindA: 0.3 * 10000 / 100 = 30 reps
+    assert.equal(byName.GrindA, 30, "spine filled to its budget share");
+    // layer GrindB: min(0.3*10000, remaining) / 200 = 3000/200 = 15 reps (concurrent, not lexicographic)
+    assert.equal(byName.GrindB, 15, "second goal advances the SAME round via its budget");
+    // residual handoff: leftover (10000 - 3000 - 3000 = 4000) → GrindC frontier grind (4000/50 = 80)
+    assert.equal(byName.GrindC, 80, "leftover budget goes to the heuristic grind tail");
+});
+
+test("assembleTargetedQueue: unbudgeted spine eats the fill; residual still tails", () => {
+    const ctx = makePlanner(921);
+    const IP = ctx.ev("IdlePlanner");
+    const A = (name, cost) => ({ name, townNum: 0, type: "progress", varName: name, visible: true,
+        unlocked: true, cost, skillsGained: [], travelDests: [] });
+    const state = { townsUnlocked: [0], baseMana: 250, actions: [A("Solo", 100), A("Later", 100)],
+        towns: [{ index: 0, limited: {}, progress: { Solo: { level: 0, exp: 0 }, Later: { level: 0, exp: 0 } } }], skills: {} };
+    const prof = (t) => ({ exec: 1, ticksPerExec: t, grants: {}, costReductions: {}, goldPerExec: 0, manaPerExec: 0, manaPerGold: 0 });
+    const know = new Map([["Solo", prof(100)], ["Later", prof(100)]]);
+    const goals = [
+        { kind: "b", target: { type: "progress", name: "Solo", town: 0 }, value: 100 },   // NO budget ⇒ greedy 0.6
+        { kind: "b", target: { type: "progress", name: "Later", town: 0 }, value: 100 },
+    ];
+    const asm = IP.assembleTargetedQueue(state, know, { needs: () => [] }, goals, {}, { capacityHint: 10000 });
+    const byName = Object.fromEntries(j(asm.q).map(([n, l]) => [n, l]));
+    assert.equal(byName.Solo, 60, "unbudgeted spine greedily fills 0.6 of the budget");
+    // remaining 4000; "Later" has no budget ⇒ greedy remaining/100 = 40
+    assert.equal(byName.Later, 40, "an unbudgeted lower goal still takes the whole remainder");
+});
+
+test("autoRankGoals enumerates blocked travel destinations, nearest first", () => {
+    const ctx = makePlanner(922);
+    const IP = ctx.ev("IdlePlanner");
+    const T = (name, townNum, to) => ({ name, townNum, travelDests: [to], visible: true, unlocked: true, cost: 100 });
+    const state = { townsUnlocked: [0, 1], actions: [
+        T("Continue On", 1, 2),     // 1->2, destination locked
+        T("Push Far", 2, 3),        // 2->3, destination locked (further)
+        T("Start Journey", 0, 1),   // 0->1, destination ALREADY unlocked → excluded
+    ] };
+    const goals = j(IP.autoRankGoals(state, new Map(), { needs: () => [] }, {}));
+    assert.deepEqual(goals, [{ kind: "a", action: "Continue On" }, { kind: "a", action: "Push Far" }],
+        "only blocked destinations, nearest town first; already-unlocked excluded");
+});

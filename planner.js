@@ -1778,6 +1778,96 @@ function generateTargeted(state, know, sess, goals, opts = {}) {
     return cands;
 }
 
+// Heuristic grind tail for the residual handoff (ruling 5): the top frontier
+// dim's cheapest grinder, sized to `ticks`. Returns [name, reps] or null.
+function heuristicGrindTail(state, know, thresholds, ticks) {
+    for (const d of rankFrontierDims(state, thresholds ?? {})) {
+        const g = grindActionFor(state, d, 0);
+        if (!g) continue;
+        const reps = Math.floor(ticks / Math.max(1, g.cost));
+        if (reps >= 1) return [g.name, g.allowed != null ? Math.min(reps, g.allowed) : reps];
+    }
+    return null;
+}
+
+// Auto-rank targets (ruling 2): enumerate blocked-but-reachable travel
+// destinations as action goals, nearest-locked-town first — the same "best
+// locked/blocked target" the §6 escalation goes all-in on. No budgets (ruling
+// 4). v1 covers the travel frontier (the pivotal blocked class); richer
+// enumeration is a calibration question, deferred.
+function autoRankGoals(state, know, sess, thresholds) {
+    const targets = travelEdges(state)
+        .filter(e => e.action.visible && e.action.unlocked && !e.dynamic && !state.townsUnlocked.includes(e.to))
+        .sort((a, b) => a.to - b.to);
+    const seen = new Set();
+    const goals = [];
+    for (const e of targets) {
+        if (seen.has(e.action.name)) continue;
+        seen.add(e.action.name);
+        goals.push({ kind: "a", action: e.action.name });
+    }
+    return goals;
+}
+
+// Assemble the priority list into ONE committed queue (§3.3–3.5). The highest-
+// priority ACHIEVABLE goal is the SPINE (its economy + chain, smallest-h
+// variant); lower-priority kind-b goals layer BUDGETED fills onto the shared
+// economy against a running remaining-ticks counter (cascade falls out of the
+// counter); leftover budget goes to a heuristic grind tail (residual handoff,
+// ruling 5). Returns { q, bareQ, label, spineGoal } or null (no goal's scaffold
+// forms → full heuristic fallback). The engine confirm (planTargeted) decides
+// achievability and whether the extension starved the spine (§8.4).
+function assembleTargetedQueue(pre, know, sess, goals, thresholds, opts = {}) {
+    const cap = opts.capacityHint ?? pre.baseMana;
+    const ticksOf = (queue) => queue.reduce((s, [n, l]) => s + l * (know.get(n)?.ticksPerExec ?? 150), 0);
+    // 1. spine = first goal whose scaffold forms (smallest-h variant)
+    let spineIdx = -1, spineCand = null;
+    for (let i = 0; i < goals.length; i++) {
+        const g = goals[i];
+        let cands = [];
+        if (g.kind === "a") {
+            const X = unlockedOf(pre).find(a => a.name === g.action);
+            if (X) cands = regressAction(pre, know, sess, X, { ...opts, capacityHint: cap });
+        } else {
+            cands = regressTarget(pre, know, sess, g, { ...opts, capacityHint: cap, fillShare: g.budget ?? 0.6 });
+        }
+        if (cands.length) { spineIdx = i; spineCand = cands[0]; break; }
+    }
+    if (spineIdx < 0) return null;
+    const bareQ = spineCand.q.slice();
+    let q = spineCand.q.slice();
+    const spineGoal = goals[spineIdx];
+    // a spine kind-a TRAVEL goal must stay queue-terminal; layers insert before it
+    const spineAction = spineGoal.kind === "a" ? unlockedOf(pre).find(a => a.name === spineGoal.action) : null;
+    const terminalTravel = !!spineAction && (spineAction.travelDests ?? []).length > 0;
+    const insert = (entry) => { if (!entry) return; if (terminalTravel) q.splice(q.length - 1, 0, entry); else q.push(entry); };
+    // 2. layer lower-priority kind-b goals (budgeted fill, running counter, cascade)
+    let remaining = Math.max(0, cap - ticksOf(q));
+    for (let i = spineIdx + 1; i < goals.length && remaining > 300; i++) {
+        const g = goals[i];
+        if (g.kind !== "b") continue;   // v1: only kind-b layers concurrently (kind-a atomic — deferred)
+        if (readStateValue(pre, g.target) >= (g.value ?? Infinity)) continue;
+        const provs = rankValueProviders(pre, know, g.target);
+        if (!provs.length) continue;
+        const top = provs[0].a;
+        const perExec = Math.max(1, know.get(top.name)?.ticksPerExec ?? top.cost ?? 150);
+        // budgeted goal takes min(its share of the WHOLE fill budget, remaining)
+        const share = g.budget ? Math.min(g.budget * cap, remaining) : remaining;
+        let reps = Math.floor(share / perExec);
+        if (top.type === "limited") {
+            const lim = pre.towns[top.townNum]?.limited[top.varName];
+            if (lim) reps = Math.min(reps, (lim.good ?? 0) + ((lim.total ?? 0) - (lim.checked ?? 0)));
+        }
+        if (top.allowed != null) reps = Math.min(reps, top.allowed);
+        if (reps < 1) continue;
+        insert([top.name, reps]);
+        remaining -= reps * perExec;
+    }
+    // 3. residual handoff: heuristic grind tail on the leftover (ruling 5)
+    if (remaining > 300) insert(heuristicGrindTail(pre, know, thresholds, remaining));
+    return { q, bareQ, label: spineCand.label, spineGoal };
+}
+
 function generateCandidates(state, know, thresholds, sess, lastCommitted, opts = {}) {
     const multiTown = opts.multiTown ?? true;
     const cands = [];
@@ -2182,49 +2272,48 @@ async function screenCandidates(sess, snap, cands, K, mode = "predictor") {
 }
 
 // ---------------------------------------------------------------------------
-// Targeted planning (§11.10): regress the priority list, confirm each chain on
-// the engine, and INSTALL the best achievable one directly — no scoring vs the
-// heuristic pool (ruling 1). Returns a planRound-shaped result, or null when no
-// goal is achievable this loop (the caller falls back to the heuristic scorer —
-// ruling 1's full fallback / ruling 5's residual handoff). The engine confirm
-// IS the achievability oracle: a chain whose target action never executes (ran
-// dry) is not installed. v1 = single-goal-wins (priority order); T3 adds
-// budgets, residual fitting and the heuristic tail.
+// Targeted planning (§11.10): assemble the priority list into ONE queue (spine +
+// budgeted layers + heuristic residual tail), engine-CONFIRM it, and INSTALL it
+// when the spine goal executes — no scoring vs the heuristic pool (ruling 1).
+// Returns a planRound-shaped result, or null when no goal is achievable this
+// loop (the caller falls back to the heuristic scorer — ruling 1's full
+// fallback). The engine confirm IS the achievability oracle. If the residual
+// extension STARVES the spine (§8.4), retry the bare spine before giving up.
 // ---------------------------------------------------------------------------
 async function planTargeted(sess, P, snap, pre) {
-    let goals = (P.targets && P.targets.length) ? P.targets
-        : (P.targetAction ? [{ kind: "a", action: P.targetAction }] : []);
+    let goals = P.autoRankTargets
+        ? autoRankGoals(pre, P.know, sess, P.thresholds)
+        : ((P.targets && P.targets.length) ? P.targets
+           : (P.targetAction ? [{ kind: "a", action: P.targetAction }] : []));
     // drop kind-b goals whose target value V is already reached — the
     // across-rounds stop condition (§3.2); advance to the next priority.
     goals = goals.filter(g => g.kind !== "b" || readStateValue(pre, g.target) < (g.value ?? Infinity));
     if (!goals.length) return null;
-    const cands = generateTargeted(pre, P.know, sess, goals,
+    const assembled = assembleTargetedQueue(pre, P.know, sess, goals, P.thresholds,
         { multiTown: P.multiTown, capacityHint: P.prevTimeNeeded });
-    if (!cands.length) return null;
-    sess.restore(snap);
-    // confirm in priority order; install the first achievable goal chain
-    for (let i = 0; i < cands.length; i++) {
-        const c = cands[i];
-        const conf = confirmCandidate(sess, snap, c.q, P.know, P.multiTown);
+    if (!assembled) return null;
+    const g = assembled.spineGoal;
+    const achieves = (post, r) => g.kind === "a"
+        ? execCountOf(r, g.action) > 0
+        : readStateValue(post, g.target) > readStateValue(pre, g.target);
+    const install = (q, label) => {
         sess.restore(snap);
-        if (conf.degenerate) continue;
-        // achievability: kind-a = the target action executed; kind-b = the
-        // read-state target value ADVANCED this loop (V is the across-rounds
-        // stop condition, not a within-loop guarantee).
-        const achieved = c.goal.kind === "a"
-            ? execCountOf(conf.r, c.goal.action) > 0
-            : readStateValue(conf.post, c.goal.target) > readStateValue(pre, c.goal.target);
-        if (!achieved) continue;
+        const conf = confirmCandidate(sess, snap, q, P.know, P.multiTown);
+        sess.restore(snap);
+        if (conf.degenerate || !achieves(conf.post, conf.r)) return null;
         const { score, parts } = scoreOutcome(pre, conf.post, P.thresholds, conf.r,
             P.prevTimeNeeded, P.know, P.weights, conf.capacity,
             { probeTicks: conf.probeTicks, prevProbeTicks: P.prevProbeTicks });
+        const c = { label, q, goal: g };
         const best = { c, r: conf.r, post: conf.post, score, parts, postSnap: conf.postSnap,
-                       capacity: conf.capacity, probeTicks: conf.probeTicks,
-                       nCands: cands.length, nScreened: cands.length };
-        return { best, snap, pre, nCands: cands.length, nScreened: cands.length,
-                 evals: [{ label: c.label, score: Math.round(score * 10) / 10, parts }] };
-    }
-    return null;
+                       capacity: conf.capacity, probeTicks: conf.probeTicks, nCands: 1, nScreened: 1 };
+        return { best, snap, pre, nCands: 1, nScreened: 1,
+                 evals: [{ label, score: Math.round(score * 10) / 10, parts }] };
+    };
+    // full assembly first; if the residual layers starved the spine, retry the
+    // bare spine (the budget caps FILL — the cushion still decides feasibility).
+    return install(assembled.q, assembled.label)
+        ?? (assembled.bareQ.length !== assembled.q.length ? install(assembled.bareQ, assembled.label) : null);
 }
 
 // ---------------------------------------------------------------------------
@@ -2359,10 +2448,12 @@ function newPlanningState(opts = {}) {
         // regression). Orthogonal to plannerMode's display-vs-install axis
         // (§7 Option X). Not serialized — the resuming caller's param wins.
         strategy: opts.strategy ?? "heuristic",
-        // T1 headless single-goal driver (--target-action); T3 replaces it with
-        // the user priority list. `targets` = [{kind,action?|target?,value?,budget?}].
+        // T1 headless single-goal driver (--target-action); T3 the user priority
+        // list. `targets` = [{kind,action?|target?,value?,budget?}]. autoRank
+        // (ruling 2) ignores the list and enumerates the travel frontier.
         targetAction: opts.targetAction ?? null,
         targets: opts.targets ?? [],
+        autoRankTargets: opts.autoRankTargets ?? false,
         divergenceLog: [],
     };
 }
@@ -2375,13 +2466,13 @@ function newPlanningState(opts = {}) {
 async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode = "predictor",
                                probeEvery = 1,
                                seedFromPredictor = false, multiTown = true, vocabulary = "empirical",
-                               strategy = "heuristic", targetAction = null, targets = [],
+                               strategy = "heuristic", targetAction = null, targets = [], autoRankTargets = false,
                                targetTown = 1,
                                verbose = false, onLoop = null, resume = null } = {}) {
     const t0 = Date.now();
     const sess = new Session();
     const P = newPlanningState({ weights, screenK, screenMode, probeEvery, seedFromPredictor, multiTown, vocabulary,
-                                 strategy, targetAction, targets });
+                                 strategy, targetAction, targets, autoRankTargets });
     const trace = [];
     const milestones = {};
     let cumTicks = 0;
@@ -2469,6 +2560,7 @@ return {
     // targeted mode (§11.10)
     regressAction, regressTarget, generateTargeted, repSinkProvider,
     rankValueProviders, readStateValue, planTargeted,
+    assembleTargetedQueue, heuristicGrindTail, autoRankGoals,
     _internals: { plReadState, plProbeThresholds, plProbeCanStartNeeds, plSaveClone,
                   plRestoreSave, plRunOneLoopChunk, plInjectResources, plSnapshot,
                   plSetQueue, plGetQueue, plPredictQueue },

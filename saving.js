@@ -692,6 +692,16 @@ const options = {
     // Only affects planning when the master gate is on; empirical keeps the
     // frozen reference untouched.
     plannerVocabulary: "empirical",
+    // §11.10 targeted mode: candidate GENERATOR, orthogonal to plannerMode's
+    // display-vs-install axis (§7 Option X). "heuristic" (default, byte-exact) =
+    // the scorer; "targeted" = goal-directed regression over the priority list.
+    plannerStrategy: "heuristic",
+    // targeted-mode priority list: a JSON array of goal specs
+    // [{kind:"a",action}|{kind:"b",target:{type,name?,town?},value,budget?}].
+    // Stored as a string (like every option); automation.js parses it.
+    plannerTargets: "[]",
+    // ignore the list and auto-enumerate+rank the travel frontier (ruling 2).
+    plannerAutoRankTargets: false,
     plannerWeightTown: 1e12,
     plannerWeightUnlockAction: 1000,
     plannerWeightVisibleAction: 300,
@@ -744,6 +754,8 @@ const stringOptions = [
     "predictorTrackedStat",
     "plannerMode",
     "plannerVocabulary",
+    "plannerStrategy",
+    "plannerTargets",
 ];
 
 /** @param {string} option @returns {option is NumericOptionName} */
@@ -849,6 +861,9 @@ const isStandardOption = {
     plannerMultiTown: false,
     plannerControlLootFirst: false,
     plannerVocabulary: false,
+    plannerStrategy: false,
+    plannerTargets: false,
+    plannerAutoRankTargets: false,
     plannerWeightTown: false,
     plannerWeightUnlockAction: false,
     plannerWeightVisibleAction: false,

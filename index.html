@@ -150,6 +150,34 @@
                                 <option value='informed'>Informed (gate-metadata setup)</option>
                             </select>
                             <br>
+                            <label class="showthat" for="plannerStrategyInput">Planner strategy
+                                <div class="showthis" style="width:280px">Heuristic (default): the scorer picks the highest-scoring
+                                candidate loop each round. Targeted (§11.10): goal-directed — regress the priority list below into a
+                                within-loop queue and INSTALL the best achievable chain, falling back to the heuristic scorer when
+                                nothing on the list is achievable. Orthogonal to Planner mode (which is display-vs-install).</div>
+                            </label>
+                            <select id='plannerStrategyInput' onchange='setOption("plannerStrategy", this.value)'>
+                                <option value='heuristic'>Heuristic (scorer, default)</option>
+                                <option value='targeted'>Targeted (goal-directed)</option>
+                            </select>
+                            <br>
+                            <input id='plannerAutoRankTargetsInput' type='checkbox' onchange='setOption("plannerAutoRankTargets", this.checked)'>
+                            <label class='showthat' for='plannerAutoRankTargetsInput'>Auto-rank targets
+                                <div class='showthis' style="width:260px">Targeted strategy: ignore the priority list and
+                                auto-enumerate the travel frontier (nearest locked destination first) as the goal.</div>
+                            </label>
+                            <br>
+                            <label class="showthat" for="plannerTargetsInput">Priority list (targeted)
+                                <div class="showthis" style="width:300px">Ordered goal list as JSON. Each goal is either
+                                <code>{"kind":"a","action":"NAME"}</code> (make a blocked-but-unlocked action executable) or
+                                <code>{"kind":"b","target":{"type":"skill|progress|buff|soulstones|goldInvested","name":"...","town":0},"value":N,"budget":0.3}</code>
+                                (reach value N of a persistent resource; budget = fraction of the loop's fill this goal may consume,
+                                omit for greedy). Goals are fitted in priority order; leftover budget goes to the heuristic grind
+                                tail. gold / reputation / mana are NOT valid targets (loop-scoped).</div>
+                            </label>
+                            <br>
+                            <textarea id='plannerTargetsInput' rows='4' spellcheck='false' placeholder='[]' style='width:95%;box-sizing:border-box;font-family:monospace;font-size:11px' onchange='setOption("plannerTargets", this.value)'></textarea>
+                            <br>
                             <input id='plannerControlLootFirstInput' type='checkbox' checked onchange='setOption("plannerControlLootFirst", this.checked)'>
                             <label class='showthat' for='plannerControlLootFirstInput'>Control "Lootable first" checkboxes
                                 <div class='showthis' style="width:260px">ON: whenever it plans, the planner sets every resource's
