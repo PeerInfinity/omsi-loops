@@ -288,11 +288,12 @@ const menuView = Views.registerView("menu", {
                     }</label>
                     <br>
                     <input id='predictorRepGapInput' type='checkbox' onchange='setOption("predictorRepGap", this.checked)'>
-                    <label class='showthat' for='predictorRepGapInput'>Report unqueued reps (fork)
-                        <div class='showthis'>Annotates the action list when an action has fewer reps queued than the
+                    <label class='showthat' for='predictorRepGapInput'>Report rep gaps (fork)
+                        <div class='showthis'>Annotates the action list when an action's queued reps differ from what the
                         current state could actually execute next loop &mdash; e.g. 50&times; Smash Pots queued with 71
-                        pots available shows +21. Counts banked + unchecked items for limited actions and the
-                        allowed() cap for training-style actions. Purely informational; never edits the queue.</div>
+                        pots available shows +21; 80&times; queued shows -9. Counts banked + unchecked items for limited
+                        actions and the allowed() cap for training-style actions. Purely informational; never edits
+                        the queue.</div>
                     </label>
                 </div>
                 <div id='advancedAutomationSection'>

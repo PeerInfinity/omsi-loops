@@ -64,11 +64,15 @@ ul.koviko {display: none}
         transition-duration: 0.1s;
     }
 }
-/* fork: rep-gap report badges (options.predictorRepGap) */
+/* fork: rep-gap report badges (options.predictorRepGap). Font matches the
+   predictor's koviko numbers (bold, 90% of the row's `small` base). */
 .predictor-rep-gap {
-    margin-left: 4px;
+    margin: 0 8px 0 4px;
     font-weight: bold;
-    font-size: 0.85em;
+    font-size: 90%;
     color: var(--predictor-rep-gap-color, #2a9d2a);
     cursor: help;
+}
+.predictor-rep-gap.over {
+    color: var(--predictor-rep-gap-over-color, #c9542a);
 }

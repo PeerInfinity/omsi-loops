@@ -2025,9 +2025,13 @@ const Koviko = {
         const div = container.children[row.lastIndex];
         if (!div) continue;
         const badge = document.createElement('span');
-        badge.className = 'predictor-rep-gap';
-        badge.textContent = `+${row.gap}`;
-        badge.title = `${row.name}: ${row.queued} queued, ${row.available} available — ${row.gap} more rep${row.gap === 1 ? "" : "s"} unlocked`;
+        const over = row.gap < 0;
+        const n = Math.abs(row.gap);
+        badge.className = over ? 'predictor-rep-gap over' : 'predictor-rep-gap';
+        badge.textContent = over ? `-${n}` : `+${n}`;
+        badge.title = over
+          ? `${row.name}: ${row.queued} queued, only ${row.available} available — ${n} rep${n === 1 ? "" : "s"} over the limit`
+          : `${row.name}: ${row.queued} queued, ${row.available} available — ${n} more rep${n === 1 ? "" : "s"} unlocked`;
         div.appendChild(badge);
       }
     }
@@ -2460,9 +2464,11 @@ const Koviko = {
   },
 
   // Aggregate the queue (enabled entries only) and report every action whose
-  // total queued reps fall short of what is currently available. Returns
-  // [{name, queued, available, gap, lastIndex}] with lastIndex = the queue
-  // position of the action's last enabled entry (where the UI badge goes).
+  // total queued reps differ from what is currently available — under-queued
+  // (gap > 0: more reps unlocked than queued) AND over-queued (gap < 0: the
+  // excess reps can't succeed next loop). Returns [{name, queued, available,
+  // gap, lastIndex}] with signed gap = available - queued and lastIndex = the
+  // queue position of the action's last enabled entry (where the badge goes).
   repGapReport(actions) {
     const queued = new Map();
     actions.forEach((entry, i) => {
@@ -2475,7 +2481,7 @@ const Koviko = {
     const report = [];
     for (const [name, rec] of queued) {
       const available = this.repGapAvailable(name);
-      if (available == null || rec.queued >= available) continue;
+      if (available == null || rec.queued === available) continue;
       report.push({ name, queued: rec.queued, available, gap: available - rec.queued, lastIndex: rec.lastIndex });
     }
     return report;

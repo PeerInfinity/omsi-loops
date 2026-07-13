@@ -41,7 +41,7 @@ test("report sums split queue entries and skips disabled/zero-rep ones", () => {
     ]);
 });
 
-test("no report when queued reps cover the pool", () => {
+test("no report when queued reps exactly match the pool", () => {
     const ctx = makeContext(4244);
     ctx.ev(`
         towns[0].totalPots = 8;
@@ -53,6 +53,29 @@ test("no report when queued reps cover the pool", () => {
         { name: "Smash Pots", loops: 2 },
     ]))`);
     assert.deepEqual(JSON.parse(report), []);
+});
+
+test("over-queued reps report a negative gap", () => {
+    const ctx = makeContext(4248);
+    ctx.ev(`
+        towns[0].totalPots = 8;
+        towns[0].checkedPots = 8;
+        towns[0].goodPots = 2;
+        towns[0].goodTempPots = 2;
+    `);
+    const report = ctx.ev(`JSON.stringify(Koviko.repGapReport([
+        { name: "Smash Pots", loops: 5 },
+    ]))`);
+    assert.deepEqual(JSON.parse(report), [
+        { name: "Smash Pots", queued: 5, available: 2, gap: -3, lastIndex: 0 },
+    ]);
+    // allowed()-capped over-queue (trainingLimits = 10)
+    const report2 = ctx.ev(`JSON.stringify(Koviko.repGapReport([
+        { name: "Train Strength", loops: 15 },
+    ]))`);
+    assert.deepEqual(JSON.parse(report2), [
+        { name: "Train Strength", queued: 15, available: 10, gap: -5, lastIndex: 0 },
+    ]);
 });
 
 test("allowed()-capped actions use the live cap (trainingLimits)", () => {
