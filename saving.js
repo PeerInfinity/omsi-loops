@@ -702,6 +702,9 @@ const options = {
     plannerTargets: "[]",
     // ignore the list and auto-enumerate+rank the travel frontier (ruling 2).
     plannerAutoRankTargets: false,
+    // §6 stagnation trigger: auto-enter ONE targeted escalation round from the
+    // heuristic when the committed queue fixates (streak/drought). Default off.
+    plannerAntiFixation: false,
     plannerWeightTown: 1e12,
     plannerWeightUnlockAction: 1000,
     plannerWeightVisibleAction: 300,
@@ -864,6 +867,7 @@ const isStandardOption = {
     plannerStrategy: false,
     plannerTargets: false,
     plannerAutoRankTargets: false,
+    plannerAntiFixation: false,
     plannerWeightTown: false,
     plannerWeightUnlockAction: false,
     plannerWeightVisibleAction: false,

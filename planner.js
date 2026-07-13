@@ -2280,8 +2280,11 @@ async function screenCandidates(sess, snap, cands, K, mode = "predictor") {
 // fallback). The engine confirm IS the achievability oracle. If the residual
 // extension STARVES the spine (§8.4), retry the bare spine before giving up.
 // ---------------------------------------------------------------------------
-async function planTargeted(sess, P, snap, pre) {
-    let goals = P.autoRankTargets
+async function planTargeted(sess, P, snap, pre, opts = {}) {
+    // opts.escalate (§6 anti-fixation): ignore the user list AND per-goal
+    // budgets — auto-rank the blocked frontier and go all-in on the escape
+    // target for this one round.
+    let goals = (opts.escalate || P.autoRankTargets)
         ? autoRankGoals(pre, P.know, sess, P.thresholds)
         : ((P.targets && P.targets.length) ? P.targets
            : (P.targetAction ? [{ kind: "a", action: P.targetAction }] : []));
@@ -2316,6 +2319,30 @@ async function planTargeted(sess, P, snap, pre) {
         ?? (assembled.bareQ.length !== assembled.q.length ? install(assembled.bareQ, assembled.label) : null);
 }
 
+// Anti-fixation counters (§6): the committed-queue identity STREAK and the
+// no-new-action-availability DROUGHT, tracked on P (NOT serialized — a
+// within-run mechanism like `perf`). Updated after each round's `best`; the
+// trigger reads them at the START of the next round. Separation data (all 11
+// bank-sweep traces): healthy max streak 16 / drought 135; the bank:20 hole
+// 617 — so K=32 / D=256 are byte-inert by margin (the counters never reach
+// them on a healthy run).
+function updateStagnation(P, best, escalated) {
+    const key = (q) => JSON.stringify(q ?? []);
+    P.streak = (P.lastCommitted != null && key(best.c.q) === key(P.lastCommitted)) ? (P.streak ?? 0) + 1 : 0;
+    // K backoff: an escalation round that RE-COMMITS the same queue (the escape
+    // didn't take) doubles K so the guard fires less often. Sticky.
+    if (escalated && P.streak > 0) P.antiFixK = (P.antiFixK ?? 32) * 2;
+    // drought: rounds since ANY action gained visibility/unlock (measures real
+    // progress, not queue churn)
+    P.seenAvail = P.seenAvail ?? new Set();
+    let fresh = false;
+    for (const a of best.post.actions) {
+        const k = `${a.name}:${a.visible ? (a.unlocked ? 2 : 1) : 0}`;
+        if ((a.visible || a.unlocked) && !P.seenAvail.has(k)) { P.seenAvail.add(k); fresh = true; }
+    }
+    P.drought = fresh ? 0 : (P.drought ?? 0) + 1;
+}
+
 // ---------------------------------------------------------------------------
 // One planning round: from the CURRENT sim state, produce the best queue for
 // the next loop. `P` is the persistent planning state (knowledge, thresholds,
@@ -2341,14 +2368,23 @@ async function planRound(sess, P) {
     sess.restore(snap);
     perf.know += Date.now() - tPhase; tPhase = Date.now();
 
-    // Targeted strategy: try the goal-directed regression first; a successful
-    // install returns straight away. Falling through to the heuristic scorer is
-    // ruling 1's full fallback (nothing achievable) — byte-inert at the default
-    // "heuristic" strategy (branch never taken).
-    if (P.strategy === "targeted") {
-        const t = await planTargeted(sess, P, snap, pre);
+    // §6 anti-fixation escalation: when the HEURISTIC has stalled — the same
+    // queue committed K rounds running, or D rounds with no new action becoming
+    // available — auto-enter ONE all-in targeted round toward the blocked
+    // frontier, then return to the scorer. Option-gated (plannerAntiFixation)
+    // and byte-inert by margin at defaults (healthy streak ≤16 < K 32; guard
+    // off). A failed escalation doubles K (updateStagnation).
+    const escalate = P.antiFixation && P.strategy !== "targeted"
+        && ((P.streak ?? 0) >= (P.antiFixK ?? 32) || (P.drought ?? 0) >= (P.droughtLimit ?? 256));
+
+    // Targeted strategy (or an escalation round): goal-directed regression
+    // first; a successful install returns straight away. Falling through to the
+    // heuristic scorer is ruling 1's full fallback — byte-inert at the default
+    // "heuristic" strategy with the guard off (branch never taken).
+    if (P.strategy === "targeted" || escalate) {
+        const t = await planTargeted(sess, P, snap, pre, { escalate });
         perf.gen += Date.now() - tPhase; tPhase = Date.now();
-        if (t) return t;
+        if (t) { updateStagnation(P, t.best, escalate); return t; }
         sess.restore(snap);
     }
 
@@ -2390,6 +2426,7 @@ async function planRound(sess, P) {
     }
     if (!best) throw new Error(`loop ${P.loop}: all candidates degenerate`);
     perf.score += Date.now() - tPhase;
+    updateStagnation(P, best, escalate);
     // restore the pre-round state; the CALLER decides how to commit (the
     // standalone driver restores best.postSnap; the live game plays the queue)
     sess.restore(snap);
@@ -2454,6 +2491,10 @@ function newPlanningState(opts = {}) {
         targetAction: opts.targetAction ?? null,
         targets: opts.targets ?? [],
         autoRankTargets: opts.autoRankTargets ?? false,
+        // §6 stagnation trigger (auto-enter a targeted escalation round from the
+        // heuristic when the queue fixates). Default off; counters live below.
+        antiFixation: opts.antiFixation ?? false,
+        streak: 0, drought: 0, antiFixK: 32, droughtLimit: 256, seenAvail: new Set(),
         divergenceLog: [],
     };
 }
@@ -2467,12 +2508,13 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode
                                probeEvery = 1,
                                seedFromPredictor = false, multiTown = true, vocabulary = "empirical",
                                strategy = "heuristic", targetAction = null, targets = [], autoRankTargets = false,
+                               antiFixation = false,
                                targetTown = 1,
                                verbose = false, onLoop = null, resume = null } = {}) {
     const t0 = Date.now();
     const sess = new Session();
     const P = newPlanningState({ weights, screenK, screenMode, probeEvery, seedFromPredictor, multiTown, vocabulary,
-                                 strategy, targetAction, targets, autoRankTargets });
+                                 strategy, targetAction, targets, autoRankTargets, antiFixation });
     const trace = [];
     const milestones = {};
     let cumTicks = 0;
@@ -2560,7 +2602,7 @@ return {
     // targeted mode (§11.10)
     regressAction, regressTarget, generateTargeted, repSinkProvider,
     rankValueProviders, readStateValue, planTargeted,
-    assembleTargetedQueue, heuristicGrindTail, autoRankGoals,
+    assembleTargetedQueue, heuristicGrindTail, autoRankGoals, updateStagnation,
     _internals: { plReadState, plProbeThresholds, plProbeCanStartNeeds, plSaveClone,
                   plRestoreSave, plRunOneLoopChunk, plInjectResources, plSnapshot,
                   plSetQueue, plGetQueue, plPredictQueue },

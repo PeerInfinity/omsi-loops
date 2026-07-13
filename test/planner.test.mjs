@@ -824,3 +824,46 @@ test("autoRankGoals enumerates blocked travel destinations, nearest first", () =
     assert.deepEqual(goals, [{ kind: "a", action: "Continue On" }, { kind: "a", action: "Push Far" }],
         "only blocked destinations, nearest town first; already-unlocked excluded");
 });
+
+// ---- §11.10 targeted mode (T4: §6 stagnation trigger) ----------------------
+
+test("updateStagnation: streak counts identical commits; drought counts no-new-availability; K backoff", () => {
+    const ctx = makePlanner(930);
+    const IP = ctx.ev("IdlePlanner");
+    const post = (names) => ({ actions: names.map(n => ({ name: n, visible: true, unlocked: true })) });
+    const P = { streak: 0, drought: 0, antiFixK: 32, seenAvail: new Set(), lastCommitted: null };
+    const commit = (q, postNames, escalated = false) => {
+        IP.updateStagnation(P, { c: { q }, post: post(postNames) }, escalated);
+        P.lastCommitted = q;   // the caller sets this after planRound
+    };
+    // first commit: nothing to compare against → streak 0; fresh availability → drought 0
+    commit([["Wander", 1]], ["Wander"]);
+    assert.equal(P.streak, 0); assert.equal(P.drought, 0);
+    // same queue, no new action → streak up, drought up
+    commit([["Wander", 1]], ["Wander"]);
+    assert.equal(P.streak, 1); assert.equal(P.drought, 1);
+    commit([["Wander", 1]], ["Wander"]);
+    assert.equal(P.streak, 2); assert.equal(P.drought, 2);
+    // a NEW action becomes available → drought resets (streak keeps counting the identical queue)
+    commit([["Wander", 1]], ["Wander", "Pick Locks"]);
+    assert.equal(P.streak, 3); assert.equal(P.drought, 0, "drought resets on new availability");
+    // a DIFFERENT queue → streak resets
+    commit([["Smash Pots", 1]], ["Wander", "Pick Locks"]);
+    assert.equal(P.streak, 0);
+    // an ESCALATION round that re-commits the same queue doubles K (backoff)
+    P.antiFixK = 32;
+    commit([["Smash Pots", 1]], ["Wander", "Pick Locks"], true);
+    assert.equal(P.streak, 1); assert.equal(P.antiFixK, 64, "failed escalation doubles K");
+});
+
+test("anti-fixation guard is byte-inert by margin (off by default; healthy streak stays under K)", async () => {
+    // a short default run: the guard is OFF, so the trace matches the reference
+    // path exactly, AND the observed committed-queue streak stays well under the
+    // K=32 threshold (the healthy runs never fixate — separation margin).
+    const ctx = makePlanner(12345);
+    const r = await ctx.ev("IdlePlanner").runStandalone({ maxLoops: 20 });
+    const labels = r.trace.map(t => t.label);
+    let maxStreak = 0, cur = 0;
+    for (let i = 1; i < labels.length; i++) { cur = labels[i] === labels[i - 1] ? cur + 1 : 0; maxStreak = Math.max(maxStreak, cur); }
+    assert.ok(maxStreak < 32, `healthy committed-queue streak (${maxStreak}) well under K=32`);
+});

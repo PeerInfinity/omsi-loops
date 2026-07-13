@@ -178,6 +178,14 @@
                             <br>
                             <textarea id='plannerTargetsInput' rows='4' spellcheck='false' placeholder='[]' style='width:95%;box-sizing:border-box;font-family:monospace;font-size:11px' onchange='setOption("plannerTargets", this.value)'></textarea>
                             <br>
+                            <input id='plannerAntiFixationInput' type='checkbox' onchange='setOption("plannerAntiFixation", this.checked)'>
+                            <label class='showthat' for='plannerAntiFixationInput'>Anti-fixation guard
+                                <div class='showthis' style="width:280px">§6: when the heuristic scorer fixates — the same queue
+                                committed 32 rounds running, or 256 rounds with no new action becoming available — auto-enter ONE
+                                all-in targeted round toward the blocked travel frontier, then return to the scorer. A failed escape
+                                doubles the streak threshold (backoff). Byte-inert by margin (healthy runs never fixate this long).</div>
+                            </label>
+                            <br>
                             <input id='plannerControlLootFirstInput' type='checkbox' checked onchange='setOption("plannerControlLootFirst", this.checked)'>
                             <label class='showthat' for='plannerControlLootFirstInput'>Control "Lootable first" checkboxes
                                 <div class='showthis' style="width:260px">ON: whenever it plans, the planner sets every resource's

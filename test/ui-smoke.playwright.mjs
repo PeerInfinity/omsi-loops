@@ -42,7 +42,7 @@ check(statRows >= 9, `compact stats rows (${statRows})`);
 // 5. settings section holds the moved inputs; Extras hint replaced the block
 for (const id of ["plannerModeInput", "plannerScreenKInput", "plannerWeightTravelReliefInput", "plannerWeightHeadroomInput",
                   // §11.10 targeted mode UI
-                  "plannerStrategyInput", "plannerAutoRankTargetsInput", "plannerTargetsInput"]) {
+                  "plannerStrategyInput", "plannerAutoRankTargetsInput", "plannerTargetsInput", "plannerAntiFixationInput"]) {
     check(await page.$eval(`#automationView #${id}`, () => true).catch(() => false), `${id} lives in the automation view`);
 }
 check(await page.$eval("#expGainMultiplierInput", el => !el.closest("#automationView")), "expGainMultiplier stays in Extras");
@@ -97,7 +97,9 @@ check(await page.$eval("#statsWindow", el => el.dataset.view === "regular"), "ga
 // 9b. §11.10 targeted-mode UI round-trips through setOption + loadOption
 await page.evaluate(() => { setOption("advancedAutomation", true); AdvancedAutomation.refreshSectionVisibility(); });
 const targetsJSON = JSON.stringify([{ kind: "a", action: "Continue On" }, { kind: "b", target: { type: "skill", name: "Magic" }, value: 50, budget: 0.3 }]);
-await page.evaluate((tj) => { setOption("plannerStrategy", "targeted"); setOption("plannerTargets", tj); setOption("plannerAutoRankTargets", true); }, targetsJSON);
+await page.evaluate((tj) => { setOption("plannerStrategy", "targeted"); setOption("plannerTargets", tj); setOption("plannerAutoRankTargets", true); setOption("plannerAntiFixation", true); }, targetsJSON);
+check(await page.$eval("#plannerAntiFixationInput", el => (loadOption("plannerAntiFixation", options.plannerAntiFixation), el.checked === true)),
+    "anti-fixation checkbox syncs from loadOption");
 check(await page.$eval("#plannerStrategyInput", el => (loadOption("plannerStrategy", options.plannerStrategy), el.value === "targeted")),
     "strategy select syncs from loadOption");
 check(await page.$eval("#plannerTargetsInput", (el, tj) => (loadOption("plannerTargets", options.plannerTargets), el.value === tj), targetsJSON),

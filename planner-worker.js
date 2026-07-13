@@ -118,6 +118,7 @@ onmessage = async (e) => {
                     P.strategy = data.params.strategy ?? P.strategy;
                     P.targets = data.params.targets ?? P.targets;
                     P.autoRankTargets = data.params.autoRankTargets ?? P.autoRankTargets;
+                    P.antiFixation = data.params.antiFixation ?? P.antiFixation;
                     // sim option (plRestoreSave never loads options): keep the
                     // worker's engine gaining exp at the live game's rate
                     if (data.params.expGainMultiplier !== undefined) options.expGainMultiplier = data.params.expGainMultiplier;

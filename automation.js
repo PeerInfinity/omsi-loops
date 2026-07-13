@@ -159,6 +159,7 @@ function requestPlan(reason) {
             strategy: options.plannerStrategy,
             targets: parsePlannerTargets(),
             autoRankTargets: options.plannerAutoRankTargets,
+            antiFixation: options.plannerAntiFixation,
             // game-sim option, not planner state: the worker's engine copy
             // must gain exp at the live game's rate or measured profiles
             // diverge from committed play
