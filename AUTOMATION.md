@@ -288,11 +288,22 @@ check-first plans lean more on engine confirmation to rank correctly).
 ## 8. Determinism and the reference playthrough
 
 With seed 12345 and default settings, the headless planner reaches Forest
-Path (town 1) in **500 loops / 5,432,753 ticks / final-state hash
-`54506b48ec1758af`**, beating the fork's 646-loop scripted baseline with
+Path (town 1) in **535 loops / 5,965,890 ticks / final-state hash
+`e23f020400162f9a`**, still beating the fork's 646-loop scripted baseline with
 zero hand-scripted knowledge. This exact triple is re-verified after every
-planner change (plus loop- AND tick-exact reproductions of two weight
-sweeps: frontier:1000 → 502 loops, bank:10 → 632 loops). Because the
-multi-town machinery and the two horizon terms are state-gated, all of them
-are provably inert on that reference run — new planner features must keep
-it byte-identical or explain themselves.
+planner change — new planner features must keep it byte-identical or explain
+themselves.
+
+**Part A re-baseline (§11.9, 2026-07-13).** This reference was deliberately
+re-frozen from the original **500 / 5,432,753 / `54506b48ec1758af`**. Part A
+un-gated the town-0 interleaved capacity probe (A1): the town-0 probe had been
+reporting `prevTimeNeeded` 5,250 while committed loops realize 27k–35k, a ~7×
+understated capacityHint that mis-sized every economy/push candidate. Fixing it
+reshapes the healthy trajectory (500 → 535 loops, +9.8% ticks) AND melts the
+**bank:20 fixation hole** — previously a DNF at 1,200 loops with zero escapes,
+now escaping to town 1 at loop 538 under the plain heuristic (no anti-fixation
+guard needed). The +35-loop healthy cost was accepted as the price of the
+bank:20 headline-gate fix (user ruling 2026-07-13). The two prior weight-sweep
+cross-checks (frontier:1000 → 502, bank:10 → 632) predate Part A and no longer
+reproduce byte-exact; they are re-measured in the calibration re-baseline
+(handoff item 5), not here.

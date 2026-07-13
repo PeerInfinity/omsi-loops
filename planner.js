@@ -26,8 +26,10 @@
 //     the AdvancedAutomation controller (automation.js) touch it.
 //
 // Provenance: direct port of the proven queue-planner v0 experiment
-// (500 loops / 5,432,753 ticks to Forest Path vs the 646-loop scripted
-// baseline, deterministic). The algorithm is transliterated, not rewritten;
+// (originally 500 loops / 5,432,753 ticks to Forest Path vs the 646-loop
+// scripted baseline, deterministic; Part A §11.9 later re-baselined this
+// reference to 535 / 5,965,890 / e23f020400162f9a — see AUTOMATION.md §8).
+// The algorithm is transliterated, not rewritten;
 // engine gotchas it encodes: positional prerequisites (a canStart-failing
 // action is skipped for the REST of the loop), travel tail-pinning in
 // addAction, per-loop gold/rep evaporation, goodTemp harvests before checks,
@@ -684,18 +686,23 @@ function probeCapacity(sess, postSnap, post, know, multiTown = true, out = {}) {
             q.push(...routeTailEntries(route.hops, resolved.segGrantors));
             cur = t;
         }
-        // Multi-town states harvest gold pools in cushion-sized CHUNKS with
+        // ALL states harvest gold pools in cushion-sized CHUNKS with
         // conversion between (the committed queues' interleave): an
         // end-loaded spend-all converter starves once banks outgrow the base
         // budget — the probe loop dies mid-harvest with its gold unconverted,
         // understating capacity and reading headroom == 0 by construction
-        // (found at 10x L140: probe 5,250 vs realized 21,250). STATE-GATED so
-        // the townsUnlocked=[0] probe queue stays v0 byte-exact. The final
-        // chunk is deliberately NOT converted: its gold funds the next
-        // journey's grantors, and pendingConv flushes it after them (or at
-        // the end) exactly as before. The modeled cushion only shapes the
-        // queue — the probe run realizes real values.
-        const interleave = post.townsUnlocked.length > 1;
+        // (found at 10x L140: probe 5,250 vs realized 21,250). Part A (§11.9)
+        // un-gated this at townsUnlocked=[0] too: the town-0 probe was
+        // reporting prevTimeNeeded 5,250 while committed loops realize
+        // 27k-35k — a ~7x understated capacityHint that mis-sized every
+        // economy/push candidate. (The Round-7 `a39bc27` fix deliberately
+        // left the [0] path on v0 to preserve the byte-reference; Part A
+        // finishes it with the deliberate re-freeze.) The final chunk is
+        // deliberately NOT converted: its gold funds the next journey's
+        // grantors, and pendingConv flushes it after them (or at the end)
+        // exactly as before. The modeled cushion only shapes the queue — the
+        // probe run realizes real values.
+        const interleave = true;
         const convT = converterOf(post, know, t);
         if (!interleave || !convT) {
             for (const p of pools) q.push([p.a.name, p.good]);

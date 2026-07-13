@@ -7,7 +7,10 @@
 // The identity golden below was captured on the tree IMMEDIATELY BEFORE the
 // multiplier landed (automation @ c97c50b): same scripted run, same hash.
 // If this hash moves, the option is not byte-inert at default — that breaks
-// the v0 acceptance gate (500 / 5,432,753 / 54506b48ec1758af).
+// the acceptance gate (Part A §11.9 re-froze it 2026-07-13 to
+// 535 / 5,965,890 / e23f020400162f9a; was 500 / 5,432,753 / 54506b48ec1758af).
+// This identity golden is the multiplier's OWN scripted-run hash, independent
+// of that acceptance reference, so it is unaffected by the re-freeze.
 
 import test from "node:test";
 import assert from "node:assert/strict";
