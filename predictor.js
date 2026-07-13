@@ -1705,6 +1705,7 @@ const Koviko = {
 
       }
       if (this.update.id === id) {
+        if (container) this.renderRepGaps(actions, container);
         await this.finishUpdate(container, runData);
         performance.mark("end-predictor-update");
         const updateTime = performance.measure("predictor-totalupdate", "start-predictor-update", "end-predictor-update");
@@ -2012,6 +2013,25 @@ const Koviko = {
       });
     }
     /** @param {HTMLElement} container  @param {PredictorRunData} runData  */
+    // fork: rep-gap badges (options.predictorRepGap). Clears previous badges
+    // unconditionally so toggling the option off leaves no residue; when on,
+    // appends a "+N" badge to the last enabled entry of every under-queued
+    // action (Koviko.repGapReport). UI-thread only — never runs in the
+    // worker (guarded at the call site by `container`).
+    renderRepGaps(actions, container) {
+      container.querySelectorAll('.predictor-rep-gap').forEach((el) => el.remove());
+      if (!options.predictorRepGap) return;
+      for (const row of Koviko.repGapReport(actions)) {
+        const div = container.children[row.lastIndex];
+        if (!div) continue;
+        const badge = document.createElement('span');
+        badge.className = 'predictor-rep-gap';
+        badge.textContent = `+${row.gap}`;
+        badge.title = `${row.name}: ${row.queued} queued, ${row.available} available — ${row.gap} more rep${row.gap === 1 ? "" : "s"} unlocked`;
+        div.appendChild(badge);
+      }
+    }
+
     async finishUpdate(container, runData) {
       const {
         state,
@@ -2413,6 +2433,53 @@ const Koviko = {
   },
 
   predictor: null,
+
+  // ---- fork: rep-gap report (assist tool, options.predictorRepGap) ------
+  // How many executions of this action the NEXT loop could actually perform
+  // from loop start, or null when the concept doesn't apply. Limited
+  // actions: banked good items (goodTemp resets to good on restart) plus
+  // still-unchecked items. allowed()-capped actions (the training family):
+  // the current cap. Multiparts, travel and plain actions have no
+  // well-defined "unlocked reps" and are skipped. Pure read of live town/
+  // action state — no DOM, callable headless (tests).
+  repGapAvailable(name) {
+    const action = getActionPrototype(name);
+    if (!action) return null;
+    if (action.type === "limited") {
+      const town = towns[action.townNum];
+      if (!town) return null;
+      const v = action.varName;
+      const good = town["good" + v] ?? 0;
+      const unchecked = (town["total" + v] ?? 0) - (town["checked" + v] ?? 0);
+      return good + Math.max(0, unchecked);
+    }
+    if (typeof action.allowed === "function") {
+      try { return action.allowed(); } catch { return null; }
+    }
+    return null;
+  },
+
+  // Aggregate the queue (enabled entries only) and report every action whose
+  // total queued reps fall short of what is currently available. Returns
+  // [{name, queued, available, gap, lastIndex}] with lastIndex = the queue
+  // position of the action's last enabled entry (where the UI badge goes).
+  repGapReport(actions) {
+    const queued = new Map();
+    actions.forEach((entry, i) => {
+      if (!entry || entry.disabled || !entry.loops) return;
+      const rec = queued.get(entry.name) ?? { queued: 0, lastIndex: i };
+      rec.queued += entry.loops;
+      rec.lastIndex = i;
+      queued.set(entry.name, rec);
+    });
+    const report = [];
+    for (const [name, rec] of queued) {
+      const available = this.repGapAvailable(name);
+      if (available == null || rec.queued >= available) continue;
+      report.push({ name, queued: rec.queued, available, gap: available - rec.queued, lastIndex: rec.lastIndex });
+    }
+    return report;
+  },
 
   /** @return {Predictor} */
   get instance() {

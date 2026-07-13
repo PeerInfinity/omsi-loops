@@ -4,7 +4,10 @@ This is an independent fork of [dmchurch/omsi-loops](https://github.com/dmchurch
 (itself a fork of lloyd-delacroix's and omsi6's Idle Loops lineage), built on
 cirne's public 2024-03-11 grant to use their code for any purpose. It adds,
 behind default-off toggles, an **Advanced Automation** queue planner
-(algorithm explained in detail in [AUTOMATION.md](AUTOMATION.md)) and (in
+(algorithm explained in detail in [AUTOMATION.md](AUTOMATION.md)), smaller
+stand-alone assist tools (currently the **rep-gap report**: a predictor-side
+annotation showing when an action has fewer reps queued than the current
+state could execute next loop — Extras menu → predictor settings), and (in
 progress) integration hooks for the Archipelago randomizer, plus a headless
 test suite (`npm test`) that locks all 157 action `varName`s (save-format
 compatibility) and the sim's deterministic behavior.

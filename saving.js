@@ -653,6 +653,12 @@ const options = {
     predictorSlowTimer: 1,
     predictorTrackedStat: "Rsoul",
     predictorBackgroundThread: true,
+    // ---- fork: assist tools (independent of Advanced Automation) ----
+    // Rep-gap report: annotate the action list when an action's total queued
+    // reps are fewer than what the current state could actually execute next
+    // loop (banked + uncheckable items for limited actions, allowed() caps
+    // for training-style actions). Info only; never edits the queue.
+    predictorRepGap: false,
     // ---- fork: testing aids ----
     // Multiplies experience/progress gains ONLY (town progress exp, skill
     // exp, stat exp + talent) at the three engine funnels (finishProgress /
@@ -824,6 +830,7 @@ const isStandardOption = {
     predictorSlowTimer: false,
     predictorTrackedStat: false,
     predictorBackgroundThread: false,
+    predictorRepGap: false,
     expGainMultiplier: false,
     advancedAutomation: false,
     plannerMode: false,
@@ -948,6 +955,11 @@ const optionValueHandlers = {
     predictorBackgroundThread(value, init) {
         if (!value && !init) {
             Koviko.instance.terminateWorker();
+        }
+    },
+    predictorRepGap(value, init) {
+        if (!init && options.predictor) {
+            view.requestUpdate("updateNextActions");
         }
     }
 };

@@ -64,3 +64,11 @@ ul.koviko {display: none}
         transition-duration: 0.1s;
     }
 }
+/* fork: rep-gap report badges (options.predictorRepGap) */
+.predictor-rep-gap {
+    margin-left: 4px;
+    font-weight: bold;
+    font-size: 0.85em;
+    color: var(--predictor-rep-gap-color, #2a9d2a);
+    cursor: help;
+}
