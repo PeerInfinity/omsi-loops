@@ -81,6 +81,43 @@ test("micro-eval measurement + restore idempotence", () => {
 // deepStrictEqual needs a JSON round-trip first
 const j = (x) => JSON.parse(JSON.stringify(x));
 
+test("plReadState surfaces persistent channels (census 2.2), JSON-plain", () => {
+    const ctx = makePlanner(783);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    // shapes present at a fresh state
+    const s0 = sess.read();
+    assert.ok(s0.buffs && typeof s0.buffs === "object", "buffs map present");
+    for (const b of ["Ritual", "Imbuement", "Imbuement2", "Feast", "Aspirant", "Heroism", "Imbuement3"])
+        assert.ok(b in s0.buffs, `buff ${b} present`);
+    assert.ok(s0.soulstones && "perStat" in s0.soulstones && "total" in s0.soulstones, "soulstones shape");
+    for (const st of ["Dex", "Str", "Con", "Spd", "Per", "Cha", "Int", "Luck", "Soul"])
+        assert.ok(st in s0.soulstones.perStat, `soulstone stat ${st} present`);
+    assert.equal(typeof s0.goldInvested, "number");
+    assert.equal(typeof s0.trainingLimits, "number");
+    assert.equal(typeof s0.effectiveTime, "number");
+    assert.ok(s0.stonesUsed && typeof s0.stonesUsed === "object", "stonesUsed present");
+    assert.ok(Array.isArray(s0.dungeons) && s0.dungeons.length === 3, "3 dungeons");
+    assert.ok(Array.isArray(s0.trials) && s0.trials.length === 5, "5 trials");
+    for (const d of s0.dungeons) for (const f of d)
+        assert.ok("completed" in f && "ssChance" in f, "dungeon floor shape");
+    for (const t of s0.trials)
+        assert.ok("highestFloor" in t && "completedTotal" in t, "trial shape");
+    for (const town of s0.towns) assert.ok("mult" in town, "town multipart ledger present");
+    // JSON-plain: the read state IS a JSON string, so a parse is total by
+    // construction — assert the parsed object survives a re-stringify unchanged
+    const raw = ctx.ev("IdlePlanner._internals.plReadState()");
+    assert.equal(typeof raw, "string");
+    assert.equal(JSON.stringify(JSON.parse(raw)), raw, "read state is canonical JSON");
+
+    // nonzero paths surface via live globals
+    ctx.ev("buffs.Ritual.amt = 5; stats.Dex.soulstone = 7; stats.Str.soulstone = 3; goldInvested = 1234");
+    const s1 = sess.read();
+    assert.equal(s1.buffs.Ritual, 5, "buff amt surfaced");
+    assert.equal(s1.soulstones.perStat.Dex, 7);
+    assert.equal(s1.soulstones.total, 10, "soulstone total = sum per stat");
+    assert.equal(s1.goldInvested, 1234, "goldInvested surfaced");
+});
+
 test("travel graph: destination edges from getPossibleTravel, dynamic flagged", () => {
     const ctx = makePlanner(781);
     ctx.ev("townsUnlocked = [0,1,2,3,4,5,6,7,8]");

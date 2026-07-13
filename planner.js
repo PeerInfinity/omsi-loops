@@ -106,7 +106,7 @@ function plReadState() {
     for (const s in skills) skillsOut[s] = { exp: skills[s].exp ?? 0, level: getSkillLevel(s) };
     const townsOut = [];
     for (const town of towns) {
-        const progress = {}, limited = {};
+        const progress = {}, limited = {}, mult = {};
         for (const a of town.totalActionList) {
             if (a.type === "progress") progress[a.varName] = {
                 exp: town["exp" + a.varName] ?? 0, level: town.getLevel(a.varName),
@@ -116,8 +116,10 @@ function plReadState() {
                 checked: town["checked" + a.varName] ?? 0,
                 total: town["total" + a.varName] ?? 0,
             };
+            // multipart persistent ledgers (census 2.2d) — town["total<var>"]
+            else if (a.type === "multipart") mult[a.varName] = town["total" + a.varName] ?? 0;
         }
-        townsOut.push({ index: town.index, progress, limited, suppliesCost: town.suppliesCost });
+        townsOut.push({ index: town.index, progress, limited, mult, suppliesCost: town.suppliesCost });
     }
     const actionsOut = [];
     for (const town of towns) {
@@ -143,11 +145,32 @@ function plReadState() {
             });
         }
     }
+    // ---- persistent-state channels the vocabulary cannot see (census 2.2) ----
+    // All additive + JSON-plain; consumed by nothing at default weights (the
+    // byte-gate proves inertness). Observability before scoring.
+    const buffsOut = {};
+    for (const b of buffList) buffsOut[b] = buffs[b]?.amt ?? 0;
+    const ssPerStat = {}; let ssTotal = 0;
+    for (const s of statList) { const v = stats[s]?.soulstone ?? 0; ssPerStat[s] = v; ssTotal += v; }
+    // dungeon/trial progression (compact — scoring only ever needs deltas):
+    // per floor {completed, ssChance}; per trial {highestFloor, completedTotal}.
+    const dungeonsOut = dungeons.map(d => d.map(f => ({ completed: f.completed ?? 0, ssChance: f.ssChance ?? 0 })));
+    const trialsOut = trials.map(t => {
+        let completedTotal = 0;
+        for (let j = 0; j < t.length; j++) completedTotal += t[j]?.completed ?? 0;
+        return { highestFloor: t.highestFloor ?? 0, completedTotal };
+    });
     return JSON.stringify({
         loops: totals.loops, townsUnlocked: townsUnlocked.slice(),
         skills: skillsOut, towns: townsOut, actions: actionsOut,
         talentTotal: totalTalent,
         baseMana: timeNeededInitial,
+        // persistent channels (census 2.2) — additive, byte-inert at defaults
+        buffs: buffsOut,
+        soulstones: { perStat: ssPerStat, total: ssTotal },
+        goldInvested, trainingLimits, effectiveTime,
+        stonesUsed: { ...stonesUsed },
+        dungeons: dungeonsOut, trials: trialsOut,
     });
 }
 

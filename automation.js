@@ -295,7 +295,7 @@ function renderCompactStats() {
         const st = stats[s];
         totalLevel += st.statLevelExp.level;
         rows.push(`<tr><td>${esc(s)}</td><td>${st.statLevelExp.level}</td>` +
-            `<td>${st.talentLevelExp.level}</td><td>${fmt(st.soulstones ?? 0)}</td></tr>`);
+            `<td>${st.talentLevelExp.level}</td><td>${fmt(st.soulstone ?? 0)}</td></tr>`);
     }
     rows.push(`<tr style="font-weight:bold"><td>Total</td><td>${totalLevel}</td>` +
         `<td>${fmt(Math.floor(totalTalent))}</td><td></td></tr>`);
@@ -352,6 +352,39 @@ function renderPools() {
         : "No limited-item pools discovered yet.";
 }
 
+// Persistent-state channels from the read state (planner.js plReadState,
+// census 2.2). Read-only observability — nothing scores these at defaults.
+function renderResources(pre) {
+    const el = document.getElementById("autoIntResourcesBody");
+    if (!el) return;
+    if (!pre) { el.innerHTML = "No read state yet — run a plan first."; return; }
+    const nz = (o) => Object.fromEntries(Object.entries(o ?? {}).filter(([, v]) => v));
+    const blocks = [];
+    const buffsNz = nz(pre.buffs);
+    if (Object.keys(buffsNz).length) blocks.push(`<div><b>buffs</b> ${esc(objStr(buffsNz))}</div>`);
+    if (pre.soulstones) {
+        const perStat = nz(pre.soulstones.perStat);
+        blocks.push(`<div><b>soulstones</b> total ${fmt(pre.soulstones.total ?? 0)}` +
+            (Object.keys(perStat).length ? ` (${esc(objStr(perStat))})` : "") + `</div>`);
+    }
+    const scalars = { goldInvested: pre.goldInvested, trainingLimits: pre.trainingLimits, effectiveTime: pre.effectiveTime };
+    blocks.push(`<div><b>scalars</b> ${esc(objStr(scalars))}</div>`);
+    const stonesNz = nz(pre.stonesUsed);
+    if (Object.keys(stonesNz).length) blocks.push(`<div><b>stones used</b> ${esc(objStr(stonesNz))}</div>`);
+    // dungeon/trial progression: only show entries with any progress
+    const dRows = (pre.dungeons ?? []).map((d, i) => {
+        const cleared = d.filter(f => f.completed >= 100).length;
+        const touched = d.some(f => f.completed > 0);
+        return touched ? `dungeon${i}: ${cleared}/${d.length} floors cleared` : null;
+    }).filter(Boolean);
+    const tRows = (pre.trials ?? []).map((t, i) =>
+        (t.completedTotal > 0 || t.highestFloor > 0)
+            ? `trial${i}: floor ${t.highestFloor} (${fmt(t.completedTotal)} completed)` : null).filter(Boolean);
+    const prog = dRows.concat(tRows);
+    if (prog.length) blocks.push(`<div><b>dungeons/trials</b> ${esc(prog.join("; "))}</div>`);
+    el.innerHTML = blocks.join("");
+}
+
 function requestDump() {
     if (!worker) return false;
     worker.postMessage({ type: "dump" });
@@ -401,6 +434,7 @@ function onDump(msg) {
             `<div><b>${esc(name)}</b>: ${t.probeable ? (t.requires ?? []).map(reqStr).join(", ") || "reachable now" : "unprobeable (story-gated)"}</div>`).join("");
         tb.innerHTML = rows ? `<div class="auto-scroll">${rows}</div>` : "Nothing locked (or no probe round yet).";
     }
+    renderResources(p.pre);
     const db = document.getElementById("autoIntDivergencesBody");
     if (db) {
         const rows = (msg.divergences ?? []).slice(-25).map(d =>
