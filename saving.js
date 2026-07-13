@@ -685,6 +685,13 @@ const options = {
     // without this the worker (no DOM) always simulated loot-first while the
     // browser default is check-first.
     plannerControlLootFirst: true,
+    // measurement vocabulary. "empirical" (default) = byte-exact today: the
+    // knowledge table forms only from resource-injection probes. "informed"
+    // adds gate-metadata setup (planner-metadata.js) so guild-gated and
+    // negative-reputation actions become measurable (ACTION-CENSUS.md §2.4).
+    // Only affects planning when the master gate is on; empirical keeps the
+    // frozen reference untouched.
+    plannerVocabulary: "empirical",
     plannerWeightTown: 1e12,
     plannerWeightUnlockAction: 1000,
     plannerWeightVisibleAction: 300,
@@ -736,6 +743,7 @@ const stringOptions = [
     "themeVariant",
     "predictorTrackedStat",
     "plannerMode",
+    "plannerVocabulary",
 ];
 
 /** @param {string} option @returns {option is NumericOptionName} */
@@ -840,6 +848,7 @@ const isStandardOption = {
     plannerProbeEvery: false,
     plannerMultiTown: false,
     plannerControlLootFirst: false,
+    plannerVocabulary: false,
     plannerWeightTown: false,
     plannerWeightUnlockAction: false,
     plannerWeightVisibleAction: false,

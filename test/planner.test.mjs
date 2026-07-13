@@ -11,7 +11,7 @@ import fs from "node:fs";
 import { makeContext } from "./harness.mjs";
 
 function makePlanner(seed) {
-    const ctx = makeContext(seed, ["planner.js"]);
+    const ctx = makeContext(seed, ["planner-metadata.js", "planner.js"]);
     ctx.sandbox.__rngGet = ctx.getRng;
     ctx.sandbox.__rngSet = ctx.setRng;
     ctx.ev("IdlePlanner.setRngHooks({ get: __rngGet, set: __rngSet })");
@@ -465,4 +465,74 @@ test("screenMode engine/none: deterministic and pool-equivalent", async () => {
     assert.equal(e2.ticks, e1.ticks, "engine screen: tick counts match");
     const n1 = await run("none", false);
     assert.ok(n1.ticks > 0, "screenMode none completes real loops");
+});
+
+// ---- §11.8 piece 2: gate metadata + informed vocabulary -------------------
+
+test("gate metadata: table loads and surfaces on read-state actions", () => {
+    const ctx = makePlanner(790);
+    const md = ctx.ev("typeof PLANNER_METADATA");
+    assert.equal(md, "object", "planner-metadata.js loaded before planner.js");
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    ctx.ev("townsUnlocked = [0,1,2]");
+    const state = sess.read();
+    const gateOf = (n) => j(state.actions.find(a => a.name === n)?.gate ?? null);
+    assert.deepEqual(gateOf("Dark Magic"), { repMax: 0 }, "Dark Magic repMax:0 gate");
+    assert.deepEqual(gateOf("Apprentice"), { guild: "Crafting" }, "Apprentice guild gate");
+    assert.deepEqual(gateOf("Wander"), null, "ungated action carries null gate");
+});
+
+test("informed vocabulary: a guild action forms a real profile (empirical exec=0)", () => {
+    const ctx = makePlanner(791);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    sess.setQueue([["Wander", 1]]);
+    sess.restart();
+    // unlock towns 0-2, a two-hop route (Start Journey, Continue On) and the
+    // guild-gated action (Apprentice: Drunk >= 40)
+    ctx.ev("townsUnlocked = [0,1,2]");
+    ctx.ev("for (const s in skills) skills[s].levelExp.level = 500;");
+    ctx.ev("towns[2].expDrunk = 1e7;");
+    ctx.ev("adjustAll()");
+    const state = sess.read();
+    const snap = sess.save();
+    const appr = state.actions.find(a => a.name === "Apprentice");
+    assert.ok(appr?.unlocked, "Apprentice unlocked");
+    const needs = sess.needs("Apprentice");
+    // empirical: guild never joined -> canStart (guild === "Crafting") false
+    const emp = IP.measureAction(sess, snap, state, new Map(), appr, needs, { baselineCache: new Map() });
+    assert.equal(emp.exec, 0, "empirical mode cannot satisfy the guild gate");
+    // informed: metadata sets guild for the probe -> Apprentice executes
+    const inf = IP.measureAction(sess, snap, state, new Map(), appr, needs,
+        { baselineCache: new Map(), vocabulary: "informed" });
+    assert.ok(inf.exec > 0, `informed mode measures the guild action (exec ${inf.exec})`);
+    assert.equal(inf.townNum, 2);
+    assert.ok((inf.skillExpPerExec ?? 0) > 0 || Math.abs(inf.goldPerExec) > 0,
+        "a real profile forms (skill exp and/or gold attributed)");
+});
+
+test("informed vocabulary: a negative-reputation action forms a real profile (empirical exec=0)", () => {
+    const ctx = makePlanner(792);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    sess.setQueue([["Wander", 1]]);
+    sess.restart();
+    ctx.ev("townsUnlocked = [0,1]");
+    ctx.ev("for (const s in skills) skills[s].levelExp.level = 200;"); // Magic >= 100
+    ctx.ev("towns[1].expWitch = 46500;");   // Witch ~30: unlocks + keeps manaCost > 0
+    ctx.ev("adjustAll()");
+    const state = sess.read();
+    const snap = sess.save();
+    const dm = state.actions.find(a => a.name === "Dark Magic");
+    assert.ok(dm?.unlocked, "Dark Magic unlocked");
+    // empirical WITH reputation injected (the refreshKnowledge retry path):
+    // reputation 1000 defeats canStart (reputation <= 0)
+    const emp = IP.measureAction(sess, snap, state, new Map(), dm, ["reputation"], { baselineCache: new Map() });
+    assert.equal(emp.exec, 0, "empirical mode with injected reputation cannot start Dark Magic");
+    // informed: the repMax:0 gate clamps reputation and skips its injection
+    const inf = IP.measureAction(sess, snap, state, new Map(), dm, ["reputation"],
+        { baselineCache: new Map(), vocabulary: "informed" });
+    assert.ok(inf.exec > 0, `informed mode measures the negative-rep action (exec ${inf.exec})`);
+    assert.ok(inf.repPerExec < 0, `Dark Magic spends reputation (repPerExec ${inf.repPerExec})`);
+    assert.ok((inf.skillExpPerExec ?? 0) > 0, "Dark skill exp attributed");
 });

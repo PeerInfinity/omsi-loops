@@ -142,6 +142,10 @@ function plReadState() {
                 cost: plAdjCost(a.name),
                 skillsGained: a.skills ? Object.keys(a.skills) : [],
                 statsUsed: a.stats ? Object.keys(a.stats) : [],
+                // structural gate the resource prober can't express (§11.8
+                // piece 2); static metadata, consumed by nothing at default
+                // vocabulary — feeds informed measurement + §11.10 traversal
+                gate: gateFor(a.name),
             });
         }
     }
@@ -459,6 +463,29 @@ function plInjectResources(json) {
     }
 }
 
+// ---- gate metadata (informed vocabulary; §11.8 piece 2) -------------------
+// Declarative per-action gates the resource prober cannot express, defined in
+// planner-metadata.js (loaded before this file; typeof-guarded so an unloaded
+// table degrades to "no gates"). See ACTION-CENSUS.md §2.4.
+function plMetadata() {
+    return (typeof PLANNER_METADATA !== "undefined") ? PLANNER_METADATA : { gates: {} };
+}
+function gateFor(name) {
+    return plMetadata().gates?.[name] ?? null;
+}
+// Satisfy the non-resource gates the resource prober can't (informed mode).
+// Called AFTER plInjectResources inside the probe loop, so it overrides any
+// injected/prefix reputation. v1 handles guild membership and reputation upper
+// bounds — both pure state the probe can set without simulating a multi-rank
+// guild join. The other declared gates (soulstoneSac / talentFloor /
+// buffFloor / combat-trial power bounds / timeMax) are left for §11.10 setup
+// chains; an action carrying only those still measures exec=0.
+function plApplyGate(g) {
+    if (!g) return;
+    if (g.guild !== undefined) guild = g.guild;
+    if (g.repMax !== undefined) resources.reputation = g.repMax;
+}
+
 // Full-state snapshot for determinism/fidelity hashes (byte-compatible with
 // the v0 experiments harness, so the 500-loop result is directly comparable).
 function plSnapshot() {
@@ -543,11 +570,12 @@ function emptyProfile() {
 
 // Run one rolled-back engine loop with the given queue; return run record + post state.
 // `inject` (measurement only): resources/mana granted right after restart.
-function evalLoop(sess, snap, queue, inject = null) {
+function evalLoop(sess, snap, queue, inject = null, gate = null) {
     sess.restore(snap);
     sess.setQueue(queue);
     sess.restart();
     if (inject) plInjectResources(JSON.stringify(inject));
+    if (gate) plApplyGate(gate);   // informed vocab only; null for every existing caller
     const r = sess.runLoop();
     const post = sess.read();
     return { r, post };
@@ -734,8 +762,20 @@ function measureAction(sess, snap, state, know, a, needs = [], opts = {}) {
         ? (bank > 0 ? bank : Math.min(Math.max(1, (lim?.total ?? 0) - (lim?.checked ?? 0)), 5))
         : 12;
     const loops = a.allowed != null ? Math.min(a.allowed, n) : n;
+    // informed vocabulary: satisfy the action's structural gate (guild
+    // membership / reputation upper bound) so it becomes measurable — the
+    // census 2.4 class that measures exec=0 from a resource-only probe. gate
+    // is applied inside evalLoop (after injection) to both baseline and full
+    // runs, so the prefix-baseline subtraction stays consistent.
+    const gate = opts.vocabulary === "informed" ? gateFor(a.name) : null;
     const inject = { mana: MEASURE_MANA };
-    for (const res of needs) if (res !== "mana") inject[res] = 1000;
+    for (const res of needs) {
+        if (res === "mana") continue;
+        // a repMax gate means reputation must stay <= bound; injecting it
+        // would re-block the action (positive injection defeats the clamp)
+        if (gate?.repMax !== undefined && res === "reputation") continue;
+        inject[res] = 1000;
+    }
     if ((a.goldCost ?? 0) > 0 && inject.gold === undefined) inject.gold = 1000 + a.goldCost;
 
     const p = know.get(a.name) ?? emptyProfile();
@@ -766,16 +806,16 @@ function measureAction(sess, snap, state, know, a, needs = [], opts = {}) {
     // 1-3 baseline loops per town, not one per action
     let baseRun = null;
     if (route) {
-        const cacheKey = p.routeKey + "|" + JSON.stringify(inject);
+        const cacheKey = p.routeKey + "|" + JSON.stringify(inject) + (gate ? "|" + JSON.stringify(gate) : "");
         baseRun = baselineCache?.get(cacheKey);
         if (!baseRun) {
-            baseRun = evalLoop(sess, snap, route.entries, inject);
+            baseRun = evalLoop(sess, snap, route.entries, inject, gate);
             baselineCache?.set(cacheKey, baseRun);
         }
     }
 
     const probeQueue = route ? [...route.entries, [a.name, Math.max(1, loops)]] : [[a.name, Math.max(1, loops)]];
-    const { r, post } = evalLoop(sess, snap, probeQueue, inject);
+    const { r, post } = evalLoop(sess, snap, probeQueue, inject, gate);
     const exec = execCountOf(r, a.name);
     p.exec = exec;
     if (exec > 0) {
@@ -928,6 +968,7 @@ function recordDivergence(divergenceLog, state, a, p) {
 async function refreshKnowledge(sess, snap, state, know, opts = {}) {
     const staleAfter = opts.staleAfter ?? 40;
     const multiTown = opts.multiTown ?? true;
+    const vocabulary = opts.vocabulary ?? "empirical";
     const unlocked = state.actions.filter(x => x.visible && x.unlocked && x.travelNum === 0);
     const needsMeasure = unlocked.filter(a => {
         const p = know.get(a.name);
@@ -960,11 +1001,11 @@ async function refreshKnowledge(sess, snap, state, know, opts = {}) {
         sess.restore(snap);
         const needs = sess.needs(a.name);
         if (opts.seedFromPredictor) await seedPredictorPrior(sess, snap, know, a, multiTown ? state : null);
-        const p = measureAction(sess, snap, state, know, a, needs, { baselineCache, multiTown });
+        const p = measureAction(sess, snap, state, know, a, needs, { baselineCache, multiTown, vocabulary });
         p.gatedOn = needs;
         // still gated or vacuous: retry with the universal consumable injected
         if (p.exec === 0 || isVacuous(p)) {
-            const p2 = measureAction(sess, snap, state, know, a, [...needs, "gold", "reputation"], { baselineCache, multiTown });
+            const p2 = measureAction(sess, snap, state, know, a, [...needs, "gold", "reputation"], { baselineCache, multiTown, vocabulary });
             p2.gatedOn = needs;
         }
         const pf = know.get(a.name);
@@ -1931,7 +1972,7 @@ async function planRound(sess, P) {
     perf.probe += Date.now() - tPhase; tPhase = Date.now();
     await refreshKnowledge(sess, snap, pre, P.know, {
         seedFromPredictor: P.seedFromPredictor, divergenceLog: P.divergenceLog,
-        multiTown: P.multiTown,
+        multiTown: P.multiTown, vocabulary: P.vocabulary,
     });
     sess.restore(snap);
     perf.know += Date.now() - tPhase; tPhase = Date.now();
@@ -2024,6 +2065,10 @@ function newPlanningState(opts = {}) {
         probeEvery: opts.probeEvery ?? 1,
         seedFromPredictor: opts.seedFromPredictor ?? false,
         multiTown: opts.multiTown ?? true,
+        // "empirical" (default, byte-exact) | "informed" (gate-metadata setup
+        // prefixes; §11.8 piece 2). Not serialized — the resuming caller's
+        // param wins, like weights/screenMode.
+        vocabulary: opts.vocabulary ?? "empirical",
         divergenceLog: [],
     };
 }
@@ -2035,11 +2080,12 @@ function newPlanningState(opts = {}) {
 // ---------------------------------------------------------------------------
 async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode = "predictor",
                                probeEvery = 1,
-                               seedFromPredictor = false, multiTown = true, targetTown = 1,
+                               seedFromPredictor = false, multiTown = true, vocabulary = "empirical",
+                               targetTown = 1,
                                verbose = false, onLoop = null, resume = null } = {}) {
     const t0 = Date.now();
     const sess = new Session();
-    const P = newPlanningState({ weights, screenK, screenMode, probeEvery, seedFromPredictor, multiTown });
+    const P = newPlanningState({ weights, screenK, screenMode, probeEvery, seedFromPredictor, multiTown, vocabulary });
     const trace = [];
     const milestones = {};
     let cumTicks = 0;

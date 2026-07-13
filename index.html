@@ -139,6 +139,17 @@
                                 so plans touching them are advisory rather than exactly replayed.</div>
                             </label>
                             <br>
+                            <label class="showthat" for="plannerVocabularyInput">Measurement vocabulary
+                                <div class="showthis" style="width:260px">Empirical (default): the knowledge table forms only from
+                                resource-injection probes — byte-exact today. Informed: adds gate-metadata setup so guild-gated and
+                                negative-reputation actions become measurable (the census 2.4 class the resource prober can't reach).
+                                Pure-empirical survives for Archipelago; informed reads the planner's own game metadata.</div>
+                            </label>
+                            <select id='plannerVocabularyInput' onchange='setOption("plannerVocabulary", this.value)'>
+                                <option value='empirical'>Empirical (probe-only, byte-exact)</option>
+                                <option value='informed'>Informed (gate-metadata setup)</option>
+                            </select>
+                            <br>
                             <input id='plannerControlLootFirstInput' type='checkbox' checked onchange='setOption("plannerControlLootFirst", this.checked)'>
                             <label class='showthat' for='plannerControlLootFirstInput'>Control "Lootable first" checkboxes
                                 <div class='showthis' style="width:260px">ON: whenever it plans, the planner sets every resource's
@@ -740,6 +751,7 @@
     <script src="challenges.js"></script>
     <script src="hotkeys.js"></script>
     <script src="predictor.js"></script>
+    <script src="planner-metadata.js"></script>
     <script src="planner.js"></script>
     <script src="automation.js"></script>
     <script src="views/views.js"></script>
