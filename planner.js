@@ -2805,9 +2805,123 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode
     };
 }
 
+// ---------------------------------------------------------------------------
+// Buy Mana / zone-1 economy optimiser (assist tool; §11.6 ladder, user scope
+// 2026-07-13). Pure (sess, snap, queue[[name,loops]]) -> {queue, report}.
+// NEVER runs in the reference path — an opt-in assist over the PLAYER's live
+// queue, so it is byte-inert against the frozen acceptance gate by
+// construction. It optimises the town-0 mana<->gold economy:
+//   REORDER  gold batches before each conversion;
+//   REMOVE   redundant / thin (<=overhead) Buy Mana conversions;
+//   INSERT / SPLIT a gold harvest to add an INTERMEDIATE conversion when the
+//            loop budget would otherwise starve the harvest;
+//   MERGE    unnecessarily-split entries (output is coalesced);
+//   RESERVE  gold for downstream purchases (a starved purchase is a throughput
+//            failure, so the tool keeps its gold and converts only the excess).
+// The engine rollout is the oracle, so ordering constraints (travel terminal,
+// funding order) are enforced IMPLICITLY: a mis-ordered action lands in the
+// wrong town / can't start -> unmet reps -> the move is rejected.
+//
+// Objective (mana units), lexicographic minimise:
+//   (1) unmet reps of every NON-converter queued action (throughput);
+//   (2) unconvertedGold*rate + converter mana spent (overhead).
+// Best-improvement hill climb (deterministic: lexicographically-min neighbour,
+// ties by generation order).
+function classifyEconomy(p) {
+    if (!p || p.exec === 0) return "other";
+    if (p.manaPerGold > 0) return "converter";
+    if ((p.goldPerExec ?? 0) < 0) return "purchase";              // gold sink
+    if ((p.goldPerExec ?? 0) > 0) return "goldGen";
+    if ((p.manaPerExec ?? 0) > (p.ticksPerExec ?? 0)) return "manaGen";
+    return "other";
+}
+// Measure the queue's distinct actions (+ enough to detect a converter) into
+// `know`, applying the same converter post-detection refreshKnowledge uses.
+function economyProfiles(sess, snap, state, names, know) {
+    const byName = new Map(state.actions.map(a => [a.name, a]));
+    const baselineCache = new Map();
+    for (const name of names) {
+        if (know.has(name)) continue;
+        const a = byName.get(name);
+        if (!a) continue;
+        sess.restore(snap);
+        const needs = sess.needs(name);
+        measureAction(sess, snap, state, know, a, needs, { baselineCache, multiTown: false });
+        const pf = know.get(name);
+        if (pf && pf.exec > 0 && pf.manaPerExec > 0 && pf.goldPerExec < 0)
+            pf.manaPerGold = pf.manaPerExec / (-pf.goldPerExec);
+    }
+}
+function optimizeEconomy(sess, snap, queue, opts = {}) {
+    const know = opts.know ?? new Map();
+    sess.restore(snap);
+    const state = sess.read();
+    const queued = queue.map(([n, l]) => [n, l]);
+
+    // classify the queued actions; detect a converter to insert (queue's own
+    // converter, else the best unlocked gold->mana action — measure the small
+    // set of unlocked goldCost purchases/converters to find it).
+    economyProfiles(sess, snap, state, [...new Set(queued.map(([n]) => n))], know);
+    const kindOf = (name) => classifyEconomy(know.get(name));
+    let convName = queued.map(([n]) => n).find(n => kindOf(n) === "converter") ?? null;
+    if (!convName) {
+        const cand = state.actions.filter(a => a.unlocked && a.goldCost > 0).map(a => a.name);
+        economyProfiles(sess, snap, state, cand, know);
+        const c = converterOf(state, know);
+        if (c) convName = c.name;
+    }
+    const rate = (convName && know.get(convName)?.manaPerGold) || 50;
+
+    const rollout = (q) => { sess.restore(snap); sess.setQueue(q); sess.restart(); return sess.runLoop(); };
+    const readout = (r) => {
+        let failed = 0, convExecs = 0, convMana = 0;
+        for (const e of r.lastExec ?? []) {
+            if (kindOf(e.name) === "converter") { convExecs += e.loops - e.loopsLeft; convMana += e.manaUsed ?? 0; }
+            else failed += Math.max(0, e.loopsLeft);
+        }
+        const unconvGold = Math.max(0, r.lastResources?.gold ?? 0);
+        return { failed, convExecs, unconvGold, econ: unconvGold * rate + convMana };
+    };
+    const cmp = (a, b) => (a.failed - b.failed) || (a.econ - b.econ);
+    const coalesce = (q) => { const o = []; for (const [n, l] of q) { const p = o[o.length - 1]; if (p && p[0] === n) p[1] += l; else o.push([n, l]); } return o; };
+
+    function* neighbours(q) {
+        const n = q.length;
+        for (let i = 0; i < n; i++) for (let j = 0; j <= n; j++) {
+            if (j === i || j === i + 1) continue;
+            const c = q.map(e => e.slice()); const [e] = c.splice(i, 1); c.splice(j > i ? j - 1 : j, 0, e); yield c;
+        }
+        for (let i = 0; i + 1 < n; i++) { const c = q.map(e => e.slice()); [c[i], c[i + 1]] = [c[i + 1], c[i]]; yield c; }
+        for (let i = 0; i < n; i++) if (kindOf(q[i][0]) === "converter") {
+            const c = q.map(e => e.slice()); if (c[i][1] > 1) c[i][1] -= 1; else c.splice(i, 1); yield c;
+        }
+        if (convName) {
+            for (let j = 0; j <= n; j++) { const c = q.map(e => e.slice()); c.splice(j, 0, [convName, 1]); yield c; }
+            for (let i = 0; i < n; i++) if (kindOf(q[i][0]) === "goldGen") {
+                const [name, loops] = q[i];
+                for (let k = 1; k < loops; k++) { const c = q.map(e => e.slice()); c.splice(i, 1, [name, k], [convName, 1], [name, loops - k]); yield c; }
+            }
+        }
+    }
+
+    let cur = coalesce(queued.map(e => e.slice()));
+    let curW = readout(rollout(cur));
+    const before = { ...curW };
+    const maxMoves = opts.maxMoves ?? 40;
+    let moves = 0, evals = 1;
+    while (moves < maxMoves) {
+        let best = null, bestW = curW;
+        for (const nb of neighbours(cur)) { evals++; const w = readout(rollout(nb)); if (cmp(w, bestW) < 0) { best = nb; bestW = w; } }
+        if (!best) break;
+        cur = coalesce(best); curW = readout(rollout(cur)); moves++;
+    }
+    return { queue: cur, report: { before, after: curW, moves, evals, converter: convName, rate } };
+}
+
 return {
     DEFAULT_WEIGHTS, MEASURE_MANA,
     Session, newPlanningState, planRound, runStandalone,
+    optimizeEconomy, classifyEconomy,
     serializePlanningState, restorePlanningState,
     setRngHooks, setEvalPool, confirmCandidate, evalLoopOnly,
     // exposed for tests and the automation controller
