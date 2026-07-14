@@ -292,26 +292,29 @@ const menuView = Views.registerView("menu", {
                     <b>Automation (fork)</b>
                     <br>
                     <input id='basicAutomationInput' type='checkbox' onchange='setOption("basicAutomation", this.checked)'>
-                    <label class='showthat' for='basicAutomationInput'>Enable basic automation
-                        <div class='showthis'>Fork addition: lightweight per-loop assist tools over your live queue &mdash;
-                        rep-gap badges, auto-add unlocked reps, and the Buy Mana optimiser (with more to come). Each has its
-                        own toggle in the <b>Basic automation</b> section of the <b>Automation</b> view (Stats panel); this
-                        master switch gates them all. Independent of the Advanced planner below.</div>
+                    <label class='showthat' for='basicAutomationInput'>Show basic automation
+                        <div class='showthis'>Fork addition: reveals the <b>Basic automation</b> section in the
+                        <b>Automation</b> view (Stats panel) &mdash; lightweight per-loop assist tools over your live queue
+                        (rep-gap badges, auto-add unlocked reps, Buy Mana optimiser). Turn the features on with the
+                        <b>Enable basic automation</b> checkbox inside that section (each feature also has its own toggle).
+                        Nothing runs while this is unshown. Independent of the Advanced planner below.</div>
                     </label>
                     <div id='basicAutomationSettings' style='display:none'>
                         Basic automation settings live in the <b>Automation</b> view in the Stats panel
-                        (a third option next to Regular/Radar while this is enabled).
+                        (a third option next to Regular/Radar while this is shown).
                     </div>
                     <br>
                     <input id='advancedAutomationInput' type='checkbox' onchange='setOption("advancedAutomation", this.checked)'>
-                    <label class='showthat' for='advancedAutomationInput'>Enable advanced automation
-                        <div class='showthis'>Fork addition: a generic queue planner that learns the game by probing and
-                        measurement in a background worker, then builds the action queue for you. All sub-features stay
-                        inert until a mode is selected in the Automation view. Manual queue editing always wins.</div>
+                    <label class='showthat' for='advancedAutomationInput'>Show advanced automation
+                        <div class='showthis'>Fork addition: reveals the <b>Advanced automation settings</b> (a generic queue
+                        planner that learns the game by probing/measurement in a background worker and builds the queue for
+                        you) in the <b>Automation</b> view. Turn it on with the <b>Enable advanced automation</b> checkbox
+                        inside that section, then pick a mode. Nothing runs while this is unshown. Manual queue editing
+                        always wins.</div>
                     </label>
                     <div id='advancedAutomationSettings' style='display:none'>
                         All planner settings and live internal data live in the <b>Automation</b> view
-                        in the Stats panel (a third option next to Regular/Radar while this is enabled).
+                        in the Stats panel (a third option next to Regular/Radar while this is shown).
                     </div>
                 </div>
                 <div id='forkTestingSection'>

@@ -42,7 +42,13 @@ let lastError = null;
 let optimizeSuggestion = null;  // last {queue, report} from the worker
 let awaitingOptimize = false;
 
-const isEnabled = () => !!options.advancedAutomation && options.plannerMode !== "off";
+// Each automation tier has TWO flags: SHOWN (Extras "Show …", controls the
+// Automation-view section + radio visibility) and ENABLED (in-section
+// "Enable …", controls whether the features run). A tier acts only when it is
+// BOTH shown and enabled — so nothing runs while its UI is hidden.
+const basicOn = () => !!options.basicAutomation && !!options.basicAutomationEnabled;
+const advancedOn = () => !!options.advancedAutomation && !!options.advancedAutomationEnabled;
+const isEnabled = () => advancedOn() && options.plannerMode !== "off";
 
 function currentWeights() {
     return {
@@ -187,7 +193,7 @@ function onResult(msg) {
     suggestion = msg;
     const div = msg.divergenceCount ? `, ${msg.divergenceCount} predictor divergence${msg.divergenceCount === 1 ? "" : "s"}` : "";
     setStatus(`plan: ${msg.label} (score ${Math.round(msg.score)}, ${(msg.wallMs / 1000).toFixed(1)}s${div})`);
-    if (options.advancedAutomation && options.plannerMode === "auto") {
+    if (advancedOn() && options.plannerMode === "auto") {
         installQueue(msg.queue);
         resumeIfPlannerPaused();
     }
@@ -214,8 +220,8 @@ function interceptPrepareRestart(curAction) {
     // guarded no-op when both are on. Fire-and-forget: the optimiser proposal
     // installs when the worker responds (next loop); never pauses, so it can't
     // soft-lock the game. Skipped while an optimise request is in flight.
-    if (options.basicAutomation && options.autoAddReps && options.autoAddRepsAuto) applyRepTopUps("loop boundary");
-    if (options.basicAutomation && options.economyOptimizer && options.economyOptimizerAuto) requestOptimize("loop boundary");
+    if (basicOn() && options.autoAddReps && options.autoAddRepsAuto) applyRepTopUps("loop boundary");
+    if (basicOn() && options.economyOptimizer && options.economyOptimizerAuto) requestOptimize("loop boundary");
     if (!isEnabled()) return false;
 
     // Manual queue editing always wins: if the queue at this boundary is not
@@ -254,6 +260,7 @@ function interceptPrepareRestart(curAction) {
 
 function planNow() {
     if (!options.advancedAutomation) return;
+    if (!options.advancedAutomationEnabled) { setStatus("enable advanced automation first"); return; }
     if (options.plannerMode === "off") {
         setStatus("set a planner mode (Suggest/Auto) first");
         return;
@@ -262,7 +269,7 @@ function planNow() {
 }
 
 function applySuggestion() {
-    if (!options.advancedAutomation) return;
+    if (!advancedOn()) return;
     if (!suggestion) { setStatus("no suggestion yet — use Plan Now"); return; }
     installQueue(suggestion.queue);
     setStatus(`applied: ${suggestion.label}`);
@@ -301,7 +308,7 @@ function onOptimizeResult(msg) {
 
 // button: compute a proposal now (suggest-first — does not install).
 function optimizeBuyMana() {
-    if (!options.basicAutomation || !options.economyOptimizer) { setStatus("enable the Buy Mana optimiser first"); return; }
+    if (!basicOn() || !options.economyOptimizer) { setStatus("enable the Buy Mana optimiser first"); return; }
     requestOptimize("manual");
 }
 
@@ -324,7 +331,7 @@ function applyOptimize() {
 // badges are the display surface; over-queued/multipart/one-shot actions are
 // left untouched (Koviko.applyRepTopUps).
 function applyRepTopUps(reason = "manual") {
-    if (!options.basicAutomation || !options.autoAddReps) { setStatus("enable auto-add reps first"); return; }
+    if (!basicOn() || !options.autoAddReps) { setStatus("enable auto-add reps first"); return; }
     const ups = Koviko.applyRepTopUps(actions.next);
     if (!ups.length) { setStatus("rep top-ups: nothing to add"); return; }
     view.requestUpdate("updateNextActions");
@@ -571,15 +578,30 @@ function onDump(msg) {
 
 // ---- option handlers (registered here so saving.js stays untouched beyond
 // the option declarations) --------------------------------------------------
+// basicAutomation = SHOWN: drives the Basic section + radio visibility.
 optionValueHandlers.basicAutomation = (value, init) => {
     refreshSectionVisibility();
-    // rep-gap badges depend on the basic master — repaint the predictor list
+    // rep-gap badges depend on shown — repaint the predictor list
     if (!init && options.predictor) view.requestUpdate("updateNextActions");
     if (!value) optimizeSuggestion = null;
 };
+// basicAutomationEnabled = ENABLED: whether the basic features run. Does NOT
+// touch visibility — only repaints the badges (their gate includes it) and
+// drops a stale Buy Mana proposal when paused.
+optionValueHandlers.basicAutomationEnabled = (value, init) => {
+    if (!init && options.predictor) view.requestUpdate("updateNextActions");
+    if (!value) optimizeSuggestion = null;
+};
+// advancedAutomation = SHOWN: drives the Advanced settings/internals + radio.
 optionValueHandlers.advancedAutomation = (value, init) => {
     refreshSectionVisibility();
     if (!value) { shutdownWorker(); suggestion = null; installedQueueJSON = null; if (!init) setStatus("off"); }
+};
+// advancedAutomationEnabled = ENABLED: whether the planner acts. Off disengages
+// it (unpause the game if it was holding a boundary, forget the installed queue)
+// without hiding anything; isEnabled() gates the rest.
+optionValueHandlers.advancedAutomationEnabled = (value, init) => {
+    if (!value) { resumeIfPlannerPaused(); installedQueueJSON = null; if (!init) setStatus("advanced automation disabled"); }
 };
 optionValueHandlers.plannerMode = (value, init) => {
     if (value === "off") { shutdownWorker(); installedQueueJSON = null; if (!init) setStatus("off"); }

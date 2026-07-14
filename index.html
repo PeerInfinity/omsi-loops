@@ -111,6 +111,13 @@
                             "Enable basic automation" (Extras menu) on. Independent of the Advanced planner.</div>
                         </summary>
                         <div id="basicAutomationBody" style="text-align:left">
+                            <input id='basicAutomationEnabledInput' type='checkbox' onchange='setOption("basicAutomationEnabled", this.checked)'>
+                            <label class='showthat' for='basicAutomationEnabledInput'><b>Enable basic automation</b>
+                                <div class='showthis' style="width:280px">Master on/off for the basic assist features below. Off pauses
+                                them all (this section stays visible so you can re-enable). Nothing runs unless "Show basic automation"
+                                (Extras menu) is also on. On by default when a tier is first shown.</div>
+                            </label>
+                            <hr>
                             <input id='predictorRepGapInput' type='checkbox' onchange='setOption("predictorRepGap", this.checked)'>
                             <label class='showthat' for='predictorRepGapInput'>Report rep gaps (badges)
                                 <div class='showthis' style="width:280px">Annotates the action list when an action's queued reps differ
@@ -165,6 +172,13 @@
                             on/off switch and the experience gain multiplier stay in the Extras menu.</div>
                         </summary>
                         <div id="automationSettingsBody" style="text-align:left">
+                            <input id='advancedAutomationEnabledInput' type='checkbox' onchange='setOption("advancedAutomationEnabled", this.checked)'>
+                            <label class='showthat' for='advancedAutomationEnabledInput'><b>Enable advanced automation</b>
+                                <div class='showthis' style="width:280px">Master on/off for the planner. Off = it won't plan or install
+                                (this section stays visible so you can re-enable). Nothing runs unless "Show advanced automation" (Extras
+                                menu) is also on and a mode is set below. On by default when first shown.</div>
+                            </label>
+                            <hr>
                             <label class="showthat" for="plannerModeInput">Planner mode
                                 <div class="showthis" style="width:260px">off = planner idle. Suggest = compute a plan
                                 each loop boundary but only display it (Apply Suggestion installs it). Auto = the

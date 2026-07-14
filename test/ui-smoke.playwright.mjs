@@ -41,16 +41,21 @@ await page.waitForTimeout(200);
 const statRows = await page.$$eval("#autoStatsBody tr", rr => rr.length);
 check(statRows >= 9, `compact stats rows (${statRows})`);
 
-// 4b. basic + advanced sub-sections show separately under their masters
+// 4b. "Show" masters reveal each section; each holds its own in-section "Enable"
+//     checkbox + the feature toggles.
 check(await page.$eval("#autoViewBasicSettings", el => getComputedStyle(el).display !== "none"),
-    "Basic automation section visible while basic master on");
+    "Basic automation section visible while basic master shown");
 check(await page.$eval("#autoViewSettings", el => getComputedStyle(el).display !== "none"),
-    "Advanced settings section visible while advanced master on");
-// the moved basic inputs live under the Basic section, not Advanced
-for (const id of ["predictorRepGapInput", "autoAddRepsInput", "economyOptimizerInput"]) {
+    "Advanced settings section visible while advanced master shown");
+for (const id of ["basicAutomationEnabledInput", "predictorRepGapInput", "autoAddRepsInput", "economyOptimizerInput"]) {
     check(await page.$eval(`#autoViewBasicSettings #${id}`, () => true).catch(() => false),
         `${id} lives in the Basic automation section`);
 }
+check(await page.$eval(`#autoViewSettings #advancedAutomationEnabledInput`, () => true).catch(() => false),
+    "advancedAutomationEnabledInput lives in the Advanced settings section");
+// "Enable" defaults on, so showing a tier enables it (features run when shown+enabled)
+check(await page.evaluate(() => options.basicAutomationEnabled === true && options.advancedAutomationEnabled === true),
+    "enable flags default on (show => enabled in one step)");
 
 // 5. settings section holds the moved inputs; Extras hint replaced the block
 for (const id of ["plannerModeInput", "plannerScreenKInput", "plannerWeightTravelReliefInput", "plannerWeightHeadroomInput",
@@ -197,32 +202,48 @@ check(await page.$eval("#autoAddRepsAutoInput", el => (setOption("autoAddRepsAut
     "auto-apply-at-boundary checkbox syncs from loadOption");
 await page.evaluate(() => setOption("autoAddRepsAuto", false));
 
-// 9e. functional master gate: with basicAutomation OFF the feature is inert
-//     even though autoAddReps is on (symmetric with advanced automation).
-const gated = await page.evaluate(() => {
-    setOption("basicAutomation", false);
+// 9e. the ENABLE axis (in-section checkbox): disabling makes features inert but
+//     leaves the section + radio visible (the whole point of the split). Also
+//     the SHOW axis: hiding makes it inert too (shown && enabled required).
+const enGate = await page.evaluate(() => {
+    setOption("basicAutomationEnabled", false);   // shown stays on
     actions.clearActions();
-    actions.addAction("Smash Pots", 50);   // 100 available from 9d's pool
+    actions.addAction("Smash Pots", 50);          // 100 available from 9d's pool
     AdvancedAutomation.applyRepTopUps();
-    const loops = actions.next.find(a => a.name === "Smash Pots")?.loops;
-    const status = document.getElementById("plannerStatus")?.textContent ?? "";
-    setOption("basicAutomation", true);     // restore for persistence block
-    return { loops, status };
+    return {
+        loops: actions.next.find(a => a.name === "Smash Pots")?.loops,
+        status: document.getElementById("plannerStatus")?.textContent ?? "",
+        sectionShown: getComputedStyle(document.getElementById("autoViewBasicSettings")).display !== "none",
+        radioShown: getComputedStyle(document.getElementById("automationStatsWrap")).display !== "none",
+    };
 });
-check(gated.loops === 50, "basic master OFF: auto-add is inert (no top-up)");
-check(/enable auto-add reps first/.test(gated.status), "basic master OFF: reports it is disabled");
+check(enGate.loops === 50, "enable OFF: auto-add is inert (no top-up)");
+check(/enable auto-add reps first/.test(enGate.status), "enable OFF: reports it is disabled");
+check(enGate.sectionShown, "enable OFF: Basic section STAYS visible (not hidden)");
+check(enGate.radioShown, "enable OFF: Automation radio STAYS visible");
+// disabling the Enable flag does not touch the "Show" state (they're independent)
+check(await page.evaluate(() => options.basicAutomation === true),
+    "enable OFF: 'Show' state unchanged (tier still shown)");
+await page.evaluate(() => setOption("basicAutomationEnabled", true));   // restore
 
-// 10. persistence: settings survive save()/reload (incl. the targeted list)
-await page.evaluate(() => { setOption("basicAutomation", true); setOption("advancedAutomation", true); setOption("economyOptimizer", true); setOption("autoAddReps", true); setOption("autoAddRepsAuto", true); setOption("plannerWeightHeadroom", 2.5); save(); });
+// 10. persistence: settings survive save()/reload (incl. the targeted list).
+//     Flip the two enable flags to non-default (false) to prove they round-trip.
+await page.evaluate(() => { setOption("basicAutomation", true); setOption("advancedAutomation", true); setOption("basicAutomationEnabled", false); setOption("advancedAutomationEnabled", false); setOption("economyOptimizer", true); setOption("autoAddReps", true); setOption("autoAddRepsAuto", true); setOption("plannerWeightHeadroom", 2.5); save(); });
 await page.reload({ waitUntil: "load" });
 await page.waitForFunction(() => typeof options !== "undefined", null, { timeout: 20000 });
 await page.waitForTimeout(1000);
 check(await page.evaluate(() => options.plannerWeightHeadroom === 2.5 && options.advancedAutomation === true),
     "options persist through reload");
 check(await page.evaluate(() => options.basicAutomation === true),
-    "basic automation master persists through reload");
+    "basic automation shown master persists through reload");
 check(await page.$eval("#basicAutomationInput", el => el.checked === true),
-    "basic automation checkbox restored on boot (Extras)");
+    "basic 'Show' checkbox restored on boot (Extras)");
+check(await page.evaluate(() => options.basicAutomationEnabled === false && options.advancedAutomationEnabled === false),
+    "enable flags (flipped to false) persist through reload");
+check(await page.$eval("#basicAutomationEnabledInput", el => el.checked === false),
+    "in-section 'Enable basic' checkbox restored on boot");
+check(await page.$eval("#advancedAutomationEnabledInput", el => el.checked === false),
+    "in-section 'Enable advanced' checkbox restored on boot");
 check(await page.$eval("#autoViewBasicSettings", el => getComputedStyle(el).display !== "none"),
     "Basic automation section visible on boot with master on");
 check(await page.evaluate(() => options.economyOptimizer === true),

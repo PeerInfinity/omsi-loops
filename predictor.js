@@ -2013,15 +2013,15 @@ const Koviko = {
       });
     }
     /** @param {HTMLElement} container  @param {PredictorRunData} runData  */
-    // fork: rep-gap badges (basicAutomation master gate + predictorRepGap).
-    // Clears previous badges unconditionally so toggling either option off
-    // leaves no residue; when both on, appends a "+N" badge to the last
+    // fork: rep-gap badges (basic automation shown+enabled + predictorRepGap).
+    // Clears previous badges unconditionally so toggling any of them off
+    // leaves no residue; when all on, appends a "+N" badge to the last
     // enabled entry of every under-queued
     // action (Koviko.repGapReport). UI-thread only — never runs in the
     // worker (guarded at the call site by `container`).
     renderRepGaps(actions, container) {
       container.querySelectorAll('.predictor-rep-gap').forEach((el) => el.remove());
-      if (!options.basicAutomation || !options.predictorRepGap) return;
+      if (!options.basicAutomation || !options.basicAutomationEnabled || !options.predictorRepGap) return;
       for (const row of Koviko.repGapReport(actions)) {
         const div = container.children[row.lastIndex];
         if (!div) continue;

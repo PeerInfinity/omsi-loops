@@ -654,12 +654,19 @@ const options = {
     predictorTrackedStat: "Rsoul",
     predictorBackgroundThread: true,
     // ---- fork: Basic automation (assist tools) ----
-    // Master gate for the basic assist features below (rep-gap badges, auto-add
-    // reps, Buy Mana optimiser), parallel to advancedAutomation. Off = all basic
-    // features inert AND their Automation-view section hidden; each feature also
-    // needs its own toggle on. Default off (byte-inert). The Automation-view
-    // radio shows when EITHER basicAutomation or advancedAutomation is on.
+    // Two flags, parallel to advancedAutomation/advancedAutomationEnabled:
+    //   basicAutomation        — SHOWN: the Extras "Show basic automation" box.
+    //     Reveals the Basic section in the Automation view and (with either tier
+    //     shown) the Automation-view radio. Default off (byte-inert).
+    //   basicAutomationEnabled — ENABLED: the in-section "Enable basic automation"
+    //     box. Whether the basic features actually run. Default ON, but a feature
+    //     runs only when the tier is BOTH shown AND enabled (so it never runs while
+    //     hidden) — so a default install stays inert (basicAutomation off). Enabled
+    //     defaults true so showing a tier turns it on in one step, and pre-split
+    //     saves (basicAutomation=true) keep working.
+    // Each individual feature also needs its own toggle.
     basicAutomation: false,
+    basicAutomationEnabled: true,
     // Rep-gap report: annotate the action list when an action's total queued
     // reps are fewer than what the current state could actually execute next
     // loop (banked + uncheckable items for limited actions, allowed() caps
@@ -693,7 +700,15 @@ const options = {
     // multiplied: the game's economy stays real. 1 = byte-exact vanilla.
     expGainMultiplier: 1,
     // ---- fork: Advanced Automation (queue planner) — everything off by default ----
+    // advancedAutomation = SHOWN (Extras "Show advanced automation"): reveals the
+    // Advanced settings + internals sections and (with either tier shown) the
+    // Automation-view radio. advancedAutomationEnabled = ENABLED (in-section
+    // "Enable advanced automation"): whether the planner acts. The planner runs
+    // only when the tier is BOTH shown AND enabled AND a planner mode is set.
+    // Enabled defaults true (one-step show, pre-split save compat); shown defaults
+    // off so a default install is inert.
     advancedAutomation: false,
+    advancedAutomationEnabled: true,
     plannerMode: "off",
     plannerPauseWhilePlanning: true,
     plannerSeedFromPredictor: true,
@@ -888,12 +903,14 @@ const isStandardOption = {
     predictorBackgroundThread: false,
     predictorRepGap: false,
     basicAutomation: false,
+    basicAutomationEnabled: false,
     economyOptimizer: false,
     economyOptimizerAuto: false,
     autoAddReps: false,
     autoAddRepsAuto: false,
     expGainMultiplier: false,
     advancedAutomation: false,
+    advancedAutomationEnabled: false,
     plannerMode: false,
     plannerPauseWhilePlanning: false,
     plannerSeedFromPredictor: false,
