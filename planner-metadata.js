@@ -92,4 +92,111 @@ const PLANNER_METADATA = {
         // ---- time ----
         "Escape": { timeMax: 60 },
     },
+
+    // ---- dimEffects (Layer M; ACTION-CENSUS.md §2.2a/§2.2c) --------------------
+    // The effect-EDGE table, keyed by DIMENSION (skill:X / buff:X) rather than by
+    // action: many actions grant the same skill, and the efficiency effect belongs
+    // to the LEVEL, not the granting action. Each edge declares WHERE a dim's level
+    // changes another action's channel; empirical measurement stays authoritative
+    // for RATES (this only tells the Layer-P prober where to POINT).
+    //   edge = { target?: actionName, targetType?: "multipart", channel }
+    //     target      → a concrete action W3 pair-probes (the highest-leverage case);
+    //     targetType  → an action CLASS (all multiparts) — declared, probed per-member;
+    //     absent      → a global/game-wide effect (declared for coverage, not probed).
+    // Channels (census taxonomy): manaCost, goldCost, goldYield, manaYield,
+    //   segmentRate, speed, poolSize, trainingLimits, startingStats, expMult, plus
+    //   soulstoneCount / sacrificeCost (census-derived; no plan-10 channel fits the
+    //   soulstone-grant magnitude or the buff-sacrifice discount).
+    // AP randomization (v1) rewires rates/pool contents, not this edge STRUCTURE.
+    dimEffects: {
+        // ---- buffs (census 2.2a): each buff's downstream channel ----
+        "buff:Ritual":      [{ channel: "speed" }],                               // Dark Ritual: per-zone/global game speed
+        "buff:Imbuement":   [{ channel: "trainingLimits" }],                      // Imbue Mind: +1 training cap / lvl
+        "buff:Imbuement2":  [{ channel: "startingStats" }],                       // Imbue Body: starting stat levels / loop
+        "buff:Feast":       [{ targetType: "multipart", channel: "segmentRate" }],// Great Feast: ×(1+0.05lvl) combat
+        "buff:Heroism":     [{ channel: "expMult" }],                             // Heroes Trial: Combat/Pyro/Restoration exp
+        "buff:Aspirant":    [{ channel: "expMult" }],                             // The Spire: ×(1+0.01lvl) talent exp
+        "buff:Imbuement3":  [{ channel: "speed" }],                               // Imbue Soul: +0.5/lvl global speed
+
+        // ---- skill-level efficiency web (census 2.2c) — the #4 high-leverage class ----
+        "skill:Practical":  [
+            { target: "Wild Mana",   channel: "manaCost" },
+            { target: "Smash Pots",  channel: "manaCost" },
+            { target: "Pick Locks",  channel: "goldYield" },
+            { target: "Short Quest", channel: "goldYield" },
+            { target: "Long Quest",  channel: "goldYield" },
+        ],
+        "skill:Dark":       [
+            { target: "Smash Pots",  channel: "manaYield" },
+            { target: "Wild Mana",   channel: "manaYield" },
+        ],
+        "skill:Alchemy":    [{ target: "Sell Potions", channel: "goldYield" }],   // revenue = potions × Alchemy LEVEL
+        "skill:Mercantilism": [
+            { target: "Buy Mana Z1", channel: "manaYield" },
+            { target: "Buy Mana Z3", channel: "manaYield" },
+            { target: "Buy Mana Z5", channel: "manaYield" },
+            { target: "Collect Interest", channel: "goldYield" },
+        ],
+        "skill:Thievery":   [
+            { target: "Pick Locks",      channel: "goldYield" },
+            { target: "Gamble",          channel: "goldYield" },
+            { target: "Pick Pockets",    channel: "goldYield" },
+            { target: "Rob Warehouse",   channel: "goldYield" },
+            { target: "Insurance Fraud", channel: "goldYield" },
+        ],
+        "skill:Chronomancy": [{ channel: "speed" }],                             // global speed mult
+        "skill:Divine":     [{ channel: "soulstoneCount" }],                     // scales dungeon/mine soulstone grant
+        "skill:Restoration": [{ target: "Rescue Survivors", channel: "segmentRate" }], // + Open Portal skill-floor gate
+        "skill:Spatiomancy": [{ channel: "poolSize" }],                          // adjustAll resizes pools game-wide
+        "skill:Wunderkind": [{ channel: "expMult" }],                            // talent exp mult; doubles Imbuement2
+        "skill:Commune":    [{ target: "Dark Ritual", channel: "sacrificeCost" }],
+        "skill:Gluttony":   [{ target: "Great Feast", channel: "sacrificeCost" }],
+        "skill:Combat":     [{ targetType: "multipart", channel: "segmentRate" }], // Fight Monsters/dungeons/trolls/giants/Spire
+        "skill:Leadership": [{ targetType: "multipart", channel: "segmentRate" }], // team size → combat
+        "skill:Crafting":   [
+            { target: "Apprentice", channel: "segmentRate" },
+            { target: "Mason",      channel: "segmentRate" },
+            { target: "Architect",  channel: "segmentRate" },
+        ],
+    },
+
+    // ---- context flags (Layer M; census 2.3/2.4) ------------------------------
+    // Per-action shape warnings the prober's point-measurement can't see. Advisory
+    // metadata: informed measurement may re-probe temporal/dynamic actions, and
+    // rng-flagged measurement/candidates REQUIRE rngMode "cycle" (plan §6). All
+    // hand-transcribed from census §2.3 + the §3 flag column.
+    //   temporal  — probe-time yield/gate ≠ realized (effectiveTime-dependent)
+    //   dynamic   — reward amount scales with a loop-varying rank/counter
+    //   rng       — reward path draws Math.random (the four §2.3 sites)
+    //   crossTown — writes progress/pools in OTHER towns (Layer E crossTown{})
+    context: {
+        "Mana Well":        { temporal: true },
+        "Escape":           { temporal: true },
+        "Seek Blessing":    { dynamic: true },
+        "Prepare Buffet":   { dynamic: true },
+        "Guild Assassin":   { dynamic: true },
+        "Meander":          { dynamic: true },
+        "Apprentice":       { dynamic: true },
+        "Mason":            { dynamic: true },
+        "Architect":        { dynamic: true },
+        "Pick Pockets":     { dynamic: true },
+        "Rob Warehouse":    { dynamic: true },
+        "Insurance Fraud":  { dynamic: true },
+        "Excursion":        { dynamic: true },
+        "Collect Interest": { dynamic: true },
+        "Collect Taxes":    { dynamic: true },
+        "Explore Jungle":   { dynamic: true },
+        "Face Judgement":   { dynamic: true },   // dynamic DESTINATION (excluded from v1 routes)
+        "Small Dungeon":    { rng: true },
+        "Large Dungeon":    { rng: true },
+        "The Spire":        { rng: true },
+        "Mine Soulstones":  { rng: true },
+        "Explorers Guild":  { rng: true, crossTown: true },   // exchangeMap: RNG zone pick + cross-town survey exp
+        "Build Tower":      { crossTown: true },
+        "RuinsZ1":          { crossTown: true },
+        "RuinsZ3":          { crossTown: true },
+        "RuinsZ5":          { crossTown: true },
+        "RuinsZ6":          { crossTown: true },
+        "Spatiomancy":      { crossTown: true },
+    },
 };
