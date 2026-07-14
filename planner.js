@@ -854,14 +854,21 @@ function measureAction(sess, snap, state, know, a, needs = [], opts = {}) {
         p.manaPerExec = (r.lastTimeNeeded - base.mana) / exec;
         p.goldPerExec = ((r.lastResources?.gold ?? 0) - base.gold) / exec;
         p.repPerExec = ((r.lastResources?.reputation ?? 0) - base.rep) / exec;
-        // granted resources beyond the standard trio
+        // granted / consumed resources beyond the standard trio (gold/rep/mana
+        // carry their own signed channels). `grants` keeps its increases-only
+        // semantics; `consumes` records DECREASES (census 2.3 consumption
+        // invisibility — the 33 cost() bodies + finish() deductions) as a
+        // SEPARATE additive field, same prefix-baseline `base` subtraction,
+        // opposite sign. Read only by informed/coverage code; byte-inert.
         p.grants = {};
+        p.consumes = {};
         for (const [k, v] of Object.entries(r.lastResources ?? {})) {
             if (["gold", "reputation", "mana"].includes(k)) continue;
             const bv = base.resources?.[k] ?? 0;
             const num = typeof v === "boolean" ? (v ? 1 : 0) : v;
             const bnum = typeof bv === "boolean" ? (bv ? 1 : 0) : bv;
             if (num > bnum) p.grants[k] = (num - bnum) / exec;
+            else if (num < bnum) p.consumes[k] = (bnum - num) / exec;
         }
         // gold-cost reductions on purchase actions (e.g. Haggle -> Buy
         // Supplies); preserve pair-probe-discovered reductions (they'd be
@@ -884,6 +891,32 @@ function measureAction(sess, snap, state, know, a, needs = [], opts = {}) {
                 if (d > 0 && v !== a.varName) p.discovers[v] = d / exec;
             }
         }
+        // cross-town effects (census 2.3): the discovers/progress diffs above
+        // see only the action's OWN town; some actions write OTHER towns
+        // (exchangeMap -> survey exp to a random zone; Build Tower -> stone
+        // pools in towns 1/3/5/6; RuinsZ*/Spatiomancy resize pools). Diff every
+        // town's progress + limited-total window and record the out-of-town
+        // deltas under crossTown[townIdx]. At townsUnlocked=[0] the action
+        // touches no other town, so crossTown stays empty and p.crossTown is
+        // never set — additive, byte-inert.
+        const crossTown = {};
+        for (const postT of post.towns) {
+            const t = postT.index;
+            if (t === a.townNum) continue;
+            const preT = pre.towns[t];
+            if (!preT) continue;
+            const ct = {};
+            for (const [v, pv] of Object.entries(postT.progress)) {
+                const d = (pv.exp ?? 0) - (preT.progress[v]?.exp ?? 0);
+                if (d !== 0) (ct.progress ??= {})[v] = d / exec;
+            }
+            for (const [v, lim2] of Object.entries(postT.limited)) {
+                const d = (lim2.total ?? 0) - (preT.limited[v]?.total ?? 0);
+                if (d !== 0) (ct.discovers ??= {})[v] = d / exec;
+            }
+            if (Object.keys(ct).length) crossTown[t] = ct;
+        }
+        if (Object.keys(crossTown).length) p.crossTown = crossTown;
         // skill/talent training rates (also feeds vacuous-execution detection)
         let dSkill = 0;
         for (const [sName, sv] of Object.entries(post.skills)) dSkill += (sv.exp ?? 0) - (pre.skills[sName]?.exp ?? 0);
@@ -911,6 +944,60 @@ function measureAction(sess, snap, state, know, a, needs = [], opts = {}) {
         if (dSS !== 0) pd.soulstones = dSS;
         const dGI = ((post.goldInvested ?? 0) - (pre.goldInvested ?? 0)) / exec;
         if (dGI !== 0) pd.goldInvested = dGI;
+        // ---- persistentDelta widening (Layer E; census 2.2b,d + class 6) ----
+        // per-stat soulstones (the exp-mult currency, stats.js 1+ss^0.8/30),
+        // trainingLimits (Imbue Mind), stonesUsed (Haul / Build Tower), dungeon
+        // floor completions + ssChance decay drift, trial floors, and per-town
+        // multipart total<var> ledgers. Same prefix-baseline `pre` subtraction;
+        // all zero at town-0 (the gate's rng:0 proves no dungeon roll fires in
+        // any town-0 probe), so pd stays {} and these fields never materialize.
+        const dSSStat = {};
+        for (const [s, amt] of Object.entries(post.soulstones?.perStat ?? {})) {
+            const d = amt - (pre.soulstones?.perStat?.[s] ?? 0);
+            if (d !== 0) dSSStat[s] = d / exec;
+        }
+        if (Object.keys(dSSStat).length) pd.soulstonesPerStat = dSSStat;
+        const dTL = ((post.trainingLimits ?? 0) - (pre.trainingLimits ?? 0)) / exec;
+        if (dTL !== 0) pd.trainingLimits = dTL;
+        const dStones = {};
+        for (const [loc, u] of Object.entries(post.stonesUsed ?? {})) {
+            const d = u - (pre.stonesUsed?.[loc] ?? 0);
+            if (d !== 0) dStones[loc] = d / exec;
+        }
+        if (Object.keys(dStones).length) pd.stonesUsed = dStones;
+        const dDun = {};
+        (post.dungeons ?? []).forEach((floors, di) => {
+            floors.forEach((f, fi) => {
+                // difference floor PROGRESSION; a floor absent in `pre` is a
+                // structure-init difference (floors are lazily built on load),
+                // not a game effect — skip it. In the live flow `pre` is always
+                // floor-initialized, so this never drops a real delta.
+                const pf = pre.dungeons?.[di]?.[fi];
+                if (!pf) return;
+                const dc = (f.completed ?? 0) - (pf.completed ?? 0);
+                const dch = (f.ssChance ?? 0) - (pf.ssChance ?? 0);
+                if (dc !== 0 || dch !== 0) (dDun[di] ??= {})[fi] = { completed: dc / exec, ssChance: dch / exec };
+            });
+        });
+        if (Object.keys(dDun).length) pd.dungeons = dDun;
+        const dTrials = {};
+        (post.trials ?? []).forEach((t2, ti) => {
+            const pt = pre.trials?.[ti];
+            const df = (t2.highestFloor ?? 0) - (pt?.highestFloor ?? 0);
+            const dct = (t2.completedTotal ?? 0) - (pt?.completedTotal ?? 0);
+            if (df !== 0 || dct !== 0) dTrials[ti] = { highestFloor: df / exec, completedTotal: dct / exec };
+        });
+        if (Object.keys(dTrials).length) pd.trials = dTrials;
+        const dMult = {};
+        for (const postT of post.towns) {
+            const preT = pre.towns[postT.index];
+            if (!preT) continue;
+            for (const [v, tot] of Object.entries(postT.mult ?? {})) {
+                const d = tot - (preT.mult?.[v] ?? 0);
+                if (d !== 0) (dMult[postT.index] ??= {})[v] = d / exec;
+            }
+        }
+        if (Object.keys(dMult).length) pd.mult = dMult;
         p.persistentDelta = pd;
     }
     know.set(a.name, p);
