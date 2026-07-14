@@ -295,6 +295,24 @@ const menuView = Views.registerView("menu", {
                         actions and the allowed() cap for training-style actions. Purely informational; never edits
                         the queue.</div>
                     </label>
+                    <br>
+                    <input id='autoAddRepsInput' type='checkbox' onchange='setOption("autoAddReps", this.checked)'>
+                    <label class='showthat' for='autoAddRepsInput'>Auto-add unlocked reps (fork)
+                        <div class='showthis'>Tops up the queue when an action has FEWER reps queued than the current
+                        state can execute next loop &mdash; the "+N" under-queued case the rep-gap badges show &mdash; by
+                        bumping that entry's reps in place. When the Buy Mana optimiser (Automation view) is also enabled
+                        it then rebalances the result. Suggest-first; over-queued, multipart and one-shot actions are
+                        left alone. Enable "Report rep gaps" above to see what will be added.</div>
+                    </label>
+                    <div id='autoAddRepsSection' style='display:none'>
+                        <button class='button control showthat' onclick='AdvancedAutomation.applyRepTopUps()'>Apply rep top-ups
+                            <div class='showthis'>Add every unlocked-but-unqueued rep to the queue now (chains to the Buy
+                            Mana optimiser when it is enabled).</div></button>
+                        <label class='showthat' for='autoAddRepsAutoInput' style='margin-left:8px'>
+                            <input id='autoAddRepsAutoInput' type='checkbox' onchange='setOption("autoAddRepsAuto", this.checked)'> Auto-apply at loop boundary
+                            <div class='showthis'>Automatically top up reps each loop before restart (default off).</div>
+                        </label>
+                    </div>
                 </div>
                 <div id='advancedAutomationSection'>
                     <br>

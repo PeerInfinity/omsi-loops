@@ -207,6 +207,12 @@ function onError(msg) {
 // true when the automation takes over the restart (game stays stopped until
 // the plan arrives).
 function interceptPrepareRestart(curAction) {
+    // Auto-add reps at the boundary (assist; INDEPENDENT of the planner master
+    // gate). Runs BEFORE the Buy Mana optimiser so the optimiser rebalances the
+    // topped-up queue; applyRepTopUps itself chains the optimiser when it's
+    // enabled, so the economyOptimizerAuto request below is a guarded no-op when
+    // both are on.
+    if (options.autoAddReps && options.autoAddRepsAuto) applyRepTopUps("loop boundary");
     // Buy Mana optimiser auto-apply is INDEPENDENT of the planner master gate:
     // fire-and-forget optimise of the current queue at the boundary; the
     // proposal installs when the worker responds (takes effect next loop). Never
@@ -308,6 +314,27 @@ function applyOptimize() {
     installQueue(optimizeSuggestion.queue);
     setStatus(`Buy Mana: applied (${optimizeSuggestion.report?.moves} change(s))`);
     if (isAutomationViewActive()) renderOptimize();
+}
+
+// ---- Auto-add reps (assist tool, §11.6 ladder rung 2) ---------------------
+// Tops up the live queue IN PLACE for every under-queued action (queued reps <
+// what the current state can execute next loop — the "+N" case the rep-gap
+// badges surface). Pure UI-thread: bumps actions.next[i].loops, no worker, no
+// engine rollout. When the Buy Mana optimiser is ALSO enabled it then chains
+// requestOptimize to rebalance the topped-up queue (reuses that feature's
+// logic instead of duplicating placement; the optimiser respects its own
+// suggest/auto setting for installation). Suggest-first — the rung-1 rep-gap
+// badges are the display surface; over-queued/multipart/one-shot actions are
+// left untouched (Koviko.applyRepTopUps).
+function applyRepTopUps(reason = "manual") {
+    if (!options.autoAddReps) { setStatus("enable auto-add reps first"); return; }
+    const ups = Koviko.applyRepTopUps(actions.next);
+    if (!ups.length) { setStatus("rep top-ups: nothing to add"); return; }
+    view.requestUpdate("updateNextActions");
+    const total = ups.reduce((s, r) => s + r.gap, 0);
+    setStatus(`rep top-ups (${reason}): added ${total} rep${total === 1 ? "" : "s"} across ${ups.length} action${ups.length === 1 ? "" : "s"}`);
+    // chain the Buy Mana optimiser when it's ALSO on (rebalance the top-up)
+    if (options.economyOptimizer) requestOptimize("after rep top-up");
 }
 
 function showDivergences() {
@@ -549,6 +576,10 @@ optionValueHandlers.economyOptimizer = (value, init) => {
     if (sec) sec.style.display = value ? "" : "none";
     if (!value) optimizeSuggestion = null;
 };
+optionValueHandlers.autoAddReps = (value, init) => {
+    const sec = document.getElementById("autoAddRepsSection");
+    if (sec) sec.style.display = value ? "" : "none";
+};
 
 return {
     interceptPrepareRestart,
@@ -556,6 +587,7 @@ return {
     applySuggestion,
     optimizeBuyMana,
     applyOptimize,
+    applyRepTopUps,
     showDivergences,
     refreshSectionVisibility,
     onViewShown,

@@ -143,8 +143,41 @@ check(await page.$eval("#economyOptimizerAutoInput", el => (setOption("economyOp
     "auto-apply checkbox syncs from loadOption");
 await page.evaluate(() => setOption("economyOptimizerAuto", false));
 
+// 9d. Auto-add reps (§11.6 ladder rung 2): enable -> section visible -> top up
+//     an under-queued action in place (pure UI-thread, no worker); the auto
+//     toggle round-trips. Controls live in the Extras menu, not the automation
+//     view. Isolate from the optimiser chain here (economyOptimizer off).
+await page.evaluate(() => setOption("economyOptimizer", false));
+check(await page.$eval("#autoAddRepsSection", el => getComputedStyle(el).display === "none"),
+    "auto-add section hidden while option off");
+await page.evaluate(() => setOption("autoAddReps", true));
+check(await page.$eval("#autoAddRepsSection", el => getComputedStyle(el).display !== "none"),
+    "auto-add section visible while option on");
+// Set the pool (100 pots available: 100 unchecked), queue Smash Pots x50, and
+// top up — all in ONE evaluate so the running game loop can't reset the pool
+// between setup and the read. Available = good(0) + unchecked(100) = 100, so
+// the +50 under-queue tops up to 100 in place.
+const topUp = await page.evaluate(() => {
+    towns[0].totalPots = 100; towns[0].checkedPots = 0; towns[0].goodPots = 0; towns[0].goodTempPots = 0;
+    actions.clearActions();
+    actions.addAction("Smash Pots", 50);
+    actions.addAction("Wander", 3);
+    AdvancedAutomation.applyRepTopUps();
+    return {
+        smash: actions.next.find(a => a.name === "Smash Pots")?.loops,
+        wander: actions.next.find(a => a.name === "Wander")?.loops,
+        status: document.getElementById("plannerStatus")?.textContent ?? "",
+    };
+});
+check(topUp.smash === 100, "apply tops Smash Pots up to 100 reps in place");
+check(topUp.wander === 3, "non-limited action left untouched by the top-up");
+check(/top-ups.*added 50/.test(topUp.status), "top-up status reports the reps added");
+check(await page.$eval("#autoAddRepsAutoInput", el => (setOption("autoAddRepsAuto", true), loadOption("autoAddRepsAuto", options.autoAddRepsAuto), el.checked === true)),
+    "auto-apply-at-boundary checkbox syncs from loadOption");
+await page.evaluate(() => setOption("autoAddRepsAuto", false));
+
 // 10. persistence: settings survive save()/reload (incl. the targeted list)
-await page.evaluate(() => { setOption("advancedAutomation", true); setOption("economyOptimizer", true); setOption("plannerWeightHeadroom", 2.5); save(); });
+await page.evaluate(() => { setOption("advancedAutomation", true); setOption("economyOptimizer", true); setOption("autoAddReps", true); setOption("autoAddRepsAuto", true); setOption("plannerWeightHeadroom", 2.5); save(); });
 await page.reload({ waitUntil: "load" });
 await page.waitForFunction(() => typeof options !== "undefined", null, { timeout: 20000 });
 await page.waitForTimeout(1000);
@@ -154,6 +187,12 @@ check(await page.evaluate(() => options.economyOptimizer === true),
     "Buy Mana optimiser option persists through reload");
 check(await page.$eval("#economyOptimizerInput", el => el.checked === true),
     "Buy Mana optimiser checkbox restored on boot");
+check(await page.evaluate(() => options.autoAddReps === true && options.autoAddRepsAuto === true),
+    "auto-add reps options persist through reload");
+check(await page.$eval("#autoAddRepsInput", el => el.checked === true), "auto-add reps checkbox restored on boot");
+check(await page.$eval("#autoAddRepsAutoInput", el => el.checked === true), "auto-add auto checkbox restored on boot");
+check(await page.$eval("#autoAddRepsSection", el => getComputedStyle(el).display !== "none"),
+    "auto-add section visible on boot with option on");
 check(await page.evaluate((tj) => options.plannerStrategy === "targeted" && options.plannerTargets === tj && options.plannerAutoRankTargets === true, targetsJSON),
     "targeted strategy + priority list + auto-rank persist through reload");
 check(await page.$eval("#plannerWeightHeadroomInput", el => el.value === "2.5"), "moved weight input restored on boot");

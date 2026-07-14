@@ -669,6 +669,16 @@ const options = {
     // reference path (byte-inert).
     economyOptimizer: false,
     economyOptimizerAuto: false,
+    // Auto-add reps (assist tool; §11.6 ladder rung 2): tops up the queue when
+    // an action has fewer reps queued than the current state can execute next
+    // loop (exactly the under-queued "+N" case the rep-gap badges show), by
+    // bumping the entry's reps in place. When the Buy Mana optimiser is ALSO
+    // enabled the top-up chains it to rebalance the result (reuses its logic,
+    // no duplicate placement). autoAddRepsAuto tops up at the loop boundary.
+    // Both default off — opt-in assist over the live queue, never the reference
+    // path (byte-inert). Over-queued/multipart/one-shot actions are left alone.
+    autoAddReps: false,
+    autoAddRepsAuto: false,
     // ---- fork: testing aids ----
     // Multiplies experience/progress gains ONLY (town progress exp, skill
     // exp, stat exp + talent) at the three engine funnels (finishProgress /
@@ -873,6 +883,8 @@ const isStandardOption = {
     predictorRepGap: false,
     economyOptimizer: false,
     economyOptimizerAuto: false,
+    autoAddReps: false,
+    autoAddRepsAuto: false,
     expGainMultiplier: false,
     advancedAutomation: false,
     plannerMode: false,

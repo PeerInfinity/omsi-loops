@@ -2487,6 +2487,28 @@ const Koviko = {
     return report;
   },
 
+  // ---- fork: auto-add reps (assist tool, options.autoAddReps, §11.6 rung 2) --
+  // The UNDER-queued subset of repGapReport (gap > 0) — the rep top-ups the
+  // auto-add tool would apply. Over-queued rows (gap < 0) are add-only excluded
+  // here; multiparts, one-shots and progress actions never appear (repGapReport
+  // already drops them via repGapAvailable === null). Pure — no DOM.
+  repTopUps(actions) {
+    return this.repGapReport(actions).filter((r) => r.gap > 0);
+  },
+
+  // Apply the rep top-ups IN PLACE: bump each under-queued action's last enabled
+  // entry by its gap so the action's total queued reps reach `available`
+  // (topping up an action already in the queue never needs to move it). Returns
+  // the applied rows ([] when nothing was under-queued). Pure mutation of the
+  // passed entries — the live caller then requests a view update and, when the
+  // Buy Mana optimiser is also on, chains it to rebalance the result; headless
+  // callers just read the mutated entries. Shared by the live path and tests.
+  applyRepTopUps(actions) {
+    const ups = this.repTopUps(actions);
+    for (const r of ups) actions[r.lastIndex].loops += r.gap;
+    return ups;
+  },
+
   /** @return {Predictor} */
   get instance() {
     if (!this.predictor) {
