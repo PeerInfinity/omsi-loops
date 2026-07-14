@@ -479,6 +479,16 @@ function plMetadata() {
 function gateFor(name) {
     return plMetadata().gates?.[name] ?? null;
 }
+// Layer M accessors (vocabulary plan §2): the effect-edge table (keyed by
+// DIMENSION skill:X/buff:X) and per-action context flags. Consumed by the
+// informed-mode edge prober (probeEdges) and the coverage report; nothing at
+// default vocabulary reads them.
+function dimEffectsFor(dim) {
+    return plMetadata().dimEffects?.[dim] ?? null;
+}
+function contextFor(name) {
+    return plMetadata().context?.[name] ?? null;
+}
 // Satisfy the non-resource gates the resource prober can't (informed mode).
 // Called AFTER plInjectResources inside the probe loop, so it overrides any
 // injected/prefix reputation. v1 handles guild membership and reputation upper
@@ -1081,6 +1091,109 @@ function recordDivergence(divergenceLog, state, a, p) {
     }
 }
 
+// ---- Layer P: edge-directed pair-probes (informed vocabulary; plan §2) ----
+// For each measured action A that GRANTS a dimension D (skill/buff), and each
+// declared dimEffects edge D -> (target T, channel), MEASURE how A's grant
+// shifts T's channel — the generalization of the travelRelief / Haggle pair
+// probe from travel edges to the whole skill/buff efficiency web (census 2.2c,
+// the #4 high-leverage class). The metadata says WHERE to point; measurement
+// stays authoritative for the RATE.
+//
+// Skill levels are global + persistent but queues run town-forward within a
+// loop, so A can't always precede T in the same loop. Two-snapshot method:
+// run A x nA from the base snapshot (leveling D; the gain persists through
+// doSave), snapshot that boosted state, then measure T from BOTH the boosted
+// and base states and difference T's channel. edgeRate is per exec of A
+// (signed: manaCost DROPS are negative = cheapening; yields positive).
+//
+// Informed-only — empirical mode never calls this, so the default reference is
+// untouched. RNG-flagged targets (context.rng) are probed only when rngMode is
+// "cycle" (plan §6): otherwise the probe would draw un-rollbackable Math.random.
+function channelOfProfile(p, channel) {
+    switch (channel) {
+        case "goldYield":   return p.goldPerExec ?? 0;
+        case "manaYield":   return p.manaPerExec ?? 0;
+        case "manaCost":    return p.ticksPerExec ?? 0;   // adjusted mana/exec; lower = cheaper
+        case "goldCost":    return p.goldPerExec ?? 0;
+        case "segmentRate": return p.exec ?? 0;           // completions in the fixed probe budget
+        default:            return null;                  // global channel: declared only, not pair-probed
+    }
+}
+// One edge measurement: level D via A from `snap`, snapshot the boosted state,
+// measure T's channel there and at baseline, return the per-A-exec delta.
+function measureEdge(sess, snap, state, know, A, T, channel, opts = {}) {
+    const multiTown = opts.multiTown ?? true;
+    // Enough execs of A to move D by SEVERAL levels: some target channels are
+    // step functions of the dim level (e.g. floor(base·(1+lvl/100)) gold yields),
+    // so a sub-level boost would read a spurious zero. Informed-only — never on
+    // the default path, so probe cost doesn't touch the byte reference.
+    const nA = opts.nA ?? 60;
+    const inject = { mana: Math.min(5_000_000, MEASURE_MANA + Math.ceil(nA * (A.cost || 1000) * 1.2)) };
+    let route = null;
+    if (A.townNum !== 0 && multiTown) {
+        route = routeTo(state, sess, A.townNum);
+        if (!route) return null;
+        for (const res of route.needs) if (res !== "mana" && inject[res] === undefined) inject[res] = 1000;
+    }
+    if ((A.goldCost ?? 0) > 0) inject.gold = 1000 + A.goldCost;
+    const setupQueue = route ? [...route.entries, [A.name, nA]] : [[A.name, nA]];
+    const { r: setupRun } = evalLoop(sess, snap, setupQueue, inject);
+    const aExec = execCountOf(setupRun, A.name);
+    if (aExec === 0) return null;
+    const boostedSnap = sess.save();
+    const boostedState = sess.read();
+    const Tb = boostedState.actions.find(x => x.name === T.name) ?? T;
+    const tNeeds = sess.needs(T.name);
+    // base first (restores snap), then boosted (restores boostedSnap)
+    const tBase  = measureAction(sess, snap, state, new Map(), T, tNeeds, { multiTown, baselineCache: new Map() });
+    const tBoost = measureAction(sess, boostedSnap, boostedState, new Map(), Tb, tNeeds, { multiTown, baselineCache: new Map() });
+    if ((tBase.exec ?? 0) === 0 || (tBoost.exec ?? 0) === 0) return null;
+    const c0 = channelOfProfile(tBase, channel), cb = channelOfProfile(tBoost, channel);
+    if (c0 === null || cb === null) return null;
+    return (cb - c0) / aExec;
+}
+function probeEdges(sess, snap, state, know, opts = {}) {
+    const multiTown = opts.multiTown ?? true;
+    const cycle = options.rngMode === "cycle";
+    const md = plMetadata();
+    if (!md.dimEffects) return;
+    const byName = new Map(state.actions.map(a => [a.name, a]));
+    const unlocked = unlockedOf(state);
+    const dimRate = (p, kind, dname) => kind === "skill"
+        ? (p.skillExpPerExec ?? 0) : (p.persistentDelta?.buffs?.[dname] ?? 0);
+    for (const [dim, edges] of Object.entries(md.dimEffects)) {
+        const [kind, dname] = dim.split(":");
+        const granters = unlocked.filter(A => {
+            const p = know.get(A.name);
+            if (!p || p.exec === 0) return false;
+            if (kind === "skill") return (A.skillsGained ?? []).includes(dname) && (p.skillExpPerExec ?? 0) > 0;
+            if (kind === "buff")  return (p.persistentDelta?.buffs?.[dname] ?? 0) > 0;
+            return false;
+        });
+        if (!granters.length) continue;
+        // representative driver: fastest grinder of D (most dim exp per tick)
+        granters.sort((x, y) => dimRate(know.get(y.name), kind, dname) / Math.max(1, know.get(y.name).ticksPerExec)
+                              - dimRate(know.get(x.name), kind, dname) / Math.max(1, know.get(x.name).ticksPerExec));
+        const A = granters[0];
+        for (const edge of edges) {
+            if (channelOfProfile({}, edge.channel) === null) continue;   // global channel: declared only
+            const targets = edge.target ? [byName.get(edge.target)]
+                          : edge.targetType === "multipart" ? unlocked.filter(x => x.type === "multipart")
+                          : [];
+            for (const T of targets) {
+                if (!T || !(T.visible && T.unlocked)) continue;
+                if (contextFor(T.name)?.rng && !cycle) continue;   // RNG target needs cycle mode
+                const rate = measureEdge(sess, snap, state, know, A, T, edge.channel, { multiTown });
+                if (rate === null) continue;
+                const pA = know.get(A.name);
+                (pA.edgeRates ??= {})[T.name] ??= {};
+                pA.edgeRates[T.name][edge.channel] = rate;
+            }
+        }
+    }
+    sess.restore(snap);
+}
+
 async function refreshKnowledge(sess, snap, state, know, opts = {}) {
     const staleAfter = opts.staleAfter ?? 40;
     const multiTown = opts.multiTown ?? true;
@@ -1180,6 +1293,11 @@ async function refreshKnowledge(sess, snap, state, know, opts = {}) {
             }
         }
     }
+    // Layer P: edge-directed pair-probes over the declared skill/buff effect
+    // web (informed vocabulary only; empirical mode leaves the reference byte-
+    // exact). Runs after empirical profiles exist — it needs the granters'
+    // measured dim-rates to pick a driver.
+    if (vocabulary === "informed") probeEdges(sess, snap, state, know, { multiTown });
     sess.restore(snap);
 }
 
@@ -2697,6 +2815,8 @@ return {
     buildEconomy, limitedPools, rankFrontierDims, grindActionFor,
     scoreOutcome, probeCapacity, screenCandidates,
     travelEdges, routeTo, buildPushes,
+    // Layer P / metadata (vocabulary plan §2/§4)
+    probeEdges, measureEdge, dimEffectsFor, contextFor,
     // targeted mode (§11.10)
     regressAction, regressTarget, generateTargeted, repSinkProvider,
     rankValueProviders, readStateValue, planTargeted,
