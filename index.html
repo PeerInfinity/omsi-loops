@@ -152,17 +152,34 @@
                                 the planning worker.</div>
                             </label>
                             <div id="buyManaOptimizerSection" style="display:none">
-                                <button class='button control showthat' onclick='AdvancedAutomation.optimizeBuyMana()'>Optimise Buy Mana
+                                <style>
+                                    .buyManaProposal { text-align: left; }
+                                    .buyManaProposal > summary { cursor: pointer; font-weight: bold; }
+                                    .buyManaProposal .automation-table { margin-top: 4px; }
+                                    .buyManaProposal .bmq-num { text-align: right; font-variant-numeric: tabular-nums; }
+                                    /* delta colour: value decreased (green) vs increased (red); the signed
+                                       number is the non-colour encoding so it never relies on colour alone. */
+                                    .buyManaProposal .d-down { color: #006300; font-weight: bold; }
+                                    .buyManaProposal .d-up   { color: #d03b3b; font-weight: bold; }
+                                    .buyManaProposal .d-zero { color: #898781; }
+                                    @media (prefers-color-scheme: dark) {
+                                        .buyManaProposal .d-down { color: #0ca30c; }
+                                        .buyManaProposal .d-up   { color: #e66767; }
+                                    }
+                                </style>
+                                <button class='button control showthat' onclick='AdvancedAutomation.optimizeBuyMana()'>Suggest
                                     <div class="showthis" style="width:240px">Compute a rebalanced queue now (fewer/better-placed Buy Mana
-                                    conversions, full harvest, all gold converted). Suggest-first — review before applying.</div></button>
+                                    conversions, full harvest, all gold converted) and show it below &mdash; does NOT change your queue.
+                                    Review, then press Apply.</div></button>
                                 <button class='button control showthat' onclick='AdvancedAutomation.applyOptimize()'>Apply
-                                    <div class="showthis" style="width:220px">Install the proposed rebalanced queue.</div></button>
+                                    <div class="showthis" style="width:220px">Install the rebalanced queue. Uses the proposal shown below if
+                                    there is one; otherwise it computes a fresh one first, then installs it.</div></button>
                                 <label class="showthat" for="economyOptimizerAutoInput" style="margin-left:8px">
                                     <input id='economyOptimizerAutoInput' type='checkbox' onclick='setOption("economyOptimizerAuto", this.checked)'> Auto-apply at loop boundary
                                     <div class="showthis" style="width:260px">Automatically optimise and install the queue each loop (default off;
                                     applies from the next loop).</div>
                                 </label>
-                                <div id="buyManaOptimizerBody" class="small" style="text-align:left">No proposal yet — press Optimise Buy Mana.</div>
+                                <div id="buyManaOptimizerBody" class="small" style="text-align:left">No proposal yet — press Suggest.</div>
                             </div>
                         </div>
                     </details>

@@ -40,7 +40,9 @@ let lastError = null;
 // §11.6 ladder — Buy Mana / zone-1 economy optimiser (assist; independent of
 // the planner master gate). Runs on the SAME headless worker.
 let optimizeSuggestion = null;  // last {queue, report} from the worker
+let optimizeInputQueue = null;  // the queue we sent to optimise (the "before" side)
 let awaitingOptimize = false;
+let pendingApplyAfterOptimize = false;  // Apply pressed with no proposal -> install the fresh one
 
 // Each automation tier has TWO flags: SHOWN (Extras "Show …", controls the
 // Automation-view section + radio visibility) and ENABLED (in-section
@@ -203,6 +205,10 @@ function onResult(msg) {
 
 function onError(msg) {
     awaitingPlan = false;
+    // a failed optimise must not wedge the optimiser flags (else future
+    // Suggest/Apply are blocked and a pending Apply never resolves)
+    awaitingOptimize = false;
+    pendingApplyAfterOptimize = false;
     lastError = msg.message;
     setStatus(`planner error: ${msg.message}`);
     // never leave the game soft-locked behind a failed plan
@@ -286,38 +292,67 @@ function requestOptimize(reason) {
     if (!queue.length) { setStatus("optimise: queue is empty"); return; }
     ensureWorker();
     awaitingOptimize = true;
+    optimizeInputQueue = queue;   // remember the "before" queue for the proposal tables
     worker.postMessage({ type: "optimize", reqId: ++reqId, save: doSave(), queue });
     setStatus(`optimising Buy Mana (${reason})…`);
 }
 
 function onOptimizeResult(msg) {
     awaitingOptimize = false;
+    msg.inputQueue = optimizeInputQueue;   // the "before" queue this proposal was computed from
     optimizeSuggestion = msg;
     const before = msg.report?.before, after = msg.report?.after;
     const changed = JSON.stringify(msg.queue) !== JSON.stringify(currentQueuePairs());
     setStatus(changed
         ? `Buy Mana: ${msg.report?.moves} change(s) — buyMana ${before?.convExecs}→${after?.convExecs}, gold ${before?.unconvGold}→${after?.unconvGold}`
         : "Buy Mana: already optimal");
-    // auto-apply (default off): install the proposal for the next loop.
-    if (options.economyOptimizer && options.economyOptimizerAuto && changed) {
+    // Install when either an Apply is pending (Apply pressed with no proposal) or
+    // auto-apply-at-boundary is on. Re-check the feature is still on (it could
+    // have been disabled while the worker ran); skip a no-op install when unchanged.
+    const applyNow = pendingApplyAfterOptimize;
+    pendingApplyAfterOptimize = false;
+    const featureOn = basicOn() && options.economyOptimizer;
+    if (featureOn && (applyNow || options.economyOptimizerAuto) && changed) {
         installQueue(msg.queue);
-        setStatus(`Buy Mana: auto-applied (${msg.report?.moves} change(s))`);
+        setStatus(`Buy Mana: ${applyNow ? "applied" : "auto-applied"} (${msg.report?.moves} change(s))`);
+    } else if (applyNow && featureOn) {
+        setStatus("Buy Mana: already optimal — nothing to apply");
     }
     if (isAutomationViewActive()) renderOptimize();
 }
 
-// button: compute a proposal now (suggest-first — does not install).
-function optimizeBuyMana() {
-    if (!basicOn() || !options.economyOptimizer) { setStatus("enable the Buy Mana optimiser first"); return; }
-    requestOptimize("manual");
+// When auto-add reps is enabled, top up the live queue so the optimiser (and the
+// before/after tables) reflect the full unlocked reps. Idempotent (a second call
+// finds no gap). Scoped to the Suggest/Apply buttons — the loop-boundary path
+// already sequences auto-add via its own auto-apply toggle.
+function topUpForOptimise() {
+    if (options.autoAddReps && basicOn()) {
+        const ups = Koviko.applyRepTopUps(actions.next);
+        if (ups.length) view.requestUpdate("updateNextActions");
+    }
 }
 
-// button: install the last proposal.
+// "Suggest" button: compute a proposal now and show it — does NOT install the
+// economy rebalance (but it DOES top up reps first when auto-add is enabled).
+function optimizeBuyMana() {
+    if (!basicOn() || !options.economyOptimizer) { setStatus("enable the Buy Mana optimiser first"); return; }
+    topUpForOptimise();
+    requestOptimize("suggest");
+}
+
+// "Apply" button: install a proposal. Uses the one already shown if there is
+// one; otherwise computes a fresh one first, then installs it when it arrives.
 function applyOptimize() {
-    if (!optimizeSuggestion) { setStatus("no Buy Mana proposal yet — press Optimise"); return; }
-    installQueue(optimizeSuggestion.queue);
-    setStatus(`Buy Mana: applied (${optimizeSuggestion.report?.moves} change(s))`);
-    if (isAutomationViewActive()) renderOptimize();
+    if (!basicOn() || !options.economyOptimizer) { setStatus("enable the Buy Mana optimiser first"); return; }
+    if (optimizeSuggestion) {
+        installQueue(optimizeSuggestion.queue);
+        setStatus(`Buy Mana: applied (${optimizeSuggestion.report?.moves} change(s))`);
+        if (isAutomationViewActive()) renderOptimize();
+        return;
+    }
+    topUpForOptimise();
+    pendingApplyAfterOptimize = true;
+    requestOptimize("apply");
 }
 
 // ---- Auto-add reps (assist tool, §11.6 ladder rung 2) ---------------------
@@ -389,19 +424,54 @@ function isAutomationViewActive() {
     return document.getElementById("statsWindow")?.dataset.view === "automation";
 }
 
-// Buy Mana optimiser proposal + waste delta (Automation view).
+// Buy Mana optimiser proposal (Automation view), collapsible (<details>). Two
+// before->after->delta tables: the waste metrics (top) and the per-action reps
+// (bottom). The delta is signed and colour-coded — green = value decreased,
+// red = increased (lower is better for both waste and Buy Mana reps); the sign
+// carries the meaning so it never relies on colour alone.
+const OPT_METRICS = [
+    { key: "failed", label: "failed reps" },
+    { key: "convExecs", label: "Buy Mana execs" },
+    { key: "unconvGold", label: "unconverted gold" },
+];
+function deltaCell(before, after) {
+    const delta = (after ?? 0) - (before ?? 0);
+    const cls = delta < 0 ? "d-down" : delta > 0 ? "d-up" : "d-zero";
+    const txt = delta > 0 ? `+${fmt(delta)}` : fmt(delta);
+    return `<td class="bmq-num ${cls}">${txt}</td>`;
+}
+function aggregateReps(pairs) {
+    const m = new Map();
+    for (const [name, loops] of (pairs ?? [])) m.set(name, (m.get(name) ?? 0) + loops);
+    return m;
+}
 function renderOptimize() {
     const el = document.getElementById("buyManaOptimizerBody");
     if (!el) return;
-    if (!optimizeSuggestion) { el.innerHTML = "No proposal yet — press Optimise Buy Mana."; return; }
-    const { queue, report } = optimizeSuggestion;
+    if (!optimizeSuggestion) { el.innerHTML = "No proposal yet — press Suggest."; return; }
+    const { queue, report, inputQueue } = optimizeSuggestion;
     const b = report?.before ?? {}, a = report?.after ?? {};
-    const d = (x, y) => `${fmt(x ?? 0)}→${fmt(y ?? 0)}`;
+    const moves = report?.moves ?? 0;
+    // waste table (one row per metric)
+    const wasteRows = OPT_METRICS.map((m) =>
+        `<tr><td>${esc(m.label)}</td><td class="bmq-num">${fmt(b[m.key] ?? 0)}</td>` +
+        `<td class="bmq-num">${fmt(a[m.key] ?? 0)}</td>${deltaCell(b[m.key], a[m.key])}</tr>`).join("");
+    // reps table (one row per action; before = the queue we optimised, after = proposal)
+    const beforeReps = aggregateReps(inputQueue), afterReps = aggregateReps(queue);
+    const names = [], seen = new Set();
+    for (const [n] of queue) if (!seen.has(n)) { seen.add(n); names.push(n); }
+    for (const n of beforeReps.keys()) if (!seen.has(n)) { seen.add(n); names.push(n); }
+    const repRows = names.map((n) =>
+        `<tr><td>${esc(n)}</td><td class="bmq-num">${fmt(beforeReps.get(n) ?? 0)}</td>` +
+        `<td class="bmq-num">${fmt(afterReps.get(n) ?? 0)}</td>${deltaCell(beforeReps.get(n), afterReps.get(n))}</tr>`).join("");
+    const table = (headA, rows) =>
+        `<table class="automation-table"><thead><tr><th>${headA}</th><th>Before</th><th>After</th><th>&Delta;</th></tr></thead>` +
+        `<tbody>${rows}</tbody></table>`;
     el.innerHTML =
-        `<div>converter: ${esc(report?.converter ?? "(none)")}, ${report?.moves ?? 0} change(s)</div>` +
-        `<div>failed reps ${d(b.failed, a.failed)}, Buy Mana execs ${d(b.convExecs, a.convExecs)}, ` +
-        `unconverted gold ${d(b.unconvGold, a.unconvGold)}</div>` +
-        `<div>proposed: ${esc(queue.map(([n, l]) => `${n} x${l}`).join(", "))}</div>`;
+        `<details class="buyManaProposal" open>` +
+        `<summary>Proposal: ${esc(report?.converter ?? "(none)")}, ${moves ? `${moves} change(s)` : "already optimal"}</summary>` +
+        table("Metric", wasteRows) + table("Action", repRows) +
+        `</details>`;
 }
 
 let statsRefreshTimer = null;

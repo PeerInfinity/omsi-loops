@@ -157,17 +157,63 @@ await page.evaluate(() => {
 await page.evaluate(() => AdvancedAutomation.optimizeBuyMana());
 await page.waitForFunction(() => AdvancedAutomation._debug.getOptimizeSuggestion() !== null, null, { timeout: 120000 });
 await page.waitForTimeout(300);
-check(await page.$eval("#buyManaOptimizerBody", el => /proposed:/.test(el.textContent)), "Buy Mana proposal rendered");
+check(await page.$eval("#buyManaOptimizerBody", el => /Proposal:/.test(el.textContent)), "Buy Mana proposal rendered");
+// proposal is a collapsible <details> with TWO before/after/delta tables
+check(await page.$eval("#buyManaOptimizerBody details.buyManaProposal", el => el.open === true).catch(() => false),
+    "proposal is a collapsible <details>, default open");
+check(await page.$$eval("#buyManaOptimizerBody .automation-table", els => els.length === 2),
+    "proposal has two tables (waste metrics + per-action reps)");
+check(await page.$eval("#buyManaOptimizerBody", el => /Before/.test(el.textContent) && /After/.test(el.textContent)),
+    "tables have Before + After + delta columns");
+check(await page.$$eval("#buyManaOptimizerBody .automation-table:last-of-type tbody tr", rows => rows.length === 3),
+    "reps table has one row per action (3)");
+check(await page.$eval("#buyManaOptimizerBody", el => !!el.querySelector("td.d-down")),
+    "delta column is colour-coded (a decrease shows d-down)");
 check(await page.evaluate(() => {
     const q = AdvancedAutomation._debug.getOptimizeSuggestion().queue;
     return q.filter(([n]) => n === "Buy Mana Z1").reduce((s, [, l]) => s + l, 0) === 1;
 }), "proposal reduces 3 Buy Manas to 1");
 await page.evaluate(() => AdvancedAutomation.applyOptimize());
 check(await page.evaluate(() => actions.next.filter(a => a.name === "Buy Mana Z1").reduce((s, a) => s + a.loops, 0) === 1),
-    "apply installs the rebalanced queue (1 Buy Mana)");
+    "Apply (proposal present) installs the rebalanced queue (1 Buy Mana)");
+
+// 9c-bis. Apply with NO prior Suggest auto-computes a proposal, then installs it.
+await page.evaluate(() => { setOption("economyOptimizer", false); setOption("economyOptimizer", true); }); // clears the cached proposal
+check(await page.evaluate(() => AdvancedAutomation._debug.getOptimizeSuggestion() === null),
+    "no cached proposal after toggling the optimiser off/on");
+await page.evaluate(() => {
+    actions.clearActions();
+    for (const [n, l] of [["Buy Mana Z1", 1], ["Smash Pots", 100], ["Pick Locks", 5], ["Buy Mana Z1", 1], ["Buy Mana Z1", 1]])
+        actions.addAction(n, l);
+    view.requestUpdate("updateNextActions");
+});
+await page.evaluate(() => AdvancedAutomation.applyOptimize());   // Apply directly, no Suggest
+let autoApplied = false;
+try {
+    await page.waitForFunction(() => actions.next.filter(a => a.name === "Buy Mana Z1").reduce((s, a) => s + a.loops, 0) === 1,
+        null, { timeout: 120000 });
+    autoApplied = true;
+} catch {}
+check(autoApplied, "Apply with no proposal auto-computes then installs (3 Buy Manas -> 1)");
 check(await page.$eval("#economyOptimizerAutoInput", el => (setOption("economyOptimizerAuto", true), loadOption("economyOptimizerAuto", options.economyOptimizerAuto), el.checked === true)),
     "auto-apply checkbox syncs from loadOption");
 await page.evaluate(() => setOption("economyOptimizerAuto", false));
+
+// 9c-ter. Suggest tops up reps first when auto-add is enabled (one evaluate so
+//         the live loop can't reset the pool between setup and the top-up read).
+const prevOptReq = await page.evaluate(() => AdvancedAutomation._debug.getOptimizeSuggestion()?.reqId ?? 0);
+await page.evaluate(() => setOption("autoAddReps", true));
+const topFirst = await page.evaluate(() => {
+    towns[0].totalPots = 100; towns[0].checkedPots = 0; towns[0].goodPots = 0; towns[0].goodTempPots = 0;   // 100 available
+    actions.clearActions();
+    actions.addAction("Smash Pots", 50);        // under-queued (100 available)
+    actions.addAction("Buy Mana Z1", 1);
+    AdvancedAutomation.optimizeBuyMana();        // topUp is synchronous, before the async optimise
+    return actions.next.find(a => a.name === "Smash Pots")?.loops;
+});
+check(topFirst === 100, "Suggest with auto-add on tops up reps first (Smash Pots 50 -> 100)");
+await page.waitForFunction((p) => (AdvancedAutomation._debug.getOptimizeSuggestion()?.reqId ?? 0) > p, prevOptReq, { timeout: 120000 });
+await page.evaluate(() => setOption("autoAddReps", false));
 
 // 9d. Auto-add reps (§11.6 ladder rung 2), now in the Basic section (needs the
 //     basicAutomation master, on from 9b): enable -> section visible -> top up
