@@ -207,18 +207,15 @@ function onError(msg) {
 // true when the automation takes over the restart (game stays stopped until
 // the plan arrives).
 function interceptPrepareRestart(curAction) {
-    // Auto-add reps at the boundary (assist; INDEPENDENT of the planner master
-    // gate). Runs BEFORE the Buy Mana optimiser so the optimiser rebalances the
-    // topped-up queue; applyRepTopUps itself chains the optimiser when it's
-    // enabled, so the economyOptimizerAuto request below is a guarded no-op when
-    // both are on.
-    if (options.autoAddReps && options.autoAddRepsAuto) applyRepTopUps("loop boundary");
-    // Buy Mana optimiser auto-apply is INDEPENDENT of the planner master gate:
-    // fire-and-forget optimise of the current queue at the boundary; the
-    // proposal installs when the worker responds (takes effect next loop). Never
-    // pauses, so it can't soft-lock the game. Skipped while a request is in
-    // flight (awaitingOptimize).
-    if (options.economyOptimizer && options.economyOptimizerAuto) requestOptimize("loop boundary");
+    // Basic-automation boundary hooks (gated on the basicAutomation master, NOT
+    // the planner gate). Auto-add reps runs BEFORE the Buy Mana optimiser so the
+    // optimiser rebalances the topped-up queue; applyRepTopUps itself chains the
+    // optimiser when it's enabled, so the economyOptimizerAuto request below is a
+    // guarded no-op when both are on. Fire-and-forget: the optimiser proposal
+    // installs when the worker responds (next loop); never pauses, so it can't
+    // soft-lock the game. Skipped while an optimise request is in flight.
+    if (options.basicAutomation && options.autoAddReps && options.autoAddRepsAuto) applyRepTopUps("loop boundary");
+    if (options.basicAutomation && options.economyOptimizer && options.economyOptimizerAuto) requestOptimize("loop boundary");
     if (!isEnabled()) return false;
 
     // Manual queue editing always wins: if the queue at this boundary is not
@@ -304,7 +301,7 @@ function onOptimizeResult(msg) {
 
 // button: compute a proposal now (suggest-first — does not install).
 function optimizeBuyMana() {
-    if (!options.economyOptimizer) { setStatus("enable the Buy Mana optimiser first"); return; }
+    if (!options.basicAutomation || !options.economyOptimizer) { setStatus("enable the Buy Mana optimiser first"); return; }
     requestOptimize("manual");
 }
 
@@ -327,7 +324,7 @@ function applyOptimize() {
 // badges are the display surface; over-queued/multipart/one-shot actions are
 // left untouched (Koviko.applyRepTopUps).
 function applyRepTopUps(reason = "manual") {
-    if (!options.autoAddReps) { setStatus("enable auto-add reps first"); return; }
+    if (!options.basicAutomation || !options.autoAddReps) { setStatus("enable auto-add reps first"); return; }
     const ups = Koviko.applyRepTopUps(actions.next);
     if (!ups.length) { setStatus("rep top-ups: nothing to add"); return; }
     view.requestUpdate("updateNextActions");
@@ -348,14 +345,25 @@ function showDivergences() {
 }
 
 function refreshSectionVisibility() {
-    const el = document.getElementById("advancedAutomationSettings");
-    if (el) el.style.display = options.advancedAutomation ? "" : "none";
-    // Stats-panel Automation view: the radio only exists while the master
-    // gate is on; if it was active when the gate flips off, fall back to the
-    // Regular view.
+    const anyAuto = options.basicAutomation || options.advancedAutomation;
+    // Extras-menu note divs each mirror their master checkbox.
+    const basicNote = document.getElementById("basicAutomationSettings");
+    if (basicNote) basicNote.style.display = options.basicAutomation ? "" : "none";
+    const advNote = document.getElementById("advancedAutomationSettings");
+    if (advNote) advNote.style.display = options.advancedAutomation ? "" : "none";
+    // Automation-view sections show/hide separately: the Basic section on the
+    // basic master, the Advanced settings + internals on the advanced master.
+    const basicSec = document.getElementById("autoViewBasicSettings");
+    if (basicSec) basicSec.style.display = options.basicAutomation ? "" : "none";
+    for (const id of ["autoViewSettings", "autoViewInternals"]) {
+        const sec = document.getElementById(id);
+        if (sec) sec.style.display = options.advancedAutomation ? "" : "none";
+    }
+    // The Automation-view radio exists while EITHER master is on; if it was the
+    // active view when both flip off, fall back to the Regular view.
     const wrap = document.getElementById("automationStatsWrap");
-    if (wrap) wrap.style.display = options.advancedAutomation ? "" : "none";
-    if (!options.advancedAutomation) {
+    if (wrap) wrap.style.display = anyAuto ? "" : "none";
+    if (!anyAuto) {
         const radio = document.getElementById("automationStats");
         if (radio?.checked) {
             radio.checked = false;
@@ -563,6 +571,12 @@ function onDump(msg) {
 
 // ---- option handlers (registered here so saving.js stays untouched beyond
 // the option declarations) --------------------------------------------------
+optionValueHandlers.basicAutomation = (value, init) => {
+    refreshSectionVisibility();
+    // rep-gap badges depend on the basic master — repaint the predictor list
+    if (!init && options.predictor) view.requestUpdate("updateNextActions");
+    if (!value) optimizeSuggestion = null;
+};
 optionValueHandlers.advancedAutomation = (value, init) => {
     refreshSectionVisibility();
     if (!value) { shutdownWorker(); suggestion = null; installedQueueJSON = null; if (!init) setStatus("off"); }

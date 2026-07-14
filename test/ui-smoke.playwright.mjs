@@ -18,15 +18,17 @@ await page.goto(PAGE_URL, { waitUntil: "load" });
 await page.waitForFunction(() => typeof options !== "undefined" && typeof view !== "undefined", null, { timeout: 20000 });
 await page.waitForTimeout(1500);
 
-// 1. gate off: radio hidden
+// 1. both masters off: radio hidden
 check(await page.$eval("#automationStatsWrap", el => getComputedStyle(el).display === "none"),
-    "automation radio hidden while gate off");
+    "automation radio hidden while both masters off");
 
-// 2. enable the master gate (as the Extras checkbox would)
-await page.evaluate(() => setOption("advancedAutomation", true));
-await page.evaluate(() => AdvancedAutomation.refreshSectionVisibility());
+// 2. radio appears when EITHER master is on: basic alone first, then add advanced
+await page.evaluate(() => setOption("basicAutomation", true));
 check(await page.$eval("#automationStatsWrap", el => getComputedStyle(el).display !== "none"),
-    "automation radio visible while gate on");
+    "automation radio visible with basic automation on (advanced off)");
+await page.evaluate(() => setOption("advancedAutomation", true));
+check(await page.$eval("#automationStatsWrap", el => getComputedStyle(el).display !== "none"),
+    "automation radio still visible with advanced also on");
 
 // 3. switch to the automation view
 await page.click("#automationStats");
@@ -38,6 +40,17 @@ check(await page.$eval("#statsContainer", el => getComputedStyle(el).display ===
 await page.waitForTimeout(200);
 const statRows = await page.$$eval("#autoStatsBody tr", rr => rr.length);
 check(statRows >= 9, `compact stats rows (${statRows})`);
+
+// 4b. basic + advanced sub-sections show separately under their masters
+check(await page.$eval("#autoViewBasicSettings", el => getComputedStyle(el).display !== "none"),
+    "Basic automation section visible while basic master on");
+check(await page.$eval("#autoViewSettings", el => getComputedStyle(el).display !== "none"),
+    "Advanced settings section visible while advanced master on");
+// the moved basic inputs live under the Basic section, not Advanced
+for (const id of ["predictorRepGapInput", "autoAddRepsInput", "economyOptimizerInput"]) {
+    check(await page.$eval(`#autoViewBasicSettings #${id}`, () => true).catch(() => false),
+        `${id} lives in the Basic automation section`);
+}
 
 // 5. settings section holds the moved inputs; Extras hint replaced the block
 for (const id of ["plannerModeInput", "plannerScreenKInput", "plannerWeightTravelReliefInput", "plannerWeightHeadroomInput",
@@ -90,12 +103,21 @@ check(await page.evaluate((id) => !document.getElementById(id).checked, togglerI
     "control OFF: planning leaves the user's checkbox alone");
 await page.evaluate(() => setOption("plannerControlLootFirst", true));
 
-// 9. disable gate while automation view active -> falls back to regular
-await page.evaluate(() => { setOption("advancedAutomation", false); AdvancedAutomation.refreshSectionVisibility(); });
-check(await page.$eval("#statsWindow", el => el.dataset.view === "regular"), "gate off falls back to regular view");
+// 9. disable ONE master leaves the view (other still on); disabling BOTH falls back
+await page.evaluate(() => setOption("advancedAutomation", false));
+check(await page.$eval("#automationStatsWrap", el => getComputedStyle(el).display !== "none"),
+    "radio stays visible with only basic master on");
+check(await page.$eval("#autoViewSettings", el => getComputedStyle(el).display === "none"),
+    "Advanced settings hidden when advanced master off");
+check(await page.$eval("#statsWindow", el => el.dataset.view === "automation"), "view stays automation while basic still on");
+await page.evaluate(() => setOption("basicAutomation", false));
+check(await page.$eval("#automationStatsWrap", el => getComputedStyle(el).display === "none"),
+    "radio hidden when both masters off");
+check(await page.$eval("#statsWindow", el => el.dataset.view === "regular"), "both gates off falls back to regular view");
 
-// 9b. §11.10 targeted-mode UI round-trips through setOption + loadOption
-await page.evaluate(() => { setOption("advancedAutomation", true); AdvancedAutomation.refreshSectionVisibility(); });
+// 9b. re-enable both masters, restore the view; targeted-mode UI round-trips
+await page.evaluate(() => { setOption("basicAutomation", true); setOption("advancedAutomation", true); });
+await page.click("#automationStats");
 const targetsJSON = JSON.stringify([{ kind: "a", action: "Continue On" }, { kind: "b", target: { type: "skill", name: "Magic" }, value: 50, budget: 0.3 }]);
 await page.evaluate((tj) => { setOption("plannerStrategy", "targeted"); setOption("plannerTargets", tj); setOption("plannerAutoRankTargets", true); setOption("plannerAntiFixation", true); }, targetsJSON);
 check(await page.$eval("#plannerAntiFixationInput", el => (loadOption("plannerAntiFixation", options.plannerAntiFixation), el.checked === true)),
@@ -107,10 +129,9 @@ check(await page.$eval("#plannerTargetsInput", (el, tj) => (loadOption("plannerT
 check(await page.$eval("#plannerAutoRankTargetsInput", el => (loadOption("plannerAutoRankTargets", options.plannerAutoRankTargets), el.checked === true)),
     "auto-rank checkbox syncs from loadOption");
 
-// 9c. Buy Mana optimiser (§11.6 ladder): enable -> section visible -> optimise
+// 9c. Buy Mana optimiser (§11.6 ladder), now in the Basic section (needs the
+//     basicAutomation master, on from 9b): enable -> section visible -> optimise
 //     a redundant-conversion queue on the worker -> proposal shown -> apply.
-await page.evaluate(() => { setOption("advancedAutomation", true); AdvancedAutomation.refreshSectionVisibility(); });
-await page.click("#automationStats");   // switch to automation view so renderOptimize fires
 check(await page.$eval("#buyManaOptimizerSection", el => getComputedStyle(el).display === "none"),
     "Buy Mana section hidden while optimiser off");
 await page.evaluate(() => setOption("economyOptimizer", true));
@@ -143,10 +164,10 @@ check(await page.$eval("#economyOptimizerAutoInput", el => (setOption("economyOp
     "auto-apply checkbox syncs from loadOption");
 await page.evaluate(() => setOption("economyOptimizerAuto", false));
 
-// 9d. Auto-add reps (§11.6 ladder rung 2): enable -> section visible -> top up
+// 9d. Auto-add reps (§11.6 ladder rung 2), now in the Basic section (needs the
+//     basicAutomation master, on from 9b): enable -> section visible -> top up
 //     an under-queued action in place (pure UI-thread, no worker); the auto
-//     toggle round-trips. Controls live in the Extras menu, not the automation
-//     view. Isolate from the optimiser chain here (economyOptimizer off).
+//     toggle round-trips. Isolate from the optimiser chain (economyOptimizer off).
 await page.evaluate(() => setOption("economyOptimizer", false));
 check(await page.$eval("#autoAddRepsSection", el => getComputedStyle(el).display === "none"),
     "auto-add section hidden while option off");
@@ -176,13 +197,34 @@ check(await page.$eval("#autoAddRepsAutoInput", el => (setOption("autoAddRepsAut
     "auto-apply-at-boundary checkbox syncs from loadOption");
 await page.evaluate(() => setOption("autoAddRepsAuto", false));
 
+// 9e. functional master gate: with basicAutomation OFF the feature is inert
+//     even though autoAddReps is on (symmetric with advanced automation).
+const gated = await page.evaluate(() => {
+    setOption("basicAutomation", false);
+    actions.clearActions();
+    actions.addAction("Smash Pots", 50);   // 100 available from 9d's pool
+    AdvancedAutomation.applyRepTopUps();
+    const loops = actions.next.find(a => a.name === "Smash Pots")?.loops;
+    const status = document.getElementById("plannerStatus")?.textContent ?? "";
+    setOption("basicAutomation", true);     // restore for persistence block
+    return { loops, status };
+});
+check(gated.loops === 50, "basic master OFF: auto-add is inert (no top-up)");
+check(/enable auto-add reps first/.test(gated.status), "basic master OFF: reports it is disabled");
+
 // 10. persistence: settings survive save()/reload (incl. the targeted list)
-await page.evaluate(() => { setOption("advancedAutomation", true); setOption("economyOptimizer", true); setOption("autoAddReps", true); setOption("autoAddRepsAuto", true); setOption("plannerWeightHeadroom", 2.5); save(); });
+await page.evaluate(() => { setOption("basicAutomation", true); setOption("advancedAutomation", true); setOption("economyOptimizer", true); setOption("autoAddReps", true); setOption("autoAddRepsAuto", true); setOption("plannerWeightHeadroom", 2.5); save(); });
 await page.reload({ waitUntil: "load" });
 await page.waitForFunction(() => typeof options !== "undefined", null, { timeout: 20000 });
 await page.waitForTimeout(1000);
 check(await page.evaluate(() => options.plannerWeightHeadroom === 2.5 && options.advancedAutomation === true),
     "options persist through reload");
+check(await page.evaluate(() => options.basicAutomation === true),
+    "basic automation master persists through reload");
+check(await page.$eval("#basicAutomationInput", el => el.checked === true),
+    "basic automation checkbox restored on boot (Extras)");
+check(await page.$eval("#autoViewBasicSettings", el => getComputedStyle(el).display !== "none"),
+    "Basic automation section visible on boot with master on");
 check(await page.evaluate(() => options.economyOptimizer === true),
     "Buy Mana optimiser option persists through reload");
 check(await page.$eval("#economyOptimizerInput", el => el.checked === true),

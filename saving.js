@@ -653,7 +653,13 @@ const options = {
     predictorSlowTimer: 1,
     predictorTrackedStat: "Rsoul",
     predictorBackgroundThread: true,
-    // ---- fork: assist tools (independent of Advanced Automation) ----
+    // ---- fork: Basic automation (assist tools) ----
+    // Master gate for the basic assist features below (rep-gap badges, auto-add
+    // reps, Buy Mana optimiser), parallel to advancedAutomation. Off = all basic
+    // features inert AND their Automation-view section hidden; each feature also
+    // needs its own toggle on. Default off (byte-inert). The Automation-view
+    // radio shows when EITHER basicAutomation or advancedAutomation is on.
+    basicAutomation: false,
     // Rep-gap report: annotate the action list when an action's total queued
     // reps are fewer than what the current state could actually execute next
     // loop (banked + uncheckable items for limited actions, allowed() caps
@@ -881,6 +887,7 @@ const isStandardOption = {
     predictorTrackedStat: false,
     predictorBackgroundThread: false,
     predictorRepGap: false,
+    basicAutomation: false,
     economyOptimizer: false,
     economyOptimizerAuto: false,
     autoAddReps: false,

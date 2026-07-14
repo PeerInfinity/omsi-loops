@@ -102,9 +102,66 @@
                             <tbody id="autoStatsBody"></tbody>
                         </table>
                     </details>
-                    <details id="autoViewSettings" open>
-                        <summary class="showthat">Automation settings
-                            <div class="showthis" style="width:250px">All Advanced Automation parameters. The master
+                    <!-- fork: Basic automation (assist tools) — shown while the
+                         basicAutomation master is on; sits above Advanced. -->
+                    <details id="autoViewBasicSettings" open style="display:none">
+                        <summary class="showthat">Basic automation
+                            <div class="showthis" style="width:260px">Lightweight per-loop assist tools that work on your live
+                            queue: rep-gap badges, auto-add reps, and the Buy Mana optimiser. Each has its own toggle; all need
+                            "Enable basic automation" (Extras menu) on. Independent of the Advanced planner.</div>
+                        </summary>
+                        <div id="basicAutomationBody" style="text-align:left">
+                            <input id='predictorRepGapInput' type='checkbox' onchange='setOption("predictorRepGap", this.checked)'>
+                            <label class='showthat' for='predictorRepGapInput'>Report rep gaps (badges)
+                                <div class='showthis' style="width:280px">Annotates the action list when an action's queued reps differ
+                                from what the current state could actually execute next loop &mdash; e.g. 50&times; Smash Pots queued with 71
+                                pots available shows +21; 80&times; queued shows &minus;9. Counts banked + unchecked items for limited actions
+                                and the allowed() cap for training-style actions. Purely informational; never edits the queue. Needs the
+                                predictor on.</div>
+                            </label>
+                            <br>
+                            <input id='autoAddRepsInput' type='checkbox' onchange='setOption("autoAddReps", this.checked)'>
+                            <label class='showthat' for='autoAddRepsInput'>Auto-add unlocked reps
+                                <div class='showthis' style="width:280px">Tops up the queue when an action has FEWER reps queued than the
+                                current state can execute next loop (the "+N" case the rep-gap badges show), by bumping that entry's reps in
+                                place. When the Buy Mana optimiser is also enabled it then rebalances the result. Suggest-first; over-queued,
+                                multipart and one-shot actions are left alone.</div>
+                            </label>
+                            <div id="autoAddRepsSection" style="display:none">
+                                <button class='button control showthat' onclick='AdvancedAutomation.applyRepTopUps()'>Apply rep top-ups
+                                    <div class="showthis" style="width:240px">Add every unlocked-but-unqueued rep to the queue now (chains
+                                    to the Buy Mana optimiser when it is enabled).</div></button>
+                                <label class="showthat" for="autoAddRepsAutoInput" style="margin-left:8px">
+                                    <input id='autoAddRepsAutoInput' type='checkbox' onchange='setOption("autoAddRepsAuto", this.checked)'> Auto-apply at loop boundary
+                                    <div class="showthis" style="width:260px">Automatically top up reps each loop before restart (default off).</div>
+                                </label>
+                            </div>
+                            <br>
+                            <label class="showthat" for="economyOptimizerInput">
+                                <input id='economyOptimizerInput' type='checkbox' onclick='setOption("economyOptimizer", this.checked)'> Buy Mana optimiser
+                                <div class="showthis" style="width:280px">Rebalance the current queue's zone-1 (town&nbsp;0) economy &mdash;
+                                batch gold before each Buy Mana, drop redundant conversions, split a harvest to insert an intermediate
+                                conversion when the budget would starve, and reserve gold for downstream purchases. Suggest-first; runs on
+                                the planning worker.</div>
+                            </label>
+                            <div id="buyManaOptimizerSection" style="display:none">
+                                <button class='button control showthat' onclick='AdvancedAutomation.optimizeBuyMana()'>Optimise Buy Mana
+                                    <div class="showthis" style="width:240px">Compute a rebalanced queue now (fewer/better-placed Buy Mana
+                                    conversions, full harvest, all gold converted). Suggest-first — review before applying.</div></button>
+                                <button class='button control showthat' onclick='AdvancedAutomation.applyOptimize()'>Apply
+                                    <div class="showthis" style="width:220px">Install the proposed rebalanced queue.</div></button>
+                                <label class="showthat" for="economyOptimizerAutoInput" style="margin-left:8px">
+                                    <input id='economyOptimizerAutoInput' type='checkbox' onclick='setOption("economyOptimizerAuto", this.checked)'> Auto-apply at loop boundary
+                                    <div class="showthis" style="width:260px">Automatically optimise and install the queue each loop (default off;
+                                    applies from the next loop).</div>
+                                </label>
+                                <div id="buyManaOptimizerBody" class="small" style="text-align:left">No proposal yet — press Optimise Buy Mana.</div>
+                            </div>
+                        </div>
+                    </details>
+                    <details id="autoViewSettings" open style="display:none">
+                        <summary class="showthat">Advanced automation settings
+                            <div class="showthis" style="width:250px">All Advanced Automation (planner) parameters. The master
                             on/off switch and the experience gain multiplier stay in the Extras menu.</div>
                         </summary>
                         <div id="automationSettingsBody" style="text-align:left">
@@ -251,30 +308,9 @@
                             <br>
                             <span class="showthat">Status: <span id='plannerStatus'>idle</span>
                                 <div class="showthis" style="width:220px">What the planner is doing (planning, last plan's label/score, errors).</div></span>
-                            <hr>
-                            <label class="showthat" for="economyOptimizerInput">
-                                <input id='economyOptimizerInput' type='checkbox' onclick='setOption("economyOptimizer", this.checked)'> Buy Mana optimiser
-                                <div class="showthis" style="width:280px">Assist tool: rebalance the current queue's zone-1 (town&nbsp;0) economy —
-                                batch gold before each Buy Mana, drop redundant conversions, split a harvest to insert an intermediate
-                                conversion when the budget would starve, and reserve gold for downstream purchases. Suggest-first; runs on
-                                the planning worker.</div>
-                            </label>
-                            <div id="buyManaOptimizerSection" style="display:none">
-                                <button class='button control showthat' onclick='AdvancedAutomation.optimizeBuyMana()'>Optimise Buy Mana
-                                    <div class="showthis" style="width:240px">Compute a rebalanced queue now (fewer/better-placed Buy Mana
-                                    conversions, full harvest, all gold converted). Suggest-first — review before applying.</div></button>
-                                <button class='button control showthat' onclick='AdvancedAutomation.applyOptimize()'>Apply
-                                    <div class="showthis" style="width:220px">Install the proposed rebalanced queue.</div></button>
-                                <label class="showthat" for="economyOptimizerAutoInput" style="margin-left:8px">
-                                    <input id='economyOptimizerAutoInput' type='checkbox' onclick='setOption("economyOptimizerAuto", this.checked)'> Auto-apply at loop boundary
-                                    <div class="showthis" style="width:260px">Automatically optimise and install the queue each loop (default off;
-                                    applies from the next loop).</div>
-                                </label>
-                                <div id="buyManaOptimizerBody" class="small" style="text-align:left">No proposal yet — press Optimise Buy Mana.</div>
-                            </div>
                         </div>
                     </details>
-                    <details id="autoViewInternals" open>
+                    <details id="autoViewInternals" open style="display:none">
                         <summary class="showthat">Planner internals
                             <div class="showthis" style="width:260px">Live view of the planning worker's internal state: the last
                             plan round's candidates and score breakdown, the measured per-action knowledge table, probed unlock

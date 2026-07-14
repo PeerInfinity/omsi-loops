@@ -286,46 +286,31 @@ const menuView = Views.registerView("menu", {
                             `<input id='predictorSlowTimerInput' type='number' value='1' min='1' style='width: 20px;' oninput='setOption("predictorSlowTimer", parseInt(this.value))'>`
                         )
                     }</label>
-                    <br>
-                    <input id='predictorRepGapInput' type='checkbox' onchange='setOption("predictorRepGap", this.checked)'>
-                    <label class='showthat' for='predictorRepGapInput'>Report rep gaps (fork)
-                        <div class='showthis'>Annotates the action list when an action's queued reps differ from what the
-                        current state could actually execute next loop &mdash; e.g. 50&times; Smash Pots queued with 71
-                        pots available shows +21; 80&times; queued shows -9. Counts banked + unchecked items for limited
-                        actions and the allowed() cap for training-style actions. Purely informational; never edits
-                        the queue.</div>
-                    </label>
-                    <br>
-                    <input id='autoAddRepsInput' type='checkbox' onchange='setOption("autoAddReps", this.checked)'>
-                    <label class='showthat' for='autoAddRepsInput'>Auto-add unlocked reps (fork)
-                        <div class='showthis'>Tops up the queue when an action has FEWER reps queued than the current
-                        state can execute next loop &mdash; the "+N" under-queued case the rep-gap badges show &mdash; by
-                        bumping that entry's reps in place. When the Buy Mana optimiser (Automation view) is also enabled
-                        it then rebalances the result. Suggest-first; over-queued, multipart and one-shot actions are
-                        left alone. Enable "Report rep gaps" above to see what will be added.</div>
-                    </label>
-                    <div id='autoAddRepsSection' style='display:none'>
-                        <button class='button control showthat' onclick='AdvancedAutomation.applyRepTopUps()'>Apply rep top-ups
-                            <div class='showthis'>Add every unlocked-but-unqueued rep to the queue now (chains to the Buy
-                            Mana optimiser when it is enabled).</div></button>
-                        <label class='showthat' for='autoAddRepsAutoInput' style='margin-left:8px'>
-                            <input id='autoAddRepsAutoInput' type='checkbox' onchange='setOption("autoAddRepsAuto", this.checked)'> Auto-apply at loop boundary
-                            <div class='showthis'>Automatically top up reps each loop before restart (default off).</div>
-                        </label>
-                    </div>
                 </div>
-                <div id='advancedAutomationSection'>
+                <div id='automationSection'>
                     <br>
-                    <b>Advanced Automation (fork)</b>
+                    <b>Automation (fork)</b>
+                    <br>
+                    <input id='basicAutomationInput' type='checkbox' onchange='setOption("basicAutomation", this.checked)'>
+                    <label class='showthat' for='basicAutomationInput'>Enable basic automation
+                        <div class='showthis'>Fork addition: lightweight per-loop assist tools over your live queue &mdash;
+                        rep-gap badges, auto-add unlocked reps, and the Buy Mana optimiser (with more to come). Each has its
+                        own toggle in the <b>Basic automation</b> section of the <b>Automation</b> view (Stats panel); this
+                        master switch gates them all. Independent of the Advanced planner below.</div>
+                    </label>
+                    <div id='basicAutomationSettings' style='display:none'>
+                        Basic automation settings live in the <b>Automation</b> view in the Stats panel
+                        (a third option next to Regular/Radar while this is enabled).
+                    </div>
                     <br>
                     <input id='advancedAutomationInput' type='checkbox' onchange='setOption("advancedAutomation", this.checked)'>
-                    <label class='showthat' for='advancedAutomationInput'>Enable Advanced Automation
+                    <label class='showthat' for='advancedAutomationInput'>Enable advanced automation
                         <div class='showthis'>Fork addition: a generic queue planner that learns the game by probing and
                         measurement in a background worker, then builds the action queue for you. All sub-features stay
-                        inert until a mode is selected below. Manual queue editing always wins.</div>
+                        inert until a mode is selected in the Automation view. Manual queue editing always wins.</div>
                     </label>
                     <div id='advancedAutomationSettings' style='display:none'>
-                        All planner settings and live internal data moved to the <b>Automation</b> view
+                        All planner settings and live internal data live in the <b>Automation</b> view
                         in the Stats panel (a third option next to Regular/Radar while this is enabled).
                     </div>
                 </div>
