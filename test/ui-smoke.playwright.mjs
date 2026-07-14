@@ -107,13 +107,53 @@ check(await page.$eval("#plannerTargetsInput", (el, tj) => (loadOption("plannerT
 check(await page.$eval("#plannerAutoRankTargetsInput", el => (loadOption("plannerAutoRankTargets", options.plannerAutoRankTargets), el.checked === true)),
     "auto-rank checkbox syncs from loadOption");
 
+// 9c. Buy Mana optimiser (§11.6 ladder): enable -> section visible -> optimise
+//     a redundant-conversion queue on the worker -> proposal shown -> apply.
+await page.evaluate(() => { setOption("advancedAutomation", true); AdvancedAutomation.refreshSectionVisibility(); });
+await page.click("#automationStats");   // switch to automation view so renderOptimize fires
+check(await page.$eval("#buyManaOptimizerSection", el => getComputedStyle(el).display === "none"),
+    "Buy Mana section hidden while optimiser off");
+await page.evaluate(() => setOption("economyOptimizer", true));
+check(await page.$eval("#buyManaOptimizerSection", el => getComputedStyle(el).display !== "none"),
+    "Buy Mana section visible while optimiser on");
+// set a town-0 economy + a queue with two redundant Buy Manas
+await page.evaluate(() => {
+    towns[0].expWander = getExpOfLevel(30);
+    for (const [v, n] of [["Pots", 100], ["Locks", 5]]) {
+        towns[0][`total${v}`] = n; towns[0][`checked${v}`] = n; towns[0][`good${v}`] = n; towns[0][`goodTemp${v}`] = n;
+    }
+    adjustAll();
+    actions.clearActions();
+    for (const [n, l] of [["Buy Mana Z1", 1], ["Smash Pots", 100], ["Pick Locks", 5], ["Buy Mana Z1", 1], ["Buy Mana Z1", 1]])
+        actions.addAction(n, l);
+    view.requestUpdate("updateNextActions");
+});
+await page.evaluate(() => AdvancedAutomation.optimizeBuyMana());
+await page.waitForFunction(() => AdvancedAutomation._debug.getOptimizeSuggestion() !== null, null, { timeout: 120000 });
+await page.waitForTimeout(300);
+check(await page.$eval("#buyManaOptimizerBody", el => /proposed:/.test(el.textContent)), "Buy Mana proposal rendered");
+check(await page.evaluate(() => {
+    const q = AdvancedAutomation._debug.getOptimizeSuggestion().queue;
+    return q.filter(([n]) => n === "Buy Mana Z1").reduce((s, [, l]) => s + l, 0) === 1;
+}), "proposal reduces 3 Buy Manas to 1");
+await page.evaluate(() => AdvancedAutomation.applyOptimize());
+check(await page.evaluate(() => actions.next.filter(a => a.name === "Buy Mana Z1").reduce((s, a) => s + a.loops, 0) === 1),
+    "apply installs the rebalanced queue (1 Buy Mana)");
+check(await page.$eval("#economyOptimizerAutoInput", el => (setOption("economyOptimizerAuto", true), loadOption("economyOptimizerAuto", options.economyOptimizerAuto), el.checked === true)),
+    "auto-apply checkbox syncs from loadOption");
+await page.evaluate(() => setOption("economyOptimizerAuto", false));
+
 // 10. persistence: settings survive save()/reload (incl. the targeted list)
-await page.evaluate(() => { setOption("advancedAutomation", true); setOption("plannerWeightHeadroom", 2.5); save(); });
+await page.evaluate(() => { setOption("advancedAutomation", true); setOption("economyOptimizer", true); setOption("plannerWeightHeadroom", 2.5); save(); });
 await page.reload({ waitUntil: "load" });
 await page.waitForFunction(() => typeof options !== "undefined", null, { timeout: 20000 });
 await page.waitForTimeout(1000);
 check(await page.evaluate(() => options.plannerWeightHeadroom === 2.5 && options.advancedAutomation === true),
     "options persist through reload");
+check(await page.evaluate(() => options.economyOptimizer === true),
+    "Buy Mana optimiser option persists through reload");
+check(await page.$eval("#economyOptimizerInput", el => el.checked === true),
+    "Buy Mana optimiser checkbox restored on boot");
 check(await page.evaluate((tj) => options.plannerStrategy === "targeted" && options.plannerTargets === tj && options.plannerAutoRankTargets === true, targetsJSON),
     "targeted strategy + priority list + auto-rank persist through reload");
 check(await page.$eval("#plannerWeightHeadroomInput", el => el.value === "2.5"), "moved weight input restored on boot");

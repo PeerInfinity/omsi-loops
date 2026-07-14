@@ -37,6 +37,10 @@ let pausedByPlanner = false;
 let suggestion = null;          // last worker result (queue not yet installed unless auto)
 let installedQueueJSON = null;  // what auto mode last installed (manual-edit detection)
 let lastError = null;
+// §11.6 ladder — Buy Mana / zone-1 economy optimiser (assist; independent of
+// the planner master gate). Runs on the SAME headless worker.
+let optimizeSuggestion = null;  // last {queue, report} from the worker
+let awaitingOptimize = false;
 
 const isEnabled = () => !!options.advancedAutomation && options.plannerMode !== "off";
 
@@ -71,6 +75,7 @@ function ensureWorker() {
         const msg = e.data;
         if (!msg?.type) return;
         if (msg.type === "result") onResult(msg);
+        else if (msg.type === "optimizeResult") onOptimizeResult(msg);
         else if (msg.type === "dumpResult") onDump(msg);
         else if (msg.type === "error") onError(msg);
     };
@@ -202,6 +207,12 @@ function onError(msg) {
 // true when the automation takes over the restart (game stays stopped until
 // the plan arrives).
 function interceptPrepareRestart(curAction) {
+    // Buy Mana optimiser auto-apply is INDEPENDENT of the planner master gate:
+    // fire-and-forget optimise of the current queue at the boundary; the
+    // proposal installs when the worker responds (takes effect next loop). Never
+    // pauses, so it can't soft-lock the game. Skipped while a request is in
+    // flight (awaitingOptimize).
+    if (options.economyOptimizer && options.economyOptimizerAuto) requestOptimize("loop boundary");
     if (!isEnabled()) return false;
 
     // Manual queue editing always wins: if the queue at this boundary is not
@@ -254,6 +265,51 @@ function applySuggestion() {
     setStatus(`applied: ${suggestion.label}`);
 }
 
+// ---- Buy Mana / zone-1 economy optimiser (assist tool) --------------------
+// Rebalances the CURRENT queue on the worker's private sim copy: batches gold
+// before each Buy Mana, drops redundant conversions, splits a harvest to insert
+// an intermediate conversion when the budget would starve, and reserves gold
+// for downstream purchases. Suggest-first; auto-apply behind its own toggle.
+function requestOptimize(reason) {
+    if (awaitingOptimize) return;
+    const queue = currentQueuePairs();
+    if (!queue.length) { setStatus("optimise: queue is empty"); return; }
+    ensureWorker();
+    awaitingOptimize = true;
+    worker.postMessage({ type: "optimize", reqId: ++reqId, save: doSave(), queue });
+    setStatus(`optimising Buy Mana (${reason})…`);
+}
+
+function onOptimizeResult(msg) {
+    awaitingOptimize = false;
+    optimizeSuggestion = msg;
+    const before = msg.report?.before, after = msg.report?.after;
+    const changed = JSON.stringify(msg.queue) !== JSON.stringify(currentQueuePairs());
+    setStatus(changed
+        ? `Buy Mana: ${msg.report?.moves} change(s) — buyMana ${before?.convExecs}→${after?.convExecs}, gold ${before?.unconvGold}→${after?.unconvGold}`
+        : "Buy Mana: already optimal");
+    // auto-apply (default off): install the proposal for the next loop.
+    if (options.economyOptimizer && options.economyOptimizerAuto && changed) {
+        installQueue(msg.queue);
+        setStatus(`Buy Mana: auto-applied (${msg.report?.moves} change(s))`);
+    }
+    if (isAutomationViewActive()) renderOptimize();
+}
+
+// button: compute a proposal now (suggest-first — does not install).
+function optimizeBuyMana() {
+    if (!options.economyOptimizer) { setStatus("enable the Buy Mana optimiser first"); return; }
+    requestOptimize("manual");
+}
+
+// button: install the last proposal.
+function applyOptimize() {
+    if (!optimizeSuggestion) { setStatus("no Buy Mana proposal yet — press Optimise"); return; }
+    installQueue(optimizeSuggestion.queue);
+    setStatus(`Buy Mana: applied (${optimizeSuggestion.report?.moves} change(s))`);
+    if (isAutomationViewActive()) renderOptimize();
+}
+
 function showDivergences() {
     if (!suggestion?.recentDivergences?.length) {
         setStatus("no predictor-vs-engine divergences recorded");
@@ -291,11 +347,27 @@ function isAutomationViewActive() {
     return document.getElementById("statsWindow")?.dataset.view === "automation";
 }
 
+// Buy Mana optimiser proposal + waste delta (Automation view).
+function renderOptimize() {
+    const el = document.getElementById("buyManaOptimizerBody");
+    if (!el) return;
+    if (!optimizeSuggestion) { el.innerHTML = "No proposal yet — press Optimise Buy Mana."; return; }
+    const { queue, report } = optimizeSuggestion;
+    const b = report?.before ?? {}, a = report?.after ?? {};
+    const d = (x, y) => `${fmt(x ?? 0)}→${fmt(y ?? 0)}`;
+    el.innerHTML =
+        `<div>converter: ${esc(report?.converter ?? "(none)")}, ${report?.moves ?? 0} change(s)</div>` +
+        `<div>failed reps ${d(b.failed, a.failed)}, Buy Mana execs ${d(b.convExecs, a.convExecs)}, ` +
+        `unconverted gold ${d(b.unconvGold, a.unconvGold)}</div>` +
+        `<div>proposed: ${esc(queue.map(([n, l]) => `${n} x${l}`).join(", "))}</div>`;
+}
+
 let statsRefreshTimer = null;
 function onViewShown() {
     renderCompactStats();
     renderLastPlan();
     renderPools();
+    renderOptimize();
     refreshInternals();
     if (!statsRefreshTimer) {
         statsRefreshTimer = setInterval(() => {
@@ -472,16 +544,24 @@ optionValueHandlers.plannerMode = (value, init) => {
     if (value === "off") { shutdownWorker(); installedQueueJSON = null; if (!init) setStatus("off"); }
     else if (value === "auto") { installedQueueJSON = null; }   // adopt whatever queue comes next
 };
+optionValueHandlers.economyOptimizer = (value, init) => {
+    const sec = document.getElementById("buyManaOptimizerSection");
+    if (sec) sec.style.display = value ? "" : "none";
+    if (!value) optimizeSuggestion = null;
+};
 
 return {
     interceptPrepareRestart,
     planNow,
     applySuggestion,
+    optimizeBuyMana,
+    applyOptimize,
     showDivergences,
     refreshSectionVisibility,
     onViewShown,
     refreshInternals,
     isEnabled,
-    _debug: { getSuggestion: () => suggestion, getLastError: () => lastError },
+    _debug: { getSuggestion: () => suggestion, getLastError: () => lastError,
+              getOptimizeSuggestion: () => optimizeSuggestion, requestOptimize },
 };
 })();

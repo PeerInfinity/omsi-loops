@@ -104,6 +104,25 @@ onmessage = async (e) => {
                 divergences: P.divergenceLog,
             });
             break;
+        case "optimize": {
+            // §11.6 ladder — Buy Mana / zone-1 economy optimiser. Rebalances the
+            // player's queue on the worker's PRIVATE sim copy (never the live
+            // game). Restore -> install the queue -> restart to a clean loop
+            // start -> optimise.
+            try {
+                IdlePlanner._internals.plRestoreSave(
+                    typeof data.save === "string" ? data.save : JSON.stringify(data.save));
+                const queue = data.queue ?? [];
+                sess.setQueue(queue);
+                sess.restart();
+                const snap = sess.save();
+                const res = IdlePlanner.optimizeEconomy(sess, snap, queue);
+                postMessage({ type: "optimizeResult", reqId: data.reqId, queue: res.queue, report: res.report });
+            } catch (err) {
+                postMessage({ type: "error", reqId: data.reqId, message: err?.message ?? String(err) });
+            }
+            break;
+        }
         case "plan": {
             const t0 = Date.now();
             try {

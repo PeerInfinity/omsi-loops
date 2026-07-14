@@ -659,6 +659,16 @@ const options = {
     // loop (banked + uncheckable items for limited actions, allowed() caps
     // for training-style actions). Info only; never edits the queue.
     predictorRepGap: false,
+    // Buy Mana / zone-1 economy optimiser (assist tool; §11.6 ladder). Suggests
+    // a rebalanced queue that batches gold before each Buy Mana, drops redundant
+    // conversions, splits a harvest to insert an intermediate conversion when the
+    // budget would starve, and reserves gold for downstream purchases. Suggest-
+    // first: this toggle shows the "Optimise Buy Mana" action in the Automation
+    // view; economyOptimizerAuto applies the proposal at the loop boundary.
+    // Both default off — an opt-in assist over the live queue, never in the
+    // reference path (byte-inert).
+    economyOptimizer: false,
+    economyOptimizerAuto: false,
     // ---- fork: testing aids ----
     // Multiplies experience/progress gains ONLY (town progress exp, skill
     // exp, stat exp + talent) at the three engine funnels (finishProgress /
@@ -861,6 +871,8 @@ const isStandardOption = {
     predictorTrackedStat: false,
     predictorBackgroundThread: false,
     predictorRepGap: false,
+    economyOptimizer: false,
+    economyOptimizerAuto: false,
     expGainMultiplier: false,
     advancedAutomation: false,
     plannerMode: false,

@@ -251,6 +251,27 @@
                             <br>
                             <span class="showthat">Status: <span id='plannerStatus'>idle</span>
                                 <div class="showthis" style="width:220px">What the planner is doing (planning, last plan's label/score, errors).</div></span>
+                            <hr>
+                            <label class="showthat" for="economyOptimizerInput">
+                                <input id='economyOptimizerInput' type='checkbox' onclick='setOption("economyOptimizer", this.checked)'> Buy Mana optimiser
+                                <div class="showthis" style="width:280px">Assist tool: rebalance the current queue's zone-1 (town&nbsp;0) economy —
+                                batch gold before each Buy Mana, drop redundant conversions, split a harvest to insert an intermediate
+                                conversion when the budget would starve, and reserve gold for downstream purchases. Suggest-first; runs on
+                                the planning worker.</div>
+                            </label>
+                            <div id="buyManaOptimizerSection" style="display:none">
+                                <button class='button control showthat' onclick='AdvancedAutomation.optimizeBuyMana()'>Optimise Buy Mana
+                                    <div class="showthis" style="width:240px">Compute a rebalanced queue now (fewer/better-placed Buy Mana
+                                    conversions, full harvest, all gold converted). Suggest-first — review before applying.</div></button>
+                                <button class='button control showthat' onclick='AdvancedAutomation.applyOptimize()'>Apply
+                                    <div class="showthis" style="width:220px">Install the proposed rebalanced queue.</div></button>
+                                <label class="showthat" for="economyOptimizerAutoInput" style="margin-left:8px">
+                                    <input id='economyOptimizerAutoInput' type='checkbox' onclick='setOption("economyOptimizerAuto", this.checked)'> Auto-apply at loop boundary
+                                    <div class="showthis" style="width:260px">Automatically optimise and install the queue each loop (default off;
+                                    applies from the next loop).</div>
+                                </label>
+                                <div id="buyManaOptimizerBody" class="small" style="text-align:left">No proposal yet — press Optimise Buy Mana.</div>
+                            </div>
                         </div>
                     </details>
                     <details id="autoViewInternals" open>
