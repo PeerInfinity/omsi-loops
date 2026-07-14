@@ -207,6 +207,10 @@ function plRestoreSave(json) {
     trainingLimits = 10 + getBuffLevel("Imbuement");
     goldInvested = toLoad.goldInvested ?? 0;
     stonesUsed = toLoad.stonesUsed ?? {1:0, 3:0, 5:0, 6:0};
+    // deterministic-RNG cursors ride the snapshot so rolled-back cycle-mode
+    // probes roll them back too (actionList.js §rngMode). Missing / random-mode
+    // saves reset to zero — inert unless rngMode is "cycle".
+    if (toLoad.rngCycle) rngCycleState = toLoad.rngCycle; else resetRngCycle();
 
     // dungeons/trials: same structure fixups as doLoad
     dungeons = [[], [], []];

@@ -677,6 +677,12 @@ const options = {
     // push candidates). Stored default ON is save-compat-safe: the planner
     // master gate above is default-off, so this does nothing until the
     // planner runs; OFF forces the v0 town-0-only filters (A/B sweeps).
+    // deterministic RNG cycling (actionList.js §rngMode). "random" (default) =
+    // Math.random verbatim, byte-inert. "cycle" replaces the four reward-path
+    // RNG sites with an expectation-preserving deterministic sequence so
+    // informed-mode dungeon probing and plan-vs-play parity need no RNG
+    // rollback (ACTION-CENSUS.md §2.3; vocabulary plan §6).
+    rngMode: "random",
     plannerMultiTown: true,
     // ON: the planner OWNS the per-resource "Lootable first" checkboxes,
     // setting them to its own model (loot-first) whenever it plans. OFF: the
@@ -759,6 +765,7 @@ const stringOptions = [
     "plannerVocabulary",
     "plannerStrategy",
     "plannerTargets",
+    "rngMode",
 ];
 
 /** @param {string} option @returns {option is NumericOptionName} */
@@ -861,6 +868,7 @@ const isStandardOption = {
     plannerSeedFromPredictor: false,
     plannerScreenK: false,
     plannerProbeEvery: false,
+    rngMode: false,
     plannerMultiTown: false,
     plannerControlLootFirst: false,
     plannerVocabulary: false,
@@ -1060,6 +1068,7 @@ function loadDefaults() {
     prestigeValues["prestigeTotalCompletions"] = 0;
     prestigeValues["completedCurrentPrestige"] = false;
     prestigeValues["completedAnyPrestige"] = false;
+    resetRngCycle();
     Data.recordDefaults();
     defaultsRecorded = true;
 }
@@ -1212,6 +1221,7 @@ function doLoad(toLoad) {
     trainingLimits = 10 + getBuffLevel("Imbuement");
     goldInvested = toLoad.goldInvested === undefined ? 0 : toLoad.goldInvested;
     stonesUsed = toLoad.stonesUsed === undefined ? {1:0, 3:0, 5:0, 6:0} : toLoad.stonesUsed;
+    if (toLoad.rngCycle) rngCycleState = toLoad.rngCycle; else resetRngCycle();
 
     actions.clearActions();
     if (toLoad.nextList) {
@@ -1475,6 +1485,7 @@ function doSave() {
     toSave.prestigeValues = prestigeValues;
     toSave.goldInvested = goldInvested;
     toSave.stonesUsed = stonesUsed;
+    toSave.rngCycle = rngCycleState;   // deterministic-RNG cursors (actionList.js §rngMode)
     toSave.version75 = true;
 
     /** @type {string[][]} */

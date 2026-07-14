@@ -17,6 +17,46 @@ function withoutSpaces(name) {
     return name.replace(/ /gu, "");
 }
 
+// ---------------------------------------------------------------------------
+// Deterministic RNG cycling (fork addition; `options.rngMode`). The sim's
+// ENTIRE RNG surface is four reward-path sites (dungeon soulstone chance +
+// stat pick, Mine Soulstones stat pick, exchangeMap zone pick —
+// ACTION-CENSUS.md §2.3). Default "random" keeps Math.random() verbatim, so
+// the frozen planner reference (535 / 5,965,890 / e23f0204…) is byte-inert;
+// town-0 routes never touch these sites anyway. "cycle" replaces them with a
+// deterministic, expectation-preserving sequence, which makes no-RNG features
+// possible: the automation planner's informed-mode probing of dungeon content
+// (rolled-back probes need no RNG rollback), and plan-vs-play parity in the
+// live browser where Math.random cannot be wound back.
+//   - ssRoll: error-diffusion (deficit-carrying) Bernoulli — accumulate each
+//     roll's probability and fire whenever the running total crosses 1,
+//     carrying the remainder forward. Long-run fire count converges to Σp,
+//     the same expectation as `Math.random() <= p`. Carries across loops (a
+//     fresh game resets it); per-loop reset would zero out sub-1/loop chances.
+//   - pick: independent round-robin cursors (one per site), so different sites
+//     never interleave and each sweeps its list uniformly.
+// The state rides the game save (doSave/doLoad) and the planner's snapshot
+// (plRestoreSave), so rolled-back probes roll the cycle state back with them.
+// ---------------------------------------------------------------------------
+/** @typedef {{ssAcc: number, dungeonStat: number, mineStat: number, zone: number}} RngCycleState */
+/** @type {RngCycleState} */
+let rngCycleState;
+function resetRngCycle() { rngCycleState = { ssAcc: 0, dungeonStat: 0, mineStat: 0, zone: 0 }; }
+resetRngCycle();
+/** Deterministic deficit-carrying Bernoulli; long-run rate == p. @param {number} p @returns {boolean} */
+function cycleSsRoll(p) {
+    rngCycleState.ssAcc += p;
+    if (rngCycleState.ssAcc >= 1) { rngCycleState.ssAcc -= 1; return true; }
+    return false;
+}
+/** Round-robin pick over `list` using the named independent cursor.
+ * @template T @param {T[]} list @param {"dungeonStat"|"mineStat"|"zone"} cursor @returns {T} */
+function cyclePick(list, cursor) {
+    const i = rngCycleState[cursor] % list.length;
+    rngCycleState[cursor]++;
+    return list[i];
+}
+
 /** @template {Action<any, any>} A @typedef {A extends Action<any, infer E> ? E : never} ExtrasOf */
 /** @template {Action<any, any>} A @typedef {A extends Action<infer N, any> ? N : never} NameOf */
 /** @template {Action<any, any>} A @typedef {A["varName"]} VarNameOf */
@@ -1659,9 +1699,10 @@ DungeonAction.prototype.finishDungeon = function finishDungeon(floorNum) {
         return false;
     }
     floor.completed++;
-    const rand = Math.random();
-    if (rand <= floor.ssChance) {
-        const statToAdd = statList[Math.floor(Math.random() * statList.length)];
+    const cycle = options.rngMode === "cycle";
+    const fire = cycle ? cycleSsRoll(floor.ssChance) : (Math.random() <= floor.ssChance);
+    if (fire) {
+        const statToAdd = cycle ? cyclePick(statList, "dungeonStat") : statList[Math.floor(Math.random() * statList.length)];
         floor.lastStat = statToAdd;
         const countToAdd = Math.floor(Math.pow(10, dungeonNum) * getSkillBonus("Divine"));
         stats[statToAdd].soulstone = (stats[statToAdd].soulstone ?? 0) + countToAdd;
@@ -4179,7 +4220,7 @@ Action.MineSoulstones = new Action("Mine Soulstones", {
     },
     finish() {
         towns[3].finishRegular(this.varName, 10, () => {
-            const statToAdd = statList[Math.floor(Math.random() * statList.length)];
+            const statToAdd = options.rngMode === "cycle" ? cyclePick(statList, "mineStat") : statList[Math.floor(Math.random() * statList.length)];
             const countToAdd = Math.floor(getSkillBonus("Divine"));
             stats[statToAdd].soulstone += countToAdd;
             actionLog.addSoulstones(this, statToAdd, countToAdd);
@@ -6718,7 +6759,7 @@ function exchangeMap() {
     //For each completed map, give 2*ExploreSkill survey exp to a random unfinished zone's
     //survey progress (if no unfinished zones remain, skip all of this.)
     while (resources.completedMap > 0 && unfinishedSurveyZones.length > 0) {
-        let rand = unfinishedSurveyZones[Math.floor(Math.random() * unfinishedSurveyZones.length)];
+        let rand = options.rngMode === "cycle" ? cyclePick(unfinishedSurveyZones, "zone") : unfinishedSurveyZones[Math.floor(Math.random() * unfinishedSurveyZones.length)];
         let name = "expSurveyZ"+rand;
         towns[rand][name] += getExploreSkill() * 2;
         if (towns[rand][name] >= 505000) {
