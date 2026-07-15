@@ -886,3 +886,106 @@ test("anti-fixation guard is byte-inert by margin (off by default; healthy strea
     for (let i = 1; i < labels.length; i++) { cur = labels[i] === labels[i - 1] ? cur + 1 : 0; maxStreak = Math.max(maxStreak, cur); }
     assert.ok(maxStreak < 32, `healthy committed-queue streak (${maxStreak}) well under K=32`);
 });
+
+// ---- targeted-mode v2 (V1: sticky goal + per-branch stall persistence) ------
+
+test("§V1 goalKey: stable identity per goal; kind-b is value-sensitive", () => {
+    const IP = makePlanner(940).ev("IdlePlanner");
+    assert.equal(IP.goalKey({ kind: "a", action: "Start Journey" }), "a:Start Journey");
+    assert.equal(IP.goalKey({ kind: "b", target: { type: "skill", name: "Magic" }, value: 50 }), "b:skill:Magic:50");
+    // budget / enabled / list position don't change WHICH goal it is
+    assert.equal(IP.goalKey({ kind: "a", action: "X", budget: 0.3, enabled: false }),
+                 IP.goalKey({ kind: "a", action: "X" }));
+    // a different stop value IS a different goal
+    assert.notEqual(IP.goalKey({ kind: "b", target: { type: "skill", name: "Magic" }, value: 40 }),
+                    IP.goalKey({ kind: "b", target: { type: "skill", name: "Magic" }, value: 50 }));
+    assert.equal(IP.goalKey(null), null);
+});
+
+test("§V1 branchProgressed: kind-b uses the measured dim delta; kind-a uses achieved", () => {
+    const IP = makePlanner(941).ev("IdlePlanner");
+    const at = (lvl) => ({ skills: { Magic: { level: lvl } } });
+    const leafB = { kind: "b", target: { type: "skill", name: "Magic" }, value: 50 };
+    assert.equal(IP.branchProgressed(leafB, at(10), at(12), false), true, "dim moved ⇒ progress (achieved flag ignored)");
+    assert.equal(IP.branchProgressed(leafB, at(10), at(10), true), false, "dim flat ⇒ no progress even if achieved");
+    const leafA = { kind: "a", action: "Start Journey" };
+    assert.equal(IP.branchProgressed(leafA, at(10), at(10), true), true, "kind-a ⇒ the achieved flag");
+    assert.equal(IP.branchProgressed(leafA, at(10), at(10), false), false, "kind-a ⇒ not achieved");
+});
+
+test("§V1 updateGoalStall: sticky goal; stall grows on no progress, resets on a measured delta; resets on goal switch", () => {
+    const IP = makePlanner(942).ev("IdlePlanner");
+    const P = IP.newPlanningState();
+    const goal = { kind: "b", target: { type: "skill", name: "Magic" }, value: 50 };
+    const at = (lvl) => ({ skills: { Magic: { level: lvl } } });
+    IP.updateGoalStall(P, goal, at(10), at(10), false);
+    assert.equal(IP.goalKey(P.activeGoal), "b:skill:Magic:50", "goal is sticky (stored on P)");
+    assert.equal(P.branchStall["b:skill:Magic:50"], 1);
+    IP.updateGoalStall(P, goal, at(10), at(10), false);
+    assert.equal(P.branchStall["b:skill:Magic:50"], 2, "no progress ⇒ stall grows");
+    IP.updateGoalStall(P, goal, at(10), at(13), false);
+    assert.equal(P.branchStall["b:skill:Magic:50"], 0, "measured dim delta resets the branch");
+    // switching to a different top goal clears the old branch bookkeeping
+    const goal2 = { kind: "a", action: "Start Journey" };
+    IP.updateGoalStall(P, goal2, at(13), at(13), false);
+    assert.equal(IP.goalKey(P.activeGoal), "a:Start Journey");
+    assert.deepEqual(j(P.branchStall), { "a:Start Journey": 1 }, "old branch cleared on goal switch");
+});
+
+test("§V1 maybeAbandonGoal: a branch stalled >= K abandons the whole goal (recorded + cleared)", () => {
+    const IP = makePlanner(943).ev("IdlePlanner");
+    const P = IP.newPlanningState({ goalStallK: 3 });
+    const goal = { kind: "a", action: "Start Journey" };
+    const st = { skills: {} };
+    for (let i = 0; i < 2; i++) {
+        IP.updateGoalStall(P, goal, st, st, false);
+        assert.equal(IP.maybeAbandonGoal(P), false, "below K ⇒ no abandon");
+    }
+    assert.equal(P.branchStall["a:Start Journey"], 2);
+    IP.updateGoalStall(P, goal, st, st, false);   // stall reaches 3 == K
+    assert.equal(IP.maybeAbandonGoal(P), true, "abandon fires at K");
+    assert.equal(P.activeGoal, null, "active goal cleared");
+    assert.deepEqual([...P.abandonedGoals], ["a:Start Journey"], "goal recorded as abandoned");
+});
+
+test("§V1 planning-state serialization round-trips the sticky-goal handle", () => {
+    const IP = makePlanner(944).ev("IdlePlanner");
+    const P = IP.newPlanningState();
+    P.activeGoal = { kind: "b", target: { type: "skill", name: "Magic" }, value: 50 };
+    P.activeLeaf = { kind: "b", target: { type: "progress", name: "Secrets", town: 0 }, value: 40 };
+    P.branchStall = { "b:progress:Secrets:40": 7 };
+    P.abandonedGoals = new Set(["a:Meet People"]);
+    const blob = JSON.parse(JSON.stringify(IP.serializePlanningState(P)));
+    const P2 = IP.newPlanningState();
+    IP.restorePlanningState(P2, blob);
+    const J = JSON.stringify;
+    assert.equal(J(P2.activeGoal), J(P.activeGoal));
+    assert.equal(J(P2.activeLeaf), J(P.activeLeaf));
+    assert.equal(J(P2.branchStall), J(P.branchStall));
+    assert.deepEqual([...P2.abandonedGoals], ["a:Meet People"], "abandoned goals restore into a Set");
+});
+
+test("§V1 a targeted goal stays ACTIVE across loops (sticky) while byte-inert vs the heuristic", async () => {
+    // Start Journey is unreachable for the first loops, so the push never
+    // confirms. Pre-V1 the greedy driver forgot the goal each round; V1 keeps it
+    // ACTIVE (P.activeGoal set, its branch stall counting up) — yet the committed
+    // trace stays byte-identical to the heuristic run (the sticky bookkeeping
+    // never changes the queue). K is high so nothing is abandoned in this window.
+    const run = async (strategy) => {
+        const ctx = makePlanner(12345);
+        const r = await ctx.ev("IdlePlanner").runStandalone({ maxLoops: 10, targetTown: 9, goalStallK: 999,
+            ...(strategy === "targeted" ? { strategy: "targeted", targetAction: "Start Journey" } : {}) });
+        return r;
+    };
+    const heur = await run("heuristic");
+    const tgt = await run("targeted");
+    assert.deepEqual(j(tgt.trace.map(t => t.label)), j(heur.trace.map(t => t.label)),
+        "sticky pursuit is byte-inert on the committed trace");
+    // the goal persisted across all 10 loops and accrued stall (never achieved)
+    assert.equal(IP_goalKeyOf(tgt.resume.planning.activeGoal), "a:Start Journey", "top goal is still active after 10 loops");
+    const stall = tgt.resume.planning.branchStall["a:Start Journey"] ?? 0;
+    assert.ok(stall >= 1 && stall <= 10, `branch stall counted the unachieved loops (got ${stall})`);
+    assert.equal([...tgt.resume.planning.abandonedGoals].length, 0, "high K ⇒ nothing abandoned");
+});
+// goalKey is a planner internal; recompute the key the same way for the assertion
+function IP_goalKeyOf(g) { return g ? (g.kind === "a" ? `a:${g.action}` : `b:${g.target?.type}:${g.target?.name ?? ""}:${g.value ?? ""}`) : null; }

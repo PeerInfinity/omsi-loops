@@ -2523,6 +2523,80 @@ async function screenCandidates(sess, snap, cands, K, mode = "predictor") {
 }
 
 // ---------------------------------------------------------------------------
+// V1 persistence scaffolding (targeted-mode v2, phase V1): a STICKY Tier-1 goal
+// plus a per-branch stall counter. Today's targeted driver is greedy per-loop —
+// each round it re-derives goals from the list, installs one only if achievable
+// THIS loop, else relinquishes to the heuristic and forgets it. V1 keeps the
+// top goal ACTIVE across loops (P.activeGoal persists in the module-level P held
+// by the worker/standalone driver) so a later phase (V2) can spend setup loops
+// building its prerequisites instead of forgetting the goal each round. V1 wires
+// the counter + abandon hook; the recursive prerequisite finder that fills the
+// leaf is V2. Byte-inert at defaults (no goals ⇒ none of this runs).
+// ---------------------------------------------------------------------------
+
+// A goal's stable identity across loops. budget / enabled / list position don't
+// change WHICH goal it is; kind + action|target + stop value do.
+function goalKey(g) {
+    if (!g) return null;
+    return g.kind === "a"
+        ? `a:${g.action}`
+        : `b:${g.target?.type}:${g.target?.name ?? ""}:${g.value ?? ""}`;
+}
+
+// The branch the stall counter tracks. V1 stub: the branch IS the top goal (a
+// single-node DAG). V2 overwrites P.activeLeaf with the actionable DAG leaf the
+// recursive finder settles on; this key then identifies the per-branch counter.
+function activeLeafGoal(P) { return P.activeLeaf ?? P.activeGoal; }
+
+// Measured progress on a branch's dim this loop — the plan's PREFERRED abort
+// signal over a fixed loop count (a wrong branch shows 0 movement fast: V0's Met
+// grind moved the dim by exactly 0 over 60 loops). A kind-b leaf carries a
+// scalar dim (readStateValue of its target); a kind-a leaf has none, so progress
+// degrades to whether the goal advanced/executed this loop (`achieved`). V2
+// supplies the sub-leaf dim for deeper chains; this shape is unchanged.
+function branchProgressed(leaf, pre, post, achieved) {
+    if (leaf && leaf.kind === "b") return readStateValue(post, leaf.target) > readStateValue(pre, leaf.target);
+    return achieved;
+}
+
+function clearActiveGoal(P) { P.activeGoal = null; P.activeLeaf = null; P.branchStall = {}; }
+
+// Keep the top priority goal ACTIVE across loops and advance its branch stall
+// counter. `topGoal` is the user's #1 outstanding priority this round; it stays
+// active even when the push isn't achievable this loop (the greedy driver used
+// to drop it). Switching to a different top goal resets the branch bookkeeping.
+// `achieved` = the top goal itself advanced this round (its push confirmed).
+function updateGoalStall(P, topGoal, pre, post, achieved) {
+    if (goalKey(P.activeGoal) !== goalKey(topGoal)) {
+        P.activeGoal = topGoal;
+        P.activeLeaf = null;          // V2 sets the DAG leaf; V1 stub = the goal itself
+        P.branchStall = {};
+    } else {
+        P.activeGoal = topGoal;       // refresh the handle (budget / list position may drift)
+    }
+    const leaf = activeLeafGoal(P);
+    const lk = goalKey(leaf);
+    const bs = P.branchStall[lk] ?? 0;
+    P.branchStall[lk] = branchProgressed(leaf, pre, post, achieved) ? 0 : bs + 1;
+}
+
+// Abandon hook (V1: single-branch DAG ⇒ a stalled branch abandons the whole
+// goal). V0 grounds K: the naive escape took ~20 setup loops, so a fixed count
+// must be >= that (the plan's guessed 8–16 was too low). The MEASURED dim-delta
+// reset in updateGoalStall is the primary signal; this count is the backstop.
+// V2 replaces "the only branch" with "all branches" (prune a branch + try a
+// sibling before abandoning the goal). Records the goal so planTargeted skips it.
+function maybeAbandonGoal(P) {
+    const lk = goalKey(activeLeafGoal(P));
+    if (lk == null) return false;
+    if ((P.branchStall[lk] ?? 0) < (P.goalStallK ?? 20)) return false;
+    const gk = goalKey(P.activeGoal);
+    if (gk) P.abandonedGoals.add(gk);
+    clearActiveGoal(P);
+    return true;
+}
+
+// ---------------------------------------------------------------------------
 // Targeted planning (§11.10): assemble the priority list into ONE queue (spine +
 // budgeted layers + heuristic residual tail), engine-CONFIRM it, and INSTALL it
 // when the spine goal executes — no scoring vs the heuristic pool (ruling 1).
@@ -2547,10 +2621,22 @@ async function planTargeted(sess, P, snap, pre, opts = {}) {
     // drop kind-b goals whose target value V is already reached — the
     // across-rounds stop condition (§3.2); advance to the next priority.
     goals = goals.filter(g => g.kind !== "b" || readStateValue(pre, g.target) < (g.value ?? Infinity));
-    if (!goals.length) return null;
+    // §V1 sticky pursuit: drop goals abandoned after their branch stalled K
+    // loops (skipped on §6 escalation rounds — those ignore the user list per
+    // ruling 1's escalation semantics and keep their one-shot behaviour).
+    if (!opts.escalate) goals = goals.filter(g => !P.abandonedGoals.has(goalKey(g)));
+    if (!goals.length) {
+        if (!opts.escalate) clearActiveGoal(P);   // nothing outstanding ⇒ drop the handle
+        return null;
+    }
     const assembled = assembleTargetedQueue(pre, P.know, sess, goals, P.thresholds,
         { multiTown: P.multiTown, capacityHint: P.prevTimeNeeded });
-    if (!assembled) return null;
+    if (!assembled) {
+        // No goal's scaffold forms this loop. The top goal stays ACTIVE (sticky)
+        // — count this as a stalled loop on its branch and maybe abandon it.
+        if (!opts.escalate) { updateGoalStall(P, goals[0], pre, pre, false); maybeAbandonGoal(P); }
+        return null;
+    }
     const g = assembled.spineGoal;
     const achieves = (post, r) => g.kind === "a"
         ? execCountOf(r, g.action) > 0
@@ -2571,8 +2657,21 @@ async function planTargeted(sess, P, snap, pre, opts = {}) {
     };
     // full assembly first; if the residual layers starved the spine, retry the
     // bare spine (the budget caps FILL — the cushion still decides feasibility).
-    return install(assembled.q, assembled.label)
+    const result = install(assembled.q, assembled.label)
         ?? (assembled.bareQ.length !== assembled.q.length ? install(assembled.bareQ, assembled.label) : null);
+    // §V1 persistence: keep the TOP priority goal (goals[0]) active across loops
+    // and advance its branch stall counter. It stays active even when the push
+    // isn't achievable this loop — the greedy driver used to forget it. The top
+    // goal counts as advanced only when the SPINE is the top goal AND its install
+    // confirmed (a lower-priority spine winning does not reset the top branch).
+    if (!opts.escalate) {
+        const topGoal = goals[0];
+        const post = result ? result.best.post : pre;
+        const achieved = !!result && goalKey(assembled.spineGoal) === goalKey(topGoal);
+        updateGoalStall(P, topGoal, pre, post, achieved);
+        maybeAbandonGoal(P);
+    }
+    return result;
 }
 
 // Anti-fixation counters (§6): the committed-queue identity STREAK and the
@@ -2728,6 +2827,15 @@ function serializePlanningState(P) {
         thresholds: P.thresholds,
         pre: P.pre,
         know: [...P.know.entries()],
+        // §V1 sticky-goal handle: the MINIMAL cross-loop state for targeted-mode
+        // v2 (active top goal + currently-pursued leaf + per-branch stall counter
+        // + abandoned goals). JSON-plain — NOT a materialized DAG (recomputed on
+        // demand). Persisting it buys resume/reload/dump durability beyond the
+        // within-run stickiness the module-level P already provides.
+        activeGoal: P.activeGoal ?? null,
+        activeLeaf: P.activeLeaf ?? null,
+        branchStall: { ...(P.branchStall ?? {}) },
+        abandonedGoals: [...(P.abandonedGoals ?? [])],
     };
 }
 function restorePlanningState(P, s) {
@@ -2738,6 +2846,10 @@ function restorePlanningState(P, s) {
     P.thresholds = s.thresholds ?? {};
     P.pre = s.pre ?? null;
     P.know = new Map(s.know ?? []);
+    P.activeGoal = s.activeGoal ?? null;
+    P.activeLeaf = s.activeLeaf ?? null;
+    P.branchStall = s.branchStall ?? {};
+    P.abandonedGoals = new Set(s.abandonedGoals ?? []);
 }
 
 function newPlanningState(opts = {}) {
@@ -2773,6 +2885,13 @@ function newPlanningState(opts = {}) {
         // heuristic when the queue fixates). Default off; counters live below.
         antiFixation: opts.antiFixation ?? false,
         streak: 0, drought: 0, antiFixK: 32, droughtLimit: 256, seenAvail: new Set(),
+        // §V1 targeted-mode v2 persistence scaffolding: a STICKY top goal + the
+        // currently-pursued leaf + per-branch stall counters + abandoned goals.
+        // All byte-inert at defaults (touched only inside the targeted driver).
+        // goalStallK is the abandon backstop (V0 grounds >=~20); like weights it
+        // is NOT serialized — the resuming caller's param wins.
+        activeGoal: null, activeLeaf: null, branchStall: {}, abandonedGoals: new Set(),
+        goalStallK: opts.goalStallK ?? 20,
         divergenceLog: [],
     };
 }
@@ -2816,14 +2935,14 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode
                                probeEvery = 1,
                                seedFromPredictor = false, multiTown = true, vocabulary = "empirical",
                                strategy = "heuristic", targetAction = null, targets = [], autoRankTargets = false,
-                               antiFixation = false,
+                               antiFixation = false, goalStallK = 20,
                                replanEvery = 1, basicReuse = false, dumpDetail = false,
                                targetTown = 1,
                                verbose = false, onLoop = null, resume = null } = {}) {
     const t0 = Date.now();
     const sess = new Session();
     const P = newPlanningState({ weights, screenK, screenMode, probeEvery, seedFromPredictor, multiTown, vocabulary,
-                                 strategy, targetAction, targets, autoRankTargets, antiFixation });
+                                 strategy, targetAction, targets, autoRankTargets, antiFixation, goalStallK });
     const trace = [];
     const milestones = {};
     let cumTicks = 0;
@@ -3087,6 +3206,8 @@ return {
     regressAction, regressTarget, generateTargeted, repSinkProvider,
     rankValueProviders, readStateValue, planTargeted,
     assembleTargetedQueue, heuristicGrindTail, autoRankGoals, updateStagnation,
+    // targeted-mode v2 persistence scaffolding (§V1)
+    goalKey, branchProgressed, updateGoalStall, maybeAbandonGoal, clearActiveGoal,
     _internals: { plReadState, plProbeThresholds, plProbeCanStartNeeds, plSaveClone,
                   plRestoreSave, plRunOneLoopChunk, plInjectResources, plSnapshot,
                   plSetQueue, plGetQueue, plPredictQueue },
