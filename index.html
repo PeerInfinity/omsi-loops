@@ -213,6 +213,32 @@
                                 planner plays exactly the loop it planned. Off = plans install one loop behind.</div>
                             </label>
                             <br>
+                            <input id='plannerPipelineInput' type='checkbox' onchange='setOption("plannerPipeline", this.checked)'>
+                            <label class='showthat' for='plannerPipelineInput'>Live pipelining (Auto, no pause)
+                                <div class='showthis' style="width:280px">§11.7 Design B. Keep playing the current queue while the worker
+                                plans from the PREDICTED loop-boundary state, then swap in the fresh plan at the boundary with no stall —
+                                only if its predicted state still matches (else it falls back). Supersedes "Pause while planning".</div>
+                            </label>
+                            <div id="plannerPipelineSection" style="display:none; margin-left:1.5em">
+                                <label class="showthat" for="plannerReplanEveryInput">Loops per plan
+                                    <div class="showthis" style="width:280px">Reuse an installed plan for this many loops before
+                                    re-planning. Running a queue is far cheaper than planning, so >1 speeds wall-clock at some cost to
+                                    loop-count. 1 = re-plan every loop.</div>
+                                </label>
+                                <input id='plannerReplanEveryInput' type='number' value='1' min='1' max='999' style='width: 44px;' oninput='setOption("plannerReplanEvery", parseInt(this.value))'>
+                                <br>
+                                <label class="showthat" for="plannerLatePlanInput">When a plan is late
+                                    <div class="showthis" style="width:280px">If a plan is not ready at a boundary: Auto = repeat the
+                                    queue when reusing plans (Loops per plan &gt; 1) but briefly pause when re-planning every loop. Repeat =
+                                    always keep playing. Pause = always wait for the fresh plan (never run a stale loop).</div>
+                                </label>
+                                <select id='plannerLatePlanInput' onchange='setOption("plannerLatePlan", this.value)'>
+                                    <option value='auto'>Auto (repeat if reusing, else pause)</option>
+                                    <option value='repeat'>Repeat (never pause)</option>
+                                    <option value='pause'>Pause (never run a stale loop)</option>
+                                </select>
+                            </div>
+                            <br>
                             <input id='plannerSeedFromPredictorInput' type='checkbox' onchange='setOption("plannerSeedFromPredictor", this.checked)'>
                             <label class='showthat' for='plannerSeedFromPredictorInput'>Cross-check with predictor model
                                 <div class='showthis' style="width:260px">Also run the Koviko predictor's effect model on each measured action and record

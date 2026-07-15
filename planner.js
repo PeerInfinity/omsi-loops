@@ -527,6 +527,41 @@ function plSnapshot() {
     });
 }
 
+// ---- §11.7 Design B: boundary-state hash (live no-pause pipelining) --------
+// Deterministic 64-bit FNV-1a over a string -> 16 hex chars. No crypto
+// dependency, so it runs identically on the browser main thread, the planning
+// Worker, and Node — which the stale-plan guard requires (both sides must
+// agree bit-for-bit on the digest of the same state).
+function fnv1a64(str) {
+    let h = 0xcbf29ce484222325n;
+    const prime = 0x100000001b3n, mask = 0xffffffffffffffffn;
+    for (let i = 0; i < str.length; i++) {
+        h = ((h ^ BigInt(str.charCodeAt(i))) * prime) & mask;
+    }
+    return h.toString(16).padStart(16, "0");
+}
+
+// A digest of the PERSISTENT, restart-invariant state that defines the next
+// loop's planning problem: everything plReadState reports EXCEPT the per-loop
+// volatile fields (the derived actions[] closures — allowed()/goldCost() read
+// live gold — and each town's suppliesCost, both reset by restart()). Two
+// identical boundary states therefore hash equal whether the read is taken on
+// the live game after a loop or in the worker's simulate-ahead. Used to reject
+// a pipelined plan whose predicted boundary no longer matches the live state
+// (manual edit, option flip, or reward-path RNG divergence).
+function boundaryHash(readStateJSON) {
+    const s = JSON.parse(readStateJSON ?? plReadState());
+    delete s.actions;
+    // effectiveTime is a cumulative timer, NOT a planning gate: live play banks
+    // it from real-time Bonus Seconds while the headless worker advances it by
+    // ticks, so it diverges live-vs-worker even when every loop outcome is
+    // identical (Bonus Seconds changes real-time speed, not per-loop results).
+    // Including it would make the stale-plan guard miss on every install.
+    delete s.effectiveTime;
+    for (const t of s.towns ?? []) delete t.suppliesCost;
+    return fnv1a64(JSON.stringify(s));
+}
+
 // ---- predictor as headless queue scorer -----------------------------------
 let plPredictor = null;
 function plInitPredictor() {
@@ -2649,6 +2684,28 @@ async function planRound(sess, P) {
     return { best, snap, pre, nCands: cands.length, nScreened: screened.length, evals };
 }
 
+// §11.7 Design B (live no-pause pipelining): plan from the state the live game
+// will be in AFTER it finishes the current window of committed loops, so the
+// fresh plan is ready to install at that boundary with no pause. Simulates the
+// committed queue `replanEvery` loops forward from the restored state (the game
+// plays this same queue for that window), captures the predicted boundary hash,
+// then plans from there. The live game installs the returned queue at the next
+// boundary only if boundaryHash still matches — determinism makes them equal
+// whenever the window ran the same queue with no reward-path RNG divergence.
+// replanEvery<=1 looks one boundary ahead (the base Design B case).
+async function planPipeline(sess, P, committedQueue, replanEvery = 1) {
+    const K = Math.max(1, replanEvery | 0);
+    for (let i = 0; i < K; i++) {
+        sess.setQueue(committedQueue);
+        sess.restart();
+        sess.runLoop();
+    }
+    const predictedHash = boundaryHash();   // digest of the current (predicted) state
+    P.pre = null;                 // plan from the advanced (predicted) state
+    const res = await planRound(sess, P);
+    return { ...res, boundaryHash: predictedHash };
+}
+
 // ---- planning-state serialization (snapshot-start iteration) --------------
 // Everything planRound accumulates across loops, JSON-safe (the knowledge
 // Map flattens to entries; JS numbers round-trip JSON exactly). Weights and
@@ -2725,6 +2782,7 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode
                                seedFromPredictor = false, multiTown = true, vocabulary = "empirical",
                                strategy = "heuristic", targetAction = null, targets = [], autoRankTargets = false,
                                antiFixation = false,
+                               replanEvery = 1,
                                targetTown = 1,
                                verbose = false, onLoop = null, resume = null } = {}) {
     const t0 = Date.now();
@@ -2788,6 +2846,45 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode
         if (onLoop) onLoop(trace[trace.length - 1]);
 
         P.pre = best.post;
+        if (P.pre.townsUnlocked.includes(targetTown)) break;
+
+        // §11.7 reuse: replay the winning queue for the rest of the window
+        // (plannerReplanEvery>1) before planning again. Each replay is ONE cheap
+        // runLoop, versus a full planRound whose Koviko screen alone is ~80–93%
+        // of planning wall time — so K>1 trades loop-count optimality for
+        // wall-clock. replanEvery<=1 skips this loop entirely (byte-exact today).
+        for (let k = 1; k < replanEvery && P.loop < maxLoops; k++) {
+            const rpre = P.pre;
+            sess.setQueue(best.c.q);
+            sess.restart();
+            const r = sess.runLoop();
+            P.loop++;
+            cumTicks += r.ticks;
+            const post = sess.read();
+            const preAvail = new Map(rpre.actions.map(a => [a.name, a.visible ? (a.unlocked ? 2 : 1) : 0]));
+            for (const a of post.actions) {
+                const before = preAvail.get(a.name) ?? 0;
+                const now = a.visible ? (a.unlocked ? 2 : 1) : 0;
+                if (now > before) {
+                    const key = `${a.name}:${now === 2 ? "unlocked" : "visible"}`;
+                    if (!(key in milestones)) milestones[key] = { loop: P.loop, cumTicks };
+                }
+            }
+            for (const t of post.townsUnlocked) {
+                if (!rpre.townsUnlocked.includes(t)) milestones[`town${t}`] = { loop: P.loop, cumTicks };
+            }
+            trace.push({
+                loop: P.loop, ticks: r.ticks, cumTicks,
+                label: best.c.label, score: null, parts: {},
+                mana: r.lastTimeNeeded, nCands: 0, nScreened: 0,
+                queue: best.c.q.map(([n, l]) => `${n} x${l}`).join(", "), reused: true,
+            });
+            if (verbose && (P.loop % 25 === 0 || post.townsUnlocked.length > rpre.townsUnlocked.length))
+                console.log(`  L${String(P.loop).padStart(4)} [${best.c.label}] ticks=${r.ticks} mana=${r.lastTimeNeeded} (reuse)`);
+            if (onLoop) onLoop(trace[trace.length - 1]);
+            P.pre = post;
+            if (post.townsUnlocked.includes(targetTown)) break;
+        }
         if (P.pre.townsUnlocked.includes(targetTown)) break;
     }
 
@@ -2920,7 +3017,8 @@ function optimizeEconomy(sess, snap, queue, opts = {}) {
 
 return {
     DEFAULT_WEIGHTS, MEASURE_MANA,
-    Session, newPlanningState, planRound, runStandalone,
+    Session, newPlanningState, planRound, planPipeline, runStandalone,
+    boundaryHash,
     optimizeEconomy, classifyEconomy,
     serializePlanningState, restorePlanningState,
     setRngHooks, setEvalPool, confirmCandidate, evalLoopOnly,

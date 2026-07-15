@@ -37,6 +37,12 @@ let pausedByPlanner = false;
 let suggestion = null;          // last worker result (queue not yet installed unless auto)
 let installedQueueJSON = null;  // what auto mode last installed (manual-edit detection)
 let lastError = null;
+// §11.7 Design B — live no-pause pipelining (auto mode only). The game keeps
+// playing the current committed queue while the worker plans from the PREDICTED
+// boundary; the fresh plan waits in pipePending until the next install boundary,
+// and installs only if its boundary hash still matches the live state.
+let pipePending = null;         // { queue, hash } from a pipelined plan, awaiting install
+let pipeWindowLeft = 0;         // committed loops left before the next intended install
 // §11.6 ladder — Buy Mana / zone-1 economy optimiser (assist; independent of
 // the planner master gate). Runs on the SAME headless worker.
 let optimizeSuggestion = null;  // last {queue, report} from the worker
@@ -51,6 +57,40 @@ let pendingApplyAfterOptimize = false;  // Apply pressed with no proposal -> ins
 const basicOn = () => !!options.basicAutomation && !!options.basicAutomationEnabled;
 const advancedOn = () => !!options.advancedAutomation && !!options.advancedAutomationEnabled;
 const isEnabled = () => advancedOn() && options.plannerMode !== "off";
+// §11.7 Design B is an AUTO-mode boundary behavior; it supersedes
+// plannerPauseWhilePlanning while on.
+const pipelineOn = () => advancedOn() && options.plannerMode === "auto" && !!options.plannerPipeline;
+const replanEvery = () => Math.max(1, options.plannerReplanEvery | 0);
+
+// Late-plan policy when a pipelined plan is not ready (or is stale) at an
+// install boundary. "auto" (the default) pauses when we re-plan every loop
+// (replanEvery==1 — a repeat would run a stale loop we didn't want) but repeats
+// when we deliberately reuse a plan across a window (replanEvery>1 — we are
+// reusing anyway). Explicit "repeat"/"pause" force one policy.
+function latePolicy() {
+    const p = options.plannerLatePlan;
+    if (p === "repeat" || p === "pause") return p;
+    return replanEvery() > 1 ? "repeat" : "pause";
+}
+
+function resetPipeline() { pipePending = null; pipeWindowLeft = 0; }
+
+// Hash of the live game's persistent boundary state (post-loop, pre-restart),
+// computed with the same function the worker used on its simulate-ahead — so
+// the two agree bit-for-bit when the committed window ran the same queue with
+// no reward-path RNG divergence.
+function liveBoundaryHash() {
+    return IdlePlanner.boundaryHash(IdlePlanner._internals.plReadState());
+}
+
+// Begin a reuse window: play the just-installed queue for replanEvery loops,
+// and kick off the pipeline plan (look replanEvery loops ahead) so it is ready
+// by the next install boundary.
+function startPipelineWindow() {
+    pipeWindowLeft = replanEvery();
+    pipePending = null;
+    requestPlan("pipeline", { pipeline: true });
+}
 
 function currentWeights() {
     return {
@@ -94,6 +134,7 @@ function ensureWorker() {
 function shutdownWorker() {
     if (worker) { worker.terminate(); worker = null; }
     awaitingPlan = false;
+    resetPipeline();
     resumeIfPlannerPaused();
 }
 
@@ -145,7 +186,7 @@ function parsePlannerTargets() {
     } catch { return []; }
 }
 
-function requestPlan(reason) {
+function requestPlan(reason, { pipeline = false } = {}) {
     if (!isEnabled() || awaitingPlan) return;
     ensureWorker();
     awaitingPlan = true;
@@ -154,6 +195,11 @@ function requestPlan(reason) {
     worker.postMessage({
         type: "plan",
         reqId: ++reqId,
+        // §11.7 Design B: when pipelining, the worker simulates the committed
+        // queue (actualQueue) replanEvery loops forward and plans from that
+        // predicted boundary, returning a boundaryHash for the stale-plan guard.
+        pipeline,
+        replanEvery: replanEvery(),
         save: doSave(),
         // null = worker keeps its native loot-first model (matches the
         // checkboxes we just set); otherwise the worker honors these states
@@ -195,9 +241,33 @@ function onResult(msg) {
     suggestion = msg;
     const div = msg.divergenceCount ? `, ${msg.divergenceCount} predictor divergence${msg.divergenceCount === 1 ? "" : "s"}` : "";
     setStatus(`plan: ${msg.label} (score ${Math.round(msg.score)}, ${(msg.wallMs / 1000).toFixed(1)}s${div})`);
-    if (advancedOn() && options.plannerMode === "auto") {
+    if (msg.boundaryHash != null) {
+        // §11.7 Design B: a pipelined plan. It does NOT install now — it waits
+        // for the next install boundary and only if its predicted hash still
+        // matches the live state. The one exception: if we PAUSED at the install
+        // boundary waiting for this exact plan (it was still in flight), consume
+        // it immediately (its predicted boundary is the frozen live state).
+        pipePending = { queue: msg.queue, hash: msg.boundaryHash };
+        if (pausedByPlanner && pipeWindowLeft <= 0) {
+            if (pipePending.hash === liveBoundaryHash()) {
+                installQueue(pipePending.queue); pipePending = null;
+                setStatus(`pipeline: installed plan after wait (${msg.label})`);
+                startPipelineWindow();
+                resumeIfPlannerPaused();
+            } else {
+                // predicted boundary drifted while we waited (rare — the game is
+                // stopped): retarget from the live state, staying paused until
+                // the non-pipeline retarget result installs + resumes.
+                pipePending = null;
+                requestPlan("pipeline retarget", { pipeline: false });
+            }
+        }
+    } else if (advancedOn() && options.plannerMode === "auto") {
+        // Non-pipelined auto result: classic install (also the pipeline
+        // cold-start / pause-late seed). In pipeline mode, arm the next window.
         installQueue(msg.queue);
         resumeIfPlannerPaused();
+        if (pipelineOn()) startPipelineWindow();
     }
     // keep the Stats-panel Automation view live: new plan -> fresh internals
     if (isAutomationViewActive()) { renderLastPlan(); refreshInternals(); }
@@ -235,32 +305,83 @@ function interceptPrepareRestart(curAction) {
     // Suggest and let the player's queue run.
     if (options.plannerMode === "auto" && installedQueueJSON !== null
         && JSON.stringify(currentQueuePairs()) !== installedQueueJSON) {
+        resetPipeline();
         setOption("plannerMode", "suggest", true);
         setStatus("manual queue edit detected — switched to Suggest mode");
         requestPlan("loop boundary");
         return false;
     }
 
+    // §11.7 Design B: live no-pause pipelining (auto mode). Supersedes the
+    // classic pause / fire-and-forget paths below while enabled.
+    if (pipelineOn()) return pipelineBoundary(curAction);
+
     if (options.plannerMode === "auto" && options.plannerPauseWhilePlanning) {
-        // Mirror the original pause path's bookkeeping, then hold the game
-        // stopped until the plan for the next loop arrives.
-        if (curAction) {
-            actions.completedTicks += curAction.ticks;
-            view.requestUpdate("updateTotalTicks", null);
-        }
-        for (let i = 0; i < actions.current.length; i++) {
-            view.requestUpdate("updateCurrentActionBar", i);
-        }
-        if (!gameIsStopped) stopGame();
-        pausedByPlanner = true;
-        requestPlan("loop boundary");
-        return true;
+        // Classic pause path: hold the game stopped until the plan arrives.
+        return pauseAndPlan(curAction, {});
     }
 
     // suggest mode / auto-without-pause: fire-and-forget; the current queue
     // restarts normally and the result lands as a suggestion (or installs
     // one loop behind in auto mode).
     requestPlan("loop boundary");
+    return false;
+}
+
+// Mirror the original pause path's bookkeeping, then hold the game stopped
+// until the requested plan arrives (onResult installs + resumes).
+function pauseAndPlan(curAction, opts) {
+    if (curAction) {
+        actions.completedTicks += curAction.ticks;
+        view.requestUpdate("updateTotalTicks", null);
+    }
+    for (let i = 0; i < actions.current.length; i++) {
+        view.requestUpdate("updateCurrentActionBar", i);
+    }
+    if (!gameIsStopped) stopGame();
+    pausedByPlanner = true;
+    requestPlan("loop boundary", opts);
+    return true;
+}
+
+// §11.7 Design B boundary handler (auto + plannerPipeline). Keeps the game
+// playing the current committed queue while the worker plans from the predicted
+// boundary; swaps in a fresh plan only at a window boundary and only if its
+// predicted hash still matches the live state.
+function pipelineBoundary(curAction) {
+    // Cold start: nothing installed yet. Seed once via the pause path (plan from
+    // the current state); onResult installs it and arms the first window.
+    if (installedQueueJSON === null) return pauseAndPlan(curAction, { pipeline: false });
+
+    // One committed loop just finished.
+    if (--pipeWindowLeft > 0) return false;   // mid-window: keep playing, no swap
+
+    // Install boundary: install the pending plan iff its predicted boundary
+    // still matches the live state (determinism ⇒ equal whenever the window ran
+    // the same queue with no reward-path RNG divergence).
+    if (pipePending && pipePending.hash === liveBoundaryHash()) {
+        installQueue(pipePending.queue);
+        setStatus(`pipeline: installed plan (window ${replanEvery()})`);
+        startPipelineWindow();
+        return false;
+    }
+    // Pending is stale (hash mismatch) — discard it; or still in flight (null).
+    const stale = !!pipePending;
+    pipePending = null;
+    if (latePolicy() === "pause") {
+        // Stall at this boundary. If a pipeline plan is still in flight it will
+        // land on this frozen boundary (onResult installs + resumes); if it was
+        // stale, requestPlan issues a fresh non-pipeline plan for this state.
+        return pauseAndPlan(curAction, { pipeline: false });
+    }
+    // "repeat": leave the current queue running and (re)plan for a fresh
+    // boundary. If a plan is already in flight (targeting the boundary we just
+    // passed), re-check next loop — it lands, is found stale, and re-plans then;
+    // otherwise request a fresh pipeline plan and a full new window. Either way
+    // the current queue keeps playing, so forward progress is guaranteed.
+    setStatus(`pipeline: plan ${stale ? "stale" : "late"} — repeating queue`);
+    if (awaitingPlan) pipeWindowLeft = 1;
+    else startPipelineWindow();
     return false;
 }
 
@@ -671,12 +792,22 @@ optionValueHandlers.advancedAutomation = (value, init) => {
 // it (unpause the game if it was holding a boundary, forget the installed queue)
 // without hiding anything; isEnabled() gates the rest.
 optionValueHandlers.advancedAutomationEnabled = (value, init) => {
-    if (!value) { resumeIfPlannerPaused(); installedQueueJSON = null; if (!init) setStatus("advanced automation disabled"); }
+    if (!value) { resetPipeline(); resumeIfPlannerPaused(); installedQueueJSON = null; if (!init) setStatus("advanced automation disabled"); }
 };
 optionValueHandlers.plannerMode = (value, init) => {
+    resetPipeline();   // any mode change abandons an in-progress pipeline window
     if (value === "off") { shutdownWorker(); installedQueueJSON = null; if (!init) setStatus("off"); }
     else if (value === "auto") { installedQueueJSON = null; }   // adopt whatever queue comes next
 };
+// §11.7 Design B controls. Changing any of them abandons the current window so
+// the next boundary re-seeds cleanly under the new settings.
+optionValueHandlers.plannerPipeline = (value, init) => {
+    resetPipeline();
+    const sec = document.getElementById("plannerPipelineSection");
+    if (sec) sec.style.display = value ? "" : "none";
+};
+optionValueHandlers.plannerReplanEvery = (value, init) => { resetPipeline(); };
+optionValueHandlers.plannerLatePlan = (value, init) => { resetPipeline(); };
 optionValueHandlers.economyOptimizer = (value, init) => {
     const sec = document.getElementById("buyManaOptimizerSection");
     if (sec) sec.style.display = value ? "" : "none";

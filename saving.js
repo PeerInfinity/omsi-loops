@@ -711,6 +711,25 @@ const options = {
     advancedAutomationEnabled: true,
     plannerMode: "off",
     plannerPauseWhilePlanning: true,
+    // §11.7 Design B — live no-pause pipelining. When ON (auto mode only), the
+    // game keeps playing the current committed queue while the worker simulates
+    // it forward and plans from the PREDICTED loop-boundary state; the fresh
+    // plan is installed at the next boundary only if its predicted-boundary hash
+    // still matches the live state (else it falls back). Supersedes
+    // plannerPauseWhilePlanning while on. Default OFF ⇒ byte-inert.
+    plannerPipeline: false,
+    // Reuse an installed plan for this many loops before re-planning (shared by
+    // the live pipeline and headless runStandalone). Running a queue is far
+    // cheaper than a planRound (the Koviko screen is ~80–93% of planning), so
+    // K>1 trades loop-count optimality for wall-clock. 1 = re-plan every loop =
+    // byte-exact today.
+    plannerReplanEvery: 1,
+    // Late-plan policy when a pipelined plan is not ready at a boundary.
+    // "auto" (default) = repeat the current queue when reusing plans
+    // (plannerReplanEvery>1, since we are reusing anyway) but briefly pause when
+    // re-planning every loop (plannerReplanEvery==1, to avoid running a stale
+    // loop). "repeat"/"pause" force one policy regardless.
+    plannerLatePlan: "auto",
     plannerSeedFromPredictor: true,
     plannerScreenK: 8,
     plannerProbeEvery: 1,
@@ -786,6 +805,7 @@ const numericOptions = [
     "expGainMultiplier",
     "plannerScreenK",
     "plannerProbeEvery",
+    "plannerReplanEvery",
     "plannerWeightTown",
     "plannerWeightUnlockAction",
     "plannerWeightVisibleAction",
@@ -806,6 +826,7 @@ const stringOptions = [
     "plannerVocabulary",
     "plannerStrategy",
     "plannerTargets",
+    "plannerLatePlan",
     "rngMode",
 ];
 
@@ -913,6 +934,9 @@ const isStandardOption = {
     advancedAutomationEnabled: false,
     plannerMode: false,
     plannerPauseWhilePlanning: false,
+    plannerPipeline: false,
+    plannerReplanEvery: false,
+    plannerLatePlan: false,
     plannerSeedFromPredictor: false,
     plannerScreenK: false,
     plannerProbeEvery: false,

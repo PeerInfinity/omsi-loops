@@ -147,7 +147,20 @@ onmessage = async (e) => {
                 IdlePlanner._internals.plRestoreSave(
                     typeof data.save === "string" ? data.save : JSON.stringify(data.save));
                 P.pre = null;   // always re-read from the restored live state
-                const { best, evals, nCands, nScreened } = await IdlePlanner.planRound(sess, P);
+                // §11.7 Design B: when the main thread asks for a pipelined plan,
+                // simulate the committed queue `replanEvery` loops forward and
+                // plan from the PREDICTED boundary, returning the hash the live
+                // game must still match to install this plan. Falls back to a
+                // plain planRound (no look-ahead) when not pipelining or when
+                // there is no committed queue to simulate.
+                let boundaryHash = null, result;
+                if (data.pipeline && data.actualQueue?.length) {
+                    result = await IdlePlanner.planPipeline(sess, P, data.actualQueue, data.replanEvery ?? 1);
+                    boundaryHash = result.boundaryHash;
+                } else {
+                    result = await IdlePlanner.planRound(sess, P);
+                }
+                const { best, evals, nCands, nScreened } = result;
                 P.prevTimeNeeded = best.capacity;
                 P.prevProbeTicks = best.probeTicks;
                 P.lastCommitted = best.c.q;
@@ -160,6 +173,7 @@ onmessage = async (e) => {
                     projectedTicks: best.r.ticks,
                     projectedMana: best.r.lastTimeNeeded,
                     nCands, nScreened, evals,
+                    boundaryHash,
                     divergenceCount: P.divergenceLog.length,
                     recentDivergences: P.divergenceLog.slice(-5),
                     wallMs: Date.now() - t0,
