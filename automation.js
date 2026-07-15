@@ -610,14 +610,17 @@ const TG_TYPES = ["skill", "progress", "buff", "soulstones", "goldInvested"];
 const TG_NEEDS_NAME = { skill: true, progress: true, buff: true, soulstones: false, goldInvested: false };
 const TG_NEEDS_TOWN = { progress: true };
 
-// Actions eligible as a kind-a goal = currently unlocked (the same set
-// generateTargeted resolves against via unlockedOf().find(name)). Names carry
-// spaces, matching the goal spec's `action` field.
+// Actions offered as a kind-a goal. Default: currently unlocked only (the set
+// generateTargeted resolves against via unlockedOf().find(name)). With
+// plannerTargetsUnlockedOnly off, list EVERY action so a goal can be
+// pre-authored for a not-yet-unlocked action (inert until it unlocks). Names
+// carry spaces, matching the goal spec's `action` field.
 function tgEligibleActions() {
     const list = (typeof totalActionList !== "undefined" ? totalActionList : []);
+    const unlockedOnly = options.plannerTargetsUnlockedOnly !== false;   // default: restrict
     const names = [];
-    for (const a of list) { try { if (a.unlocked()) names.push(a.name); } catch { /* skip flaky unlocked() */ } }
-    return names.sort();
+    for (const a of list) { try { if (!unlockedOnly || a.unlocked()) names.push(a.name); } catch { /* skip flaky unlocked() */ } }
+    return [...new Set(names)].sort();
 }
 function tgSkills() { return typeof skillList !== "undefined" ? [...skillList] : []; }
 function tgBuffs() { return typeof buffList !== "undefined" ? [...buffList] : []; }
@@ -966,6 +969,7 @@ optionValueHandlers.autoAddReps = (value, init) => {
 // load / external change, and greys out when Auto-rank overrides the list.
 optionValueHandlers.plannerTargets = (value, init) => { renderTargetsEditor(); };
 optionValueHandlers.plannerAutoRankTargets = (value, init) => { renderTargetsEditor(); };
+optionValueHandlers.plannerTargetsUnlockedOnly = (value, init) => { renderTargetsEditor(); };
 
 return {
     interceptPrepareRestart,

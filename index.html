@@ -290,6 +290,13 @@
                                 tail. gold / reputation / mana are NOT valid targets (loop-scoped).</div>
                             </label>
                             <br>
+                            <input id='plannerTargetsUnlockedOnlyInput' type='checkbox' checked onchange='setOption("plannerTargetsUnlockedOnly", this.checked)'>
+                            <label class='showthat' for='plannerTargetsUnlockedOnlyInput'>Only unlocked actions
+                                <div class='showthis' style="width:280px">Restrict the Action-goal dropdowns to actions that are currently unlocked (default).
+                                Uncheck to list every action — lets you pre-author a goal for an action you haven't unlocked yet (it stays
+                                inert until it unlocks: the planner drops an unreachable goal and falls back to the heuristic scorer).</div>
+                            </label>
+                            <br>
                             <div id='plannerTargetsEditor' class='targeted-editor'></div>
                             <br>
                             <input id='plannerAntiFixationInput' type='checkbox' onchange='setOption("plannerAntiFixation", this.checked)'>

@@ -768,6 +768,11 @@ const options = {
     plannerTargets: "[]",
     // ignore the list and auto-enumerate+rank the travel frontier (ruling 2).
     plannerAutoRankTargets: false,
+    // priority-list editor: restrict the kind-a action dropdowns to currently
+    // UNLOCKED actions (default). Off = list every action, so goals can be
+    // pre-authored for actions not yet unlocked (a locked-action goal is inert
+    // until it unlocks — generateTargeted drops it and falls back).
+    plannerTargetsUnlockedOnly: true,
     // §6 stagnation trigger: auto-enter ONE targeted escalation round from the
     // heuristic when the committed queue fixates (streak/drought). Default off.
     plannerAntiFixation: false,
@@ -947,6 +952,7 @@ const isStandardOption = {
     plannerStrategy: false,
     plannerTargets: false,
     plannerAutoRankTargets: false,
+    plannerTargetsUnlockedOnly: false,
     plannerAntiFixation: false,
     plannerWeightTown: false,
     plannerWeightUnlockAction: false,

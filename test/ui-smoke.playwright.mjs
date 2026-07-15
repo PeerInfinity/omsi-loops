@@ -60,7 +60,8 @@ check(await page.evaluate(() => options.basicAutomationEnabled === true && optio
 // 5. settings section holds the moved inputs; Extras hint replaced the block
 for (const id of ["plannerModeInput", "plannerScreenKInput", "plannerWeightTravelReliefInput", "plannerWeightHeadroomInput",
                   // §11.10 targeted mode UI (plannerTargets is now a row editor, not a textarea)
-                  "plannerStrategyInput", "plannerAutoRankTargetsInput", "plannerTargetsEditor", "plannerAntiFixationInput"]) {
+                  "plannerStrategyInput", "plannerAutoRankTargetsInput", "plannerTargetsEditor",
+                  "plannerTargetsUnlockedOnlyInput", "plannerAntiFixationInput"]) {
     check(await page.$eval(`#automationView #${id}`, () => true).catch(() => false), `${id} lives in the automation view`);
 }
 check(await page.$eval("#expGainMultiplierInput", el => !el.closest("#automationView")), "expGainMultiplier stays in Extras");
@@ -203,6 +204,15 @@ check(tg[0].enabled === false, "unchecking Enable parks the row (enabled:false),
 await page.click('#plannerTargetsEditor .tg-row:nth-child(2) [data-tg="up"]');
 tg = await page.evaluate(() => JSON.parse(options.plannerTargets));
 check(tg[0].kind === "b" && tg[1].kind === "a", "raise-priority reorders the goals");
+// "Only unlocked actions" toggles the kind-a dropdown between the unlocked set
+// (default) and the full action list (more options, for pre-authoring goals).
+const unlockedCount = await page.$eval('#plannerTargetsEditor .tg-action', el => el.options.length);
+await page.evaluate(() => setOption("plannerTargetsUnlockedOnly", false));
+const allCount = await page.$eval('#plannerTargetsEditor .tg-action', el => el.options.length);
+check(allCount > unlockedCount, `unchecking 'Only unlocked' lists more actions (${unlockedCount} -> ${allCount})`);
+await page.evaluate(() => setOption("plannerTargetsUnlockedOnly", true));
+check(await page.$eval('#plannerTargetsEditor .tg-action', el => el.options.length) === unlockedCount,
+    "re-checking 'Only unlocked' restores the restricted list");
 // restore the targeted state block 10 expects to survive save()/reload
 await page.evaluate((tj) => { setOption("plannerStrategy", "targeted"); setOption("plannerTargets", tj); setOption("plannerAutoRankTargets", true); setOption("plannerAntiFixation", true); }, targetsJSON);
 
@@ -346,7 +356,7 @@ await page.evaluate(() => setOption("basicAutomationEnabled", true));   // resto
 
 // 10. persistence: settings survive save()/reload (incl. the targeted list).
 //     Flip the two enable flags to non-default (false) to prove they round-trip.
-await page.evaluate(() => { setOption("basicAutomation", true); setOption("advancedAutomation", true); setOption("basicAutomationEnabled", false); setOption("advancedAutomationEnabled", false); setOption("economyOptimizer", true); setOption("autoAddReps", true); setOption("autoAddRepsAuto", true); setOption("plannerWeightHeadroom", 2.5); setOption("plannerPipeline", true); setOption("plannerReplanEvery", 4); setOption("plannerLatePlan", "pause"); save(); });
+await page.evaluate(() => { setOption("basicAutomation", true); setOption("advancedAutomation", true); setOption("basicAutomationEnabled", false); setOption("advancedAutomationEnabled", false); setOption("economyOptimizer", true); setOption("autoAddReps", true); setOption("autoAddRepsAuto", true); setOption("plannerWeightHeadroom", 2.5); setOption("plannerPipeline", true); setOption("plannerReplanEvery", 4); setOption("plannerLatePlan", "pause"); setOption("plannerTargetsUnlockedOnly", false); save(); });
 await page.reload({ waitUntil: "load" });
 await page.waitForFunction(() => typeof options !== "undefined", null, { timeout: 20000 });
 await page.waitForTimeout(1000);
@@ -379,6 +389,10 @@ check(await page.evaluate((tj) => options.plannerStrategy === "targeted" && opti
 check(await page.$eval("#plannerWeightHeadroomInput", el => el.value === "2.5"), "moved weight input restored on boot");
 check(await page.$eval("#plannerTargetsEditor", el => el.querySelectorAll(".tg-row").length === 2),
     "priority-list editor restored on boot (a row per persisted goal)");
+check(await page.evaluate(() => options.plannerTargetsUnlockedOnly === false),
+    "'Only unlocked actions' (flipped off) persists through reload");
+check(await page.$eval("#plannerTargetsUnlockedOnlyInput", el => el.checked === false),
+    "'Only unlocked actions' checkbox restored on boot");
 check(await page.$eval("#automationStatsWrap", el => getComputedStyle(el).display !== "none"),
     "radio visible on boot with gate on");
 
