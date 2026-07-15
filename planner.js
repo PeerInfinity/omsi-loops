@@ -2782,7 +2782,7 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode
                                seedFromPredictor = false, multiTown = true, vocabulary = "empirical",
                                strategy = "heuristic", targetAction = null, targets = [], autoRankTargets = false,
                                antiFixation = false,
-                               replanEvery = 1,
+                               replanEvery = 1, basicReuse = false,
                                targetTown = 1,
                                verbose = false, onLoop = null, resume = null } = {}) {
     const t0 = Date.now();
@@ -2857,6 +2857,12 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode
             const rpre = P.pre;
             sess.setQueue(best.c.q);
             sess.restart();
+            // "basic automation during reuse" (user idea): between expensive
+            // full replans, cheaply RE-TUNE the reused queue to the current
+            // state — top up under-queued reps to the (grown) pools. Tactical
+            // only (never adds actions), UI-thread cost, no planRound. Off =
+            // plain reuse.
+            if (basicReuse) Koviko.applyRepTopUps(actions.next);
             const r = sess.runLoop();
             P.loop++;
             cumTicks += r.ticks;
