@@ -65,6 +65,24 @@ for (const id of ["plannerModeInput", "plannerScreenKInput", "plannerWeightTrave
 }
 check(await page.$eval("#expGainMultiplierInput", el => !el.closest("#automationView")), "expGainMultiplier stays in Extras");
 
+// 5b. §11.7 Design B pipeline controls: live in the settings view; the
+//     replan/late sub-controls reveal on plannerPipeline; options round-trip.
+for (const id of ["plannerPipelineInput", "plannerReplanEveryInput", "plannerLatePlanInput"]) {
+    check(await page.$eval(`#automationView #${id}`, () => true).catch(() => false), `${id} lives in the automation view`);
+}
+check(await page.$eval("#plannerPipelineSection", el => getComputedStyle(el).display === "none"),
+    "pipeline sub-section hidden while plannerPipeline off");
+await page.evaluate(() => setOption("plannerPipeline", true));
+check(await page.$eval("#plannerPipelineSection", el => getComputedStyle(el).display !== "none"),
+    "pipeline sub-section visible while plannerPipeline on");
+await page.evaluate(() => setOption("plannerReplanEvery", 3));
+check(await page.$eval("#plannerReplanEveryInput", el => (loadOption("plannerReplanEvery", options.plannerReplanEvery), el.value === "3")),
+    "replanEvery input syncs from loadOption");
+await page.evaluate(() => setOption("plannerLatePlan", "repeat"));
+check(await page.$eval("#plannerLatePlanInput", el => (loadOption("plannerLatePlan", options.plannerLatePlan), el.value === "repeat")),
+    "late-plan select syncs from loadOption");
+await page.evaluate(() => { setOption("plannerReplanEvery", 1); setOption("plannerLatePlan", "auto"); setOption("plannerPipeline", false); });
+
 // 6. option round-trip through the moved input
 await page.evaluate(() => setOption("plannerScreenK", 12));
 check(await page.$eval("#plannerScreenKInput", el => (loadOption("plannerScreenK", options.plannerScreenK), el.value === "12")),
@@ -107,6 +125,34 @@ await page.waitForFunction((prev) =>
 check(await page.evaluate((id) => !document.getElementById(id).checked, togglerIds[0]),
     "control OFF: planning leaves the user's checkbox alone");
 await page.evaluate(() => setOption("plannerControlLootFirst", true));
+
+// 8d. §11.7 Design B live flow: enable auto + pipeline, START the game (it boots
+//     paused), and let it run. Loops must advance with no permanent stall and no
+//     planner error — the soft-lock regression guard for the pipeline state
+//     machine. gameSpeed is cranked so loops complete fast.
+await page.evaluate(() => {
+    gameSpeed = 200;
+    setOption("plannerScreenK", 4);
+    actions.clearActions(); actions.addAction("Wander", 1); view.requestUpdate("updateNextActions");
+    setOption("plannerReplanEvery", 1);
+    setOption("plannerLatePlan", "auto");
+    setOption("plannerMode", "auto");
+    setOption("plannerPipeline", true);
+    if (gameIsStopped) pauseGame();   // press play (boots paused)
+});
+const loopsLive0 = await page.evaluate(() => totals.loops);
+await page.waitForFunction((l0) => totals.loops >= l0 + 5, loopsLive0, { timeout: 120000 });
+const live = await page.evaluate(() => ({ loops: totals.loops,
+    engaged: AdvancedAutomation.isEnabled(), err: AdvancedAutomation._debug.getLastError() }));
+check(live.loops >= loopsLive0 + 5, `pipeline: loops advance under auto pipelining (no soft-lock) ${loopsLive0}->${live.loops}`);
+check(live.engaged, "pipeline: planner stays engaged while pipelining");
+check(!live.err, "pipeline: no planner error while pipelining", live.err ? String(live.err) : "");
+// stop the game + reset for the rest of the smoke
+await page.evaluate(() => {
+    setOption("plannerMode", "off"); setOption("plannerPipeline", false);
+    setOption("plannerReplanEvery", 1); setOption("plannerScreenK", 8);
+    gameSpeed = 1; if (!gameIsStopped) pauseGame();
+});
 
 // 9. disable ONE master leaves the view (other still on); disabling BOTH falls back
 await page.evaluate(() => setOption("advancedAutomation", false));
@@ -274,7 +320,7 @@ await page.evaluate(() => setOption("basicAutomationEnabled", true));   // resto
 
 // 10. persistence: settings survive save()/reload (incl. the targeted list).
 //     Flip the two enable flags to non-default (false) to prove they round-trip.
-await page.evaluate(() => { setOption("basicAutomation", true); setOption("advancedAutomation", true); setOption("basicAutomationEnabled", false); setOption("advancedAutomationEnabled", false); setOption("economyOptimizer", true); setOption("autoAddReps", true); setOption("autoAddRepsAuto", true); setOption("plannerWeightHeadroom", 2.5); save(); });
+await page.evaluate(() => { setOption("basicAutomation", true); setOption("advancedAutomation", true); setOption("basicAutomationEnabled", false); setOption("advancedAutomationEnabled", false); setOption("economyOptimizer", true); setOption("autoAddReps", true); setOption("autoAddRepsAuto", true); setOption("plannerWeightHeadroom", 2.5); setOption("plannerPipeline", true); setOption("plannerReplanEvery", 4); setOption("plannerLatePlan", "pause"); save(); });
 await page.reload({ waitUntil: "load" });
 await page.waitForFunction(() => typeof options !== "undefined", null, { timeout: 20000 });
 await page.waitForTimeout(1000);
@@ -308,6 +354,16 @@ check(await page.$eval("#plannerWeightHeadroomInput", el => el.value === "2.5"),
 check(await page.$eval("#plannerTargetsInput", (el, tj) => el.value === tj, targetsJSON), "priority-list textarea restored on boot");
 check(await page.$eval("#automationStatsWrap", el => getComputedStyle(el).display !== "none"),
     "radio visible on boot with gate on");
+
+// 10b. §11.7 pipeline options persist through reload (incl. the flipped
+//      replanEvery / late-plan values, and the sub-section restored open).
+check(await page.evaluate(() => options.plannerPipeline === true && options.plannerReplanEvery === 4 && options.plannerLatePlan === "pause"),
+    "pipeline options persist through reload");
+check(await page.$eval("#plannerPipelineInput", el => el.checked === true), "pipeline checkbox restored on boot");
+check(await page.$eval("#plannerReplanEveryInput", el => el.value === "4"), "replanEvery input restored on boot");
+check(await page.$eval("#plannerLatePlanInput", el => el.value === "pause"), "late-plan select restored on boot");
+check(await page.$eval("#plannerPipelineSection", el => getComputedStyle(el).display !== "none"),
+    "pipeline sub-section visible on boot with pipeline on");
 
 await browser.close();
 console.log(fails.length ? `\n${fails.length} FAILURES` : "\nALL PASS");

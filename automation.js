@@ -831,6 +831,9 @@ return {
     refreshInternals,
     isEnabled,
     _debug: { getSuggestion: () => suggestion, getLastError: () => lastError,
-              getOptimizeSuggestion: () => optimizeSuggestion, requestOptimize },
+              getOptimizeSuggestion: () => optimizeSuggestion, requestOptimize,
+              // §11.7 pipeline observability (smoke tests / debugging)
+              getPipePending: () => pipePending, getPipeWindowLeft: () => pipeWindowLeft,
+              isPipelineOn: () => pipelineOn() },
 };
 })();
