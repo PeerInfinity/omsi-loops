@@ -595,12 +595,157 @@ function renderOptimize() {
         `</details>`;
 }
 
+// ---------------------------------------------------------------------------
+// §11.10 targeted-mode priority-list EDITOR (replaces the raw JSON textarea).
+// A row-based editor over the plannerTargets array (order = fitting priority).
+// Each row is a goal: kind "a" (make an action executable this loop) or kind "b"
+// (reach value V of a persistent resource). The enable checkbox parks a row
+// WITHOUT losing its config — planner.js skips `enabled === false` (keeps its
+// position + params in plannerTargets); ↑/↓ reorder = priority. When the
+// "Auto-rank targets" option is on the whole manual list is IGNORED by the
+// planner, so the editor greys out to match. No engine changes beyond the
+// one-line `enabled` filter — the editor only authors valid plannerTargets JSON.
+// ---------------------------------------------------------------------------
+const TG_TYPES = ["skill", "progress", "buff", "soulstones", "goldInvested"];
+const TG_NEEDS_NAME = { skill: true, progress: true, buff: true, soulstones: false, goldInvested: false };
+const TG_NEEDS_TOWN = { progress: true };
+
+// Actions eligible as a kind-a goal = currently unlocked (the same set
+// generateTargeted resolves against via unlockedOf().find(name)). Names carry
+// spaces, matching the goal spec's `action` field.
+function tgEligibleActions() {
+    const list = (typeof totalActionList !== "undefined" ? totalActionList : []);
+    const names = [];
+    for (const a of list) { try { if (a.unlocked()) names.push(a.name); } catch { /* skip flaky unlocked() */ } }
+    return names.sort();
+}
+function tgSkills() { return typeof skillList !== "undefined" ? [...skillList] : []; }
+function tgBuffs() { return typeof buffList !== "undefined" ? [...buffList] : []; }
+function tgReadTargets() {
+    const arr = parsePlannerTargets();   // defensive parse (never throws)
+    for (const g of arr) if (g && g.kind === "b" && !g.target) g.target = { type: "skill" };
+    return Array.isArray(arr) ? arr : [];
+}
+function tgWrite(goals, rerender = true) {
+    setOption("plannerTargets", JSON.stringify(goals));
+    if (rerender) renderTargetsEditor();
+}
+function tgOpts(values, sel) {
+    return values.map(v => `<option value="${esc(v)}"${v === sel ? " selected" : ""}>${esc(v)}</option>`).join("");
+}
+function tgDefaultB() {
+    return { kind: "b", target: { type: "skill", name: tgSkills()[0] ?? "", town: 0 }, value: 0 };
+}
+function tgRowHtml(g, i, n) {
+    const off = g.enabled === false;
+    const en = `<input type="checkbox" data-tg="en" data-i="${i}"${off ? "" : " checked"} title="Enable/disable this goal (disabled stays in the list, skipped by the planner)">`;
+    const kind = `<select data-tg="kind" data-i="${i}"><option value="a"${g.kind === "a" ? " selected" : ""}>Action</option>` +
+                 `<option value="b"${g.kind === "b" ? " selected" : ""}>Reach&nbsp;value</option></select>`;
+    let body;
+    if (g.kind === "a") {
+        const names = tgEligibleActions();
+        if (g.action && !names.includes(g.action)) names.unshift(g.action);   // keep the current selection even if now locked
+        body = `<select data-tg="action" data-i="${i}" class="tg-action" title="Make this action executable this loop">${tgOpts(names, g.action ?? "")}</select>`;
+    } else {
+        const t = g.target ?? { type: "skill" };
+        const typeSel = `<select data-tg="type" data-i="${i}">${tgOpts(TG_TYPES, t.type ?? "skill")}</select>`;
+        let nameSel = "";
+        if (t.type === "skill") nameSel = `<select data-tg="name" data-i="${i}">${tgOpts(tgSkills(), t.name ?? "")}</select>`;
+        else if (t.type === "buff") nameSel = `<select data-tg="name" data-i="${i}">${tgOpts(tgBuffs(), t.name ?? "")}</select>`;
+        else if (t.type === "progress") nameSel = `<input type="text" data-tg="name" data-i="${i}" class="tg-name" value="${esc(t.name ?? "")}" placeholder="progress name">`;
+        const town = TG_NEEDS_TOWN[t.type] ? `<label class="tg-lbl">town<input type="number" data-tg="town" data-i="${i}" class="tg-town" min="0" max="8" value="${Number(t.town ?? 0)}"></label>` : "";
+        const val = `<label class="tg-lbl" title="stop condition (tracked across rounds)">&ge;<input type="number" data-tg="value" data-i="${i}" class="tg-val" value="${Number(g.value ?? 0)}"></label>`;
+        const bud = `<label class="tg-lbl" title="fraction of the loop's fill this goal may use (0–1); blank = greedy">bud<input type="number" data-tg="budget" data-i="${i}" class="tg-budget" step="0.05" min="0" max="1" value="${g.budget ?? ""}"></label>`;
+        body = typeSel + nameSel + town + val + bud;
+    }
+    const up = `<button type="button" class="tg-btn" data-tg="up" data-i="${i}"${i === 0 ? " disabled" : ""} title="raise priority">&uarr;</button>`;
+    const dn = `<button type="button" class="tg-btn" data-tg="dn" data-i="${i}"${i === n - 1 ? " disabled" : ""} title="lower priority">&darr;</button>`;
+    const rm = `<button type="button" class="tg-btn" data-tg="rm" data-i="${i}" title="remove">&times;</button>`;
+    return `<div class="tg-row${off ? " tg-off" : ""}">${en}${kind}${body}${up}${dn}${rm}</div>`;
+}
+function renderTargetsEditor() {
+    const el = document.getElementById("plannerTargetsEditor");
+    if (!el) return;
+    tgEnsureStyle();
+    tgEnsureWired(el);
+    const goals = tgReadTargets();
+    const locked = !!options.plannerAutoRankTargets;
+    el.classList.toggle("tg-locked", locked);
+    const note = locked
+        ? `<div class="tg-note">Auto-rank is on — this manual list is ignored. Uncheck “Auto-rank targets” to use it.</div>`
+        : "";
+    const rows = goals.map((g, i) => tgRowHtml(g, i, goals.length)).join("")
+        || `<div class="tg-empty">No goals. Add one below — an empty list makes targeted mode fall back to the heuristic scorer.</div>`;
+    const add = `<div class="tg-add">`
+        + `<button type="button" class="tg-btn tg-addbtn" data-tg="add-a">+ Action goal</button>`
+        + `<button type="button" class="tg-btn tg-addbtn" data-tg="add-b">+ Reach-value goal</button></div>`;
+    el.innerHTML = note + `<div class="tg-rows">${rows}</div>` + add;
+}
+let tgWired = false;
+function tgEnsureWired(el) {
+    if (tgWired) return;
+    tgWired = true;
+    const handle = (target) => {
+        const act = target.getAttribute("data-tg");
+        const goals = tgReadTargets();
+        if (act === "add-a") { goals.push({ kind: "a", action: tgEligibleActions()[0] ?? "" }); return tgWrite(goals); }
+        if (act === "add-b") { goals.push(tgDefaultB()); return tgWrite(goals); }
+        const i = Number(target.getAttribute("data-i"));
+        if (!Number.isInteger(i) || i < 0 || i >= goals.length) return;
+        const g = goals[i];
+        const keepEnabled = g.enabled === false ? { enabled: false } : {};
+        switch (act) {
+            case "rm": goals.splice(i, 1); return tgWrite(goals);
+            case "up": if (i > 0) [goals[i - 1], goals[i]] = [goals[i], goals[i - 1]]; return tgWrite(goals);
+            case "dn": if (i < goals.length - 1) [goals[i + 1], goals[i]] = [goals[i], goals[i + 1]]; return tgWrite(goals);
+            case "en": if (target.checked) delete g.enabled; else g.enabled = false; return tgWrite(goals);
+            case "kind":
+                if (target.value === "a") goals[i] = { kind: "a", action: tgEligibleActions()[0] ?? "", ...keepEnabled };
+                else goals[i] = { ...tgDefaultB(), ...keepEnabled };
+                return tgWrite(goals);
+            case "type": {
+                const type = target.value;
+                const name = TG_NEEDS_NAME[type] ? (type === "skill" ? tgSkills()[0] ?? "" : type === "buff" ? tgBuffs()[0] ?? "" : "") : undefined;
+                g.target = { type, ...(name !== undefined ? { name } : {}), ...(TG_NEEDS_TOWN[type] ? { town: 0 } : {}) };
+                return tgWrite(goals);
+            }
+            // edit boxes: write WITHOUT a re-render so focus/caret survive.
+            case "action": g.action = target.value; return tgWrite(goals, false);
+            case "name": (g.target ??= { type: "skill" }).name = target.value; return tgWrite(goals, false);
+            case "town": (g.target ??= { type: "progress" }).town = Number(target.value) || 0; return tgWrite(goals, false);
+            case "value": g.value = Number(target.value) || 0; return tgWrite(goals, false);
+            case "budget": if (target.value === "") delete g.budget; else g.budget = Number(target.value); return tgWrite(goals, false);
+        }
+    };
+    el.addEventListener("click", (ev) => { const t = ev.target.closest("button[data-tg]"); if (t) handle(t); });
+    el.addEventListener("change", (ev) => { const t = ev.target.closest("[data-tg]"); if (t && t.tagName !== "BUTTON") handle(t); });
+}
+function tgEnsureStyle() {
+    if (document.getElementById("tg-editor-style")) return;
+    const s = document.createElement("style");
+    s.id = "tg-editor-style";
+    s.textContent =
+        `#plannerTargetsEditor{font-size:11px;margin:2px 0 4px}` +
+        `#plannerTargetsEditor .tg-row{display:flex;align-items:center;gap:3px;margin:2px 0;flex-wrap:wrap}` +
+        `#plannerTargetsEditor select,#plannerTargetsEditor input[type=number],#plannerTargetsEditor input[type=text]{font-size:11px;padding:0 2px}` +
+        `#plannerTargetsEditor .tg-val{width:60px}#plannerTargetsEditor .tg-budget{width:48px}#plannerTargetsEditor .tg-town{width:40px}#plannerTargetsEditor .tg-name{width:96px}` +
+        `#plannerTargetsEditor .tg-lbl{display:inline-flex;align-items:center;gap:2px}` +
+        `#plannerTargetsEditor .tg-btn{cursor:pointer;padding:0 5px}` +
+        `#plannerTargetsEditor .tg-off{opacity:.45}` +
+        `#plannerTargetsEditor.tg-locked .tg-rows,#plannerTargetsEditor.tg-locked .tg-add{opacity:.5;pointer-events:none}` +
+        `#plannerTargetsEditor .tg-note{color:#c80;margin-bottom:3px}` +
+        `#plannerTargetsEditor .tg-empty{color:#888;margin:2px 0}` +
+        `#plannerTargetsEditor .tg-add{margin-top:3px}`;
+    document.head.appendChild(s);
+}
+
 let statsRefreshTimer = null;
 function onViewShown() {
     renderCompactStats();
     renderLastPlan();
     renderPools();
     renderOptimize();
+    renderTargetsEditor();
     refreshInternals();
     if (!statsRefreshTimer) {
         statsRefreshTimer = setInterval(() => {
@@ -817,6 +962,10 @@ optionValueHandlers.autoAddReps = (value, init) => {
     const sec = document.getElementById("autoAddRepsSection");
     if (sec) sec.style.display = value ? "" : "none";
 };
+// §11.10 targeted mode: the priority-list editor reflects plannerTargets on
+// load / external change, and greys out when Auto-rank overrides the list.
+optionValueHandlers.plannerTargets = (value, init) => { renderTargetsEditor(); };
+optionValueHandlers.plannerAutoRankTargets = (value, init) => { renderTargetsEditor(); };
 
 return {
     interceptPrepareRestart,

@@ -290,7 +290,7 @@
                                 tail. gold / reputation / mana are NOT valid targets (loop-scoped).</div>
                             </label>
                             <br>
-                            <textarea id='plannerTargetsInput' rows='4' spellcheck='false' placeholder='[]' style='width:95%;box-sizing:border-box;font-family:monospace;font-size:11px' onchange='setOption("plannerTargets", this.value)'></textarea>
+                            <div id='plannerTargetsEditor' class='targeted-editor'></div>
                             <br>
                             <input id='plannerAntiFixationInput' type='checkbox' onchange='setOption("plannerAntiFixation", this.checked)'>
                             <label class='showthat' for='plannerAntiFixationInput'>Anti-fixation guard

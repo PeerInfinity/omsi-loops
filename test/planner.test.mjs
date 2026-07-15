@@ -756,6 +756,25 @@ test("targeted kind-b goal already at its value V falls back to the heuristic (b
     assert.deepEqual(satisfied, heuristic, "an already-satisfied value goal is inert");
 });
 
+test("a disabled (enabled:false) goal is skipped — byte-identical to the heuristic", async () => {
+    // The priority-list editor's Enable checkbox parks a row via `enabled:false`:
+    // planTargeted filters it out, so a list whose only goal is disabled falls
+    // straight back to the heuristic scorer (ruling 1). Guard with a goal proven
+    // to CHANGE the trace when active, so the inertness is non-trivial.
+    const labels = async (targets) => {
+        const ctx = makePlanner(12345);
+        const r = await ctx.ev("IdlePlanner").runStandalone({ maxLoops: 8, targetTown: 9,
+            ...(targets ? { strategy: "targeted", targets } : {}) });
+        return r.trace.map(t => t.label);
+    };
+    const goal = { kind: "b", target: { type: "progress", name: "Wander", town: 0 }, value: 100, budget: 0.5 };
+    const heuristic = j(await labels(null));
+    const active = j(await labels([goal]));
+    const disabled = j(await labels([{ ...goal, enabled: false }]));
+    assert.notDeepEqual(active, heuristic, "the goal actually bites when enabled (non-trivial guard)");
+    assert.deepEqual(disabled, heuristic, "the same goal disabled is skipped — the heuristic trace");
+});
+
 // ---- §11.10 targeted mode (T3: priority list + budgets + residual) ---------
 
 test("assembleTargetedQueue: budgeted layers + cascade + heuristic residual tail", () => {

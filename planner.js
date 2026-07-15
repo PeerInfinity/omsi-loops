@@ -2539,6 +2539,11 @@ async function planTargeted(sess, P, snap, pre, opts = {}) {
         ? autoRankGoals(pre, P.know, sess, P.thresholds)
         : ((P.targets && P.targets.length) ? P.targets
            : (P.targetAction ? [{ kind: "a", action: P.targetAction }] : []));
+    // drop rows the user disabled in the priority-list editor: `enabled:false`
+    // parks a goal (keeps its config + position in plannerTargets) but skips it
+    // this round. Auto-rank / escalation goals carry no `enabled` field, so
+    // `!== false` always passes them — byte-inert at defaults (empty list).
+    goals = goals.filter(g => g.enabled !== false);
     // drop kind-b goals whose target value V is already reached — the
     // across-rounds stop condition (§3.2); advance to the next priority.
     goals = goals.filter(g => g.kind !== "b" || readStateValue(pre, g.target) < (g.value ?? Infinity));

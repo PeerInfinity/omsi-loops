@@ -59,8 +59,8 @@ check(await page.evaluate(() => options.basicAutomationEnabled === true && optio
 
 // 5. settings section holds the moved inputs; Extras hint replaced the block
 for (const id of ["plannerModeInput", "plannerScreenKInput", "plannerWeightTravelReliefInput", "plannerWeightHeadroomInput",
-                  // §11.10 targeted mode UI
-                  "plannerStrategyInput", "plannerAutoRankTargetsInput", "plannerTargetsInput", "plannerAntiFixationInput"]) {
+                  // §11.10 targeted mode UI (plannerTargets is now a row editor, not a textarea)
+                  "plannerStrategyInput", "plannerAutoRankTargetsInput", "plannerTargetsEditor", "plannerAntiFixationInput"]) {
     check(await page.$eval(`#automationView #${id}`, () => true).catch(() => false), `${id} lives in the automation view`);
 }
 check(await page.$eval("#expGainMultiplierInput", el => !el.closest("#automationView")), "expGainMultiplier stays in Extras");
@@ -175,10 +175,36 @@ check(await page.$eval("#plannerAntiFixationInput", el => (loadOption("plannerAn
     "anti-fixation checkbox syncs from loadOption");
 check(await page.$eval("#plannerStrategyInput", el => (loadOption("plannerStrategy", options.plannerStrategy), el.value === "targeted")),
     "strategy select syncs from loadOption");
-check(await page.$eval("#plannerTargetsInput", (el, tj) => (loadOption("plannerTargets", options.plannerTargets), el.value === tj), targetsJSON),
-    "priority-list textarea syncs from loadOption");
 check(await page.$eval("#plannerAutoRankTargetsInput", el => (loadOption("plannerAutoRankTargets", options.plannerAutoRankTargets), el.checked === true)),
     "auto-rank checkbox syncs from loadOption");
+// priority-list EDITOR renders one row per goal from the option, and greys out
+// while auto-rank (set true just above) overrides the manual list.
+const editorRows = await page.$eval("#plannerTargetsEditor",
+    el => { loadOption("plannerTargets", options.plannerTargets); return el.querySelectorAll(".tg-row").length; });
+check(editorRows === 2, `priority-list editor renders a row per goal (${editorRows})`);
+check(await page.$eval("#plannerTargetsEditor", el => el.classList.contains("tg-locked")),
+    "editor greys out when auto-rank is on");
+
+// 9b-2. editor mutations round-trip to the plannerTargets option: add, edit a
+//       value box, disable (park) a row, and reorder by priority.
+await page.evaluate(() => { setOption("plannerAutoRankTargets", false); setOption("plannerTargets", "[]"); loadOption("plannerTargets", "[]"); });
+await page.click('#plannerTargetsEditor [data-tg="add-a"]');
+await page.click('#plannerTargetsEditor [data-tg="add-b"]');
+let tg = await page.evaluate(() => JSON.parse(options.plannerTargets));
+check(tg.length === 2 && tg[0].kind === "a" && tg[1].kind === "b", "add buttons append kind-a then kind-b goals");
+await page.$eval('#plannerTargetsEditor .tg-row:nth-child(2) [data-tg="value"]',
+    el => { el.value = "42"; el.dispatchEvent(new Event("change", { bubbles: true })); });
+tg = await page.evaluate(() => JSON.parse(options.plannerTargets));
+check(tg[1].value === 42, "editing the value box writes to the goal");
+await page.$eval('#plannerTargetsEditor .tg-row:nth-child(1) [data-tg="en"]',
+    el => { el.checked = false; el.dispatchEvent(new Event("change", { bubbles: true })); });
+tg = await page.evaluate(() => JSON.parse(options.plannerTargets));
+check(tg[0].enabled === false, "unchecking Enable parks the row (enabled:false), keeping it in the list");
+await page.click('#plannerTargetsEditor .tg-row:nth-child(2) [data-tg="up"]');
+tg = await page.evaluate(() => JSON.parse(options.plannerTargets));
+check(tg[0].kind === "b" && tg[1].kind === "a", "raise-priority reorders the goals");
+// restore the targeted state block 10 expects to survive save()/reload
+await page.evaluate((tj) => { setOption("plannerStrategy", "targeted"); setOption("plannerTargets", tj); setOption("plannerAutoRankTargets", true); setOption("plannerAntiFixation", true); }, targetsJSON);
 
 // 9c. Buy Mana optimiser (§11.6 ladder), now in the Basic section (needs the
 //     basicAutomation master, on from 9b): enable -> section visible -> optimise
@@ -351,7 +377,8 @@ check(await page.$eval("#autoAddRepsSection", el => getComputedStyle(el).display
 check(await page.evaluate((tj) => options.plannerStrategy === "targeted" && options.plannerTargets === tj && options.plannerAutoRankTargets === true, targetsJSON),
     "targeted strategy + priority list + auto-rank persist through reload");
 check(await page.$eval("#plannerWeightHeadroomInput", el => el.value === "2.5"), "moved weight input restored on boot");
-check(await page.$eval("#plannerTargetsInput", (el, tj) => el.value === tj, targetsJSON), "priority-list textarea restored on boot");
+check(await page.$eval("#plannerTargetsEditor", el => el.querySelectorAll(".tg-row").length === 2),
+    "priority-list editor restored on boot (a row per persisted goal)");
 check(await page.$eval("#automationStatsWrap", el => getComputedStyle(el).display !== "none"),
     "radio visible on boot with gate on");
 
