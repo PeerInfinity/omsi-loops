@@ -2777,12 +2777,42 @@ function newPlanningState(opts = {}) {
 // Same commit semantics as the v0 experiments harness (restore the winner's
 // post-loop snapshot) so results are directly comparable.
 // ---------------------------------------------------------------------------
+// Compact per-loop diagnostic snapshot from a read-state (plReadState) + the
+// current threshold table. Drops the heavy actions[] array; keeps the economy
+// (limited pools, progress + skill levels, persistent banks) and the gated
+// frontier (what is locked and by how much) — enough to see, alongside the
+// candidate evals, WHY a round chose what it did. Diagnostic dump only; never
+// read by the sim, so it cannot affect determinism.
+function compactState(post, thresholds) {
+    const skills = {};
+    for (const [k, v] of Object.entries(post.skills ?? {})) if (v.level > 0) skills[k] = v.level;
+    const pools = {};
+    for (const t of post.towns ?? []) {
+        if (!post.townsUnlocked.includes(t.index)) continue;
+        for (const [v, p] of Object.entries(t.limited ?? {})) if (p.total > 0) pools[`${t.index}:${v}`] = [p.good, p.checked, p.total];
+        for (const [v, pr] of Object.entries(t.progress ?? {})) if (pr.level > 0) pools[`${t.index}:${v}`] = `L${pr.level}`;
+    }
+    const gated = {};
+    for (const [name, th] of Object.entries(thresholds ?? {})) {
+        if (!th.probeable) { gated[name] = "story-gated"; continue; }
+        const unmet = (th.requires ?? []).filter(r => r.cur < r.need);
+        if (unmet.length) gated[name] = unmet.map(r => `${r.kind === "p" ? `t${r.town} ${r.v}` : r.v}>=${r.need}(${r.cur})`).join(",");
+    }
+    const buffs = {};
+    for (const [k, v] of Object.entries(post.buffs ?? {})) if (v) buffs[k] = v;
+    return {
+        townsUnlocked: post.townsUnlocked, skills, pools, gated, buffs,
+        soulstones: post.soulstones?.total ?? 0, goldInvested: post.goldInvested ?? 0,
+        baseMana: post.baseMana,
+    };
+}
+
 async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode = "predictor",
                                probeEvery = 1,
                                seedFromPredictor = false, multiTown = true, vocabulary = "empirical",
                                strategy = "heuristic", targetAction = null, targets = [], autoRankTargets = false,
                                antiFixation = false,
-                               replanEvery = 1, basicReuse = false,
+                               replanEvery = 1, basicReuse = false, dumpDetail = false,
                                targetTown = 1,
                                verbose = false, onLoop = null, resume = null } = {}) {
     const t0 = Date.now();
@@ -2810,7 +2840,7 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode
     }
 
     while (P.loop < maxLoops) {
-        const { best, pre } = await planRound(sess, P);
+        const { best, pre, evals } = await planRound(sess, P);
 
         // commit the winner
         sess.restore(best.postSnap);
@@ -2833,14 +2863,23 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode
             if (!pre.townsUnlocked.includes(t)) milestones[`town${t}`] = { loop: P.loop, cumTicks };
         }
 
-        trace.push({
+        const entry = {
             loop: P.loop, ticks: best.r.ticks, cumTicks,
             label: best.c.label, score: Math.round(best.score),
             parts: Object.fromEntries(Object.entries(best.parts).map(([k, v]) => [k, Math.round(v * 10) / 10])),
             mana: best.r.lastTimeNeeded,
             nCands: best.nCands, nScreened: best.nScreened,
             queue: best.c.q.map(([n, l]) => `${n} x${l}`).join(", "),
-        });
+        };
+        if (dumpDetail) {
+            // the WHOLE candidate set this round (each {label, score, capacity,
+            // probeTicks, parts}) — this is what shows why the winner beat the
+            // others (e.g. why "repeat" outscores "push:Start Journey") — plus a
+            // compact economy/frontier snapshot of the committed state.
+            entry.evals = evals;
+            entry.state = compactState(best.post, P.thresholds);
+        }
+        trace.push(entry);
         if (verbose && (P.loop % 25 === 0 || P.loop <= 3 || best.post.townsUnlocked.length > pre.townsUnlocked.length))
             console.log(`  L${String(P.loop).padStart(4)} [${best.c.label}] ticks=${best.r.ticks} mana=${best.r.lastTimeNeeded} score=${Math.round(best.score)}`);
         if (onLoop) onLoop(trace[trace.length - 1]);
@@ -2879,12 +2918,16 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode
             for (const t of post.townsUnlocked) {
                 if (!rpre.townsUnlocked.includes(t)) milestones[`town${t}`] = { loop: P.loop, cumTicks };
             }
-            trace.push({
+            const rentry = {
                 loop: P.loop, ticks: r.ticks, cumTicks,
                 label: best.c.label, score: null, parts: {},
                 mana: r.lastTimeNeeded, nCands: 0, nScreened: 0,
                 queue: best.c.q.map(([n, l]) => `${n} x${l}`).join(", "), reused: true,
-            });
+            };
+            // reused loops have no planRound (no evals); still snapshot the state
+            // so the economy trajectory across a reuse window is visible.
+            if (dumpDetail) rentry.state = compactState(post, P.thresholds);
+            trace.push(rentry);
             if (verbose && (P.loop % 25 === 0 || post.townsUnlocked.length > rpre.townsUnlocked.length))
                 console.log(`  L${String(P.loop).padStart(4)} [${best.c.label}] ticks=${r.ticks} mana=${r.lastTimeNeeded} (reuse)`);
             if (onLoop) onLoop(trace[trace.length - 1]);
