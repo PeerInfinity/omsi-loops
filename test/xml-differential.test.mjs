@@ -40,14 +40,64 @@ test("canary: a non-vanilla effortCost diverges for every migrated action", () =
     }
 });
 
-test("canary: a non-vanilla unlock threshold diverges (Pick Locks, Wander 20 -> 21)", () => {
-    const d = buildXmlDifferential({
-        maxMismatches: 5,
+// targeted canaries: one per vocabulary family, proving the corpus can
+// distinguish a wrong translation through that construct
+const TARGETED_CANARIES = [
+    {
+        label: "unlock threshold (Pick Locks, ifProgress 20 -> 21)",
+        expect: { name: "Pick Locks", col: "unlocked" },
         mutate: (doc) => {
             const unlocked = doc.actions["Pick Locks"].children.find(c => c.tag === "unlocked");
             unlocked.children.find(c => c.tag === "ifProgress").attrs.min = "21";
         },
+    },
+    {
+        label: "talentLevel (Train Strength story 2, 100 -> 200)",
+        expect: { name: "Train Strength", col: "storyReqs(2)" },
+        mutate: (doc) => {
+            const sr = doc.actions["Train Strength"].children.find(c => c.tag === "storyReqs");
+            sr.children.find(s => s.attrs.num === "2").children.find(c => c.tag === "if").attrs.min = "200";
+        },
+    },
+    {
+        label: "townValue (Buy Supplies cost, suppliesCost -> bogus field)",
+        expect: { name: "Buy Supplies", col: "canStart" },
+        mutate: (doc) => {
+            const cost = doc.actions["Buy Supplies"].children.find(c => c.tag === "cost");
+            cost.children[0].children.find(c => c.tag === "townValue").attrs.name = "noSuchField";
+        },
+    },
+    {
+        label: "anyOf arm (SurveyZ0 canStart, equals 100 -> 99)",
+        expect: { name: "SurveyZ0", col: "canStart" },
+        mutate: (doc) => {
+            const cs = doc.actions["SurveyZ0"].children.find(c => c.tag === "canStart");
+            cs.children.find(c => c.tag === "anyOf").children.find(c => c.tag === "ifProgress").attrs.equals = "99";
+        },
+    },
+    {
+        label: "globalValue (Train Strength allowed, trainingLimits -> storyMax)",
+        expect: { name: "Train Strength", col: "allowed" },
+        mutate: (doc) => {
+            const allowed = doc.actions["Train Strength"].children.find(c => c.tag === "allowed");
+            allowed.children.find(c => c.tag === "globalValue").attrs.name = "storyMax";
+        },
+    },
+    {
+        label: "ifTownUnlocked (Start Journey story 1, town 1 -> 2)",
+        expect: { name: "Start Journey", col: "storyReqs(1)" },
+        mutate: (doc) => {
+            const sr = doc.actions["Start Journey"].children.find(c => c.tag === "storyReqs");
+            sr.children[0].children.find(c => c.tag === "ifTownUnlocked").attrs.townNum = "2";
+        },
+    },
+];
+
+for (const { label, expect, mutate } of TARGETED_CANARIES) {
+    test(`canary: ${label} diverges`, () => {
+        const d = buildXmlDifferential({ maxMismatches: 5, mutate });
+        assert.ok(d.mismatches.some(m => m.name === expect.name && m.col === expect.col),
+            `mutation produced no ${expect.col} divergence for ${expect.name} — `
+            + `the corpus cannot see through this construct (got: ${JSON.stringify(d.mismatches.slice(0, 3))})`);
     });
-    assert.ok(d.mismatches.some(m => m.name === "Pick Locks" && m.col === "unlocked"),
-        "threshold mutation produced no unlocked divergence — the corpus does not straddle the threshold");
-});
+}

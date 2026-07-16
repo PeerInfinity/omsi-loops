@@ -131,6 +131,24 @@
                 <il:label>If prestiged</il:label>
                 <ref name="booleanCondition" />
             </element>
+            <element name="ifTownUnlocked">
+                <a:documentation>Test whether the given town has been unlocked.</a:documentation>
+                <il:label>If town unlocked</il:label>
+                <attribute name="townNum">
+                    <data type="integer" />
+                </attribute>
+                <ref name="booleanCondition" />
+            </element>
+            <element name="anyOf">
+                <a:documentation>True when ANY child condition passes (disjunction; the surrounding list is a conjunction).</a:documentation>
+                <il:label>Any of</il:label>
+                <ref name="booleanCondition" />
+            </element>
+            <element name="never">
+                <a:documentation>Always false — for properties that are constant false (e.g. actions granted by other means).</a:documentation>
+                <il:label>Never</il:label>
+                <empty />
+            </element>
         </choice>
     </define>
     <define name="required-statName">
@@ -308,6 +326,46 @@
         </element>
     </define>
     <define name="baseValue" combine="choice">
+        <element name="talentLevel">
+            <a:documentation>The current talent level of a given stat, as an integer.</a:documentation>
+            <il:label>Talent Level</il:label>
+            <ref name="required-statName" />
+        </element>
+    </define>
+    <define name="baseValue" combine="choice">
+        <element name="resourceValue">
+            <a:documentation>The current amount of a numeric resource.</a:documentation>
+            <il:label>Resource amount</il:label>
+            <attribute name="name" />
+        </element>
+    </define>
+    <define name="baseValue" combine="choice">
+        <element name="townValue">
+            <a:documentation>A named numeric field of a town (the action's own town if townNum is omitted), e.g. suppliesCost.</a:documentation>
+            <il:label>Town value</il:label>
+            <attribute name="name" />
+            <optional>
+                <attribute name="townNum">
+                    <data type="integer" />
+                </attribute>
+            </optional>
+        </element>
+    </define>
+    <define name="baseValue" combine="choice">
+        <element name="globalValue">
+            <a:documentation>A whitelisted global game value.</a:documentation>
+            <il:label>Global value</il:label>
+            <!-- Names here must also be whitelisted in actionListXml.js -->
+            <attribute name="name">
+                <choice>
+                    <value>trainingLimits</value>
+                    <value>goldInvested</value>
+                    <value>storyMax</value>
+                </choice>
+            </attribute>
+        </element>
+    </define>
+    <define name="baseValue" combine="choice">
         <element name="function">
             <a:documentation>The result of calling a named JavaScript function.</a:documentation>
             <il:label>JS function</il:label>
@@ -459,16 +517,18 @@
             <element name="expMult">
                 <ref name="numericEvaluation" />
             </element>
-            <element name="storyReqs">
-                <zeroOrMore>
-                    <element name="story">
-                        <attribute name="num">
-                            <data type="integer"/>
-                        </attribute>
-                        <ref name="conditionalEvaluation" />
-                    </element>
-                </zeroOrMore>
-            </element>
+            <optional>
+                <element name="storyReqs">
+                    <zeroOrMore>
+                        <element name="story">
+                            <attribute name="num">
+                                <data type="integer"/>
+                            </attribute>
+                            <ref name="conditionalEvaluation" />
+                        </element>
+                    </zeroOrMore>
+                </element>
+            </optional>
             <element name="stats">
                 <zeroOrMore>
                     <element name="stat">

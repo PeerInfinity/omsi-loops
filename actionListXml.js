@@ -38,14 +38,21 @@
 const ActionListXml = (() => {
     /** @typedef {import("./xmlLite.js").XmlNode} XmlNode */
 
-    const BASE_VALUE_TAGS = new Set(["skillLevel", "buffLevel", "primaryValue", "progressLevel",
-        "goodItems", "discoveredItems", "checkedItems", "value", "function"]);
+    const BASE_VALUE_TAGS = new Set(["skillLevel", "buffLevel", "talentLevel", "primaryValue",
+        "progressLevel", "goodItems", "discoveredItems", "checkedItems", "value", "function",
+        "resourceValue", "townValue", "globalValue"]);
     const CONDITIONAL_TAGS = new Set(["if", "ifCurrentValue", "ifResource", "ifHasResource",
         "ifStoryFlag", "ifProgress", "ifGoodItems", "ifDiscoveredItems", "ifCheckedItems",
-        "ifPrestige"]);
+        "ifPrestige", "ifTownUnlocked", "anyOf", "never"]);
     // whitelisted <function name="..."/> targets (mirrors schema.js / the rng)
     const FUNCTIONS = {
         getExploreProgress: () => getExploreProgress(),
+    };
+    // whitelisted <globalValue name="..."/> targets
+    const GLOBALS = {
+        trainingLimits: () => trainingLimits,
+        goldInvested: () => goldInvested,
+        storyMax: () => storyMax,
     };
 
     /** @param {string} xmlText */
@@ -122,6 +129,16 @@ const ActionListXml = (() => {
                 return !!storyFlags[node.attrs.storyFlagName] !== inverted;
             case "ifPrestige":   // fork schema extension: prestigeValues.completedAnyPrestige
                 return !!prestigeValues.completedAnyPrestige !== inverted;
+            case "ifTownUnlocked":   // fork schema extension: townsUnlocked membership
+                return townsUnlocked.includes(num(node.attrs.townNum, "ifTownUnlocked")) !== inverted;
+            case "anyOf": {   // fork schema extension: disjunction over child conditionals
+                for (const c of node.children) {
+                    if (evalConditional(c, ctx)) return !inverted;
+                }
+                return inverted;
+            }
+            case "never":   // fork schema extension: constant false (unlocks by other means)
+                return inverted;
             case "ifProgress":
                 return testNumeric(node, townFor(ownVar(node, ctx)).getLevel(ownVar(node, ctx)));
             case "ifGoodItems":
@@ -149,6 +166,17 @@ const ActionListXml = (() => {
         switch (node.tag) {
             case "skillLevel": return getSkillLevel(node.attrs.skillName);
             case "buffLevel": return getBuffLevel(node.attrs.buffName);
+            case "talentLevel": return getTalent(node.attrs.statName);
+            case "resourceValue": return resources[node.attrs.name];
+            case "townValue": {
+                const t = node.attrs.townNum !== undefined ? num(node.attrs.townNum, "townValue") : ctx.action.townNum;
+                return towns[t][node.attrs.name];
+            }
+            case "globalValue": {
+                const g = GLOBALS[node.attrs.name];
+                if (!g) throw new Error(`actionListXml: global ${node.attrs.name} not whitelisted`);
+                return g();
+            }
             case "progressLevel": return townFor(node.attrs.varName).getLevel(node.attrs.varName);
             case "goodItems": return townFor(ownVar(node, ctx))["good" + ownVar(node, ctx)];
             case "discoveredItems": return townFor(ownVar(node, ctx))["total" + ownVar(node, ctx)];
@@ -329,10 +357,14 @@ const ActionListXml = (() => {
         const cost = child(def, "cost");
         if (canStart || cost) {
             const costChecks = (cost?.children ?? [])
-                .filter(c => c.tag === "numericResource")
-                .map(c => ({ resource: c.attrs.name, node: c }));
+                .filter(c => c.tag === "numericResource" || c.tag === "booleanResource")
+                .map(c => ({ kind: c.tag, resource: c.attrs.name, node: c }));
             fields.canStart = () => {
-                for (const { resource, node } of costChecks) {
+                for (const { kind, resource, node } of costChecks) {
+                    if (kind === "booleanResource") {
+                        if (!resources[resource]) return false;
+                        continue;
+                    }
                     const needAmount = evalNumeric(node, ctx);
                     if (needAmount === null || !(resources[resource] >= needAmount)) return false;
                 }

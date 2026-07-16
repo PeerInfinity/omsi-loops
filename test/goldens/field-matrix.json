@@ -6,7 +6,7 @@
   },
   "predicates": 314,
   "probeEvals": 169996,
-  "states": 695,
+  "states": 707,
   "randomStates": 64,
   "fieldColumns": [
    "manaCost",
@@ -18,7 +18,7 @@
    "storyReqs1to8"
   ]
  },
- "matrixHash": "2d794b8b61acde97",
+ "matrixHash": "3f72338a19c44932",
  "perState": [
   {
    "id": "boot",
@@ -2537,92 +2537,140 @@
    "hash": "1d48b8508cbc4095"
   },
   {
+   "id": "talents:0",
+   "hash": "f017e17760d9755f"
+  },
+  {
+   "id": "talents:99",
+   "hash": "f017e17760d9755f"
+  },
+  {
+   "id": "talents:100",
+   "hash": "d7b2427aefee2aae"
+  },
+  {
+   "id": "talents:150",
+   "hash": "d7b2427aefee2aae"
+  },
+  {
+   "id": "talents:999",
+   "hash": "d7b2427aefee2aae"
+  },
+  {
+   "id": "talents:1000",
+   "hash": "a6fab20c8d396217"
+  },
+  {
+   "id": "talents:5000",
+   "hash": "a6fab20c8d396217"
+  },
+  {
+   "id": "talents:9999",
+   "hash": "a6fab20c8d396217"
+  },
+  {
+   "id": "talents:10000",
+   "hash": "066986724e7c5df4"
+  },
+  {
+   "id": "talents:99999",
+   "hash": "066986724e7c5df4"
+  },
+  {
+   "id": "talents:100000",
+   "hash": "6b74342eb58d83b3"
+  },
+  {
+   "id": "talents:500000",
+   "hash": "6b74342eb58d83b3"
+  },
+  {
    "id": "random:0",
-   "hash": "941f8b34528d20fc"
+   "hash": "65d3755d13c36e31"
   },
   {
    "id": "random:1",
-   "hash": "c304c99ed67378c1"
+   "hash": "d083dc328134b0cb"
   },
   {
    "id": "random:2",
-   "hash": "38be11d466521c9e"
+   "hash": "c7d72acdde85b551"
   },
   {
    "id": "random:3",
-   "hash": "4da91014535739c2"
+   "hash": "8abdd824d417ada1"
   },
   {
    "id": "random:4",
-   "hash": "a62a1e1fd345aa70"
+   "hash": "d9c56cd1200da6e9"
   },
   {
    "id": "random:5",
-   "hash": "ee26c32de8177ea4"
+   "hash": "e5e9dbbe5a573726"
   },
   {
    "id": "random:6",
-   "hash": "4494a6d11e5c17cf"
+   "hash": "636bc400971e9f60"
   },
   {
    "id": "random:7",
-   "hash": "e30a001eff86c1f7"
+   "hash": "9c7af8e2e1053598"
   },
   {
    "id": "random:8",
-   "hash": "4ffe0270a804870c"
+   "hash": "e10a4d5ca57796b2"
   },
   {
    "id": "random:9",
-   "hash": "d28e34fdf8c79747"
+   "hash": "21cc0fe619d65a8c"
   },
   {
    "id": "random:10",
-   "hash": "bd37af08ddd8f8d5"
+   "hash": "cf14e8877695ff37"
   },
   {
    "id": "random:11",
-   "hash": "bb3753abd4827486"
+   "hash": "353cf6295794780e"
   },
   {
    "id": "random:12",
-   "hash": "43cf3ede0b32735f"
+   "hash": "cbb478d0a8cb9ac0"
   },
   {
    "id": "random:13",
-   "hash": "21326f0bc293acc4"
+   "hash": "090efb5b8de8c5f0"
   },
   {
    "id": "random:14",
-   "hash": "7d2c6e1e2c33f3a1"
+   "hash": "4e0751b65046b602"
   },
   {
    "id": "random:15",
-   "hash": "2032523c40eae202"
+   "hash": "42ab92e1ef5a4e0f"
   },
   {
    "id": "random:16",
-   "hash": "9e870dc2d66dfc92"
+   "hash": "4f788948fe11f1d6"
   },
   {
    "id": "random:17",
-   "hash": "4477142b71d426d5"
+   "hash": "2a150411e1cff393"
   },
   {
    "id": "random:18",
-   "hash": "b266c182d92a9ebb"
+   "hash": "c753431ec2f6414b"
   },
   {
    "id": "random:19",
-   "hash": "d0f684ea23d3741d"
+   "hash": "1e973fce42de1773"
   },
   {
    "id": "random:20",
-   "hash": "b95de551df06b47c"
+   "hash": "a56309bb99127889"
   },
   {
    "id": "random:21",
-   "hash": "9f6f444821a9f07d"
+   "hash": "a3bac0b32ef054a8"
   },
   {
    "id": "random:22",
@@ -2630,107 +2678,107 @@
   },
   {
    "id": "random:23",
-   "hash": "8f4c3032315778e9"
+   "hash": "4743e4935372b593"
   },
   {
    "id": "random:24",
-   "hash": "adbdd7a6ce4294df"
+   "hash": "692cee075c630a14"
   },
   {
    "id": "random:25",
-   "hash": "d707304c8bf1ea84"
+   "hash": "40d7993dbd8cefc8"
   },
   {
    "id": "random:26",
-   "hash": "526e9a3a1c1e99de"
+   "hash": "4c5f69f853badcd3"
   },
   {
    "id": "random:27",
-   "hash": "7fcb886c08d7bcdc"
+   "hash": "afb9c9b58c88dff6"
   },
   {
    "id": "random:28",
-   "hash": "8f887eba1bc57882"
+   "hash": "1a73c2fb72360268"
   },
   {
    "id": "random:29",
-   "hash": "fd2b72fb65d9e7e2"
+   "hash": "5f707603b7a5bb8a"
   },
   {
    "id": "random:30",
-   "hash": "75cc9c40f30837a7"
+   "hash": "db0fb19d394ddd88"
   },
   {
    "id": "random:31",
-   "hash": "9bfbd5aa448a2fe1"
+   "hash": "4a7fdf3ba2cdfd00"
   },
   {
    "id": "random:32",
-   "hash": "2a5a3e128121bb3f"
+   "hash": "5ea569d97aae4742"
   },
   {
    "id": "random:33",
-   "hash": "bb37a16a5a4299f2"
+   "hash": "f33269b6f9afe398"
   },
   {
    "id": "random:34",
-   "hash": "87aba41d86cc85e0"
+   "hash": "d01c5689b3c76841"
   },
   {
    "id": "random:35",
-   "hash": "515c7ab074aea83c"
+   "hash": "02a79d20214d72dd"
   },
   {
    "id": "random:36",
-   "hash": "9e8e19d0b3dce94a"
+   "hash": "0f44a0e2e40e233c"
   },
   {
    "id": "random:37",
-   "hash": "4a7cf949ccaaed65"
+   "hash": "01328e7f56724aaf"
   },
   {
    "id": "random:38",
-   "hash": "bc456e5d673b701a"
+   "hash": "ed1a2938a43f1854"
   },
   {
    "id": "random:39",
-   "hash": "995a45c9dad5967e"
+   "hash": "88ce827f656201f1"
   },
   {
    "id": "random:40",
-   "hash": "3b3da4d6a80a9299"
+   "hash": "f2a074caf778d4f6"
   },
   {
    "id": "random:41",
-   "hash": "d5ef3a0295ab8e44"
+   "hash": "b09c30df9822cb55"
   },
   {
    "id": "random:42",
-   "hash": "027a434b2d7f8b7d"
+   "hash": "76247a281093f39e"
   },
   {
    "id": "random:43",
-   "hash": "15bae1d132a718cf"
+   "hash": "7adc75eea1cae4ed"
   },
   {
    "id": "random:44",
-   "hash": "b6ed2793d7b90845"
+   "hash": "1f888067139ba880"
   },
   {
    "id": "random:45",
-   "hash": "b66eb76742fd2bfc"
+   "hash": "b87076b409342bd5"
   },
   {
    "id": "random:46",
-   "hash": "f3bdad04e894fbb8"
+   "hash": "d51a6913783a70b6"
   },
   {
    "id": "random:47",
-   "hash": "a23df48ececf7f0b"
+   "hash": "6213a498097e4284"
   },
   {
    "id": "random:48",
-   "hash": "ab18df6cb0bf09b7"
+   "hash": "2032f065c1832eef"
   },
   {
    "id": "random:49",
@@ -2738,39 +2786,39 @@
   },
   {
    "id": "random:50",
-   "hash": "bc54c7952009adda"
+   "hash": "eecde8df18933375"
   },
   {
    "id": "random:51",
-   "hash": "594b98cedf04e76a"
+   "hash": "29e42eb70beeceef"
   },
   {
    "id": "random:52",
-   "hash": "6a80c98d439665b2"
+   "hash": "734c05f019d6b847"
   },
   {
    "id": "random:53",
-   "hash": "a897124ffd260402"
+   "hash": "0f4eea94f42c838e"
   },
   {
    "id": "random:54",
-   "hash": "4167d436d7e46acf"
+   "hash": "1f86d9af21421007"
   },
   {
    "id": "random:55",
-   "hash": "08a7a450d2c0a3b5"
+   "hash": "9f539a144520d531"
   },
   {
    "id": "random:56",
-   "hash": "2fda81d9be7121f8"
+   "hash": "b4c2bc306affc9b9"
   },
   {
    "id": "random:57",
-   "hash": "a79adaff276e28ad"
+   "hash": "dc3e5600fb3c5bc5"
   },
   {
    "id": "random:58",
-   "hash": "57a46007913932c2"
+   "hash": "cc5874ff4a4d63c0"
   },
   {
    "id": "random:59",
@@ -2778,15 +2826,15 @@
   },
   {
    "id": "random:60",
-   "hash": "3340f5f650072c9d"
+   "hash": "0a84f6775b5d0559"
   },
   {
    "id": "random:61",
-   "hash": "cb721a249635550c"
+   "hash": "b3a763f5faae8998"
   },
   {
    "id": "random:62",
-   "hash": "5a282d0887cbf25d"
+   "hash": "2f9f2214d5fe65a0"
   },
   {
    "id": "random:63",

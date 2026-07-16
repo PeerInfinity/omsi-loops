@@ -170,4 +170,895 @@
             <booleanResource name="glasses" />
         </reward>
     </action>
+    <action type="normal" name="Map" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <if minExclusive="1">
+                    <function name="getExploreProgress" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Cha">80</stat>
+            <stat statName="Luck">10</stat>
+            <stat statName="Soul">10</stat>
+        </stats>
+        <primaryValue value="15" />
+        <effortCost>200</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </unlocked>
+        <cost>
+            <numericResource name="gold">
+                <primaryValue />
+            </numericResource>
+        </cost>
+        <reward>
+            <numericResource name="map">1</numericResource>
+        </reward>
+    </action>
+    <action type="normal" name="Found Glasses" townNum="0">
+        <expMult>0</expMult>
+        <stats />
+        <affectedBy>
+            <action name="SurveyZ1" />
+        </affectedBy>
+        <allowed>0</allowed>
+        <effortCost>0</effortCost>
+        <visible>
+            <anyOf>
+                <if min="100">
+                    <function name="getExploreProgress" />
+                </if>
+                <ifPrestige />
+            </anyOf>
+        </visible>
+        <unlocked>
+            <never />
+        </unlocked>
+        <canStart>
+            <never />
+        </canStart>
+        <reward />
+    </action>
+    <action type="normal" name="Buy Mana Z1" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <!-- unlocks after meeting people, not on first purchase (upstream quirk) -->
+                <ifProgress varName="Met" minExclusive="0" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Cha">70</stat>
+            <stat statName="Int">20</stat>
+            <stat statName="Luck">10</stat>
+        </stats>
+        <primaryValue value="50">
+            <skillBonus name="Mercantilism" />
+            <prestigeBonus name="PrestigeBartering" />
+            <floor />
+        </primaryValue>
+        <effortCost>100</effortCost>
+        <visible>
+            <ifProgress varName="Wander" min="3" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Wander" min="20" />
+        </unlocked>
+        <!-- finish() not yet modeled (Phase 6): mana += gold * primaryValue, then gold resets to 0 -->
+        <reward />
+    </action>
+    <action type="progress" name="Meet People" varName="Met" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifProgress min="1" />
+            </story>
+            <story num="2">
+                <ifProgress min="20" />
+            </story>
+            <story num="3">
+                <ifProgress min="40" />
+            </story>
+            <story num="4">
+                <ifProgress min="60" />
+            </story>
+            <story num="5">
+                <ifProgress min="80" />
+            </story>
+            <story num="6">
+                <ifProgress min="100" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Int">10</stat>
+            <stat statName="Cha">80</stat>
+            <stat statName="Soul">10</stat>
+        </stats>
+        <effortCost>800</effortCost>
+        <visible>
+            <ifProgress varName="Wander" min="10" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Wander" min="22" />
+        </unlocked>
+        <progress value="200" />
+    </action>
+    <action type="normal" name="Train Strength" townNum="0">
+        <expMult>4</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="strengthTrained" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="strengthTrained" />
+                <if min="100">
+                    <talentLevel statName="Str" />
+                </if>
+            </story>
+            <story num="3">
+                <ifStoryFlag storyFlagName="strengthTrained" />
+                <if min="1000">
+                    <talentLevel statName="Str" />
+                </if>
+            </story>
+            <story num="4">
+                <ifStoryFlag storyFlagName="strengthTrained" />
+                <if min="10000">
+                    <talentLevel statName="Str" />
+                </if>
+            </story>
+            <story num="5">
+                <ifStoryFlag storyFlagName="strengthTrained" />
+                <if min="100000">
+                    <talentLevel statName="Str" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Str">80</stat>
+            <stat statName="Con">20</stat>
+        </stats>
+        <allowed>
+            <globalValue name="trainingLimits" />
+        </allowed>
+        <effortCost>2000</effortCost>
+        <visible>
+            <ifProgress varName="Met" min="1" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Met" min="5" />
+        </unlocked>
+        <!-- finish() not yet modeled (Phase 6): story() sets strengthTrained -->
+        <reward />
+    </action>
+    <action type="limited" name="Short Quest" varName="SQuests" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifCheckedItems min="1" />
+            </story>
+            <story num="2">
+                <!-- 20 short quests in a loop -->
+                <ifStoryFlag storyFlagName="maxSQuestsInALoop" />
+            </story>
+            <story num="3">
+                <!-- 50 short quests in a loop -->
+                <ifStoryFlag storyFlagName="realMaxSQuestsInALoop" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Str">20</stat>
+            <stat statName="Dex">10</stat>
+            <stat statName="Cha">30</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Luck">10</stat>
+            <stat statName="Soul">10</stat>
+        </stats>
+        <effortCost>600</effortCost>
+        <visible>
+            <ifProgress varName="Met" min="1" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Met" min="5" />
+        </unlocked>
+        <totalDiscovered>
+            <progressLevel varName="Met" />
+            <adjustment name="prestigeContent" />
+            <additiveBonus>
+                <skillMod name="Spatiomancy" minExclusive="200" max="400" percentChange="0.5" />
+                <surveyBonus />
+            </additiveBonus>
+            <floor />
+        </totalDiscovered>
+        <oneInEvery>5</oneInEvery>
+        <primaryValue value="20">
+            <skillMod name="Practical" minExclusive="100" max="300" percentChange="1" />
+            <floor />
+        </primaryValue>
+        <reward>
+            <numericResource name="gold">
+                <primaryValue />
+            </numericResource>
+        </reward>
+    </action>
+    <action type="progress" name="Investigate" varName="Secrets" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifProgress min="20" />
+            </story>
+            <story num="2">
+                <ifProgress min="40" />
+            </story>
+            <story num="3">
+                <ifProgress min="60" />
+            </story>
+            <story num="4">
+                <ifProgress min="80" />
+            </story>
+            <story num="5">
+                <ifProgress min="100" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">30</stat>
+            <stat statName="Cha">40</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Luck">10</stat>
+        </stats>
+        <effortCost>1000</effortCost>
+        <visible>
+            <ifProgress varName="Met" min="5" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Met" min="25" />
+        </unlocked>
+        <progress value="500" />
+    </action>
+    <action type="limited" name="Long Quest" varName="LQuests" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifCheckedItems min="1" />
+            </story>
+            <story num="2">
+                <!-- 10 long quests in a loop -->
+                <ifStoryFlag storyFlagName="maxLQuestsInALoop" />
+            </story>
+            <story num="3">
+                <!-- 25 long quests in a loop -->
+                <ifStoryFlag storyFlagName="realMaxLQuestsInALoop" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Str">20</stat>
+            <stat statName="Int">20</stat>
+            <stat statName="Con">40</stat>
+            <stat statName="Spd">20</stat>
+        </stats>
+        <effortCost>1500</effortCost>
+        <visible>
+            <ifProgress varName="Secrets" min="1" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Secrets" min="10" />
+        </unlocked>
+        <totalDiscovered>
+            <progressLevel varName="Secrets" />
+            <divisor value="2" />
+            <adjustment name="prestigeContent" />
+            <additiveBonus>
+                <skillMod name="Spatiomancy" minExclusive="300" max="500" percentChange="0.5" />
+                <surveyBonus />
+            </additiveBonus>
+            <floor />
+        </totalDiscovered>
+        <oneInEvery>5</oneInEvery>
+        <primaryValue value="30">
+            <skillMod name="Practical" minExclusive="200" max="400" percentChange="1" />
+            <floor />
+        </primaryValue>
+        <reward>
+            <numericResource name="reputation">1</numericResource>
+            <numericResource name="gold">
+                <primaryValue />
+            </numericResource>
+        </reward>
+    </action>
+    <action type="normal" name="Throw Party" townNum="0">
+        <expMult>2</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="partyThrown" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="partyThrown2" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Cha">80</stat>
+            <stat statName="Soul">20</stat>
+        </stats>
+        <effortCost>1600</effortCost>
+        <visible>
+            <ifProgress varName="Secrets" min="20" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Secrets" min="30" />
+        </unlocked>
+        <cost>
+            <numericResource name="reputation">2</numericResource>
+        </cost>
+        <!-- finish() not yet modeled (Phase 6): Met progress +3200; story() sets partyThrown / partyThrown2@10 -->
+        <reward />
+    </action>
+    <action type="normal" name="Warrior Lessons" townNum="0">
+        <expMult>1.5</expMult>
+        <storyReqs>
+            <story num="1">
+                <if min="1">
+                    <skillLevel skillName="Combat" />
+                </if>
+            </story>
+            <story num="2">
+                <if min="100">
+                    <skillLevel skillName="Combat" />
+                </if>
+            </story>
+            <story num="3">
+                <if min="200">
+                    <skillLevel skillName="Combat" />
+                </if>
+            </story>
+            <story num="4">
+                <if min="250">
+                    <skillLevel skillName="Combat" />
+                </if>
+            </story>
+            <story num="5">
+                <if min="500">
+                    <skillLevel skillName="Combat" />
+                </if>
+            </story>
+            <story num="6">
+                <if min="1000">
+                    <skillLevel skillName="Combat" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Str">50</stat>
+            <stat statName="Dex">30</stat>
+            <stat statName="Con">20</stat>
+        </stats>
+        <effortCost>1000</effortCost>
+        <visible>
+            <ifProgress varName="Secrets" min="10" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Secrets" min="20" />
+        </unlocked>
+        <canStart>
+            <ifResource resourceName="reputation" min="2" />
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): Combat exp 100; reputation is required, not consumed -->
+        <reward />
+    </action>
+    <action type="normal" name="Mage Lessons" townNum="0">
+        <expMult>1.5</expMult>
+        <storyReqs>
+            <story num="1">
+                <if min="1">
+                    <skillLevel skillName="Magic" />
+                </if>
+            </story>
+            <story num="2">
+                <if min="100">
+                    <skillLevel skillName="Magic" />
+                </if>
+            </story>
+            <story num="3">
+                <if min="200">
+                    <skillLevel skillName="Magic" />
+                </if>
+            </story>
+            <story num="4">
+                <if min="250">
+                    <skillLevel skillName="Magic" />
+                </if>
+            </story>
+            <story num="5">
+                <if min="10">
+                    <skillLevel skillName="Alchemy" />
+                </if>
+            </story>
+            <story num="6">
+                <if min="50">
+                    <skillLevel skillName="Alchemy" />
+                </if>
+            </story>
+            <story num="7">
+                <if min="100">
+                    <skillLevel skillName="Alchemy" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">30</stat>
+            <stat statName="Int">50</stat>
+            <stat statName="Con">20</stat>
+        </stats>
+        <effortCost>1000</effortCost>
+        <visible>
+            <ifProgress varName="Secrets" min="10" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Secrets" min="20" />
+        </unlocked>
+        <canStart>
+            <ifResource resourceName="reputation" min="2" />
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): Magic exp 100*(1+Alchemy/100); reputation required, not consumed -->
+        <reward />
+    </action>
+    <action type="normal" name="Buy Supplies" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="suppliesBought" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="suppliesBoughtWithoutHaggling" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Cha">80</stat>
+            <stat statName="Luck">10</stat>
+            <stat statName="Soul">10</stat>
+        </stats>
+        <allowed>1</allowed>
+        <effortCost>200</effortCost>
+        <visible>
+            <if min="15">
+                <skillLevel skillName="Combat" />
+                <addition>
+                    <skillLevel skillName="Magic" />
+                </addition>
+            </if>
+        </visible>
+        <unlocked>
+            <if min="35">
+                <skillLevel skillName="Combat" />
+                <addition>
+                    <skillLevel skillName="Magic" />
+                </addition>
+            </if>
+        </unlocked>
+        <cost>
+            <!-- suppliesCost is set by restart() (300, less Haggle) -->
+            <numericResource name="gold">
+                <townValue name="suppliesCost" />
+            </numericResource>
+        </cost>
+        <canStart>
+            <ifHasResource resourceName="supplies" inverted="inverted" />
+        </canStart>
+        <reward>
+            <booleanResource name="supplies" />
+        </reward>
+    </action>
+    <action type="normal" name="Haggle" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="haggle" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="haggle15TimesInALoop" />
+            </story>
+            <story num="3">
+                <ifStoryFlag storyFlagName="haggle16TimesInALoop" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Cha">80</stat>
+            <stat statName="Luck">10</stat>
+            <stat statName="Soul">10</stat>
+        </stats>
+        <effortCost>100</effortCost>
+        <visible>
+            <if min="15">
+                <skillLevel skillName="Combat" />
+                <addition>
+                    <skillLevel skillName="Magic" />
+                </addition>
+            </if>
+        </visible>
+        <unlocked>
+            <if min="35">
+                <skillLevel skillName="Combat" />
+                <addition>
+                    <skillLevel skillName="Magic" />
+                </addition>
+            </if>
+        </unlocked>
+        <cost>
+            <numericResource name="reputation">1</numericResource>
+        </cost>
+        <!-- finish() not yet modeled (Phase 6): suppliesCost -= 20 (clamped at 0) -->
+        <reward />
+    </action>
+    <action type="normal" name="Start Journey" townNum="0">
+        <expMult>2</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifTownUnlocked townNum="1" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Con">40</stat>
+            <stat statName="Per">30</stat>
+            <stat statName="Spd">30</stat>
+        </stats>
+        <allowed>1</allowed>
+        <effortCost>1000</effortCost>
+        <visible>
+            <if min="15">
+                <skillLevel skillName="Combat" />
+                <addition>
+                    <skillLevel skillName="Magic" />
+                </addition>
+            </if>
+        </visible>
+        <unlocked>
+            <if min="35">
+                <skillLevel skillName="Combat" />
+                <addition>
+                    <skillLevel skillName="Magic" />
+                </addition>
+            </if>
+        </unlocked>
+        <cost>
+            <booleanResource name="supplies" />
+        </cost>
+        <!-- finish() not yet modeled (Phase 6): unlockTown(1); story() unlocks global story 3 -->
+        <reward />
+    </action>
+    <action type="normal" name="Hitch Ride" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <if min="25">
+                    <function name="getExploreProgress" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Cha">50</stat>
+            <stat statName="Per">50</stat>
+        </stats>
+        <allowed>1</allowed>
+        <effortCost>1</effortCost>
+        <visible>
+            <if minExclusive="1">
+                <function name="getExploreProgress" />
+            </if>
+        </visible>
+        <unlocked>
+            <if min="25">
+                <function name="getExploreProgress" />
+            </if>
+        </unlocked>
+        <canStart />
+        <!-- finish() not yet modeled (Phase 6): unlockTown(2) -->
+        <reward />
+    </action>
+    <action type="normal" name="Open Rift" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifProgress varName="Meander" min="1" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Int">20</stat>
+            <stat statName="Luck">10</stat>
+            <stat statName="Soul">70</stat>
+        </stats>
+        <allowed>1</allowed>
+        <effortCost>50000</effortCost>
+        <visible>
+            <ifProgress varName="Meander" min="1" />
+        </visible>
+        <unlocked>
+            <if min="300">
+                <skillLevel skillName="Dark" />
+            </if>
+            <if min="100">
+                <skillLevel skillName="Spatiomancy" />
+            </if>
+        </unlocked>
+        <!-- finish() not yet modeled (Phase 6): Dark exp 1000; supplies = false; unlockTown(5) -->
+        <reward />
+    </action>
+    <action type="progress" name="SurveyZ0" townNum="0">
+        <expMult>1</expMult>
+        <stats>
+            <stat statName="Per">40</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Con">20</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <effortCost>10000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </unlocked>
+        <canStart>
+            <anyOf>
+                <ifResource resourceName="map" minExclusive="0" />
+                <ifProgress varName="SurveyZ0" equals="100" />
+            </anyOf>
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): consumes a map, +completedMap, progress += getExploreSkill() -->
+        <progress>
+            <function name="getExploreSkill" />
+        </progress>
+    </action>
+    <action type="progress" name="SurveyZ1" townNum="1">
+        <expMult>1</expMult>
+        <stats>
+            <stat statName="Per">40</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Con">20</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <effortCost>20000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </unlocked>
+        <canStart>
+            <anyOf>
+                <ifResource resourceName="map" minExclusive="0" />
+                <ifProgress varName="SurveyZ1" equals="100" />
+            </anyOf>
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): consumes a map, +completedMap, progress += getExploreSkill() -->
+        <progress>
+            <function name="getExploreSkill" />
+        </progress>
+    </action>
+    <action type="progress" name="SurveyZ2" townNum="2">
+        <expMult>1</expMult>
+        <stats>
+            <stat statName="Per">40</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Con">20</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <effortCost>30000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </unlocked>
+        <canStart>
+            <anyOf>
+                <ifResource resourceName="map" minExclusive="0" />
+                <ifProgress varName="SurveyZ2" equals="100" />
+            </anyOf>
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): consumes a map, +completedMap, progress += getExploreSkill() -->
+        <progress>
+            <function name="getExploreSkill" />
+        </progress>
+    </action>
+    <action type="progress" name="SurveyZ3" townNum="3">
+        <expMult>1</expMult>
+        <stats>
+            <stat statName="Per">40</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Con">20</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <effortCost>40000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </unlocked>
+        <canStart>
+            <anyOf>
+                <ifResource resourceName="map" minExclusive="0" />
+                <ifProgress varName="SurveyZ3" equals="100" />
+            </anyOf>
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): consumes a map, +completedMap, progress += getExploreSkill() -->
+        <progress>
+            <function name="getExploreSkill" />
+        </progress>
+    </action>
+    <action type="progress" name="SurveyZ4" townNum="4">
+        <expMult>1</expMult>
+        <stats>
+            <stat statName="Per">40</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Con">20</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <effortCost>50000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </unlocked>
+        <canStart>
+            <anyOf>
+                <ifResource resourceName="map" minExclusive="0" />
+                <ifProgress varName="SurveyZ4" equals="100" />
+            </anyOf>
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): consumes a map, +completedMap, progress += getExploreSkill() -->
+        <progress>
+            <function name="getExploreSkill" />
+        </progress>
+    </action>
+    <action type="progress" name="SurveyZ5" townNum="5">
+        <expMult>1</expMult>
+        <stats>
+            <stat statName="Per">40</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Con">20</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <effortCost>60000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </unlocked>
+        <canStart>
+            <anyOf>
+                <ifResource resourceName="map" minExclusive="0" />
+                <ifProgress varName="SurveyZ5" equals="100" />
+            </anyOf>
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): consumes a map, +completedMap, progress += getExploreSkill() -->
+        <progress>
+            <function name="getExploreSkill" />
+        </progress>
+    </action>
+    <action type="progress" name="SurveyZ6" townNum="6">
+        <expMult>1</expMult>
+        <stats>
+            <stat statName="Per">40</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Con">20</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <effortCost>70000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </unlocked>
+        <canStart>
+            <anyOf>
+                <ifResource resourceName="map" minExclusive="0" />
+                <ifProgress varName="SurveyZ6" equals="100" />
+            </anyOf>
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): consumes a map, +completedMap, progress += getExploreSkill() -->
+        <progress>
+            <function name="getExploreSkill" />
+        </progress>
+    </action>
+    <action type="progress" name="SurveyZ7" townNum="7">
+        <expMult>1</expMult>
+        <stats>
+            <stat statName="Per">40</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Con">20</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <effortCost>80000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </unlocked>
+        <canStart>
+            <anyOf>
+                <ifResource resourceName="map" minExclusive="0" />
+                <ifProgress varName="SurveyZ7" equals="100" />
+            </anyOf>
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): consumes a map, +completedMap, progress += getExploreSkill() -->
+        <progress>
+            <function name="getExploreSkill" />
+        </progress>
+    </action>
+    <action type="progress" name="SurveyZ8" townNum="8">
+        <expMult>1</expMult>
+        <stats>
+            <stat statName="Per">40</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Con">20</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <effortCost>90000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <function name="getExploreProgress" />
+            </if>
+        </unlocked>
+        <canStart>
+            <anyOf>
+                <ifResource resourceName="map" minExclusive="0" />
+                <ifProgress varName="SurveyZ8" equals="100" />
+            </anyOf>
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): consumes a map, +completedMap, progress += getExploreSkill() -->
+        <progress>
+            <function name="getExploreSkill" />
+        </progress>
+    </action>
 </actions>

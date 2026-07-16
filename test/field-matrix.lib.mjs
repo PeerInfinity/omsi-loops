@@ -103,13 +103,16 @@ globalThis.__fm = (() => {
     });
     const bootStones = structuredClone(stonesUsed);
     const bootGoldInvested = goldInvested, bootTrainingLimits = trainingLimits;
+    const bootTalents = Object.fromEntries(Object.entries(stats).map(([k, v]) => [k, v.talentLevelExp.level]));
     const resetExtras = () => {
         for (const k in resources) delete resources[k];
         Object.assign(resources, structuredClone(bootResources));
         towns.forEach((t, i) => Object.assign(t, bootTowns[i]));
+        for (const t of towns) delete t.suppliesCost;   // created by restart(), undefined at boot
         stonesUsed = structuredClone(bootStones);
         goldInvested = bootGoldInvested;
         trainingLimits = bootTrainingLimits;
+        for (const k in bootTalents) stats[k].talentLevelExp.level = bootTalents[k];
         townsUnlocked = [0];
     };
 
@@ -216,6 +219,8 @@ globalThis.__fm = (() => {
         else zeroAll();   // "boot"/"zero": dims zeroed, extras at boot defaults
         for (const [i, L] of spec.dims ?? []) set(numericDims[i], L);
         for (const [i, on] of spec.bools ?? []) setBool(boolDims[i], on);
+        if (spec.allFlags) for (const d of boolDims) setBool(d, true);
+        if (spec.talents != null) for (const k of Object.keys(stats)) stats[k].talentLevelExp.level = spec.talents;
         if (spec.random != null) {
             rs = spec.random >>> 0;
             for (const d of numericDims) {
@@ -244,6 +249,16 @@ globalThis.__fm = (() => {
             const gi = [0, 999999, 1000000, 999999999, 1000000000, 999999999999];
             goldInvested = gi[Math.floor(rnd() * gi.length)];
             trainingLimits = Math.floor(rnd() * 31);
+            // talents: threshold-aware (Train-family storyReqs test 100/1k/10k/100k)
+            const tal = [0, 1, 99, 100, 999, 1000, 9999, 10000, 99999, 100000, 500000];
+            for (const k of Object.keys(stats)) {
+                stats[k].talentLevelExp.level = rnd() < 0.4 ? 0 : tal[Math.floor(rnd() * tal.length)];
+            }
+            // suppliesCost: restart()-created; undefined at boot, 300 fresh, Haggle -20 steps
+            for (const t of towns) {
+                if (rnd() < 0.5) t.suppliesCost = Math.floor(rnd() * 16) * 20;
+                else delete t.suppliesCost;
+            }
             townsUnlocked = Array.from({ length: 1 + Math.floor(rnd() * 9) }, (_, i) => i);
         }
     };
@@ -416,6 +431,11 @@ function assembleStates(ctx, randomStates, probe = true) {
     }
     for (const i of th.zeroBools) states.push({ id: `zero:${boolName(i)}=on`, spec: { profile: "zero", bools: [[i, true]] } });
     for (const i of th.maxBools) states.push({ id: `max:${boolName(i)}=off`, spec: { profile: "max", bools: [[i, false]] } });
+    // talent ladder: story flags are ANDed with talent thresholds in the
+    // Train-family storyReqs — deterministic joint coverage, not probability
+    for (const t of [0, 99, 100, 150, 999, 1000, 5000, 9999, 10000, 99999, 100000, 500000]) {
+        states.push({ id: `talents:${t}`, spec: { profile: "zero", allFlags: true, talents: t } });
+    }
     for (let k = 0; k < randomStates; k++) {
         states.push({ id: `random:${k}`, spec: { profile: "zero", random: 0x51D0 + k * 7919 } });
     }
