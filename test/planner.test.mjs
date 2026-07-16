@@ -965,15 +965,19 @@ test("§V1 planning-state serialization round-trips the sticky-goal handle", () 
     assert.deepEqual([...P2.abandonedGoals], ["a:Meet People"], "abandoned goals restore into a Set");
 });
 
-test("§V1 a targeted goal stays ACTIVE across loops (sticky) while byte-inert vs the heuristic", async () => {
-    // Start Journey is unreachable for the first loops, so the push never
-    // confirms. Pre-V1 the greedy driver forgot the goal each round; V1 keeps it
-    // ACTIVE (P.activeGoal set, its branch stall counting up) — yet the committed
-    // trace stays byte-identical to the heuristic run (the sticky bookkeeping
-    // never changes the queue). K is high so nothing is abandoned in this window.
+test("§V3 a locked targeted goal stays ACTIVE (sticky, abandon clock FROZEN) while byte-inert vs the heuristic", async () => {
+    // Start Journey is LOCKED for the first ~540 loops (unlocks at Combat+Magic
+    // >=35), so no directed spine/leaf can form and planTargeted falls to the
+    // heuristic every round. §V3: while the action is locked the goal stays sticky
+    // but the abandon clock is FROZEN — the kind-a branch signal is blind to the
+    // real progress (skills climbing toward unlock), so it must NOT false-stall and
+    // abandon the goal before the finder can ever engage. goalStallK is LOW here:
+    // pre-fix the goal would abandon by ~loop 3 (a genuine regression); post-fix it
+    // never does. The committed trace still stays byte-identical to the heuristic
+    // run (the sticky bookkeeping never changes the queue).
     const run = async (strategy) => {
         const ctx = makePlanner(12345);
-        const r = await ctx.ev("IdlePlanner").runStandalone({ maxLoops: 10, targetTown: 9, goalStallK: 999,
+        const r = await ctx.ev("IdlePlanner").runStandalone({ maxLoops: 10, targetTown: 9, goalStallK: 3,
             ...(strategy === "targeted" ? { strategy: "targeted", targetAction: "Start Journey" } : {}) });
         return r;
     };
@@ -981,11 +985,13 @@ test("§V1 a targeted goal stays ACTIVE across loops (sticky) while byte-inert v
     const tgt = await run("targeted");
     assert.deepEqual(j(tgt.trace.map(t => t.label)), j(heur.trace.map(t => t.label)),
         "sticky pursuit is byte-inert on the committed trace");
-    // the goal persisted across all 10 loops and accrued stall (never achieved)
-    assert.equal(IP_goalKeyOf(tgt.resume.planning.activeGoal), "a:Start Journey", "top goal is still active after 10 loops");
+    // the goal persisted across all 10 loops with the abandon clock frozen (locked)
+    assert.equal(IP_goalKeyOf(tgt.resume.planning.activeGoal), "a:Start Journey",
+        "top goal is still active after 10 loops (not abandoned despite low K)");
     const stall = tgt.resume.planning.branchStall["a:Start Journey"] ?? 0;
-    assert.ok(stall >= 1 && stall <= 10, `branch stall counted the unachieved loops (got ${stall})`);
-    assert.equal([...tgt.resume.planning.abandonedGoals].length, 0, "high K ⇒ nothing abandoned");
+    assert.equal(stall, 0, `abandon clock frozen while locked ⇒ stall stays 0 (got ${stall})`);
+    assert.equal([...tgt.resume.planning.abandonedGoals].length, 0,
+        "a locked kind-a goal never abandons (frozen clock) even at K=3");
 });
 // goalKey is a planner internal; recompute the key the same way for the assertion
 function IP_goalKeyOf(g) { return g ? (g.kind === "a" ? `a:${g.action}` : `b:${g.target?.type}:${g.target?.name ?? ""}:${g.value ?? ""}`) : null; }

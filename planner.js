@@ -2622,6 +2622,21 @@ function branchProgressed(leaf, pre, post, achieved) {
 
 function clearActiveGoal(P) { P.activeGoal = null; P.activeLeaf = null; P.branchStall = {}; }
 
+// Make `topGoal` the active sticky goal WITHOUT advancing the abandon clock.
+// Switching to a different top goal resets the branch bookkeeping; the same goal
+// just refreshes the handle (budget / list position may drift without changing
+// identity). Shared by updateGoalStall and the §V3 locked-goal freeze path (which
+// keeps the goal sticky while its action is locked but does NOT accrue stall).
+function keepGoalSticky(P, topGoal) {
+    if (goalKey(P.activeGoal) !== goalKey(topGoal)) {
+        P.activeGoal = topGoal;
+        P.activeLeaf = null;          // V2 sets the DAG leaf; V1 stub = the goal itself
+        P.branchStall = {};
+    } else {
+        P.activeGoal = topGoal;       // refresh the handle (budget / list position may drift)
+    }
+}
+
 // Keep the top priority goal ACTIVE across loops and advance its branch stall
 // counter. `topGoal` is the user's #1 outstanding priority this round; it stays
 // active even when the push isn't achievable this loop (the greedy driver used
@@ -2632,13 +2647,7 @@ function clearActiveGoal(P) { P.activeGoal = null; P.activeLeaf = null; P.branch
 // prerequisite grinds), null to reset the branch to the goal itself, or omit
 // (undefined) to leave the current leaf untouched (V1 callers / lower-goal wins).
 function updateGoalStall(P, topGoal, pre, post, achieved, leaf = undefined) {
-    if (goalKey(P.activeGoal) !== goalKey(topGoal)) {
-        P.activeGoal = topGoal;
-        P.activeLeaf = null;          // V2 sets the DAG leaf; V1 stub = the goal itself
-        P.branchStall = {};
-    } else {
-        P.activeGoal = topGoal;       // refresh the handle (budget / list position may drift)
-    }
+    keepGoalSticky(P, topGoal);
     if (leaf !== undefined) P.activeLeaf = leaf;   // V2: the finder's current DAG leaf
     const l = activeLeafGoal(P);
     const lk = goalKey(l);
@@ -2886,6 +2895,24 @@ async function planTargeted(sess, P, snap, pre, opts = {}) {
         // bare spine (the budget caps FILL — the cushion still decides feasibility).
         result = install(assembled.q, assembled.label)
             ?? (assembled.bareQ.length !== assembled.q.length ? install(assembled.bareQ, assembled.label) : null);
+        // §V3 h-variant cash-in: assembleTargetedQueue picks the SMALLEST-h spine
+        // (regressAction's cands[0]); when that h can't fund the toll this loop,
+        // escalate through the spine goal's OWN regressAction h-variants (ascending)
+        // and install the FIRST that confirms — so targeted mode cashes in the push
+        // ITSELF once a setup round has grown the rep pool enough for a higher Haggle
+        // h, instead of leaning on the heuristic fallback's push. Scoped to the spine
+        // goal's candidates; the engine confirm (`achieves`) is the achievability
+        // oracle; fully byte-inert (targeted path only). Same capacityHint as
+        // assembleTargetedQueue ⇒ cands[0] IS the h0 bareQ already tried (skip it).
+        if (!result && g.kind === "a") {
+            const X = unlockedOf(pre).find(a => a.name === g.action);
+            if (X) {
+                const cands = regressAction(pre, P.know, sess, X,
+                    { multiTown: P.multiTown, capacityHint: P.prevTimeNeeded ?? pre.baseMana });
+                for (let i = 1; i < cands.length && !result; i++)
+                    result = install(cands[i].q, cands[i].label);
+            }
+        }
     }
     // A goal INSTALLED this loop: keep the TOP priority goal (goals[0]) active and
     // advance its branch stall counter. The top goal counts as advanced only when
@@ -2915,8 +2942,27 @@ async function planTargeted(sess, P, snap, pre, opts = {}) {
             return setup.result;
         }
     }
-    // No achievable setup leaf ⇒ count a stalled loop on the bare goal and fall
-    // back to the heuristic scorer (the leaf, if any, stays the tracked branch).
+    // §V3 — a sticky kind-a goal whose ACTION is still LOCKED is NOT stalled. The
+    // heuristic fallback is legitimately building toward its unlock (e.g. Start
+    // Journey unlocks at Combat+Magic >= 35), yet the kind-a branch signal is only
+    // the `achieved` flag (did the push execute) — blind to that real progress — so
+    // it would false-stall every loop and abandon the goal ~loop 80 (K=4), before
+    // the finder can ever engage once the action unlocks (the fresh-K=4 DNF cause).
+    // Abandon is meant to prune a WRONG LEAF with 0 MEASURED progress (V0's Met
+    // case), not a goal that simply isn't unlockable yet. Freeze the abandon clock
+    // while locked: keep the goal sticky but don't advance the counter or abandon.
+    // Once the action is in unlockedOf (unlocked-but-truly-stuck, no achievable
+    // leaf) the normal stall/abandon below resumes. (Future: credit the unlock-
+    // predicate dims as real branch progress instead of freezing — plan §V-future.)
+    const actionable = topGoal.kind !== "a"
+        || unlockedOf(pre).some(a => a.name === topGoal.action);
+    if (!actionable) {
+        keepGoalSticky(P, topGoal);
+        return null;
+    }
+    // No achievable setup leaf for an actionable goal ⇒ count a stalled loop on the
+    // bare goal and fall back to the heuristic scorer (the leaf, if any, stays the
+    // tracked branch).
     updateGoalStall(P, topGoal, pre, pre, false);
     maybeAbandonGoal(P);
     return null;
