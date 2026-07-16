@@ -1,8 +1,10 @@
-// Playwright smoke for the Stats-panel Automation view. MANUAL-RUN (not in
-// the npm-test glob): needs a browser, the outer repo's playwright dep, and a
-// dev server serving the outer repo root on :8000.
-//   node test/ui-smoke.playwright.mjs
-// Env overrides: PLAYWRIGHT_PKG (path to playwright's index.mjs), SMOKE_URL.
+// Playwright smoke for the Stats-panel Automation view — the STANDING GATE for
+// UI-facing planner work (runs in CI as the `ui-smoke` job, which serves the
+// repo root and installs playwright ad hoc). Not in the npm-test glob (needs a
+// browser + a server). Locally:
+//   npm run test:ui        (outer-repo playwright dep + a :8000 dev server
+//                           serving the outer repo root)
+// Env overrides: PLAYWRIGHT_PKG (path/specifier for playwright), SMOKE_URL.
 const pwPath = process.env.PLAYWRIGHT_PKG
     ?? new globalThis.URL("../../../../node_modules/playwright/index.mjs", import.meta.url).href;
 const { chromium } = await import(pwPath);

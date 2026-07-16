@@ -18,3 +18,26 @@ jobs:
         with:
           node-version: 22
       - run: npm test
+
+  # Live-browser smoke of the Stats-panel Automation view + two-tier priority
+  # editor (test/ui-smoke.playwright.mjs) — the standing gate for UI-facing
+  # planner work. Playwright is installed ad hoc (--no-save) so the repo keeps
+  # its no-runtime-deps setup; the repo root is served statically and the
+  # script pointed at it via SMOKE_URL/PLAYWRIGHT_PKG.
+  ui-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save playwright
+      - run: npx playwright install --with-deps chromium
+      - name: Serve repo root
+        run: |
+          python3 -m http.server 8000 &
+          for i in $(seq 1 20); do curl -sf http://localhost:8000/index.html >/dev/null && break; sleep 0.5; done
+      - run: npm run test:ui
+        env:
+          PLAYWRIGHT_PKG: playwright
+          SMOKE_URL: http://localhost:8000/index.html

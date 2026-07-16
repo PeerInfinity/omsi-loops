@@ -1178,3 +1178,59 @@ test("§V4 deriveTier2Tree: a kind-b value goal ⇒ leaf root (its own provider)
     assert.equal(tree.leaf, true);
     assert.equal(tree.children.length, 0);
 });
+
+// ===========================================================================
+// §V5 — planner-consume: a user-authored Tier-2 override (tier2Mode:"user" +
+// userTier2, the V4 editor's storage) replaces the auto-derived setup leaf;
+// the auto finder stays the fallback when the override is empty/exhausted.
+// ===========================================================================
+
+test("§V5 tier2UserLeaves: only an explicit user override yields leaves; reached stop values are skipped", () => {
+    const IP = makePlanner(965).ev("IdlePlanner");
+    const state = { townsUnlocked: [0], skills: { Magic: { level: 10 } },
+        towns: [{ index: 0, limited: { LQuests: { good: 3, checked: 16, total: 16 } },
+                  progress: { Secrets: { level: 31 } } }] };
+    const goal = { kind: "a", action: "Start Journey", tier2Mode: "user", userTier2: [
+        { target: { type: "progress", name: "Secrets", town: 0 }, label: "Secrets", value: 20 },  // 31 >= 20 ⇒ exhausted
+        { target: { type: "skill", name: "Magic" }, value: 50 },
+        { target: { type: "poolGood", name: "LQuests", town: 0 }, label: "LQuests" },             // no stop value ⇒ always eligible
+    ] };
+    assert.deepEqual(j(IP.tier2UserLeaves(state, goal)), [
+        { kind: "b", target: { type: "skill", name: "Magic" }, value: 50 },
+        { kind: "b", target: { type: "poolGood", name: "LQuests", town: 0 } },
+    ], "entries map to ordered kind-b leaves; reached stop values drop out");
+    assert.deepEqual(j(IP.tier2UserLeaves(state, { kind: "a", action: "Start Journey", userTier2: goal.userTier2 })), [],
+        "absent tier2Mode ⇒ auto ⇒ no leaves (byte-inert)");
+    assert.deepEqual(j(IP.tier2UserLeaves(state, { ...goal, tier2Mode: "auto" })), [],
+        "auto mode ⇒ no leaves even with a stored list (lossless switch)");
+    assert.deepEqual(j(IP.tier2UserLeaves(state, { kind: "a", action: "Start Journey", tier2Mode: "user" })), [],
+        "user mode with no list ⇒ no leaves");
+});
+
+test("§V5 planTargeted honors a user Tier-2 override: the pinned dim's setup rounds install; auto never pins", async () => {
+    // Fresh save, goal Start Journey (LOCKED early: Combat+Magic >= 35). AUTO
+    // derives no leaf while locked (findSetupLeaf null ⇒ §V3 freeze + heuristic
+    // fallback). A USER override pinning Wander progress (grindable from loop 1)
+    // must CHANGE WHAT PLAYS: planTargeted installs `value:progress:Wander>…`
+    // setup rounds. The pin's stop value then EXHAUSTS it and later loops fall
+    // back — a stale override never dead-ends the goal.
+    const run = async (goal) => {
+        const ctx = makePlanner(12346);
+        return await ctx.ev("IdlePlanner").runStandalone({ maxLoops: 8, targetTown: 9,
+            strategy: "targeted", targets: [goal] });
+    };
+    const auto = await run({ kind: "a", action: "Start Journey" });
+    const user = await run({ kind: "a", action: "Start Journey", tier2Mode: "user",
+        userTier2: [{ target: { type: "progress", name: "Wander", town: 0 }, label: "Wander progress", value: 2 }] });
+    const isPin = (l) => l.startsWith("value:progress:Wander>");
+    const userLabels = user.trace.map(t => t.label);
+    assert.ok(userLabels.some(isPin),
+        `the pinned setup round installs (labels: ${userLabels.join(", ")})`);
+    assert.ok(!auto.trace.some(t => isPin(t.label)),
+        "auto mode never pursues the pin (locked goal ⇒ no auto leaf ⇒ heuristic)");
+    const lastPin = userLabels.map(isPin).lastIndexOf(true);
+    assert.ok(lastPin < userLabels.length - 1,
+        "the pin exhausts at its stop value and later loops fall back (no dead end)");
+    assert.equal(IP_goalKeyOf(user.resume.planning.activeGoal), "a:Start Journey",
+        "the top goal stays sticky through the override rounds");
+});

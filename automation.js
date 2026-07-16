@@ -706,8 +706,9 @@ function tgRenderChain(node, depth = 0) {
 // auto chain + an auto/user mode toggle + (in user mode) the editable ordered
 // override list. Storage is TWO separate representations — the auto tree
 // (derived, never persisted) and the user list (g.userTier2) — plus g.tier2Mode;
-// switching is lossless. DISPLAY-ONLY this slice: the planner still uses the
-// auto DAG (V3); userTier2/tier2Mode are authored + stored, not yet consumed.
+// switching is lossless. CONSUMED by the planner (§V5): in user mode
+// planTargeted pursues the override entries in order (tier2UserLeaves) and
+// falls back to the auto-derived chain when the list is empty/exhausted.
 function tgTier2Html(g, i) {
     const key = tgGoalKey(g);
     const tree = lastDumpTrees.get(key);
@@ -715,7 +716,7 @@ function tgTier2Html(g, i) {
     const modeToggle =
         `<div class="tg-t2-mode">` +
         `<label title="planner auto-derives the chain each loop"><input type="radio" data-tg="t2mode" data-i="${i}" value="auto"${mode === "auto" ? " checked" : ""}> Auto</label>` +
-        `<label title="author an override list (stored; not yet consumed by the planner)"><input type="radio" data-tg="t2mode" data-i="${i}" value="user"${mode === "user" ? " checked" : ""}> User&nbsp;override</label>` +
+        `<label title="planner pursues these prerequisites in order (falls back to auto when the list is empty or exhausted)"><input type="radio" data-tg="t2mode" data-i="${i}" value="user"${mode === "user" ? " checked" : ""}> User&nbsp;override</label>` +
         `</div>`;
     const autoBody = tree
         ? (tgRenderChain(tree) || `<div class="tg-t2-empty">No prerequisite chain — this goal is directly actionable (or falls back to the heuristic).</div>`)

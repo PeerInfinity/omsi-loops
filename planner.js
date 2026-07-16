@@ -2808,6 +2808,28 @@ function findSetupLeaf(state, know, sess, goal, depth = 0) {
     return null;
 }
 
+// §V5 planner-consume: map a goal's user-authored Tier-2 override (V4 editor
+// storage — `tier2Mode:"user"` + `userTier2`, the flattened prerequisite-first
+// list) to the ordered kind-b leaf goals to pursue INSTEAD of the auto-derived
+// leaf. Entries whose optional stop value (>= value) is already reached are
+// skipped as exhausted; entry targets are already readStateValue-shaped
+// (progress / skill / poolGood from the editor's tgFlattenTree), so
+// regressTarget/planSetupRound accept them as-is. Returns [] unless the goal
+// explicitly opts in — an absent/auto flag or empty list changes nothing, and
+// the only caller lives behind planTargeted ⇒ byte-inert at defaults.
+function tier2UserLeaves(state, goal) {
+    if (!goal || goal.tier2Mode !== "user" || !Array.isArray(goal.userTier2)) return [];
+    const out = [];
+    for (const e of goal.userTier2) {
+        if (!e || !e.target) continue;
+        if (e.value != null && readStateValue(state, e.target) >= e.value) continue;
+        const leaf = { kind: "b", target: e.target };
+        if (e.value != null) leaf.value = e.value;
+        out.push(leaf);
+    }
+    return out;
+}
+
 // ---------------------------------------------------------------------------
 // §V4 (two-tier UI, READ-ONLY display): derive the FULL auto Tier-2 prerequisite
 // chain for a goal. Mirrors findSetupLeaf's DAG walk EXACTLY (same
@@ -2995,6 +3017,24 @@ async function planTargeted(sess, P, snap, pre, opts = {}) {
     // it; SET P.activeLeaf so the branch counter tracks the LEAF dim (the top goal
     // stays alive while the prerequisite grinds).
     if (opts.escalate) return null;
+    // §V5 planner-consume: a user-authored Tier-2 override replaces the auto-
+    // derived leaf — pursue the FIRST entry that installs a confirmed setup
+    // round (entries with a reached stop value are skipped as exhausted). The
+    // auto finder below stays the FALLBACK whenever the override is empty,
+    // exhausted, or can't make measured progress this loop, so a stale override
+    // never dead-ends the goal. planSetupRound's measured-leaf-move gate is the
+    // safety net: a pin that moves nothing never installs (the goal falls
+    // through to the auto chain / heuristic and the normal stall accounting),
+    // while a wrong-but-grindable pin installs until its dim caps, then falls
+    // through the same way — the user's explicit ordering wins while it works.
+    for (const uLeaf of tier2UserLeaves(pre, topGoal)) {
+        const setup = await planSetupRound(sess, P, snap, pre, uLeaf);
+        if (setup) {
+            updateGoalStall(P, topGoal, pre, setup.post, false, uLeaf);
+            maybeAbandonGoal(P);
+            return setup.result;
+        }
+    }
     const leaf = findSetupLeaf(pre, P.know, sess, topGoal);
     if (leaf) {
         const setup = await planSetupRound(sess, P, snap, pre, leaf);
@@ -3568,6 +3608,8 @@ return {
     findSetupLeaf, analyzePushBottleneck, probePoolCapDriver, poolCapCandidates, planSetupRound,
     // targeted-mode v2 two-tier UI: read-only Tier-2 chain derivation (§V4)
     deriveTier2Tree,
+    // targeted-mode v2 planner-consume: user Tier-2 override → leaf goals (§V5)
+    tier2UserLeaves,
     _internals: { plReadState, plProbeThresholds, plProbeCanStartNeeds, plProbePoolCap, plSaveClone,
                   plRestoreSave, plRunOneLoopChunk, plInjectResources, plSnapshot,
                   plSetQueue, plGetQueue, plPredictQueue },

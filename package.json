@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "test:ui": "node test/ui-smoke.playwright.mjs"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
