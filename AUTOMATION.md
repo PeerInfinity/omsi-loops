@@ -238,6 +238,45 @@ plan request).
   push/expedition budgets reproduce this arithmetic exactly; travel is a
   per-loop expense (every loop starts at town 0; supplies re-buy each loop).
 
+## 4a. Targeted mode and the two-tier priority list
+
+The default **heuristic** strategy scores whatever candidate loop looks best
+right now. The **targeted** strategy (Automation view → Strategy) instead
+pursues an ordered goal list you author, and only falls back to the heuristic
+when nothing on the list can be advanced.
+
+- **Goals (Tier 1)**: an *action* goal ("make Start Journey execute") or a
+  *value* goal ("reach reputation/buff/soulstone/progress value V"). Goals
+  are a JSON list behind the row editor (option `plannerTargets`); the first
+  entry is the active goal and stays **sticky across loops** until achieved
+  or abandoned — a goal whose action is still *locked* freezes its abandon
+  clock while the heuristic builds toward the unlock.
+- **Sub-priorities (Tier 2)**: for the active goal the planner derives a
+  prerequisite chain by regressing over its measured graph (e.g. Start
+  Journey ⇐ cheaper supplies ⇐ Haggle depth ⇐ reputation ⇐ Long Quest pool ⇐
+  Secrets). Expand a goal row (▶) to see the current auto-derived chain
+  read-only. Switching the row to **user** mode flattens the chain into an
+  editable ordered list (reorder / remove / optional "≥ value" stop per
+  entry); auto and user lists are stored separately, so switching back is
+  lossless. A "setup loop" — a loop spent growing a prerequisite because the
+  goal push isn't achievable yet — falls out of this pursuit automatically,
+  and each setup round is accepted only if it measurably moves its target
+  dimension.
+- **A user pin can build toward a still-LOCKED goal** — the auto finder
+  can't (it only analyzes unlocked actions). Pinning a known-useful grind
+  (say Secrets) under a goal whose action hasn't unlocked yet is a
+  legitimate play the automation itself would not discover.
+- **Ordering is strict, by design — mind the stop values.** The consume
+  semantics honor your order literally: entry 1 keeps installing setup
+  rounds for as long as its dimension keeps measurably progressing, so a
+  value-less first entry can *monopolize* the run long past the point the
+  auto chain would have moved on (measured: a pinned Secrets grind ran 44
+  loops where the auto finder adapted after 4). If you don't want that, put
+  a "≥ value" stop on each entry — a reached stop retires the entry and the
+  planner advances down your list, then falls back to the auto chain. A pin
+  that can't install at all (nothing reachable grows it) is skipped
+  harmlessly; a stale override never dead-ends the run.
+
 ## 5. Observing it live
 
 Enable Advanced Automation (Extras menu), then switch the Stats panel to the
