@@ -1111,3 +1111,70 @@ test("§V2 findSetupLeaf: a fat/unbound push has no prerequisite leaf (⇒ heuri
     assert.equal(IP.findSetupLeaf(state, know, sess, { kind: "a", action: "Start Journey" }), null,
         "no rep-capacity bottleneck ⇒ no setup leaf");
 });
+
+// ===========================================================================
+// §V4 — two-tier UI: read-only Tier-2 chain derivation (deriveTier2Tree walks
+// the SAME finder edges as findSetupLeaf but COLLECTS every node). It adds no
+// new sim mutation beyond probePoolCap, whose bit-identity is proven above (the
+// plProbePoolCap test), so deriveTier2Tree is byte-inert by construction.
+// ===========================================================================
+
+test("§V4 deriveTier2Tree: EXHAUSTED pool ⇒ full chain root→pool→dim(Secrets leaf)", () => {
+    const IP = makePlanner(960).ev("IdlePlanner");
+    const { state, know, sess } = v2Scenario({ good: 3, checked: 16, total: 16 });
+    const tree = j(IP.deriveTier2Tree(state, know, sess, { kind: "a", action: "Start Journey" }));
+    assert.equal(tree.kind, "goal-a");
+    assert.equal(tree.action, "Start Journey");
+    assert.equal(tree.locked, false);
+    assert.equal(tree.children.length, 1, "one bottleneck pool child");
+    const pool = tree.children[0];
+    assert.equal(pool.kind, "pool");
+    assert.deepEqual(pool.target, { type: "poolGood", name: "LQuests", town: 0 });
+    assert.equal(pool.grindAction, "Long Quest");
+    assert.equal(pool.children.length, 1, "exhausted ⇒ recurse to the cap driver");
+    const dim = pool.children[0];
+    assert.equal(dim.kind, "dim");
+    assert.deepEqual(dim.target, { type: "progress", name: "Secrets", town: 0 });
+    assert.equal(dim.leaf, true, "Secrets is grindable-from-here ⇒ the leaf");
+    assert.equal(dim.grindAction, "Investigate");
+});
+
+test("§V4 deriveTier2Tree: UNCHECKED headroom ⇒ pool is the leaf, no cap recursion", () => {
+    const IP = makePlanner(961).ev("IdlePlanner");
+    const { state, know, sess } = v2Scenario({ good: 3, checked: 16, total: 25 });
+    const tree = j(IP.deriveTier2Tree(state, know, sess, { kind: "a", action: "Start Journey" }));
+    assert.equal(tree.children.length, 1);
+    const pool = tree.children[0];
+    assert.equal(pool.leaf, true, "unchecked headroom ⇒ CHECK items directly (poolGood leaf)");
+    assert.equal(pool.children.length, 0, "no recursion to a cap driver");
+});
+
+test("§V4 deriveTier2Tree: fat/unbound push ⇒ root with no children + a fallback note", () => {
+    const IP = makePlanner(962).ev("IdlePlanner");
+    const { state, know, sess } = v2Scenario({ good: 20, checked: 16, total: 16 });
+    const tree = j(IP.deriveTier2Tree(state, know, sess, { kind: "a", action: "Start Journey" }));
+    assert.equal(tree.children.length, 0, "no bottleneck ⇒ no prerequisite chain");
+    assert.ok(tree.note, "carries a heuristic-fallback note for the UI");
+});
+
+test("§V4 deriveTier2Tree: a LOCKED action ⇒ root locked:true, note, no children (matches the freeze)", () => {
+    const IP = makePlanner(963).ev("IdlePlanner");
+    const { state, know, sess } = v2Scenario({ good: 3, checked: 16, total: 16 });
+    state.actions.find(a => a.name === "Start Journey").unlocked = false;   // still-locked goal
+    const tree = j(IP.deriveTier2Tree(state, know, sess, { kind: "a", action: "Start Journey" }));
+    assert.equal(tree.kind, "goal-a");
+    assert.equal(tree.locked, true);
+    assert.equal(tree.children.length, 0, "locked ⇒ no chain (heuristic builds toward the unlock)");
+    assert.ok(tree.note, "carries a locked note");
+});
+
+test("§V4 deriveTier2Tree: a kind-b value goal ⇒ leaf root (its own provider), no deeper chain", () => {
+    const IP = makePlanner(964).ev("IdlePlanner");
+    const { state, know, sess } = v2Scenario({ good: 3, checked: 16, total: 16 });
+    const goal = { kind: "b", target: { type: "skill", name: "Magic" }, value: 40 };
+    const tree = j(IP.deriveTier2Tree(state, know, sess, goal));
+    assert.equal(tree.kind, "goal-b");
+    assert.deepEqual(tree.target, { type: "skill", name: "Magic" });
+    assert.equal(tree.leaf, true);
+    assert.equal(tree.children.length, 0);
+});

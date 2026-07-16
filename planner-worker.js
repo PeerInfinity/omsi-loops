@@ -94,16 +94,37 @@ onmessage = async (e) => {
             P = IdlePlanner.newPlanningState(data.params ?? {});
             postMessage({ type: "resetDone" });
             break;
-        case "dump":
+        case "dump": {
             // Introspection for the Stats-panel Automation view: everything
             // planRound accumulates (knowledge, thresholds, prev capacity/
             // pump pair, last committed queue) plus the divergence log.
+            // §V4 two-tier UI: also derive each goal's READ-ONLY Tier-2
+            // prerequisite chain (the DAG findSetupLeaf would walk) so the
+            // priority-list editor can render + flatten it. Goals come from the
+            // live editor (data.goals) falling back to P.targets; the state is
+            // the last-planned loop start (planRound leaves sess restored to
+            // snap). deriveTier2Tree never mutates committed state and its only
+            // sim call (probePoolCap) restores itself bit-identically ⇒ this is
+            // pure introspection, never on the planRound path ⇒ byte-inert.
+            let tier2 = [];
+            try {
+                const goals = data.goals ?? P.targets ?? [];
+                if (goals.length) {
+                    const pre = sess.read();
+                    tier2 = goals.map(g => ({
+                        key: IdlePlanner.goalKey(g),
+                        tree: IdlePlanner.deriveTier2Tree(pre, P.know, sess, g),
+                    }));
+                }
+            } catch { tier2 = []; }
             postMessage({
                 type: "dumpResult",
                 planning: IdlePlanner.serializePlanningState(P),
                 divergences: P.divergenceLog,
+                tier2,
             });
             break;
+        }
         case "optimize": {
             // §11.6 ladder — Buy Mana / zone-1 economy optimiser. Rebalances the
             // player's queue on the worker's PRIVATE sim copy (never the live

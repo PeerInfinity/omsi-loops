@@ -2808,6 +2808,68 @@ function findSetupLeaf(state, know, sess, goal, depth = 0) {
     return null;
 }
 
+// ---------------------------------------------------------------------------
+// §V4 (two-tier UI, READ-ONLY display): derive the FULL auto Tier-2 prerequisite
+// chain for a goal. Mirrors findSetupLeaf's DAG walk EXACTLY (same
+// analyzePushBottleneck → growPoolGood → probePoolCapDriver → growDim edges) but
+// COLLECTS every node instead of short-circuiting to the leaf, so the editor can
+// render the chain the planner WOULD pursue and flatten it to an override list.
+// Introspection-only: called from the worker `dump` case, NEVER from planRound ⇒
+// fully byte-inert (and plProbePoolCap restores its own snapshot bit-identically).
+// Each node carries a readStateValue-shaped `target` (except the kind-a root),
+// so a flattened chain is a valid ordered list of Tier-2 sub-goals. Returns the
+// root node ({label, kind, children, ...}) or null for a falsy goal.
+// ---------------------------------------------------------------------------
+function tier2TargetLabel(t) {
+    if (!t) return "?";
+    if (t.type === "progress") return `${t.name} progress (town ${t.town ?? 0})`;
+    if (t.type === "skill") return `${t.name} skill`;
+    if (t.type === "poolGood") return `${t.name} rep pool (town ${t.town ?? 0})`;
+    if (t.type === "buff") return `${t.name} buff`;
+    if (t.type === "soulstones") return "soulstones";
+    if (t.type === "goldInvested") return "gold invested";
+    return `${t.name ?? t.type} (${t.type})`;
+}
+function deriveDimNode(state, know, sess, dim, depth) {
+    const town = dim.kind === "p" ? (dim.town ?? 0) : firstGrindTown(state, dim);
+    const grind = town != null ? grindActionFor(state, dim, town) : null;
+    const target = dimTarget(dim);
+    return { label: tier2TargetLabel(target), kind: "dim", target,
+             leaf: !!grind, grindAction: grind?.name ?? null,
+             cur: readStateValue(state, target), children: [] };
+}
+function derivePoolNode(state, know, sess, pool, depth) {
+    if (depth > 6) return null;
+    const target = { type: "poolGood", name: pool.a.varName, town: pool.a.townNum };
+    const node = { label: tier2TargetLabel(target), kind: "pool", target,
+                   grindAction: pool.a.name, unchecked: pool.unchecked ?? 0,
+                   cur: pool.good ?? 0, children: [] };
+    if ((pool.unchecked ?? 0) > 0) { node.leaf = true; return node; }  // check items = leaf
+    const driver = probePoolCapDriver(state, know, sess, pool);
+    if (!driver) { node.note = "pool exhausted — no grindable cap driver"; return node; }
+    const dimNode = deriveDimNode(state, know, sess, driver, depth + 1);
+    if (dimNode) node.children.push(dimNode);
+    return node;
+}
+function deriveTier2Tree(state, know, sess, goal, depth = 0) {
+    if (!goal || depth > 8) return null;
+    if (goal.kind === "a") {
+        const X = unlockedOf(state).find(a => a.name === goal.action);
+        const root = { label: goal.action, kind: "goal-a", action: goal.action,
+                       locked: !X, children: [] };
+        if (!X) { root.note = "action locked — heuristic builds toward its unlock"; return root; }
+        const pool = analyzePushBottleneck(state, know, sess, X);
+        if (!pool) { root.note = "no rep-capacity prerequisite (heuristic fallback)"; return root; }
+        const node = derivePoolNode(state, know, sess, pool, depth + 1);
+        if (node) root.children.push(node);
+        return root;
+    }
+    // kind-b goal: its own value provider is the leaf; deeper regression of a
+    // value goal is future work (matches findSetupLeaf's kind-b null path).
+    return { label: tier2TargetLabel(goal.target), kind: "goal-b",
+             target: goal.target, value: goal.value, leaf: true, children: [] };
+}
+
 // Build + engine-confirm a setup round toward `leaf` and return a planRound-shaped
 // result (or null). The engine confirm is the achievability oracle AND the
 // independent stratum: a setup round is accepted only when it MOVES the leaf dim
@@ -3504,6 +3566,8 @@ return {
     goalKey, branchProgressed, updateGoalStall, maybeAbandonGoal, clearActiveGoal,
     // targeted-mode v2 recursive prerequisite finder (§V2)
     findSetupLeaf, analyzePushBottleneck, probePoolCapDriver, poolCapCandidates, planSetupRound,
+    // targeted-mode v2 two-tier UI: read-only Tier-2 chain derivation (§V4)
+    deriveTier2Tree,
     _internals: { plReadState, plProbeThresholds, plProbeCanStartNeeds, plProbePoolCap, plSaveClone,
                   plRestoreSave, plRunOneLoopChunk, plInjectResources, plSnapshot,
                   plSetQueue, plGetQueue, plPredictQueue },

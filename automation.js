@@ -641,6 +641,8 @@ function tgDefaultB() {
 }
 function tgRowHtml(g, i, n) {
     const off = g.enabled === false;
+    const expanded = tgExpanded.has(tgGoalKey(g));
+    const exp = `<button type="button" class="tg-btn tg-expand" data-tg="expand" data-i="${i}" title="show/hide the Tier-2 prerequisite chain">${expanded ? "&#9662;" : "&#9656;"}</button>`;
     const en = `<input type="checkbox" data-tg="en" data-i="${i}"${off ? "" : " checked"} title="Enable/disable this goal (disabled stays in the list, skipped by the planner)">`;
     const kind = `<select data-tg="kind" data-i="${i}"><option value="a"${g.kind === "a" ? " selected" : ""}>Action</option>` +
                  `<option value="b"${g.kind === "b" ? " selected" : ""}>Reach&nbsp;value</option></select>`;
@@ -664,7 +666,80 @@ function tgRowHtml(g, i, n) {
     const up = `<button type="button" class="tg-btn" data-tg="up" data-i="${i}"${i === 0 ? " disabled" : ""} title="raise priority">&uarr;</button>`;
     const dn = `<button type="button" class="tg-btn" data-tg="dn" data-i="${i}"${i === n - 1 ? " disabled" : ""} title="lower priority">&darr;</button>`;
     const rm = `<button type="button" class="tg-btn" data-tg="rm" data-i="${i}" title="remove">&times;</button>`;
-    return `<div class="tg-row${off ? " tg-off" : ""}">${en}${kind}${body}${up}${dn}${rm}</div>`;
+    return `<div class="tg-row${off ? " tg-off" : ""}">${exp}${en}${kind}${body}${up}${dn}${rm}</div>`;
+}
+
+// §V4 two-tier UI: goalKey mirror (planner.js goalKey) so the read-only Tier-2
+// trees dumped by the worker (keyed by goalKey) match the editor's rows through
+// reorders/edits, and expansion state survives a re-render.
+function tgGoalKey(g) {
+    if (!g) return "";
+    return g.kind === "a" ? `a:${g.action ?? ""}`
+                          : `b:${g.target?.type}:${g.target?.name ?? ""}:${g.value ?? ""}`;
+}
+// Flatten an auto Tier-2 tree into an ordered override list, PREREQUISITE-FIRST
+// (deepest node first — grind the leaf dim before checking the pool that caps
+// on it). Only the pool/dim prerequisite nodes are entries; the Tier-1 goal
+// roots (goal-a/goal-b) are the goal itself, not a sub-priority. Each entry
+// keeps the node label so the editable list renders without re-deriving.
+function tgFlattenTree(tree) {
+    const out = [];
+    (function walk(node) {
+        if (!node) return;
+        for (const c of node.children ?? []) walk(c);
+        if (node.kind === "pool" || node.kind === "dim") out.push({ target: node.target, label: node.label });
+    })(tree);
+    return out;
+}
+// Render an auto Tier-2 chain read-only as indented lines.
+function tgRenderChain(node, depth = 0) {
+    if (!node) return "";
+    const grind = node.grindAction ? ` <span class="tg-t2-ga">via ${esc(node.grindAction)}</span>` : "";
+    const cur = node.cur != null ? ` <span class="tg-t2-cur">now ${fmt(node.cur)}</span>` : "";
+    const leaf = node.leaf ? ` <span class="tg-t2-leaf">&#9664; grind here</span>` : "";
+    const note = node.note ? ` <span class="tg-t2-note">${esc(node.note)}</span>` : "";
+    let html = `<div class="tg-t2-node" style="padding-left:${depth * 14}px">&#8627; ${esc(node.label)}${grind}${cur}${leaf}${note}</div>`;
+    for (const c of node.children ?? []) html += tgRenderChain(c, depth + 1);
+    return html;
+}
+// The per-goal Tier-2 sub-panel (shown when the row is expanded): read-only
+// auto chain + an auto/user mode toggle + (in user mode) the editable ordered
+// override list. Storage is TWO separate representations — the auto tree
+// (derived, never persisted) and the user list (g.userTier2) — plus g.tier2Mode;
+// switching is lossless. DISPLAY-ONLY this slice: the planner still uses the
+// auto DAG (V3); userTier2/tier2Mode are authored + stored, not yet consumed.
+function tgTier2Html(g, i) {
+    const key = tgGoalKey(g);
+    const tree = lastDumpTrees.get(key);
+    const mode = g.tier2Mode === "user" ? "user" : "auto";
+    const modeToggle =
+        `<div class="tg-t2-mode">` +
+        `<label title="planner auto-derives the chain each loop"><input type="radio" data-tg="t2mode" data-i="${i}" value="auto"${mode === "auto" ? " checked" : ""}> Auto</label>` +
+        `<label title="author an override list (stored; not yet consumed by the planner)"><input type="radio" data-tg="t2mode" data-i="${i}" value="user"${mode === "user" ? " checked" : ""}> User&nbsp;override</label>` +
+        `</div>`;
+    const autoBody = tree
+        ? (tgRenderChain(tree) || `<div class="tg-t2-empty">No prerequisite chain — this goal is directly actionable (or falls back to the heuristic).</div>`)
+        : `<div class="tg-t2-empty">Run the planner (Suggest / Auto / Plan&nbsp;Now) to derive the chain.</div>`;
+    const auto = `<div class="tg-t2-auto"><div class="tg-t2-cap">Auto-derived chain (read-only)</div>${autoBody}</div>`;
+    let user = "";
+    if (mode === "user") {
+        const entries = Array.isArray(g.userTier2) ? g.userTier2 : [];
+        const seed = `<button type="button" class="tg-btn tg-t2-seed" data-tg="t2seed" data-i="${i}"${tree ? "" : " disabled"} title="replace the list with the current auto-derived chain">Seed from auto chain</button>`;
+        let rows;
+        if (!entries.length) {
+            rows = `<div class="tg-t2-empty">Empty override list. ${tree ? "Seed it from the auto chain, then reorder/remove." : "Run a plan to derive a chain to seed from."}</div>`;
+        } else {
+            rows = entries.map((e, j) => {
+                const up = `<button type="button" class="tg-btn" data-tg="t2up" data-i="${i}" data-j="${j}"${j === 0 ? " disabled" : ""} title="earlier">&uarr;</button>`;
+                const dn = `<button type="button" class="tg-btn" data-tg="t2dn" data-i="${i}" data-j="${j}"${j === entries.length - 1 ? " disabled" : ""} title="later">&darr;</button>`;
+                const rm = `<button type="button" class="tg-btn" data-tg="t2rm" data-i="${i}" data-j="${j}" title="remove">&times;</button>`;
+                const val = `<label class="tg-lbl" title="optional target value (stored for future consumption)">&ge;<input type="number" data-tg="t2val" data-i="${i}" data-j="${j}" class="tg-val" value="${e.value ?? ""}"></label>`;
+                return `<div class="tg-t2-row"><span class="tg-t2-lbl">${j + 1}. ${esc(e.label ?? tgGoalKey({ kind: "b", target: e.target }))}</span>${val}${up}${dn}${rm}</div>`;
+            }).join("");
+        }
+        user = `<div class="tg-t2-user"><div class="tg-t2-cap">Override list (edit order)&nbsp;${seed}</div>${rows}</div>`;
+    }
+    return `<div class="tg-tier2">${modeToggle}${auto}${user}</div>`;
 }
 function renderTargetsEditor() {
     const el = document.getElementById("plannerTargetsEditor");
@@ -677,12 +752,27 @@ function renderTargetsEditor() {
     const note = locked
         ? `<div class="tg-note">Auto-rank is on — this manual list is ignored. Uncheck “Auto-rank targets” to use it.</div>`
         : "";
-    const rows = goals.map((g, i) => tgRowHtml(g, i, goals.length)).join("")
+    const rows = goals.map((g, i) => {
+        const tier2 = tgExpanded.has(tgGoalKey(g)) ? tgTier2Html(g, i) : "";
+        return `<div class="tg-goal">${tgRowHtml(g, i, goals.length)}${tier2}</div>`;
+    }).join("")
         || `<div class="tg-empty">No goals. Add one below — an empty list makes targeted mode fall back to the heuristic scorer.</div>`;
     const add = `<div class="tg-add">`
         + `<button type="button" class="tg-btn tg-addbtn" data-tg="add-a">+ Action goal</button>`
         + `<button type="button" class="tg-btn tg-addbtn" data-tg="add-b">+ Reach-value goal</button></div>`;
     el.innerHTML = note + `<div class="tg-rows">${rows}</div>` + add;
+}
+// §V4: expanded rows (by goalKey ⇒ survives reorder/re-render) and the latest
+// worker-derived read-only Tier-2 trees (goalKey → tree). UI-only, not persisted.
+const tgExpanded = new Set();
+let lastDumpTrees = new Map();
+// Re-render the editor when fresh trees arrive, but only if a row is expanded
+// and the user isn't mid-edit inside it (don't nuke focus/caret).
+function tgMaybeRerender() {
+    const el = document.getElementById("plannerTargetsEditor");
+    if (!el || !tgExpanded.size) return;
+    if (document.activeElement && el.contains(document.activeElement)) return;
+    renderTargetsEditor();
 }
 let tgWired = false;
 function tgEnsureWired(el) {
@@ -718,6 +808,39 @@ function tgEnsureWired(el) {
             case "town": (g.target ??= { type: "progress" }).town = Number(target.value) || 0; return tgWrite(goals, false);
             case "value": g.value = Number(target.value) || 0; return tgWrite(goals, false);
             case "budget": if (target.value === "") delete g.budget; else g.budget = Number(target.value); return tgWrite(goals, false);
+            // §V4 two-tier UI ------------------------------------------------
+            case "expand": {   // UI-only: toggle the Tier-2 panel (not persisted)
+                const key = tgGoalKey(g);
+                if (tgExpanded.has(key)) tgExpanded.delete(key);
+                else { tgExpanded.add(key); requestDump(); }   // pull a fresh tree
+                return renderTargetsEditor();
+            }
+            case "t2mode": {   // auto (default) | user override — lossless switch
+                if (target.value === "user") {
+                    g.tier2Mode = "user";
+                    // seed the override list from the current auto chain on first switch
+                    if (!Array.isArray(g.userTier2) || !g.userTier2.length) {
+                        const tree = lastDumpTrees.get(tgGoalKey(g));
+                        if (tree) g.userTier2 = tgFlattenTree(tree);
+                    }
+                } else { delete g.tier2Mode; }   // absent ⇒ auto ⇒ byte-inert
+                return tgWrite(goals);
+            }
+            case "t2seed": {   // replace the override list with the auto chain
+                const tree = lastDumpTrees.get(tgGoalKey(g));
+                if (tree) g.userTier2 = tgFlattenTree(tree);
+                return tgWrite(goals);
+            }
+            case "t2up": case "t2dn": case "t2rm": case "t2val": {
+                const list = Array.isArray(g.userTier2) ? g.userTier2 : (g.userTier2 = []);
+                const j = Number(target.getAttribute("data-j"));
+                if (!Number.isInteger(j) || j < 0 || j >= list.length) return;
+                if (act === "t2rm") { list.splice(j, 1); return tgWrite(goals); }
+                if (act === "t2up") { if (j > 0) [list[j - 1], list[j]] = [list[j], list[j - 1]]; return tgWrite(goals); }
+                if (act === "t2dn") { if (j < list.length - 1) [list[j + 1], list[j]] = [list[j], list[j + 1]]; return tgWrite(goals); }
+                if (act === "t2val") { if (target.value === "") delete list[j].value; else list[j].value = Number(target.value); return tgWrite(goals, false); }
+                return;
+            }
         }
     };
     el.addEventListener("click", (ev) => { const t = ev.target.closest("button[data-tg]"); if (t) handle(t); });
@@ -738,7 +861,24 @@ function tgEnsureStyle() {
         `#plannerTargetsEditor.tg-locked .tg-rows,#plannerTargetsEditor.tg-locked .tg-add{opacity:.5;pointer-events:none}` +
         `#plannerTargetsEditor .tg-note{color:#c80;margin-bottom:3px}` +
         `#plannerTargetsEditor .tg-empty{color:#888;margin:2px 0}` +
-        `#plannerTargetsEditor .tg-add{margin-top:3px}`;
+        `#plannerTargetsEditor .tg-add{margin-top:3px}` +
+        // §V4 two-tier Tier-2 sub-panel
+        `#plannerTargetsEditor .tg-goal{margin:2px 0}` +
+        `#plannerTargetsEditor .tg-expand{opacity:.7}` +
+        `#plannerTargetsEditor .tg-tier2{margin:1px 0 5px 18px;padding:3px 6px;border-left:2px solid #8884}` +
+        `#plannerTargetsEditor .tg-t2-cap{font-weight:bold;opacity:.75;margin:2px 0}` +
+        `#plannerTargetsEditor .tg-t2-mode{display:flex;gap:10px;margin-bottom:2px}` +
+        `#plannerTargetsEditor .tg-t2-mode label{display:inline-flex;align-items:center;gap:3px}` +
+        `#plannerTargetsEditor .tg-t2-node{white-space:nowrap;overflow-x:auto}` +
+        `#plannerTargetsEditor .tg-t2-ga{opacity:.7;font-style:italic}` +
+        `#plannerTargetsEditor .tg-t2-cur{opacity:.6}` +
+        `#plannerTargetsEditor .tg-t2-leaf{color:#2a8}` +
+        `#plannerTargetsEditor .tg-t2-note{color:#c80}` +
+        `#plannerTargetsEditor .tg-t2-empty{color:#888;margin:1px 0}` +
+        `#plannerTargetsEditor .tg-t2-auto{margin-bottom:3px}` +
+        `#plannerTargetsEditor .tg-t2-row{display:flex;align-items:center;gap:3px;margin:1px 0}` +
+        `#plannerTargetsEditor .tg-t2-lbl{min-width:150px}` +
+        `#plannerTargetsEditor .tg-t2-seed{font-weight:normal;margin-left:4px}`;
     document.head.appendChild(s);
 }
 
@@ -859,7 +999,10 @@ function renderResources(pre) {
 
 function requestDump() {
     if (!worker) return false;
-    worker.postMessage({ type: "dump" });
+    // §V4: send the live editor goal list so the worker derives each goal's
+    // read-only Tier-2 chain against its last-planned state (matches the rows
+    // the user sees, even for a goal added since the last plan round).
+    worker.postMessage({ type: "dump", goals: tgReadTargets() });
     return true;
 }
 
@@ -874,6 +1017,12 @@ function refreshInternals() {
 function onDump(msg) {
     const p = msg.planning ?? {};
     lastDumpKnow = p.know ?? lastDumpKnow;
+    // §V4: cache the per-goal read-only Tier-2 trees (keyed by goalKey) and
+    // refresh any expanded editor panels (focus-guarded so edits aren't nuked).
+    if (Array.isArray(msg.tier2)) {
+        lastDumpTrees = new Map(msg.tier2.map(x => [x.key, x.tree]));
+        tgMaybeRerender();
+    }
     renderPools();
     const status = document.getElementById("autoInternalsStatus");
     if (status) {

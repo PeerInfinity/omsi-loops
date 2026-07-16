@@ -193,15 +193,15 @@ await page.click('#plannerTargetsEditor [data-tg="add-a"]');
 await page.click('#plannerTargetsEditor [data-tg="add-b"]');
 let tg = await page.evaluate(() => JSON.parse(options.plannerTargets));
 check(tg.length === 2 && tg[0].kind === "a" && tg[1].kind === "b", "add buttons append kind-a then kind-b goals");
-await page.$eval('#plannerTargetsEditor .tg-row:nth-child(2) [data-tg="value"]',
+await page.$eval('#plannerTargetsEditor .tg-goal:nth-child(2) [data-tg="value"]',
     el => { el.value = "42"; el.dispatchEvent(new Event("change", { bubbles: true })); });
 tg = await page.evaluate(() => JSON.parse(options.plannerTargets));
 check(tg[1].value === 42, "editing the value box writes to the goal");
-await page.$eval('#plannerTargetsEditor .tg-row:nth-child(1) [data-tg="en"]',
+await page.$eval('#plannerTargetsEditor .tg-goal:nth-child(1) [data-tg="en"]',
     el => { el.checked = false; el.dispatchEvent(new Event("change", { bubbles: true })); });
 tg = await page.evaluate(() => JSON.parse(options.plannerTargets));
 check(tg[0].enabled === false, "unchecking Enable parks the row (enabled:false), keeping it in the list");
-await page.click('#plannerTargetsEditor .tg-row:nth-child(2) [data-tg="up"]');
+await page.click('#plannerTargetsEditor .tg-goal:nth-child(2) [data-tg="up"]');
 tg = await page.evaluate(() => JSON.parse(options.plannerTargets));
 check(tg[0].kind === "b" && tg[1].kind === "a", "raise-priority reorders the goals");
 // "Only unlocked actions" toggles the kind-a dropdown between the unlocked set
@@ -405,6 +405,64 @@ check(await page.$eval("#plannerReplanEveryInput", el => el.value === "4"), "rep
 check(await page.$eval("#plannerLatePlanInput", el => el.value === "pause"), "late-plan select restored on boot");
 check(await page.$eval("#plannerPipelineSection", el => getComputedStyle(el).display !== "none"),
     "pipeline sub-section visible on boot with pipeline on");
+
+// 11. §V4 two-tier Tier-2 UI: a Tier-1 row expands to its Tier-2 sub-panel; the
+//     auto/user mode flag + the user override list are stored as SEPARATE
+//     representations (lossless switch) and round-trip through save()/reload.
+await page.evaluate(() => { setOption("basicAutomation", true); setOption("advancedAutomation", true); });
+await page.click("#automationStats");
+await page.waitForTimeout(150);
+// one kind-a goal pre-authored with a user override list (as if seeded+edited),
+// user mode on, auto-rank off so the editor is interactive.
+await page.evaluate(() => {
+    setOption("plannerAutoRankTargets", false);
+    setOption("plannerStrategy", "targeted");
+    setOption("plannerTargets", JSON.stringify([{ kind: "a", action: "Continue On", tier2Mode: "user",
+        userTier2: [
+            { target: { type: "progress", name: "Secrets", town: 0 }, label: "Secrets progress (town 0)" },
+            { target: { type: "poolGood", name: "LQuests", town: 0 }, label: "LQuests rep pool (town 0)" },
+        ] }]));
+    loadOption("plannerTargets", options.plannerTargets);
+});
+// expand the goal row -> the Tier-2 sub-panel + auto/user mode radios appear
+await page.click('#plannerTargetsEditor [data-tg="expand"]');
+check(await page.$eval("#plannerTargetsEditor", el => !!el.querySelector(".tg-tier2")),
+    "expanding a Tier-1 goal shows its Tier-2 sub-panel");
+check(await page.$$eval('#plannerTargetsEditor [data-tg="t2mode"]', els => els.length === 2),
+    "the sub-panel has auto + user mode radios");
+check(await page.$eval("#plannerTargetsEditor", el => !!el.querySelector(".tg-t2-auto")),
+    "the read-only auto-derived chain section renders");
+// user mode already set -> the editable override list renders one row per entry
+check(await page.$$eval("#plannerTargetsEditor .tg-t2-row", rr => rr.length === 2),
+    "user mode renders the flattened override list (one row per entry)");
+// reorder: raise the SECOND entry -> writes to userTier2 (poolGood now first)
+await page.evaluate(() => document.querySelectorAll('#plannerTargetsEditor .tg-t2-row [data-tg="t2up"]')[1].click());
+let g0 = await page.evaluate(() => JSON.parse(options.plannerTargets)[0]);
+check(g0.userTier2[0].target.type === "poolGood" && g0.userTier2[1].target.type === "progress",
+    "reordering the override list writes to userTier2 (lossless of the auto tree)");
+// switch to AUTO -> lossless: the flag clears (absent ⇒ byte-inert) but userTier2 is kept
+await page.$eval('#plannerTargetsEditor [data-tg="t2mode"][value="auto"]',
+    el => { el.checked = true; el.dispatchEvent(new Event("change", { bubbles: true })); });
+g0 = await page.evaluate(() => JSON.parse(options.plannerTargets)[0]);
+check(g0.tier2Mode === undefined && Array.isArray(g0.userTier2) && g0.userTier2.length === 2,
+    "auto mode clears the flag (byte-inert) yet keeps the user list (lossless switch)");
+// back to USER, then persist + reload
+await page.$eval('#plannerTargetsEditor [data-tg="t2mode"][value="user"]',
+    el => { el.checked = true; el.dispatchEvent(new Event("change", { bubbles: true })); });
+await page.evaluate(() => save());
+await page.reload({ waitUntil: "load" });
+await page.waitForFunction(() => typeof options !== "undefined", null, { timeout: 20000 });
+await page.waitForTimeout(1000);
+const restored = await page.evaluate(() => JSON.parse(options.plannerTargets)[0]);
+check(restored.tier2Mode === "user" && restored.userTier2?.length === 2
+    && restored.userTier2[0].target.type === "poolGood",
+    "tier2Mode + the reordered override list persist through save()/reload");
+// the editor rebuilds the expandable row on boot
+await page.evaluate(() => { setOption("basicAutomation", true); setOption("advancedAutomation", true); });
+await page.click("#automationStats");
+await page.waitForTimeout(150);
+check(await page.$eval("#plannerTargetsEditor", el => !!el.querySelector('[data-tg="expand"]')),
+    "the expand affordance is restored on boot");
 
 await browser.close();
 console.log(fails.length ? `\n${fails.length} FAILURES` : "\nALL PASS");
