@@ -1,0 +1,5699 @@
+{
+ "meta": {
+  "dims": {
+   "numeric": 75,
+   "bool": 210
+  },
+  "predicates": 314,
+  "probeEvals": 169996,
+  "states": 695,
+  "randomStates": 64,
+  "fieldColumns": [
+   "manaCost",
+   "goldCost",
+   "visible",
+   "unlocked",
+   "canStart",
+   "allowed",
+   "storyReqs1to8"
+  ]
+ },
+ "matrixHash": "2d794b8b61acde97",
+ "perState": [
+  {
+   "id": "boot",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "all-zero",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "all-max",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "zero:townLevel:0:Wander@2",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:townLevel:0:Wander@3",
+   "hash": "4624e9f63098f976"
+  },
+  {
+   "id": "zero:townLevel:0:Wander@9",
+   "hash": "4624e9f63098f976"
+  },
+  {
+   "id": "zero:townLevel:0:Wander@10",
+   "hash": "07d32d8fc3d7aebd"
+  },
+  {
+   "id": "zero:townLevel:0:Wander@19",
+   "hash": "07d32d8fc3d7aebd"
+  },
+  {
+   "id": "zero:townLevel:0:Wander@20",
+   "hash": "eefb42fe318a6ece"
+  },
+  {
+   "id": "zero:townLevel:0:Wander@21",
+   "hash": "eefb42fe318a6ece"
+  },
+  {
+   "id": "zero:townLevel:0:Wander@22",
+   "hash": "f60c80029e51ffbc"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@1",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@1",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@2",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@24",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@25",
+   "hash": "5a7f4e7389d3fea2"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@25",
+   "hash": "5a7f4e7389d3fea2"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@26",
+   "hash": "bdbf433b70bed394"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@49",
+   "hash": "bdbf433b70bed394"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@50",
+   "hash": "07d41eefcc34cdb0"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@50",
+   "hash": "07d41eefcc34cdb0"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@51",
+   "hash": "187a66cb8d03e087"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@75",
+   "hash": "187a66cb8d03e087"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@76",
+   "hash": "50dd532d6be4f6fc"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@99",
+   "hash": "50dd532d6be4f6fc"
+  },
+  {
+   "id": "zero:exploreProgress::exploreProgress@100",
+   "hash": "48cbd5dafae8954a"
+  },
+  {
+   "id": "zero:townLevel:0:Met@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:townLevel:0:Met@1",
+   "hash": "69cd4324bf69cdaa"
+  },
+  {
+   "id": "zero:townLevel:0:Met@4",
+   "hash": "69cd4324bf69cdaa"
+  },
+  {
+   "id": "zero:townLevel:0:Met@5",
+   "hash": "d37ac31a98f2ecd7"
+  },
+  {
+   "id": "zero:townLevel:0:Met@24",
+   "hash": "70eeee77ac859310"
+  },
+  {
+   "id": "zero:townLevel:0:Met@25",
+   "hash": "326344a60877b8a4"
+  },
+  {
+   "id": "zero:townLevel:0:Secrets@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:townLevel:0:Secrets@1",
+   "hash": "a868541397c4b811"
+  },
+  {
+   "id": "zero:townLevel:0:Secrets@9",
+   "hash": "a868541397c4b811"
+  },
+  {
+   "id": "zero:townLevel:0:Secrets@10",
+   "hash": "69b0d956aab44cc2"
+  },
+  {
+   "id": "zero:townLevel:0:Secrets@19",
+   "hash": "69b0d956aab44cc2"
+  },
+  {
+   "id": "zero:townLevel:0:Secrets@20",
+   "hash": "eaeeb5c11d421d94"
+  },
+  {
+   "id": "zero:townLevel:0:Secrets@29",
+   "hash": "eaeeb5c11d421d94"
+  },
+  {
+   "id": "zero:townLevel:0:Secrets@30",
+   "hash": "564836da5dd2c51c"
+  },
+  {
+   "id": "zero:skillLevel::Magic@11",
+   "hash": "869d002fe582711f"
+  },
+  {
+   "id": "zero:skillLevel::Magic@12",
+   "hash": "362aa53e3c0ade14"
+  },
+  {
+   "id": "zero:skillLevel::Magic@14",
+   "hash": "362aa53e3c0ade14"
+  },
+  {
+   "id": "zero:skillLevel::Magic@15",
+   "hash": "403dc6dec6645a3a"
+  },
+  {
+   "id": "zero:skillLevel::Magic@34",
+   "hash": "403dc6dec6645a3a"
+  },
+  {
+   "id": "zero:skillLevel::Magic@35",
+   "hash": "42367729bdc7de4a"
+  },
+  {
+   "id": "zero:skillLevel::Combat@9",
+   "hash": "a4eafae5e57c83a7"
+  },
+  {
+   "id": "zero:skillLevel::Combat@10",
+   "hash": "076f23727d85200f"
+  },
+  {
+   "id": "zero:skillLevel::Combat@14",
+   "hash": "076f23727d85200f"
+  },
+  {
+   "id": "zero:skillLevel::Combat@15",
+   "hash": "aa2f1e45074fb959"
+  },
+  {
+   "id": "zero:skillLevel::Combat@34",
+   "hash": "aa2f1e45074fb959"
+  },
+  {
+   "id": "zero:skillLevel::Combat@35",
+   "hash": "fd281713f83095dc"
+  },
+  {
+   "id": "zero:surveyLevel:0:SurveyZ0@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:surveyLevel:0:SurveyZ0@1",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:0:SurveyZ0@17",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:0:SurveyZ0@18",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:1:SurveyZ1@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:surveyLevel:1:SurveyZ1@1",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:1:SurveyZ1@17",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:1:SurveyZ1@18",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:1:SurveyZ1@99",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:1:SurveyZ1@100",
+   "hash": "505195ab78eee75b"
+  },
+  {
+   "id": "zero:surveyLevel:2:SurveyZ2@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:surveyLevel:2:SurveyZ2@1",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:2:SurveyZ2@17",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:2:SurveyZ2@18",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:2:SurveyZ2@99",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:2:SurveyZ2@100",
+   "hash": "3e166e124d8f35cb"
+  },
+  {
+   "id": "zero:surveyLevel:3:SurveyZ3@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:surveyLevel:3:SurveyZ3@1",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:3:SurveyZ3@17",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:3:SurveyZ3@18",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:3:SurveyZ3@99",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:3:SurveyZ3@100",
+   "hash": "cfb6d6b6881d2c1f"
+  },
+  {
+   "id": "zero:surveyLevel:4:SurveyZ4@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:surveyLevel:4:SurveyZ4@1",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:4:SurveyZ4@17",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:4:SurveyZ4@18",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:5:SurveyZ5@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:surveyLevel:5:SurveyZ5@1",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:5:SurveyZ5@17",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:5:SurveyZ5@18",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:5:SurveyZ5@99",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:5:SurveyZ5@100",
+   "hash": "72e95610a52f1190"
+  },
+  {
+   "id": "zero:surveyLevel:6:SurveyZ6@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:surveyLevel:6:SurveyZ6@1",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:6:SurveyZ6@17",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:6:SurveyZ6@18",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:6:SurveyZ6@99",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:6:SurveyZ6@100",
+   "hash": "dcadd99a6cad0cd1"
+  },
+  {
+   "id": "zero:surveyLevel:7:SurveyZ7@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:surveyLevel:7:SurveyZ7@1",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:7:SurveyZ7@17",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:7:SurveyZ7@18",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:7:SurveyZ7@99",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:surveyLevel:7:SurveyZ7@100",
+   "hash": "603f7f702e463779"
+  },
+  {
+   "id": "zero:surveyLevel:8:SurveyZ8@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:surveyLevel:8:SurveyZ8@1",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:8:SurveyZ8@17",
+   "hash": "5c3109bb0e713ec8"
+  },
+  {
+   "id": "zero:surveyLevel:8:SurveyZ8@18",
+   "hash": "27caf923c78ad895"
+  },
+  {
+   "id": "zero:skillLevel::Assassin@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:skillLevel::Assassin@1",
+   "hash": "31c4746adf00020a"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@1",
+   "hash": "11ce930b7abc50db"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@1",
+   "hash": "11ce930b7abc50db"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@2",
+   "hash": "ef6e0943f903ff44"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@4",
+   "hash": "ef6e0943f903ff44"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@5",
+   "hash": "9a8affddfdf72a33"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@14",
+   "hash": "9a8affddfdf72a33"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@15",
+   "hash": "5ef3329ebffd0627"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@24",
+   "hash": "5ef3329ebffd0627"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@25",
+   "hash": "d4e1b5cccd6c75e4"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@49",
+   "hash": "d4e1b5cccd6c75e4"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@50",
+   "hash": "4bff1776b2a28f99"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@74",
+   "hash": "4bff1776b2a28f99"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@75",
+   "hash": "1d1bf87d626cca6d"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@99",
+   "hash": "1d1bf87d626cca6d"
+  },
+  {
+   "id": "zero:townLevel:5:Meander@100",
+   "hash": "90383645b644b07a"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@1",
+   "hash": "ac64982e3ab0dcbb"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@2",
+   "hash": "6967ea9a30be5656"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@9",
+   "hash": "6967ea9a30be5656"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@10",
+   "hash": "65d29dcbc6a354e9"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@19",
+   "hash": "65d29dcbc6a354e9"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@20",
+   "hash": "3d6d44bfc6bfd71d"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@29",
+   "hash": "3d6d44bfc6bfd71d"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@30",
+   "hash": "83a79710de55451b"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@39",
+   "hash": "83a79710de55451b"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@40",
+   "hash": "577147ec19e239ab"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@49",
+   "hash": "577147ec19e239ab"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@50",
+   "hash": "793d5ac021304d5e"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@59",
+   "hash": "793d5ac021304d5e"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@60",
+   "hash": "8ba42a4412c72602"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@69",
+   "hash": "8ba42a4412c72602"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@70",
+   "hash": "9c71ac6c3df1ec6b"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@79",
+   "hash": "9c71ac6c3df1ec6b"
+  },
+  {
+   "id": "zero:townLevel:1:Forest@80",
+   "hash": "9299429df2532285"
+  },
+  {
+   "id": "zero:townLevel:1:Hermit@9",
+   "hash": "5cc1f0970f9f9dcf"
+  },
+  {
+   "id": "zero:townLevel:1:Hermit@10",
+   "hash": "d81dd625fa3172ca"
+  },
+  {
+   "id": "zero:skillLevel::Alchemy@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:skillLevel::Alchemy@1",
+   "hash": "3cf0a32b5dce5b4e"
+  },
+  {
+   "id": "zero:skillLevel::Alchemy@9",
+   "hash": "3cf0a32b5dce5b4e"
+  },
+  {
+   "id": "zero:skillLevel::Alchemy@10",
+   "hash": "16cadfa07a4248fc"
+  },
+  {
+   "id": "zero:skillLevel::Alchemy@199",
+   "hash": "84b11dbcd8374b9f"
+  },
+  {
+   "id": "zero:skillLevel::Alchemy@200",
+   "hash": "98bbbe9e11276292"
+  },
+  {
+   "id": "zero:townLevel:1:Flowers@9",
+   "hash": "91e4f32f845160ac"
+  },
+  {
+   "id": "zero:townLevel:1:Flowers@10",
+   "hash": "1d584cdd23489ffc"
+  },
+  {
+   "id": "zero:townLevel:1:Flowers@19",
+   "hash": "1d584cdd23489ffc"
+  },
+  {
+   "id": "zero:townLevel:1:Flowers@20",
+   "hash": "c54ddfde56885ea4"
+  },
+  {
+   "id": "zero:townLevel:1:Flowers@29",
+   "hash": "c54ddfde56885ea4"
+  },
+  {
+   "id": "zero:townLevel:1:Flowers@30",
+   "hash": "a6d5969ccb6436f3"
+  },
+  {
+   "id": "zero:townLevel:1:Flowers@79",
+   "hash": "55b95807d081d3d4"
+  },
+  {
+   "id": "zero:townLevel:1:Flowers@80",
+   "hash": "ea98c47ac22278ee"
+  },
+  {
+   "id": "zero:townLevel:1:Thicket@19",
+   "hash": "6ce2a8137b3e5722"
+  },
+  {
+   "id": "zero:townLevel:1:Thicket@20",
+   "hash": "c2a135ce20a1ea92"
+  },
+  {
+   "id": "zero:townLevel:1:Witch@9",
+   "hash": "3f19ff0c01780340"
+  },
+  {
+   "id": "zero:townLevel:1:Witch@10",
+   "hash": "1b91b493fc63dc3b"
+  },
+  {
+   "id": "zero:townLevel:1:Witch@19",
+   "hash": "5d5db7aa2756fe52"
+  },
+  {
+   "id": "zero:townLevel:1:Witch@20",
+   "hash": "7ba91c3d326e1781"
+  },
+  {
+   "id": "zero:townLevel:1:RuinsZ1@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:townLevel:1:RuinsZ1@1",
+   "hash": "8d988d11014e1efc"
+  },
+  {
+   "id": "zero:townLevel:2:City@4",
+   "hash": "881c2cf8ed45678b"
+  },
+  {
+   "id": "zero:townLevel:2:City@5",
+   "hash": "8e66253b10417adb"
+  },
+  {
+   "id": "zero:townLevel:2:City@9",
+   "hash": "8e66253b10417adb"
+  },
+  {
+   "id": "zero:townLevel:2:City@10",
+   "hash": "a1f986a828a4631b"
+  },
+  {
+   "id": "zero:townLevel:2:City@19",
+   "hash": "a1f986a828a4631b"
+  },
+  {
+   "id": "zero:townLevel:2:City@20",
+   "hash": "77aca82d969ce66e"
+  },
+  {
+   "id": "zero:townLevel:2:City@29",
+   "hash": "77aca82d969ce66e"
+  },
+  {
+   "id": "zero:townLevel:2:City@30",
+   "hash": "b14dfeeb89703fb3"
+  },
+  {
+   "id": "zero:townLevel:2:City@49",
+   "hash": "92bfdb88e21058ce"
+  },
+  {
+   "id": "zero:townLevel:2:City@50",
+   "hash": "bc145c344cfcd4dd"
+  },
+  {
+   "id": "zero:townLevel:2:City@59",
+   "hash": "bc145c344cfcd4dd"
+  },
+  {
+   "id": "zero:townLevel:2:City@60",
+   "hash": "cf9591fa46f0bcc0"
+  },
+  {
+   "id": "zero:townLevel:2:City@89",
+   "hash": "abe661c8671ec6bb"
+  },
+  {
+   "id": "zero:townLevel:2:City@90",
+   "hash": "cfb63af672520768"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@4",
+   "hash": "7d6cfe0005c9a921"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@5",
+   "hash": "87ae4245115a0d8b"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@9",
+   "hash": "87ae4245115a0d8b"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@10",
+   "hash": "42d2c71d81ee6883"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@14",
+   "hash": "42d2c71d81ee6883"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@15",
+   "hash": "841e2d59169d31f9"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@19",
+   "hash": "841e2d59169d31f9"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@20",
+   "hash": "0f51fa471d544ac2"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@29",
+   "hash": "0f51fa471d544ac2"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@30",
+   "hash": "450b49d5fc77f68a"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@39",
+   "hash": "450b49d5fc77f68a"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@40",
+   "hash": "583b8e36e03f54eb"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@59",
+   "hash": "583b8e36e03f54eb"
+  },
+  {
+   "id": "zero:townLevel:2:Drunk@60",
+   "hash": "183fe20ec88fb31e"
+  },
+  {
+   "id": "zero:townLevel:3:Mountain@1",
+   "hash": "198664049188406e"
+  },
+  {
+   "id": "zero:townLevel:3:Mountain@2",
+   "hash": "a122ccfce6adbcf8"
+  },
+  {
+   "id": "zero:townLevel:3:Mountain@9",
+   "hash": "a122ccfce6adbcf8"
+  },
+  {
+   "id": "zero:townLevel:3:Mountain@10",
+   "hash": "381cef0d1356df4c"
+  },
+  {
+   "id": "zero:townLevel:3:Mountain@19",
+   "hash": "381cef0d1356df4c"
+  },
+  {
+   "id": "zero:townLevel:3:Mountain@20",
+   "hash": "f8c6d3aa5fc8f744"
+  },
+  {
+   "id": "zero:townLevel:3:Mountain@39",
+   "hash": "f8c6d3aa5fc8f744"
+  },
+  {
+   "id": "zero:townLevel:3:Mountain@40",
+   "hash": "40e8f34cea0af76a"
+  },
+  {
+   "id": "zero:townLevel:3:Mountain@99",
+   "hash": "962c1b7177ce382d"
+  },
+  {
+   "id": "zero:townLevel:3:Mountain@100",
+   "hash": "9728d380cb0034d1"
+  },
+  {
+   "id": "zero:townLevel:3:Runes@7",
+   "hash": "8389f68cf2064bc5"
+  },
+  {
+   "id": "zero:townLevel:3:Runes@8",
+   "hash": "3a8b6f77bcc412df"
+  },
+  {
+   "id": "zero:townLevel:3:Runes@15",
+   "hash": "a9cfff4bf4f7893b"
+  },
+  {
+   "id": "zero:townLevel:3:Runes@16",
+   "hash": "a114fe1d4e946cfc"
+  },
+  {
+   "id": "zero:skillLevel::Spatiomancy@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:skillLevel::Spatiomancy@1",
+   "hash": "35ebad15f0f0d89e"
+  },
+  {
+   "id": "zero:townLevel:3:Cavern@1",
+   "hash": "07d096534f527b9b"
+  },
+  {
+   "id": "zero:townLevel:3:Cavern@2",
+   "hash": "9d250ef8808b42a3"
+  },
+  {
+   "id": "zero:townLevel:3:Cavern@4",
+   "hash": "9d250ef8808b42a3"
+  },
+  {
+   "id": "zero:townLevel:3:Cavern@5",
+   "hash": "7ec89999189f988e"
+  },
+  {
+   "id": "zero:townLevel:3:Cavern@19",
+   "hash": "3f298c1c8334fea0"
+  },
+  {
+   "id": "zero:townLevel:3:Cavern@20",
+   "hash": "172458cb4216074c"
+  },
+  {
+   "id": "zero:townLevel:3:Cavern@39",
+   "hash": "172458cb4216074c"
+  },
+  {
+   "id": "zero:townLevel:3:Cavern@40",
+   "hash": "f52fb0054da0eaf5"
+  },
+  {
+   "id": "zero:townLevel:3:Cavern@49",
+   "hash": "f52fb0054da0eaf5"
+  },
+  {
+   "id": "zero:townLevel:3:Cavern@50",
+   "hash": "e36aa1ef830a0eed"
+  },
+  {
+   "id": "zero:townLevel:3:Cavern@79",
+   "hash": "39db6e1f964d3b2b"
+  },
+  {
+   "id": "zero:townLevel:3:Cavern@80",
+   "hash": "fd4f334b3f40de23"
+  },
+  {
+   "id": "zero:townLevel:3:Illusions@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:townLevel:3:Illusions@1",
+   "hash": "7ddfb88d7f632fb1"
+  },
+  {
+   "id": "zero:townLevel:3:Illusions@4",
+   "hash": "7ddfb88d7f632fb1"
+  },
+  {
+   "id": "zero:townLevel:3:Illusions@5",
+   "hash": "e25d01ff166c6110"
+  },
+  {
+   "id": "zero:townLevel:3:Illusions@49",
+   "hash": "bc5908132be2a7bc"
+  },
+  {
+   "id": "zero:townLevel:3:Illusions@50",
+   "hash": "544f30dbf5d70198"
+  },
+  {
+   "id": "zero:buffLevel::Imbuement@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:buffLevel::Imbuement@1",
+   "hash": "fea061d824f239e9"
+  },
+  {
+   "id": "zero:townLevel:3:RuinsZ3@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:townLevel:3:RuinsZ3@1",
+   "hash": "cbdfcd6232903093"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@9",
+   "hash": "822e857d68fe7bc6"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@10",
+   "hash": "18c6656c684d379f"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@19",
+   "hash": "18c6656c684d379f"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@20",
+   "hash": "2ccca5fa2dfb5564"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@29",
+   "hash": "2ccca5fa2dfb5564"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@30",
+   "hash": "45ce44613cd57fe8"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@39",
+   "hash": "45ce44613cd57fe8"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@40",
+   "hash": "c8f97e040561e066"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@59",
+   "hash": "c8f97e040561e066"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@60",
+   "hash": "93a1024048c4cd3e"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@69",
+   "hash": "93a1024048c4cd3e"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@70",
+   "hash": "e5fa895662f919f0"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@79",
+   "hash": "e5fa895662f919f0"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@80",
+   "hash": "7480fcd77f5c3c36"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@89",
+   "hash": "7480fcd77f5c3c36"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@90",
+   "hash": "5d40f12ff2334167"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@99",
+   "hash": "5d40f12ff2334167"
+  },
+  {
+   "id": "zero:townLevel:4:Tour@100",
+   "hash": "b9f95ff416544951"
+  },
+  {
+   "id": "zero:townLevel:4:Canvassed@4",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:townLevel:4:Canvassed@5",
+   "hash": "5a486764d22518bf"
+  },
+  {
+   "id": "zero:townLevel:4:Canvassed@9",
+   "hash": "5a486764d22518bf"
+  },
+  {
+   "id": "zero:townLevel:4:Canvassed@10",
+   "hash": "feebf9c06baad286"
+  },
+  {
+   "id": "zero:townLevel:4:Canvassed@29",
+   "hash": "f778f9b8bc810b04"
+  },
+  {
+   "id": "zero:townLevel:4:Canvassed@30",
+   "hash": "183689afba17592c"
+  },
+  {
+   "id": "zero:townLevel:4:Citizen@59",
+   "hash": "7d2d95fbe8d14451"
+  },
+  {
+   "id": "zero:townLevel:4:Citizen@60",
+   "hash": "e134560c506d16c6"
+  },
+  {
+   "id": "zero:townLevel:4:Citizen@79",
+   "hash": "e134560c506d16c6"
+  },
+  {
+   "id": "zero:townLevel:4:Citizen@80",
+   "hash": "4a6001b23a376db7"
+  },
+  {
+   "id": "zero:townLevel:4:Citizen@99",
+   "hash": "4a6001b23a376db7"
+  },
+  {
+   "id": "zero:townLevel:4:Citizen@100",
+   "hash": "717c5281fb4a4f88"
+  },
+  {
+   "id": "zero:skillLevel::Pyromancy@199",
+   "hash": "d01f4460d8f0d523"
+  },
+  {
+   "id": "zero:skillLevel::Pyromancy@200",
+   "hash": "92d07e2d9c40667b"
+  },
+  {
+   "id": "zero:skillLevel::Dark@999",
+   "hash": "712881871cac793b"
+  },
+  {
+   "id": "zero:skillLevel::Dark@1000",
+   "hash": "37b647f92e60c197"
+  },
+  {
+   "id": "zero:buffLevel::Ritual@59",
+   "hash": "284c531a87f8bdca"
+  },
+  {
+   "id": "zero:buffLevel::Ritual@60",
+   "hash": "41b368613cb86f16"
+  },
+  {
+   "id": "zero:townLevel:5:RuinsZ5@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:townLevel:5:RuinsZ5@1",
+   "hash": "19f9c0c276dbd418"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@9",
+   "hash": "b5259040a912b324"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@10",
+   "hash": "280d27c77347b912"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@14",
+   "hash": "280d27c77347b912"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@15",
+   "hash": "b62128fd5ebad923"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@19",
+   "hash": "b62128fd5ebad923"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@20",
+   "hash": "f45b3690d9c14f32"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@24",
+   "hash": "f45b3690d9c14f32"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@25",
+   "hash": "2eb05c4178eba305"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@49",
+   "hash": "436f1e9a5d169667"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@50",
+   "hash": "b543c68dde7ce505"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@74",
+   "hash": "9eafc9cfc365f0cd"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@75",
+   "hash": "84947b54442b4263"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@99",
+   "hash": "69b9e3e3729a4b88"
+  },
+  {
+   "id": "zero:townLevel:6:ExploreJungle@100",
+   "hash": "3bf044a2a4e56fb6"
+  },
+  {
+   "id": "zero:townLevel:6:RuinsZ6@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:townLevel:6:RuinsZ6@1",
+   "hash": "4e3c752d0ea62153"
+  },
+  {
+   "id": "zero:townLevel:7:Excursion@4",
+   "hash": "f9207f9b20117e42"
+  },
+  {
+   "id": "zero:townLevel:7:Excursion@5",
+   "hash": "0f0351b63809a02e"
+  },
+  {
+   "id": "zero:townLevel:7:Excursion@9",
+   "hash": "0f0351b63809a02e"
+  },
+  {
+   "id": "zero:townLevel:7:Excursion@10",
+   "hash": "0b4897471f0f9ae6"
+  },
+  {
+   "id": "zero:townLevel:7:Excursion@19",
+   "hash": "0b4897471f0f9ae6"
+  },
+  {
+   "id": "zero:townLevel:7:Excursion@20",
+   "hash": "4fb383b869c8feb3"
+  },
+  {
+   "id": "zero:townLevel:7:Excursion@24",
+   "hash": "4fb383b869c8feb3"
+  },
+  {
+   "id": "zero:townLevel:7:Excursion@25",
+   "hash": "67327e613dbe9e56"
+  },
+  {
+   "id": "zero:skillLevel::Thievery@0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "zero:skillLevel::Thievery@1",
+   "hash": "eb1cf5b96c70a61e"
+  },
+  {
+   "id": "zero:townLevel:7:PickPockets@24",
+   "hash": "9104c68a1a2d7ef8"
+  },
+  {
+   "id": "zero:townLevel:7:PickPockets@25",
+   "hash": "70594325e71a9238"
+  },
+  {
+   "id": "zero:townLevel:7:PickPockets@99",
+   "hash": "4d2636cfe8a467fd"
+  },
+  {
+   "id": "zero:townLevel:7:PickPockets@100",
+   "hash": "9fc86c1b8f2d5903"
+  },
+  {
+   "id": "zero:townLevel:7:RobWarehouse@49",
+   "hash": "21dd0de481738f02"
+  },
+  {
+   "id": "zero:townLevel:7:RobWarehouse@50",
+   "hash": "f1b3ecfd236fde5e"
+  },
+  {
+   "id": "zero:townLevel:7:RobWarehouse@99",
+   "hash": "e265d5dfa3fd1a69"
+  },
+  {
+   "id": "zero:townLevel:7:RobWarehouse@100",
+   "hash": "d70c8455119ad53e"
+  },
+  {
+   "id": "zero:townLevel:7:InsuranceFraud@74",
+   "hash": "c1d84a18ce7c25d8"
+  },
+  {
+   "id": "zero:townLevel:7:InsuranceFraud@75",
+   "hash": "1a9c91f6e5a369c2"
+  },
+  {
+   "id": "zero:townLevel:7:InsuranceFraud@99",
+   "hash": "1a9c91f6e5a369c2"
+  },
+  {
+   "id": "zero:townLevel:7:InsuranceFraud@100",
+   "hash": "6ed9b94bd935c97b"
+  },
+  {
+   "id": "zero:townLevel:8:BuildTower@99",
+   "hash": "83dbcb1597e987af"
+  },
+  {
+   "id": "zero:townLevel:8:BuildTower@100",
+   "hash": "52b6b7a1f43cd30f"
+  },
+  {
+   "id": "max:townLevel:0:Wander@2",
+   "hash": "95d8ed6f72bbace2"
+  },
+  {
+   "id": "max:townLevel:0:Wander@3",
+   "hash": "abadc8376baa612d"
+  },
+  {
+   "id": "max:townLevel:0:Wander@9",
+   "hash": "abadc8376baa612d"
+  },
+  {
+   "id": "max:townLevel:0:Wander@10",
+   "hash": "cdef594fd6257736"
+  },
+  {
+   "id": "max:townLevel:0:Wander@19",
+   "hash": "cdef594fd6257736"
+  },
+  {
+   "id": "max:townLevel:0:Wander@20",
+   "hash": "23475ef0bb23e1b6"
+  },
+  {
+   "id": "max:townLevel:0:Wander@21",
+   "hash": "23475ef0bb23e1b6"
+  },
+  {
+   "id": "max:townLevel:0:Wander@22",
+   "hash": "cbf84cbdedeaddae"
+  },
+  {
+   "id": "max:townLevel:0:Met@0",
+   "hash": "67b62d019ee0abb0"
+  },
+  {
+   "id": "max:townLevel:0:Met@1",
+   "hash": "47505e892356285a"
+  },
+  {
+   "id": "max:townLevel:0:Met@4",
+   "hash": "47505e892356285a"
+  },
+  {
+   "id": "max:townLevel:0:Met@5",
+   "hash": "6adb0c4a334300f1"
+  },
+  {
+   "id": "max:townLevel:0:Met@24",
+   "hash": "f0b5d7d9cb7c65d5"
+  },
+  {
+   "id": "max:townLevel:0:Met@25",
+   "hash": "904c41ed76b8c825"
+  },
+  {
+   "id": "max:townLevel:0:Secrets@0",
+   "hash": "d882d61b221f9c0a"
+  },
+  {
+   "id": "max:townLevel:0:Secrets@1",
+   "hash": "8fb0361fa8d2f250"
+  },
+  {
+   "id": "max:townLevel:0:Secrets@9",
+   "hash": "8fb0361fa8d2f250"
+  },
+  {
+   "id": "max:townLevel:0:Secrets@10",
+   "hash": "02e327088d6a1c0a"
+  },
+  {
+   "id": "max:townLevel:0:Secrets@19",
+   "hash": "02e327088d6a1c0a"
+  },
+  {
+   "id": "max:townLevel:0:Secrets@20",
+   "hash": "4d2ffc2db92b0191"
+  },
+  {
+   "id": "max:townLevel:0:Secrets@29",
+   "hash": "4d2ffc2db92b0191"
+  },
+  {
+   "id": "max:townLevel:0:Secrets@30",
+   "hash": "248084b521394cad"
+  },
+  {
+   "id": "max:skillLevel::Magic@11",
+   "hash": "abdd5af493a7dca0"
+  },
+  {
+   "id": "max:skillLevel::Magic@12",
+   "hash": "019da78ad3358337"
+  },
+  {
+   "id": "max:skillLevel::Magic@39",
+   "hash": "019da78ad3358337"
+  },
+  {
+   "id": "max:skillLevel::Magic@40",
+   "hash": "8117a23fc4dcff72"
+  },
+  {
+   "id": "max:skillLevel::Magic@49",
+   "hash": "8117a23fc4dcff72"
+  },
+  {
+   "id": "max:skillLevel::Magic@50",
+   "hash": "baeed978dfe28db3"
+  },
+  {
+   "id": "max:skillLevel::Magic@59",
+   "hash": "baeed978dfe28db3"
+  },
+  {
+   "id": "max:skillLevel::Magic@60",
+   "hash": "da3d1940daf143ce"
+  },
+  {
+   "id": "max:skillLevel::Magic@79",
+   "hash": "da3d1940daf143ce"
+  },
+  {
+   "id": "max:skillLevel::Magic@80",
+   "hash": "8108da0cd6f5171f"
+  },
+  {
+   "id": "max:skillLevel::Magic@99",
+   "hash": "8108da0cd6f5171f"
+  },
+  {
+   "id": "max:skillLevel::Magic@100",
+   "hash": "2e755757623fa24d"
+  },
+  {
+   "id": "max:skillLevel::Magic@149",
+   "hash": "2e755757623fa24d"
+  },
+  {
+   "id": "max:skillLevel::Magic@150",
+   "hash": "2adb84193ea032bf"
+  },
+  {
+   "id": "max:skillLevel::Magic@199",
+   "hash": "2adb84193ea032bf"
+  },
+  {
+   "id": "max:skillLevel::Magic@200",
+   "hash": "28152a84c159881a"
+  },
+  {
+   "id": "max:skillLevel::Magic@299",
+   "hash": "4a45d77a3a7a040d"
+  },
+  {
+   "id": "max:skillLevel::Magic@300",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:skillLevel::Combat@9",
+   "hash": "fc5ddd5a66591676"
+  },
+  {
+   "id": "max:skillLevel::Combat@10",
+   "hash": "5b28b0c632aea11f"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@0",
+   "hash": "0c5bfa1ef09e4ad8"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@1",
+   "hash": "f7902ab514b0d62a"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@1",
+   "hash": "f7902ab514b0d62a"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@2",
+   "hash": "798b6fdafd96dd61"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@24",
+   "hash": "798b6fdafd96dd61"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@25",
+   "hash": "9c32547724559cd6"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@25",
+   "hash": "9c32547724559cd6"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@26",
+   "hash": "cdfafa18dd6866df"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@49",
+   "hash": "cdfafa18dd6866df"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@50",
+   "hash": "b69b1904a3534d8c"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@50",
+   "hash": "b69b1904a3534d8c"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@51",
+   "hash": "6995495fd1ceff4b"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@74",
+   "hash": "6995495fd1ceff4b"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@75",
+   "hash": "b341e2342b0c1071"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@75",
+   "hash": "b341e2342b0c1071"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@76",
+   "hash": "ab7df2b16d7cbb12"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@99",
+   "hash": "ab7df2b16d7cbb12"
+  },
+  {
+   "id": "max:exploreProgress::exploreProgress@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:skillLevel::Assassin@0",
+   "hash": "93bc84adb0534b42"
+  },
+  {
+   "id": "max:skillLevel::Assassin@1",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:5:Meander@0",
+   "hash": "bb19a4d07d0578f6"
+  },
+  {
+   "id": "max:townLevel:5:Meander@1",
+   "hash": "83badb7c51d7f425"
+  },
+  {
+   "id": "max:townLevel:5:Meander@1",
+   "hash": "83badb7c51d7f425"
+  },
+  {
+   "id": "max:townLevel:5:Meander@2",
+   "hash": "ba232385f4dc31c9"
+  },
+  {
+   "id": "max:townLevel:5:Meander@4",
+   "hash": "ba232385f4dc31c9"
+  },
+  {
+   "id": "max:townLevel:5:Meander@5",
+   "hash": "086b65bc984c6716"
+  },
+  {
+   "id": "max:townLevel:5:Meander@14",
+   "hash": "086b65bc984c6716"
+  },
+  {
+   "id": "max:townLevel:5:Meander@15",
+   "hash": "dd946cb32c77f1fa"
+  },
+  {
+   "id": "max:townLevel:5:Meander@24",
+   "hash": "dd946cb32c77f1fa"
+  },
+  {
+   "id": "max:townLevel:5:Meander@25",
+   "hash": "0ee6aae742686bd6"
+  },
+  {
+   "id": "max:townLevel:5:Meander@49",
+   "hash": "0ee6aae742686bd6"
+  },
+  {
+   "id": "max:townLevel:5:Meander@50",
+   "hash": "1e81173a071ad355"
+  },
+  {
+   "id": "max:townLevel:5:Meander@74",
+   "hash": "1e81173a071ad355"
+  },
+  {
+   "id": "max:townLevel:5:Meander@75",
+   "hash": "364eea07a2c473e2"
+  },
+  {
+   "id": "max:townLevel:5:Meander@99",
+   "hash": "364eea07a2c473e2"
+  },
+  {
+   "id": "max:townLevel:5:Meander@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:skillLevel::Dark@49",
+   "hash": "8408d9ed34e46165"
+  },
+  {
+   "id": "max:skillLevel::Dark@50",
+   "hash": "bcb93fe81e7d938b"
+  },
+  {
+   "id": "max:skillLevel::Dark@299",
+   "hash": "2dc2091622a24750"
+  },
+  {
+   "id": "max:skillLevel::Dark@300",
+   "hash": "332783f213de9e16"
+  },
+  {
+   "id": "max:skillLevel::Dark@999",
+   "hash": "acf5e6869ad2cff9"
+  },
+  {
+   "id": "max:skillLevel::Dark@1000",
+   "hash": "176bf4ddb60b730a"
+  },
+  {
+   "id": "max:skillLevel::Spatiomancy@0",
+   "hash": "b952242564066a51"
+  },
+  {
+   "id": "max:skillLevel::Spatiomancy@1",
+   "hash": "47e82cf09e73c0e8"
+  },
+  {
+   "id": "max:skillLevel::Spatiomancy@99",
+   "hash": "d79704ad4879a21b"
+  },
+  {
+   "id": "max:skillLevel::Spatiomancy@100",
+   "hash": "1fdcc89bd2ccf5fe"
+  },
+  {
+   "id": "max:townLevel:1:Forest@1",
+   "hash": "a7b9e1856b0215e0"
+  },
+  {
+   "id": "max:townLevel:1:Forest@2",
+   "hash": "56195a7a85d23fdf"
+  },
+  {
+   "id": "max:townLevel:1:Forest@9",
+   "hash": "56195a7a85d23fdf"
+  },
+  {
+   "id": "max:townLevel:1:Forest@10",
+   "hash": "746dda10227a7bcd"
+  },
+  {
+   "id": "max:townLevel:1:Forest@19",
+   "hash": "746dda10227a7bcd"
+  },
+  {
+   "id": "max:townLevel:1:Forest@20",
+   "hash": "6a4f85676c3df284"
+  },
+  {
+   "id": "max:townLevel:1:Forest@29",
+   "hash": "6a4f85676c3df284"
+  },
+  {
+   "id": "max:townLevel:1:Forest@30",
+   "hash": "0c3a71ff6993f731"
+  },
+  {
+   "id": "max:townLevel:1:Forest@39",
+   "hash": "0c3a71ff6993f731"
+  },
+  {
+   "id": "max:townLevel:1:Forest@40",
+   "hash": "3f2247529199ff4f"
+  },
+  {
+   "id": "max:townLevel:1:Forest@49",
+   "hash": "3f2247529199ff4f"
+  },
+  {
+   "id": "max:townLevel:1:Forest@50",
+   "hash": "61db78961be77ed0"
+  },
+  {
+   "id": "max:townLevel:1:Forest@59",
+   "hash": "61db78961be77ed0"
+  },
+  {
+   "id": "max:townLevel:1:Forest@60",
+   "hash": "2de2cd1f3b42e842"
+  },
+  {
+   "id": "max:townLevel:1:Forest@69",
+   "hash": "2de2cd1f3b42e842"
+  },
+  {
+   "id": "max:townLevel:1:Forest@70",
+   "hash": "bc457a1aee2a191b"
+  },
+  {
+   "id": "max:townLevel:1:Forest@79",
+   "hash": "bc457a1aee2a191b"
+  },
+  {
+   "id": "max:townLevel:1:Forest@80",
+   "hash": "604e9dd4c08e304d"
+  },
+  {
+   "id": "max:townLevel:1:Shortcut@19",
+   "hash": "db40e99639fc6387"
+  },
+  {
+   "id": "max:townLevel:1:Shortcut@20",
+   "hash": "3ec195ba9fbc7734"
+  },
+  {
+   "id": "max:townLevel:1:Hermit@9",
+   "hash": "3296d0e3764e03ed"
+  },
+  {
+   "id": "max:townLevel:1:Hermit@10",
+   "hash": "9ae1275be0bd03bb"
+  },
+  {
+   "id": "max:townLevel:1:Hermit@19",
+   "hash": "42a106f6ebc5ce74"
+  },
+  {
+   "id": "max:townLevel:1:Hermit@20",
+   "hash": "ed3d8c6e827de941"
+  },
+  {
+   "id": "max:townLevel:1:Hermit@39",
+   "hash": "2c6ca204cabf421d"
+  },
+  {
+   "id": "max:townLevel:1:Hermit@40",
+   "hash": "1635811b58d258a4"
+  },
+  {
+   "id": "max:skillLevel::Alchemy@0",
+   "hash": "e1cb47647a580242"
+  },
+  {
+   "id": "max:skillLevel::Alchemy@1",
+   "hash": "ea542e01a2f467ab"
+  },
+  {
+   "id": "max:skillLevel::Alchemy@9",
+   "hash": "ea542e01a2f467ab"
+  },
+  {
+   "id": "max:skillLevel::Alchemy@10",
+   "hash": "a0072a191a508c4a"
+  },
+  {
+   "id": "max:skillLevel::Alchemy@199",
+   "hash": "cfcd601ab82562dc"
+  },
+  {
+   "id": "max:skillLevel::Alchemy@200",
+   "hash": "7a7528d667221def"
+  },
+  {
+   "id": "max:townLevel:1:Flowers@9",
+   "hash": "483bb88f4401af4f"
+  },
+  {
+   "id": "max:townLevel:1:Flowers@10",
+   "hash": "b2d7a0a6f746b1bc"
+  },
+  {
+   "id": "max:townLevel:1:Flowers@19",
+   "hash": "b2d7a0a6f746b1bc"
+  },
+  {
+   "id": "max:townLevel:1:Flowers@20",
+   "hash": "e8e34255b181cd4a"
+  },
+  {
+   "id": "max:townLevel:1:Flowers@29",
+   "hash": "e8e34255b181cd4a"
+  },
+  {
+   "id": "max:townLevel:1:Flowers@30",
+   "hash": "326b83cf1c380d9a"
+  },
+  {
+   "id": "max:townLevel:1:Flowers@79",
+   "hash": "20c5d80c14484570"
+  },
+  {
+   "id": "max:townLevel:1:Flowers@80",
+   "hash": "ffa80dc417f337ea"
+  },
+  {
+   "id": "max:townLevel:1:Thicket@19",
+   "hash": "ed5eb05bb4d28d18"
+  },
+  {
+   "id": "max:townLevel:1:Thicket@20",
+   "hash": "6eed5e67c67eaaa6"
+  },
+  {
+   "id": "max:townLevel:1:Thicket@59",
+   "hash": "b352d23546882dda"
+  },
+  {
+   "id": "max:townLevel:1:Thicket@60",
+   "hash": "5ebb8a83f76ad37f"
+  },
+  {
+   "id": "max:townLevel:1:Witch@9",
+   "hash": "6d4de166e2004ba3"
+  },
+  {
+   "id": "max:townLevel:1:Witch@10",
+   "hash": "f9603e0677ea8488"
+  },
+  {
+   "id": "max:townLevel:1:Witch@19",
+   "hash": "d737c83b7b15518f"
+  },
+  {
+   "id": "max:townLevel:1:Witch@20",
+   "hash": "a4b59aef57222491"
+  },
+  {
+   "id": "max:townLevel:1:Witch@49",
+   "hash": "84e9baf86b49f4ad"
+  },
+  {
+   "id": "max:townLevel:1:Witch@50",
+   "hash": "653951a14d3a52a9"
+  },
+  {
+   "id": "max:surveyLevel:1:SurveyZ1@99",
+   "hash": "f17e4d3da5a348fd"
+  },
+  {
+   "id": "max:surveyLevel:1:SurveyZ1@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:1:RuinsZ1@0",
+   "hash": "658b3b2df1ee90fe"
+  },
+  {
+   "id": "max:townLevel:1:RuinsZ1@1",
+   "hash": "0b95a84fe6b7d1a7"
+  },
+  {
+   "id": "max:townLevel:2:City@4",
+   "hash": "b77c6d7737099040"
+  },
+  {
+   "id": "max:townLevel:2:City@5",
+   "hash": "e0c0f74aecaf2682"
+  },
+  {
+   "id": "max:townLevel:2:City@9",
+   "hash": "e0c0f74aecaf2682"
+  },
+  {
+   "id": "max:townLevel:2:City@10",
+   "hash": "46def6bfa2b8dcae"
+  },
+  {
+   "id": "max:townLevel:2:City@19",
+   "hash": "46def6bfa2b8dcae"
+  },
+  {
+   "id": "max:townLevel:2:City@20",
+   "hash": "38288d38fbc4f86c"
+  },
+  {
+   "id": "max:townLevel:2:City@29",
+   "hash": "38288d38fbc4f86c"
+  },
+  {
+   "id": "max:townLevel:2:City@30",
+   "hash": "621b898f8b3ef065"
+  },
+  {
+   "id": "max:townLevel:2:City@49",
+   "hash": "9711658c1115d2a9"
+  },
+  {
+   "id": "max:townLevel:2:City@50",
+   "hash": "4d29749399a51733"
+  },
+  {
+   "id": "max:townLevel:2:City@59",
+   "hash": "4d29749399a51733"
+  },
+  {
+   "id": "max:townLevel:2:City@60",
+   "hash": "f2fd3542afd9fd0a"
+  },
+  {
+   "id": "max:townLevel:2:City@89",
+   "hash": "977b3a33e1144959"
+  },
+  {
+   "id": "max:townLevel:2:City@90",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@4",
+   "hash": "85c12c1f90d82fc9"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@5",
+   "hash": "f9b875096653830d"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@9",
+   "hash": "f9b875096653830d"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@10",
+   "hash": "2a7c70661650b012"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@14",
+   "hash": "2a7c70661650b012"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@15",
+   "hash": "e8901690a4222423"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@19",
+   "hash": "e8901690a4222423"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@20",
+   "hash": "6dc6dab59cdb67c4"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@29",
+   "hash": "6dc6dab59cdb67c4"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@30",
+   "hash": "aac6469bd5e1658c"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@39",
+   "hash": "aac6469bd5e1658c"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@40",
+   "hash": "a34fa1c4cc6c74c1"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@59",
+   "hash": "a34fa1c4cc6c74c1"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@60",
+   "hash": "5a56a90f3d7c2a6b"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@79",
+   "hash": "5a56a90f3d7c2a6b"
+  },
+  {
+   "id": "max:townLevel:2:Drunk@80",
+   "hash": "151ea2b5ecbb6d57"
+  },
+  {
+   "id": "max:townLevel:2:Apprentice@99",
+   "hash": "9a3f10a3e613f074"
+  },
+  {
+   "id": "max:townLevel:2:Apprentice@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:2:Mason@99",
+   "hash": "e5adcded691b57ec"
+  },
+  {
+   "id": "max:townLevel:2:Mason@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:surveyLevel:2:SurveyZ2@99",
+   "hash": "37c90a0ff87baf40"
+  },
+  {
+   "id": "max:surveyLevel:2:SurveyZ2@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:3:Mountain@1",
+   "hash": "95f731e3c86127e4"
+  },
+  {
+   "id": "max:townLevel:3:Mountain@2",
+   "hash": "c45642531c62459b"
+  },
+  {
+   "id": "max:townLevel:3:Mountain@9",
+   "hash": "c45642531c62459b"
+  },
+  {
+   "id": "max:townLevel:3:Mountain@10",
+   "hash": "85d2a5701c68db38"
+  },
+  {
+   "id": "max:townLevel:3:Mountain@19",
+   "hash": "85d2a5701c68db38"
+  },
+  {
+   "id": "max:townLevel:3:Mountain@20",
+   "hash": "c58929b2a52e6528"
+  },
+  {
+   "id": "max:townLevel:3:Mountain@39",
+   "hash": "c58929b2a52e6528"
+  },
+  {
+   "id": "max:townLevel:3:Mountain@40",
+   "hash": "258baa07cf668c07"
+  },
+  {
+   "id": "max:townLevel:3:Mountain@99",
+   "hash": "d81ae3e782891866"
+  },
+  {
+   "id": "max:townLevel:3:Mountain@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:3:Runes@7",
+   "hash": "a9bf5f76743df184"
+  },
+  {
+   "id": "max:townLevel:3:Runes@8",
+   "hash": "3549f7b54f803eb1"
+  },
+  {
+   "id": "max:townLevel:3:Runes@15",
+   "hash": "a85be882513b1812"
+  },
+  {
+   "id": "max:townLevel:3:Runes@16",
+   "hash": "f22ab393261d2783"
+  },
+  {
+   "id": "max:townLevel:3:Runes@29",
+   "hash": "4883845ee7f18ec4"
+  },
+  {
+   "id": "max:townLevel:3:Runes@30",
+   "hash": "2913420e4de075b8"
+  },
+  {
+   "id": "max:townLevel:3:Runes@59",
+   "hash": "4251c1dd662df5b5"
+  },
+  {
+   "id": "max:townLevel:3:Runes@60",
+   "hash": "7bedeb0bcf1d6e75"
+  },
+  {
+   "id": "max:townLevel:3:Cavern@1",
+   "hash": "e8d54d5f514d2427"
+  },
+  {
+   "id": "max:townLevel:3:Cavern@2",
+   "hash": "4d84566012764b90"
+  },
+  {
+   "id": "max:townLevel:3:Cavern@4",
+   "hash": "4d84566012764b90"
+  },
+  {
+   "id": "max:townLevel:3:Cavern@5",
+   "hash": "13ea45edf75f03d3"
+  },
+  {
+   "id": "max:townLevel:3:Cavern@19",
+   "hash": "f2423a9446c625a5"
+  },
+  {
+   "id": "max:townLevel:3:Cavern@20",
+   "hash": "44df6c652bc5bcb4"
+  },
+  {
+   "id": "max:townLevel:3:Cavern@39",
+   "hash": "44df6c652bc5bcb4"
+  },
+  {
+   "id": "max:townLevel:3:Cavern@40",
+   "hash": "8ab568683c0613e3"
+  },
+  {
+   "id": "max:townLevel:3:Cavern@49",
+   "hash": "8ab568683c0613e3"
+  },
+  {
+   "id": "max:townLevel:3:Cavern@50",
+   "hash": "3f7a58f93c6c14e4"
+  },
+  {
+   "id": "max:townLevel:3:Cavern@79",
+   "hash": "8578b5f5c018bdb1"
+  },
+  {
+   "id": "max:townLevel:3:Cavern@80",
+   "hash": "16e2b58d32814c93"
+  },
+  {
+   "id": "max:townLevel:3:Illusions@0",
+   "hash": "2a18d2005470b539"
+  },
+  {
+   "id": "max:townLevel:3:Illusions@1",
+   "hash": "424a14acda50a737"
+  },
+  {
+   "id": "max:townLevel:3:Illusions@4",
+   "hash": "424a14acda50a737"
+  },
+  {
+   "id": "max:townLevel:3:Illusions@5",
+   "hash": "350220d9915ef67c"
+  },
+  {
+   "id": "max:townLevel:3:Illusions@49",
+   "hash": "18c6d2fef5d73958"
+  },
+  {
+   "id": "max:townLevel:3:Illusions@50",
+   "hash": "1ad64a6040dec0f9"
+  },
+  {
+   "id": "max:townLevel:3:Illusions@69",
+   "hash": "17a532123e3be926"
+  },
+  {
+   "id": "max:townLevel:3:Illusions@70",
+   "hash": "7728439e8775c164"
+  },
+  {
+   "id": "max:buffLevel::Imbuement@0",
+   "hash": "a4ef214d1cdd412d"
+  },
+  {
+   "id": "max:buffLevel::Imbuement@1",
+   "hash": "7cd9abb15589d2f9"
+  },
+  {
+   "id": "max:buffLevel::Imbuement@499",
+   "hash": "cd9f62c472124368"
+  },
+  {
+   "id": "max:buffLevel::Imbuement@500",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:surveyLevel:3:SurveyZ3@99",
+   "hash": "1207a5c45311bd69"
+  },
+  {
+   "id": "max:surveyLevel:3:SurveyZ3@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:3:RuinsZ3@0",
+   "hash": "b0e058ebf3a6902c"
+  },
+  {
+   "id": "max:townLevel:3:RuinsZ3@1",
+   "hash": "7772ddd21ceae838"
+  },
+  {
+   "id": "max:surveyLevel:0:SurveyZ0@99",
+   "hash": "be7625cd5a031bc5"
+  },
+  {
+   "id": "max:surveyLevel:0:SurveyZ0@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:surveyLevel:4:SurveyZ4@99",
+   "hash": "c2fa9506d3332cd7"
+  },
+  {
+   "id": "max:surveyLevel:4:SurveyZ4@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:surveyLevel:5:SurveyZ5@99",
+   "hash": "6a34aaa75faeee3f"
+  },
+  {
+   "id": "max:surveyLevel:5:SurveyZ5@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:surveyLevel:6:SurveyZ6@99",
+   "hash": "7bd068eeffd94bd0"
+  },
+  {
+   "id": "max:surveyLevel:6:SurveyZ6@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:surveyLevel:7:SurveyZ7@99",
+   "hash": "8857982fe3885ac8"
+  },
+  {
+   "id": "max:surveyLevel:7:SurveyZ7@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:surveyLevel:8:SurveyZ8@99",
+   "hash": "7ca7ebcd8a4f017d"
+  },
+  {
+   "id": "max:surveyLevel:8:SurveyZ8@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:4:Tour@9",
+   "hash": "47a312acfa46cda5"
+  },
+  {
+   "id": "max:townLevel:4:Tour@10",
+   "hash": "3140bf1c3ca5b401"
+  },
+  {
+   "id": "max:townLevel:4:Tour@19",
+   "hash": "3140bf1c3ca5b401"
+  },
+  {
+   "id": "max:townLevel:4:Tour@20",
+   "hash": "0983a20eea35b241"
+  },
+  {
+   "id": "max:townLevel:4:Tour@29",
+   "hash": "0983a20eea35b241"
+  },
+  {
+   "id": "max:townLevel:4:Tour@30",
+   "hash": "49c8791f2633920c"
+  },
+  {
+   "id": "max:townLevel:4:Tour@39",
+   "hash": "49c8791f2633920c"
+  },
+  {
+   "id": "max:townLevel:4:Tour@40",
+   "hash": "ef04c579457508ee"
+  },
+  {
+   "id": "max:townLevel:4:Tour@59",
+   "hash": "ef04c579457508ee"
+  },
+  {
+   "id": "max:townLevel:4:Tour@60",
+   "hash": "9db7d7cf2b533f04"
+  },
+  {
+   "id": "max:townLevel:4:Tour@69",
+   "hash": "9db7d7cf2b533f04"
+  },
+  {
+   "id": "max:townLevel:4:Tour@70",
+   "hash": "013dd10920e2bb54"
+  },
+  {
+   "id": "max:townLevel:4:Tour@79",
+   "hash": "013dd10920e2bb54"
+  },
+  {
+   "id": "max:townLevel:4:Tour@80",
+   "hash": "73bfe4620ba9b5bd"
+  },
+  {
+   "id": "max:townLevel:4:Tour@89",
+   "hash": "73bfe4620ba9b5bd"
+  },
+  {
+   "id": "max:townLevel:4:Tour@90",
+   "hash": "b26dae63b9e3b374"
+  },
+  {
+   "id": "max:townLevel:4:Tour@99",
+   "hash": "b26dae63b9e3b374"
+  },
+  {
+   "id": "max:townLevel:4:Tour@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:4:Canvassed@4",
+   "hash": "4ca047c71f0b52b1"
+  },
+  {
+   "id": "max:townLevel:4:Canvassed@5",
+   "hash": "5128bea8eb044cf0"
+  },
+  {
+   "id": "max:townLevel:4:Canvassed@9",
+   "hash": "5128bea8eb044cf0"
+  },
+  {
+   "id": "max:townLevel:4:Canvassed@10",
+   "hash": "cb7b830c61593bbe"
+  },
+  {
+   "id": "max:townLevel:4:Canvassed@29",
+   "hash": "8ce50b72171dcdbc"
+  },
+  {
+   "id": "max:townLevel:4:Canvassed@30",
+   "hash": "303021a99849a3ad"
+  },
+  {
+   "id": "max:townLevel:4:Citizen@59",
+   "hash": "2952026da79a676f"
+  },
+  {
+   "id": "max:townLevel:4:Citizen@60",
+   "hash": "08cd3b5a4857255c"
+  },
+  {
+   "id": "max:townLevel:4:Citizen@79",
+   "hash": "08cd3b5a4857255c"
+  },
+  {
+   "id": "max:townLevel:4:Citizen@80",
+   "hash": "0ae00eca8af857ca"
+  },
+  {
+   "id": "max:townLevel:4:Citizen@99",
+   "hash": "0ae00eca8af857ca"
+  },
+  {
+   "id": "max:townLevel:4:Citizen@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:skillLevel::Mercantilism@0",
+   "hash": "994a84ce56283bcf"
+  },
+  {
+   "id": "max:skillLevel::Mercantilism@1",
+   "hash": "401bc7ef7a60c856"
+  },
+  {
+   "id": "max:skillLevel::Pyromancy@199",
+   "hash": "7aa58ef44d47ad3a"
+  },
+  {
+   "id": "max:skillLevel::Pyromancy@200",
+   "hash": "8cdd09b6e68f180a"
+  },
+  {
+   "id": "max:buffLevel::Ritual@59",
+   "hash": "916ee32e0b8225fa"
+  },
+  {
+   "id": "max:buffLevel::Ritual@60",
+   "hash": "763b1b6e61904a08"
+  },
+  {
+   "id": "max:townLevel:5:RuinsZ5@0",
+   "hash": "72f859fc2ac2f5fa"
+  },
+  {
+   "id": "max:townLevel:5:RuinsZ5@1",
+   "hash": "3648f36f901cf043"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@9",
+   "hash": "76c27de72637eeae"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@10",
+   "hash": "2eb93aa6eaf21196"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@14",
+   "hash": "2eb93aa6eaf21196"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@15",
+   "hash": "dbbf91679b8ba156"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@19",
+   "hash": "dbbf91679b8ba156"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@20",
+   "hash": "c134853e0169accd"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@24",
+   "hash": "c134853e0169accd"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@25",
+   "hash": "d9ce6118b1ce5c2e"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@49",
+   "hash": "bc29ea9e36cb28b0"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@50",
+   "hash": "f912af449fd7ba7f"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@74",
+   "hash": "02a409fe580c5d7e"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@75",
+   "hash": "809ea67449e6e305"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@99",
+   "hash": "3d6c7bc7bef5ff94"
+  },
+  {
+   "id": "max:townLevel:6:ExploreJungle@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:6:RuinsZ6@0",
+   "hash": "205d73855eb3ab69"
+  },
+  {
+   "id": "max:townLevel:6:RuinsZ6@1",
+   "hash": "5deed825855e28e5"
+  },
+  {
+   "id": "max:skillLevel::Restoration@999",
+   "hash": "a8fe3f76b6b4eda8"
+  },
+  {
+   "id": "max:skillLevel::Restoration@1000",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:7:Excursion@4",
+   "hash": "3f6fc91930422602"
+  },
+  {
+   "id": "max:townLevel:7:Excursion@5",
+   "hash": "cc4b6b9c0c2241b5"
+  },
+  {
+   "id": "max:townLevel:7:Excursion@9",
+   "hash": "cc4b6b9c0c2241b5"
+  },
+  {
+   "id": "max:townLevel:7:Excursion@10",
+   "hash": "81a1d8b9073c957a"
+  },
+  {
+   "id": "max:townLevel:7:Excursion@19",
+   "hash": "81a1d8b9073c957a"
+  },
+  {
+   "id": "max:townLevel:7:Excursion@20",
+   "hash": "ebdefcd1a79c2841"
+  },
+  {
+   "id": "max:townLevel:7:Excursion@24",
+   "hash": "ebdefcd1a79c2841"
+  },
+  {
+   "id": "max:townLevel:7:Excursion@25",
+   "hash": "79cd072425e93be2"
+  },
+  {
+   "id": "max:skillLevel::Thievery@0",
+   "hash": "77dda9a0435aba7a"
+  },
+  {
+   "id": "max:skillLevel::Thievery@1",
+   "hash": "6aa3c5f9199f7f18"
+  },
+  {
+   "id": "max:townLevel:7:PickPockets@24",
+   "hash": "beab7c7ca9b70267"
+  },
+  {
+   "id": "max:townLevel:7:PickPockets@25",
+   "hash": "0fdee05a9834313f"
+  },
+  {
+   "id": "max:townLevel:7:PickPockets@99",
+   "hash": "67781c71fd9b2f38"
+  },
+  {
+   "id": "max:townLevel:7:PickPockets@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:7:RobWarehouse@49",
+   "hash": "ae764e3ab02d5b7f"
+  },
+  {
+   "id": "max:townLevel:7:RobWarehouse@50",
+   "hash": "eafd3e35a89196eb"
+  },
+  {
+   "id": "max:townLevel:7:RobWarehouse@99",
+   "hash": "24bcba67390b4ee4"
+  },
+  {
+   "id": "max:townLevel:7:RobWarehouse@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:7:InsuranceFraud@74",
+   "hash": "fdaa8ddc194f7ca6"
+  },
+  {
+   "id": "max:townLevel:7:InsuranceFraud@75",
+   "hash": "0fc893f331f1ee7e"
+  },
+  {
+   "id": "max:townLevel:7:InsuranceFraud@99",
+   "hash": "0fc893f331f1ee7e"
+  },
+  {
+   "id": "max:townLevel:7:InsuranceFraud@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:buffLevel::Imbuement3@6",
+   "hash": "007700391ef1a2a1"
+  },
+  {
+   "id": "max:buffLevel::Imbuement3@7",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:storyMax::storyMax@11",
+   "hash": "c91864c9ea175c2a"
+  },
+  {
+   "id": "max:storyMax::storyMax@12",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:buffLevel::Imbuement2@499",
+   "hash": "8f8d76a2867d89b4"
+  },
+  {
+   "id": "max:buffLevel::Imbuement2@500",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "max:townLevel:8:BuildTower@99",
+   "hash": "719ba07338d8e3ba"
+  },
+  {
+   "id": "max:townLevel:8:BuildTower@100",
+   "hash": "e6b4dfe5258011a1"
+  },
+  {
+   "id": "zero:prestige:completedAnyPrestige=on",
+   "hash": "0ff5003c70d1f9ab"
+  },
+  {
+   "id": "zero:storyFlag:acquiredPegasus=on",
+   "hash": "1d48b8508cbc4095"
+  },
+  {
+   "id": "random:0",
+   "hash": "941f8b34528d20fc"
+  },
+  {
+   "id": "random:1",
+   "hash": "c304c99ed67378c1"
+  },
+  {
+   "id": "random:2",
+   "hash": "38be11d466521c9e"
+  },
+  {
+   "id": "random:3",
+   "hash": "4da91014535739c2"
+  },
+  {
+   "id": "random:4",
+   "hash": "a62a1e1fd345aa70"
+  },
+  {
+   "id": "random:5",
+   "hash": "ee26c32de8177ea4"
+  },
+  {
+   "id": "random:6",
+   "hash": "4494a6d11e5c17cf"
+  },
+  {
+   "id": "random:7",
+   "hash": "e30a001eff86c1f7"
+  },
+  {
+   "id": "random:8",
+   "hash": "4ffe0270a804870c"
+  },
+  {
+   "id": "random:9",
+   "hash": "d28e34fdf8c79747"
+  },
+  {
+   "id": "random:10",
+   "hash": "bd37af08ddd8f8d5"
+  },
+  {
+   "id": "random:11",
+   "hash": "bb3753abd4827486"
+  },
+  {
+   "id": "random:12",
+   "hash": "43cf3ede0b32735f"
+  },
+  {
+   "id": "random:13",
+   "hash": "21326f0bc293acc4"
+  },
+  {
+   "id": "random:14",
+   "hash": "7d2c6e1e2c33f3a1"
+  },
+  {
+   "id": "random:15",
+   "hash": "2032523c40eae202"
+  },
+  {
+   "id": "random:16",
+   "hash": "9e870dc2d66dfc92"
+  },
+  {
+   "id": "random:17",
+   "hash": "4477142b71d426d5"
+  },
+  {
+   "id": "random:18",
+   "hash": "b266c182d92a9ebb"
+  },
+  {
+   "id": "random:19",
+   "hash": "d0f684ea23d3741d"
+  },
+  {
+   "id": "random:20",
+   "hash": "b95de551df06b47c"
+  },
+  {
+   "id": "random:21",
+   "hash": "9f6f444821a9f07d"
+  },
+  {
+   "id": "random:22",
+   "hash": "127b168927c92e91"
+  },
+  {
+   "id": "random:23",
+   "hash": "8f4c3032315778e9"
+  },
+  {
+   "id": "random:24",
+   "hash": "adbdd7a6ce4294df"
+  },
+  {
+   "id": "random:25",
+   "hash": "d707304c8bf1ea84"
+  },
+  {
+   "id": "random:26",
+   "hash": "526e9a3a1c1e99de"
+  },
+  {
+   "id": "random:27",
+   "hash": "7fcb886c08d7bcdc"
+  },
+  {
+   "id": "random:28",
+   "hash": "8f887eba1bc57882"
+  },
+  {
+   "id": "random:29",
+   "hash": "fd2b72fb65d9e7e2"
+  },
+  {
+   "id": "random:30",
+   "hash": "75cc9c40f30837a7"
+  },
+  {
+   "id": "random:31",
+   "hash": "9bfbd5aa448a2fe1"
+  },
+  {
+   "id": "random:32",
+   "hash": "2a5a3e128121bb3f"
+  },
+  {
+   "id": "random:33",
+   "hash": "bb37a16a5a4299f2"
+  },
+  {
+   "id": "random:34",
+   "hash": "87aba41d86cc85e0"
+  },
+  {
+   "id": "random:35",
+   "hash": "515c7ab074aea83c"
+  },
+  {
+   "id": "random:36",
+   "hash": "9e8e19d0b3dce94a"
+  },
+  {
+   "id": "random:37",
+   "hash": "4a7cf949ccaaed65"
+  },
+  {
+   "id": "random:38",
+   "hash": "bc456e5d673b701a"
+  },
+  {
+   "id": "random:39",
+   "hash": "995a45c9dad5967e"
+  },
+  {
+   "id": "random:40",
+   "hash": "3b3da4d6a80a9299"
+  },
+  {
+   "id": "random:41",
+   "hash": "d5ef3a0295ab8e44"
+  },
+  {
+   "id": "random:42",
+   "hash": "027a434b2d7f8b7d"
+  },
+  {
+   "id": "random:43",
+   "hash": "15bae1d132a718cf"
+  },
+  {
+   "id": "random:44",
+   "hash": "b6ed2793d7b90845"
+  },
+  {
+   "id": "random:45",
+   "hash": "b66eb76742fd2bfc"
+  },
+  {
+   "id": "random:46",
+   "hash": "f3bdad04e894fbb8"
+  },
+  {
+   "id": "random:47",
+   "hash": "a23df48ececf7f0b"
+  },
+  {
+   "id": "random:48",
+   "hash": "ab18df6cb0bf09b7"
+  },
+  {
+   "id": "random:49",
+   "hash": "7310a54179797296"
+  },
+  {
+   "id": "random:50",
+   "hash": "bc54c7952009adda"
+  },
+  {
+   "id": "random:51",
+   "hash": "594b98cedf04e76a"
+  },
+  {
+   "id": "random:52",
+   "hash": "6a80c98d439665b2"
+  },
+  {
+   "id": "random:53",
+   "hash": "a897124ffd260402"
+  },
+  {
+   "id": "random:54",
+   "hash": "4167d436d7e46acf"
+  },
+  {
+   "id": "random:55",
+   "hash": "08a7a450d2c0a3b5"
+  },
+  {
+   "id": "random:56",
+   "hash": "2fda81d9be7121f8"
+  },
+  {
+   "id": "random:57",
+   "hash": "a79adaff276e28ad"
+  },
+  {
+   "id": "random:58",
+   "hash": "57a46007913932c2"
+  },
+  {
+   "id": "random:59",
+   "hash": "c23e8f4128ee85e7"
+  },
+  {
+   "id": "random:60",
+   "hash": "3340f5f650072c9d"
+  },
+  {
+   "id": "random:61",
+   "hash": "cb721a249635550c"
+  },
+  {
+   "id": "random:62",
+   "hash": "5a282d0887cbf25d"
+  },
+  {
+   "id": "random:63",
+   "hash": "1df779f4edcb03f4"
+  },
+  {
+   "id": "fixture:mid",
+   "hash": "489c91dd9a781266"
+  },
+  {
+   "id": "fixture:deep",
+   "hash": "a19cf2f7db42d067"
+  }
+ ],
+ "bootSample": [
+  [
+   "Wander",
+   250,
+   null,
+   true,
+   true,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Smash Pots",
+   50,
+   100,
+   true,
+   true,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Pick Locks",
+   400,
+   10,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Buy Glasses",
+   50,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Found Glasses",
+   0,
+   null,
+   false,
+   false,
+   false,
+   0,
+   null
+  ],
+  [
+   "Buy Mana Z1",
+   100,
+   50,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Meet People",
+   800,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Train Strength",
+   2000,
+   null,
+   false,
+   false,
+   null,
+   10,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Short Quest",
+   600,
+   20,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Investigate",
+   1000,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Long Quest",
+   1500,
+   30,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Throw Party",
+   1600,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Warrior Lessons",
+   1000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Mage Lessons",
+   1000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Heal The Sick",
+   2500,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Fight Monsters",
+   2000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Small Dungeon",
+   2000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Buy Supplies",
+   200,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Haggle",
+   100,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "SurveyZ0",
+   10000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   null
+  ],
+  [
+   "AssassinZ0",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Map",
+   200,
+   15,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Start Journey",
+   1000,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Hitch Ride",
+   1,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Open Rift",
+   50000,
+   null,
+   false,
+   false,
+   null,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Explore Forest",
+   400,
+   null,
+   true,
+   true,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Wild Mana",
+   150,
+   250,
+   true,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Gather Herbs",
+   200,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Hunt",
+   800,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Sit By Waterfall",
+   2000,
+   null,
+   false,
+   false,
+   null,
+   10,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Old Shortcut",
+   800,
+   null,
+   true,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Talk To Hermit",
+   1200,
+   null,
+   true,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Practical Magic",
+   4000,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Learn Alchemy",
+   5000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Brew Potions",
+   4000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Train Dexterity",
+   2000,
+   null,
+   false,
+   false,
+   null,
+   10,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Train Speed",
+   2000,
+   null,
+   false,
+   false,
+   null,
+   10,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Follow Flowers",
+   300,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Bird Watching",
+   2000,
+   null,
+   false,
+   false,
+   false,
+   10,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Clear Thicket",
+   500,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Talk To Witch",
+   1500,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Dark Magic",
+   6000,
+   null,
+   false,
+   false,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Dark Ritual",
+   50000,
+   50,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "SurveyZ1",
+   20000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   null
+  ],
+  [
+   "RuinsZ1",
+   100000,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "HaulZ1",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "AssassinZ1",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Continue On",
+   8000,
+   null,
+   true,
+   true,
+   null,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Explore City",
+   750,
+   null,
+   true,
+   true,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Gamble",
+   1000,
+   null,
+   true,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Get Drunk",
+   1000,
+   null,
+   true,
+   false,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Buy Mana Z3",
+   100,
+   50,
+   true,
+   true,
+   true,
+   null,
+   [
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Sell Potions",
+   1000,
+   null,
+   true,
+   true,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Adventure Guild",
+   3000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Gather Team",
+   2000,
+   null,
+   false,
+   false,
+   false,
+   5,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Large Dungeon",
+   6000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Crafting Guild",
+   3000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Craft Armor",
+   1000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Apprentice",
+   2000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Mason",
+   2000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Architect",
+   2000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Read Books",
+   2000,
+   null,
+   false,
+   false,
+   false,
+   10,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Buy Pickaxe",
+   3000,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Heroes Trial",
+   100000,
+   null,
+   false,
+   false,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "SurveyZ2",
+   30000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   null
+  ],
+  [
+   "AssassinZ2",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Start Trek",
+   12000,
+   null,
+   false,
+   false,
+   null,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Underworld",
+   50000,
+   500,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Climb Mountain",
+   800,
+   null,
+   true,
+   true,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Mana Geyser",
+   2000,
+   null,
+   true,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Decipher Runes",
+   1200,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Chronomancy",
+   10000,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Looping Potion",
+   30000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Pyromancy",
+   14000,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Explore Cavern",
+   1500,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Mine Soulstones",
+   5000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Hunt Trolls",
+   8000,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Check Walls",
+   3000,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Take Artifacts",
+   1500,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Imbue Mind",
+   500000,
+   20,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Imbue Body",
+   500000,
+   1,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "SurveyZ3",
+   40000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   null
+  ],
+  [
+   "RuinsZ3",
+   100000,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "HaulZ3",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "AssassinZ3",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Face Judgement",
+   30000,
+   null,
+   false,
+   false,
+   null,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Guru",
+   100000,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Guided Tour",
+   2500,
+   null,
+   true,
+   true,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Canvass",
+   4000,
+   null,
+   true,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Donate",
+   2000,
+   null,
+   true,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Accept Donations",
+   2000,
+   null,
+   true,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Tidy Up",
+   10000,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    null,
+    null,
+    null,
+    false,
+    false,
+    false,
+    null
+   ]
+  ],
+  [
+   "Buy Mana Z5",
+   100,
+   50,
+   true,
+   true,
+   true,
+   null,
+   [
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Sell Artifact",
+   500,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Gift Artifact",
+   500,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Mercantilism",
+   10000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Charm School",
+   2000,
+   null,
+   false,
+   false,
+   null,
+   10,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Oracle",
+   2000,
+   null,
+   false,
+   false,
+   null,
+   10,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Enchant Armor",
+   1000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Wizard College",
+   10000,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    null,
+    false,
+    null,
+    false
+   ]
+  ],
+  [
+   "Restoration",
+   15000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Spatiomancy",
+   20000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    null,
+    null
+   ]
+  ],
+  [
+   "Seek Citizenship",
+   1500,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    null,
+    null
+   ]
+  ],
+  [
+   "Build Housing",
+   2000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Collect Taxes",
+   10000,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Pegasus",
+   3000,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Fight Frost Giants",
+   20000,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Seek Blessing",
+   1000000,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Great Feast",
+   5000000,
+   5000,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "SurveyZ4",
+   50000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   null
+  ],
+  [
+   "AssassinZ4",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Fall From Grace",
+   30000,
+   null,
+   true,
+   false,
+   null,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Meander",
+   2500,
+   null,
+   true,
+   true,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Mana Well",
+   2500,
+   5000,
+   true,
+   false,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Destroy Pylons",
+   10000,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Raise Zombie",
+   10000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    null,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Dark Sacrifice",
+   20000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "The Spire",
+   100000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    null,
+    null
+   ]
+  ],
+  [
+   "Purchase Supplies",
+   2000,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Dead Trial",
+   100000,
+   null,
+   false,
+   false,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "SurveyZ5",
+   60000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   null
+  ],
+  [
+   "RuinsZ5",
+   100000,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "HaulZ5",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "AssassinZ5",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Journey Forth",
+   20000,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Explore Jungle",
+   25000,
+   null,
+   true,
+   true,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Fight Jungle Monsters",
+   30000,
+   null,
+   true,
+   true,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Rescue Survivors",
+   25000,
+   null,
+   false,
+   false,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Prepare Buffet",
+   30000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Totem",
+   30000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "SurveyZ6",
+   70000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   null
+  ],
+  [
+   "RuinsZ6",
+   100000,
+   null,
+   false,
+   false,
+   null,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "HaulZ6",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "AssassinZ6",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Escape",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Open Portal",
+   50000,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Excursion",
+   25000,
+   10,
+   true,
+   true,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Explorers Guild",
+   65000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Thieves Guild",
+   75000,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Pick Pockets",
+   20000,
+   2,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    null
+   ]
+  ],
+  [
+   "Rob Warehouse",
+   50000,
+   20,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    null
+   ]
+  ],
+  [
+   "Insurance Fraud",
+   100000,
+   200,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    null
+   ]
+  ],
+  [
+   "Guild Assassin",
+   100000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    null,
+    null
+   ]
+  ],
+  [
+   "Invest",
+   50000,
+   null,
+   true,
+   true,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Collect Interest",
+   1,
+   null,
+   true,
+   true,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Seminar",
+   20000,
+   1000,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Purchase Key",
+   20000,
+   1000000,
+   true,
+   true,
+   false,
+   1,
+   [
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Secret Trial",
+   100000,
+   null,
+   false,
+   false,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    null,
+    null
+   ]
+  ],
+  [
+   "SurveyZ7",
+   80000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   null
+  ],
+  [
+   "AssassinZ7",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Leave City",
+   100000,
+   null,
+   true,
+   true,
+   false,
+   1,
+   [
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "SurveyZ8",
+   90000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   null
+  ],
+  [
+   "Imbue Soul",
+   5000000,
+   null,
+   true,
+   false,
+   false,
+   1,
+   [
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null
+   ]
+  ],
+  [
+   "Build Tower",
+   250000,
+   null,
+   true,
+   true,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    null
+   ]
+  ],
+  [
+   "Gods Trial",
+   50000,
+   null,
+   false,
+   false,
+   true,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Challenge Gods",
+   50000,
+   null,
+   false,
+   false,
+   false,
+   null,
+   [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ]
+  ],
+  [
+   "Restore Time",
+   7777777,
+   null,
+   false,
+   false,
+   false,
+   1,
+   [
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  ]
+ ]
+}
