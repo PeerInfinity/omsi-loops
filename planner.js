@@ -27,8 +27,9 @@
 //
 // Provenance: direct port of the proven queue-planner v0 experiment
 // (originally 500 loops / 5,432,753 ticks to Forest Path vs the 646-loop
-// scripted baseline, deterministic; Part A §11.9 later re-baselined this
-// reference to 535 / 5,965,890 / e23f020400162f9a — see AUTOMATION.md §8).
+// scripted baseline, deterministic; Part A §11.9 re-baselined it to 535 /
+// 5,965,890 / e23f020400162f9a, and the session-28 weight recalibration to
+// 461 / 5,195,188 / 9d9952e68bc8373c — see AUTOMATION.md §8).
 // The algorithm is transliterated, not rewritten;
 // engine gotchas it encodes: positional prerequisites (a canStart-failing
 // action is skipped for the REST of the loop), travel tail-pinning in
@@ -61,8 +62,8 @@ const DEFAULT_WEIGHTS = {
     visibleAction: 300, // an action newly visible
     frontier: 4000,    // sum of exp-fraction progress toward probed unlock thresholds
     mana: 800,         // log-growth of realized per-loop mana capacity
-    bank: 30,          // measured mana-equivalent value of newly banked good items (a bank pays out EVERY future loop)
-    bankPot: 15,       // newly DISCOVERED items (total pool growth = future banks)
+    bank: 45,          // measured mana-equivalent value of newly banked good items (a bank pays out EVERY future loop). 30 -> 45: session-28 recalibration on the Part-A capacity model
+    bankPot: 8,        // newly DISCOVERED items (total pool growth = future banks). 15 -> 8: same recalibration (bank45+bankPot8 = 461 loops / 5,195,188 ticks vs 535 / 5,965,890)
     talent: 0.01,      // total talent exp (long-horizon tie-break)
     // §11.5 scoring-horizon terms — both ONLY computed when the PRE state has
     // more than one town unlocked (byte-inert at townsUnlocked=[0], where the

@@ -22,7 +22,7 @@ function withoutSpaces(name) {
 // ENTIRE RNG surface is four reward-path sites (dungeon soulstone chance +
 // stat pick, Mine Soulstones stat pick, exchangeMap zone pick —
 // ACTION-CENSUS.md §2.3). Default "random" keeps Math.random() verbatim, so
-// the frozen planner reference (535 / 5,965,890 / e23f0204…) is byte-inert;
+// the frozen planner reference (461 / 5,195,188 / 9d9952e6…) is byte-inert;
 // town-0 routes never touch these sites anyway. "cycle" replaces them with a
 // deterministic, expectation-preserving sequence, which makes no-RNG features
 // possible: the automation planner's informed-mode probing of dungeon content

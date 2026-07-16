@@ -781,8 +781,8 @@ const options = {
     plannerWeightVisibleAction: 300,
     plannerWeightFrontier: 4000,
     plannerWeightMana: 800,
-    plannerWeightBank: 30,
-    plannerWeightBankPot: 15,
+    plannerWeightBank: 45,
+    plannerWeightBankPot: 8,
     plannerWeightTalent: 0.01,
     // §11.5 scoring-horizon terms (only computed once >1 town is unlocked;
     // byte-inert at townsUnlocked=[0] regardless of value)

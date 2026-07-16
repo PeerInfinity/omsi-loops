@@ -327,11 +327,26 @@ check-first plans lean more on engine confirmation to rank correctly).
 ## 8. Determinism and the reference playthrough
 
 With seed 12345 and default settings, the headless planner reaches Forest
-Path (town 1) in **535 loops / 5,965,890 ticks / final-state hash
-`e23f020400162f9a`**, still beating the fork's 646-loop scripted baseline with
+Path (town 1) in **461 loops / 5,195,188 ticks / final-state hash
+`9d9952e68bc8373c`**, still beating the fork's 646-loop scripted baseline with
 zero hand-scripted knowledge. This exact triple is re-verified after every
 planner change — new planner features must keep it byte-identical or explain
 themselves.
+
+**Weight recalibration re-baseline (2026-07-16).** The previous reference
+**535 / 5,965,890 / `e23f020400162f9a`** was deliberately retired by the
+calibration pass that Part A had queued: with the accurate town-0 capacity
+model in place, DEFAULT_WEIGHTS moved `bank` 30 → 45 and `bankPot` 15 → 8
+(the sweep winner under BOTH metrics on the predictor screen: −13.8% loops,
+−12.9% ticks; the combo's bank 20–60 neighborhood is a healthy plateau,
+while bank10+bankPot8 and bank55-alone are fixation holes the DNF-aware
+sweeps flagged). The §11.8 piece-3 scored channels (efficiency / buff /
+soulstone / invest / grindTalent) all ship at 0 — none has any town-0
+signal to calibrate against (see the SUMMARY Round-19 notes); they get
+values when the town-2+ arcs run. An exact-count tail trim was prototyped
+and REJECTED by measurement: it cuts ~9% of per-loop ticks but the lost
+per-tick stat/talent exp compounds into more loops, losing BOTH metrics on
+the new defaults (515 / 6,117,370 vs 461 / 5,195,188).
 
 **Part A re-baseline (§11.9, 2026-07-13).** This reference was deliberately
 re-frozen from the original **500 / 5,432,753 / `54506b48ec1758af`**. Part A
