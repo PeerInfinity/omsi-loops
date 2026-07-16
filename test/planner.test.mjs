@@ -1076,6 +1076,7 @@ test("§V1 planning-state serialization round-trips the sticky-goal handle", () 
     P.activeLeaf = { kind: "b", target: { type: "progress", name: "Secrets", town: 0 }, value: 40 };
     P.branchStall = { "b:progress:Secrets:40": 7 };
     P.abandonedGoals = new Set(["a:Meet People"]);
+    P.unlockProg = { "a:Start Journey": { base: 0.1, last: 0.3 } };
     const blob = JSON.parse(JSON.stringify(IP.serializePlanningState(P)));
     const P2 = IP.newPlanningState();
     IP.restorePlanningState(P2, blob);
@@ -1084,18 +1085,21 @@ test("§V1 planning-state serialization round-trips the sticky-goal handle", () 
     assert.equal(J(P2.activeLeaf), J(P.activeLeaf));
     assert.equal(J(P2.branchStall), J(P.branchStall));
     assert.deepEqual([...P2.abandonedGoals], ["a:Meet People"], "abandoned goals restore into a Set");
+    assert.equal(J(P2.unlockProg), J(P.unlockProg), "§U unlock-dim baselines round-trip");
 });
 
 test("§V3 a locked targeted goal stays ACTIVE (sticky, abandon clock FROZEN) while byte-inert vs the heuristic", async () => {
     // Start Journey is LOCKED for the first ~540 loops (unlocks at Combat+Magic
     // >=35), so no directed spine/leaf can form and planTargeted falls to the
-    // heuristic every round. §V3: while the action is locked the goal stays sticky
-    // but the abandon clock is FROZEN — the kind-a branch signal is blind to the
-    // real progress (skills climbing toward unlock), so it must NOT false-stall and
-    // abandon the goal before the finder can ever engage. goalStallK is LOW here:
-    // pre-fix the goal would abandon by ~loop 3 (a genuine regression); post-fix it
-    // never does. The committed trace still stays byte-identical to the heuristic
-    // run (the sticky bookkeeping never changes the queue).
+    // heuristic every round. §U (session 29) replaced the unconditional §V3
+    // freeze with ARMED unlock-dim tracking, but the observable outcome HERE is
+    // unchanged: Combat/Magic exp is [0,0] for the first ~236 loops (measured on
+    // the reference run), so the tracker never ARMS in a 10-loop window and the
+    // clock stays frozen — the goal must NOT false-stall and abandon before the
+    // grind ever starts. goalStallK is LOW here: under pre-V3 semantics (or naive
+    // flat-window accrual) the goal would abandon by ~loop 4 — a genuine
+    // regression this test guards against. The committed trace still stays
+    // byte-identical to the heuristic run (bookkeeping never changes the queue).
     const run = async (strategy) => {
         const ctx = makePlanner(12345);
         const r = await ctx.ev("IdlePlanner").runStandalone({ maxLoops: 10, targetTown: 9, goalStallK: 3,
@@ -1116,6 +1120,72 @@ test("§V3 a locked targeted goal stays ACTIVE (sticky, abandon clock FROZEN) wh
 });
 // goalKey is a planner internal; recompute the key the same way for the assertion
 function IP_goalKeyOf(g) { return g ? (g.kind === "a" ? `a:${g.action}` : `b:${g.target?.type}:${g.target?.name ?? ""}:${g.value ?? ""}`) : null; }
+
+// ===========================================================================
+// §U (session 29) — armed unlock-dim tracking for LOCKED kind-a goals
+// (accrueTopGoalStall regimes, unit-tested on synthetic states)
+// ===========================================================================
+
+// A locked-goal fixture: no unlocked actions carry the goal's name, thresholds
+// declare a single probeable skill requirement, and the "state" carries just
+// the exp the reqFraction arithmetic reads.
+function uFixture(IP, { goalStallK = 3, unlockStallK = 3, probeable = true } = {}) {
+    const P = IP.newPlanningState({ goalStallK, unlockStallK });
+    P.thresholds = { "Start Journey": { probeable, requires: [{ kind: "s", v: "Combat", need: 35 }] } };
+    const goal = { kind: "a", action: "Start Journey" };
+    const at = (exp) => ({ actions: [], skills: { Combat: { exp } }, towns: [] });
+    return { P, goal, at };
+}
+
+test("§U armed unlock-dim tracking: never-moved dims stay FROZEN (no arm, no stall, no abandon)", () => {
+    const IP = makePlanner(960).ev("IdlePlanner");
+    const { P, goal, at } = uFixture(IP);
+    for (let i = 0; i < 10; i++) IP.accrueTopGoalStall(P, goal, at(0), at(0));
+    assert.equal(IP.goalKey(P.activeGoal), "a:Start Journey", "goal sticky through 10 flat rounds");
+    assert.equal(P.branchStall["a:Start Journey"] ?? 0, 0, "clock frozen while un-armed (K=3 never fires)");
+    assert.equal(P.abandonedGoals.size, 0, "never abandons in the pre-grind window");
+    assert.equal(P.unlockProg["a:Start Journey"].base, P.unlockProg["a:Start Journey"].last, "baseline recorded, never risen");
+});
+
+test("§U armed unlock-dim tracking: rising dims keep stall at 0; armed-then-flat accrues and abandons at K", () => {
+    const IP = makePlanner(961).ev("IdlePlanner");
+    const { P, goal, at } = uFixture(IP);
+    IP.accrueTopGoalStall(P, goal, at(0), at(0));       // baseline
+    for (const exp of [100, 300, 700]) {                 // rising rounds ARM the tracker
+        IP.accrueTopGoalStall(P, goal, at(exp), at(exp));
+        assert.equal(P.branchStall["a:Start Journey"] ?? 0, 0, "rising dims reset the clock");
+    }
+    for (let i = 1; i <= 2; i++) {                       // armed + flat: accrual below K
+        IP.accrueTopGoalStall(P, goal, at(700), at(700));
+        assert.equal(P.branchStall["a:Start Journey"], i, "armed + flat ⇒ stall accrues");
+    }
+    assert.equal(P.abandonedGoals.size, 0, "below K ⇒ still active");
+    IP.accrueTopGoalStall(P, goal, at(700), at(700));    // stall reaches K=3
+    assert.deepEqual([...P.abandonedGoals], ["a:Start Journey"], "armed grind that dies abandons at K");
+    assert.equal(P.activeGoal, null, "active goal cleared on abandon");
+});
+
+test("§U unprobeable unlock dims fall back to the §V3 freeze (no baseline, no stall)", () => {
+    const IP = makePlanner(962).ev("IdlePlanner");
+    const { P, goal, at } = uFixture(IP, { probeable: false });
+    for (let i = 0; i < 6; i++) IP.accrueTopGoalStall(P, goal, at(i * 100), at(i * 100));
+    assert.equal(IP.goalKey(P.activeGoal), "a:Start Journey", "sticky");
+    assert.equal(P.unlockProg["a:Start Journey"], undefined, "no §U baseline for unprobeable dims");
+    assert.equal(P.branchStall["a:Start Journey"] ?? 0, 0, "§V3 freeze: no stall either way");
+});
+
+test("§U an ACTIONABLE goal takes the normal V1 stall path through accrueTopGoalStall", () => {
+    const IP = makePlanner(963).ev("IdlePlanner");
+    const { P, goal } = uFixture(IP);
+    // the goal's action is unlocked now ⇒ normal stalled-loop accounting
+    const atUnlocked = { actions: [{ name: "Start Journey", visible: true, unlocked: true }], skills: {}, towns: [] };
+    for (let i = 1; i <= 2; i++) {
+        IP.accrueTopGoalStall(P, goal, atUnlocked, atUnlocked);
+        assert.equal(P.branchStall["a:Start Journey"], i, "actionable ⇒ stall accrues on the bare goal");
+    }
+    IP.accrueTopGoalStall(P, goal, atUnlocked, atUnlocked);
+    assert.deepEqual([...P.abandonedGoals], ["a:Start Journey"], "abandons at K like the V1 path");
+});
 
 // ===========================================================================
 // §V2 — recursive prerequisite finder (DAG walk + pool-cap discovery)

@@ -2741,7 +2741,7 @@ function branchProgressed(leaf, pre, post, achieved) {
     return achieved;
 }
 
-function clearActiveGoal(P) { P.activeGoal = null; P.activeLeaf = null; P.branchStall = {}; }
+function clearActiveGoal(P) { P.activeGoal = null; P.activeLeaf = null; P.branchStall = {}; P.unlockProg = {}; }
 
 // Make `topGoal` the active sticky goal WITHOUT advancing the abandon clock.
 // Switching to a different top goal resets the branch bookkeeping; the same goal
@@ -2753,6 +2753,7 @@ function keepGoalSticky(P, topGoal) {
         P.activeGoal = topGoal;
         P.activeLeaf = null;          // V2 sets the DAG leaf; V1 stub = the goal itself
         P.branchStall = {};
+        P.unlockProg = {};            // §U unlock-dim baselines reset with the branch bookkeeping
     } else {
         P.activeGoal = topGoal;       // refresh the handle (budget / list position may drift)
     }
@@ -2782,14 +2783,64 @@ function updateGoalStall(P, topGoal, pre, post, achieved, leaf = undefined) {
 // reset in updateGoalStall is the primary signal; this count is the backstop.
 // V2 replaces "the only branch" with "all branches" (prune a branch + try a
 // sibling before abandoning the goal). Records the goal so planTargeted skips it.
-function maybeAbandonGoal(P) {
+function maybeAbandonGoal(P, k = P.goalStallK ?? 20) {
     const lk = goalKey(activeLeafGoal(P));
     if (lk == null) return false;
-    if ((P.branchStall[lk] ?? 0) < (P.goalStallK ?? 20)) return false;
+    if ((P.branchStall[lk] ?? 0) < k) return false;
     const gk = goalKey(P.activeGoal);
     if (gk) P.abandonedGoals.add(gk);
     clearActiveGoal(P);
     return true;
+}
+
+// §U (session 29) — round-end stall accounting for the TOP goal when the round
+// did NOT advance it (no install this round, or a lower goal won the setup
+// round under the goal-list-scoped setup path). Three regimes:
+// - ACTIONABLE (unlocked): a normal stalled loop on the bare goal (the V1
+//   path — abandon prunes a dead-but-unlocked goal at goalStallK).
+// - LOCKED with probeable unlock dims: ARMED unlock-dim tracking. The unlock
+//   fraction (mean reqFraction over P.thresholds[action].requires — the
+//   frontier term's own arithmetic) is baselined on first sighting; while it
+//   has NEVER risen the clock stays FROZEN (measured: the healthy reference
+//   run carries Combat/Magic exp [0,0] for 236 rounds before the first grind —
+//   any flat-window accrual would false-abandon Start Journey on every fresh
+//   run). Once the dims have MOVED during the goal's tenure ("armed"), rising
+//   rounds reset the stall and flat rounds accrue it — a grind chain that
+//   engages and then dies abandons at unlockStallK, while a goal whose dims
+//   never move at all stays frozen exactly like §V3 (harmless: the list-
+//   scoped setup path removed the dead-goal shadow, so a frozen top goal no
+//   longer blocks lower goals). The LOCKED branch uses its OWN threshold
+//   (unlockStallK, default 64), NOT goalStallK: the healthy reference run's
+//   armed window (L237-L374) carries a measured MAX flat stretch of 25
+//   rounds at replanEvery=1 — over goalStallK's 20 — and a locked dead entry
+//   costs one threshold lookup per round, so the hygiene threshold buys its
+//   2.5x margin for free.
+// - LOCKED and unknown/unprobeable (story gates etc.): §V3 freeze — sticky,
+//   no stall (there is no measurable progress signal at all).
+function unlockFraction(state, t) {
+    return t.requires.reduce((s, r) => s + reqFraction(state, r), 0) / t.requires.length;
+}
+function accrueTopGoalStall(P, topGoal, pre, post) {
+    const actionable = topGoal.kind !== "a"
+        || unlockedOf(pre).some(a => a.name === topGoal.action);
+    if (actionable) {
+        updateGoalStall(P, topGoal, pre, post, false);
+        maybeAbandonGoal(P);
+        return;
+    }
+    keepGoalSticky(P, topGoal);
+    const t = P.thresholds?.[topGoal.action];
+    if (!t?.probeable || !t.requires?.length) return;        // §V3 freeze fallback
+    const frac = unlockFraction(pre, t);
+    const lk = goalKey(topGoal);
+    P.unlockProg = P.unlockProg ?? {};
+    const rec = P.unlockProg[lk];
+    if (!rec) { P.unlockProg[lk] = { base: frac, last: frac }; return; }   // baseline round
+    const rising = frac > rec.last;
+    rec.last = Math.max(rec.last, frac);
+    if (!(rec.last > rec.base)) return;                      // not armed yet: freeze
+    P.branchStall[lk] = rising ? 0 : (P.branchStall[lk] ?? 0) + 1;
+    maybeAbandonGoal(P, P.unlockStallK ?? 64);
 }
 
 // ===========================================================================
@@ -3133,61 +3184,47 @@ async function planTargeted(sess, P, snap, pre, opts = {}) {
         return result;
     }
     // §V2 — the top goal's push is INFEASIBLE this loop (V1 returned null here).
-    // Escalation rounds keep their one-shot semantics (no sticky pursuit). Else
-    // walk the prerequisite DAG to an actionable leaf and spend the loop building
-    // it; SET P.activeLeaf so the branch counter tracks the LEAF dim (the top goal
-    // stays alive while the prerequisite grinds).
+    // Escalation rounds keep their one-shot semantics (no sticky pursuit).
     if (opts.escalate) return null;
-    // §V5 planner-consume: a user-authored Tier-2 override replaces the auto-
-    // derived leaf — pursue the FIRST entry that installs a confirmed setup
-    // round (entries with a reached stop value are skipped as exhausted). The
-    // auto finder below stays the FALLBACK whenever the override is empty,
-    // exhausted, or can't make measured progress this loop, so a stale override
-    // never dead-ends the goal. planSetupRound's measured-leaf-move gate is the
-    // safety net: a pin that moves nothing never installs (the goal falls
-    // through to the auto chain / heuristic and the normal stall accounting),
-    // while a wrong-but-grindable pin installs until its dim caps, then falls
-    // through the same way — the user's explicit ordering wins while it works.
-    for (const uLeaf of tier2UserLeaves(pre, topGoal)) {
-        const setup = await planSetupRound(sess, P, snap, pre, uLeaf);
-        if (setup) {
-            updateGoalStall(P, topGoal, pre, setup.post, false, uLeaf);
-            maybeAbandonGoal(P);
+    // §B (goal-list-scoped setup, session 29): iterate the PRIORITY LIST in
+    // order and spend the loop on the FIRST goal with an installable setup
+    // leaf, instead of only ever building toward the top goal. A dead top goal
+    // (no providers, never progresses) used to shadow every lower goal's setup
+    // rounds for goalStallK × replanEvery loops until abandon fired (Round 20:
+    // an 80-loop shadow; abandon OFF = DNF); now the list advances immediately
+    // and abandon is demoted to list hygiene for the dead entry. Per-goal leaf
+    // order: the user-authored Tier-2 override first (§V5), then the auto DAG
+    // walk (§V2). planSetupRound's measured-leaf-move gate is the safety net:
+    // a pin/leaf that moves nothing never installs (the goal falls through to
+    // the next leaf, the next goal, or the heuristic), while a wrong-but-
+    // grindable pin installs until its dim caps, then falls through the same
+    // way — the user's explicit ordering wins while it works. When the TOP
+    // goal wins, its branch counter tracks the pursued leaf (the goal stays
+    // alive while the prerequisite grinds); when a LOWER goal wins, the top
+    // goal still made no progress this round, so its clock advances via the
+    // same accounting as the no-install path (accrueTopGoalStall).
+    for (const g of goals) {
+        const leaves = tier2UserLeaves(pre, g);
+        const auto = findSetupLeaf(pre, P.know, sess, g);
+        if (auto) leaves.push(auto);
+        for (const leaf of leaves) {
+            const setup = await planSetupRound(sess, P, snap, pre, leaf);
+            if (!setup) continue;
+            if (goalKey(g) === goalKey(topGoal)) {
+                updateGoalStall(P, topGoal, pre, setup.post, false, leaf);
+                maybeAbandonGoal(P);
+            } else {
+                accrueTopGoalStall(P, topGoal, pre, setup.post);
+            }
             return setup.result;
         }
     }
-    const leaf = findSetupLeaf(pre, P.know, sess, topGoal);
-    if (leaf) {
-        const setup = await planSetupRound(sess, P, snap, pre, leaf);
-        if (setup) {
-            updateGoalStall(P, topGoal, pre, setup.post, false, leaf);
-            maybeAbandonGoal(P);
-            return setup.result;
-        }
-    }
-    // §V3 — a sticky kind-a goal whose ACTION is still LOCKED is NOT stalled. The
-    // heuristic fallback is legitimately building toward its unlock (e.g. Start
-    // Journey unlocks at Combat+Magic >= 35), yet the kind-a branch signal is only
-    // the `achieved` flag (did the push execute) — blind to that real progress — so
-    // it would false-stall every loop and abandon the goal ~loop 80 (K=4), before
-    // the finder can ever engage once the action unlocks (the fresh-K=4 DNF cause).
-    // Abandon is meant to prune a WRONG LEAF with 0 MEASURED progress (V0's Met
-    // case), not a goal that simply isn't unlockable yet. Freeze the abandon clock
-    // while locked: keep the goal sticky but don't advance the counter or abandon.
-    // Once the action is in unlockedOf (unlocked-but-truly-stuck, no achievable
-    // leaf) the normal stall/abandon below resumes. (Future: credit the unlock-
-    // predicate dims as real branch progress instead of freezing — plan §V-future.)
-    const actionable = topGoal.kind !== "a"
-        || unlockedOf(pre).some(a => a.name === topGoal.action);
-    if (!actionable) {
-        keepGoalSticky(P, topGoal);
-        return null;
-    }
-    // No achievable setup leaf for an actionable goal ⇒ count a stalled loop on the
-    // bare goal and fall back to the heuristic scorer (the leaf, if any, stays the
-    // tracked branch).
-    updateGoalStall(P, topGoal, pre, pre, false);
-    maybeAbandonGoal(P);
+    // No goal installed anything this round ⇒ fall back to the heuristic
+    // scorer, with the top goal's round-end accounting: a normal stalled loop
+    // when it is actionable, §U armed unlock-dim tracking while it is locked
+    // with probeable dims, or the §V3 freeze when there is no signal at all
+    // (see accrueTopGoalStall for the regimes and their measurements).
+    accrueTopGoalStall(P, topGoal, pre, pre);
     return null;
 }
 
@@ -3358,6 +3395,8 @@ function serializePlanningState(P) {
         activeLeaf: P.activeLeaf ?? null,
         branchStall: { ...(P.branchStall ?? {}) },
         abandonedGoals: [...(P.abandonedGoals ?? [])],
+        // §U armed unlock-dim baselines ({goalKey: {base, last}}) — JSON-plain
+        unlockProg: JSON.parse(JSON.stringify(P.unlockProg ?? {})),
     };
 }
 function restorePlanningState(P, s) {
@@ -3372,6 +3411,7 @@ function restorePlanningState(P, s) {
     P.activeLeaf = s.activeLeaf ?? null;
     P.branchStall = s.branchStall ?? {};
     P.abandonedGoals = new Set(s.abandonedGoals ?? []);
+    P.unlockProg = s.unlockProg ?? {};
 }
 
 function newPlanningState(opts = {}) {
@@ -3413,7 +3453,12 @@ function newPlanningState(opts = {}) {
         // goalStallK is the abandon backstop (V0 grounds >=~20); like weights it
         // is NOT serialized — the resuming caller's param wins.
         activeGoal: null, activeLeaf: null, branchStall: {}, abandonedGoals: new Set(),
+        unlockProg: {},
         goalStallK: opts.goalStallK ?? 20,
+        // §U locked-branch abandon threshold (armed unlock-dim clock); see
+        // accrueTopGoalStall for the measured grounds. Not serialized, like
+        // goalStallK — the resuming caller's param wins.
+        unlockStallK: opts.unlockStallK ?? 64,
         divergenceLog: [],
     };
 }
@@ -3457,14 +3502,14 @@ async function runStandalone({ maxLoops = 1200, weights, screenK = 8, screenMode
                                probeEvery = 1,
                                seedFromPredictor = false, multiTown = true, vocabulary = "empirical",
                                strategy = "heuristic", targetAction = null, targets = [], autoRankTargets = false,
-                               antiFixation = false, goalStallK = 20,
+                               antiFixation = false, goalStallK = 20, unlockStallK = 64,
                                replanEvery = 1, basicReuse = false, dumpDetail = false,
                                targetTown = 1,
                                verbose = false, onLoop = null, resume = null } = {}) {
     const t0 = Date.now();
     const sess = new Session();
     const P = newPlanningState({ weights, screenK, screenMode, probeEvery, seedFromPredictor, multiTown, vocabulary,
-                                 strategy, targetAction, targets, autoRankTargets, antiFixation, goalStallK });
+                                 strategy, targetAction, targets, autoRankTargets, antiFixation, goalStallK, unlockStallK });
     const trace = [];
     const milestones = {};
     let cumTicks = 0;
@@ -3728,8 +3773,9 @@ return {
     regressAction, regressTarget, generateTargeted, repSinkProvider,
     rankValueProviders, readStateValue, planTargeted,
     assembleTargetedQueue, heuristicGrindTail, autoRankGoals, updateStagnation,
-    // targeted-mode v2 persistence scaffolding (§V1)
+    // targeted-mode v2 persistence scaffolding (§V1) + §U unlock-dim tracking
     goalKey, branchProgressed, updateGoalStall, maybeAbandonGoal, clearActiveGoal,
+    accrueTopGoalStall, unlockFraction,
     // targeted-mode v2 recursive prerequisite finder (§V2)
     findSetupLeaf, analyzePushBottleneck, probePoolCapDriver, poolCapCandidates, planSetupRound,
     // targeted-mode v2 two-tier UI: read-only Tier-2 chain derivation (§V4)

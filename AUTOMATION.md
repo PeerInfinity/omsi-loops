@@ -249,8 +249,27 @@ when nothing on the list can be advanced.
   *value* goal ("reach reputation/buff/soulstone/progress value V"). Goals
   are a JSON list behind the row editor (option `plannerTargets`); the first
   entry is the active goal and stays **sticky across loops** until achieved
-  or abandoned — a goal whose action is still *locked* freezes its abandon
-  clock while the heuristic builds toward the unlock.
+  or abandoned.
+- **Setup rounds are goal-LIST-scoped (§B, session 29).** When the top
+  goal's push is infeasible, the planner walks the WHOLE list in order and
+  spends the loop on the first goal with an installable setup leaf. A dead
+  top goal (no providers, never progresses) therefore no longer shadows
+  the goals below it — measured on the Round-20 donor: dead goal + Start
+  Journey escaped in 9 loops with abandon fully disabled, where the old
+  top-goal-scoped path was a DNF. Abandon still prunes dead entries at
+  `goalStallK` (default 20) stalled rounds, but it is list hygiene now,
+  not the escape mechanism.
+- **A LOCKED goal's abandon clock runs on its unlock dims (§U, session
+  29, armed).** While a kind-a goal's action is locked, progress is
+  measured as the mean unlock-requirement fraction (the frontier term's
+  arithmetic over the probed thresholds). The clock stays FROZEN until the
+  dims first move during the goal's tenure — on the reference run
+  Combat/Magic sit at zero for ~236 loops before the first grind, so any
+  flat-window accrual would false-abandon Start Journey on every fresh
+  run. Once armed, rising rounds reset the clock and flat rounds accrue
+  it, abandoning at `unlockStallK` (default 64; the healthy armed window's
+  worst flat stretch measures 25 rounds). Goals with unprobeable
+  (story-gated) unlock dims keep the unconditional freeze.
 - **Sub-priorities (Tier 2)**: for the active goal the planner derives a
   prerequisite chain by regressing over its measured graph (e.g. Start
   Journey ⇐ cheaper supplies ⇐ Haggle depth ⇐ reputation ⇐ Long Quest pool ⇐
