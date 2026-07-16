@@ -365,6 +365,21 @@
                             <span class="showthat">Talent <input id='plannerWeightTalentInput' type='number' value='0.01' step='0.01' style='width: 60px;' oninput='setOption("plannerWeightTalent", parseFloat(this.value))'>
                                 <div class="showthis" style="width:260px">Total talent exp gained (long-horizon tie-break).</div></span>
                             <br>
+                            <span class="showthat">Efficiency <input id='plannerWeightEfficiencyInput' type='number' value='0' style='width: 60px;' oninput='setOption("plannerWeightEfficiency", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Persistent cost/yield drift on all actions (mana-cost cheapening,
+                                gold-yield growth), valued as drift times expected future executions. 0 = off.</div></span>
+                            <span class="showthat">Buffs <input id='plannerWeightBuffInput' type='number' value='0' style='width: 60px;' oninput='setOption("plannerWeightBuff", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Buff levels gained this loop (Ritual, Imbuement, Feast, ...). 0 = off.</div></span>
+                            <br>
+                            <span class="showthat">Soulstones <input id='plannerWeightSoulstoneInput' type='number' value='0' style='width: 60px;' oninput='setOption("plannerWeightSoulstone", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Net soulstone flux (grants minus sacrifices); dungeon rolls counted
+                                at their ssChance expected value. 0 = off.</div></span>
+                            <span class="showthat">Invest <input id='plannerWeightInvestInput' type='number' value='0' style='width: 60px;' oninput='setOption("plannerWeightInvest", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Gold newly banked with Invest (a permanent interest annuity). 0 = off.</div></span>
+                            <span class="showthat">Talent grind <input id='plannerWeightGrindTalentInput' type='number' value='0' style='width: 60px;' oninput='setOption("plannerWeightGrindTalent", parseFloat(this.value))'>
+                                <div class="showthis" style="width:260px">Above 0, the planner also proposes grind loops on high-expMult
+                                (&ge;4) actions — efficient talent farming. Scored by the Talent weight; this only enables the candidates.</div></span>
+                            <br>
                             <button class='button control showthat' onclick='AdvancedAutomation.planNow()'>Plan Now
                                 <div class="showthis" style="width:220px">Compute a plan for the next loop right now (any mode except Off).</div></button>
                             <button class='button control showthat' onclick='AdvancedAutomation.applySuggestion()'>Apply Suggestion

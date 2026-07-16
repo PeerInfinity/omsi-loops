@@ -104,6 +104,11 @@ function currentWeights() {
         talent: options.plannerWeightTalent,
         travelRelief: options.plannerWeightTravelRelief,
         headroom: options.plannerWeightHeadroom,
+        efficiency: options.plannerWeightEfficiency,
+        buff: options.plannerWeightBuff,
+        soulstone: options.plannerWeightSoulstone,
+        invest: options.plannerWeightInvest,
+        grindTalent: options.plannerWeightGrindTalent,
     };
 }
 

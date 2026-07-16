@@ -788,6 +788,13 @@ const options = {
     // byte-inert at townsUnlocked=[0] regardless of value)
     plannerWeightTravelRelief: 3,
     plannerWeightHeadroom: 1,
+    // §11.8 piece 3 scored channels — all 0 (byte-inert) until the
+    // calibration pass assigns real values
+    plannerWeightEfficiency: 0,
+    plannerWeightBuff: 0,
+    plannerWeightSoulstone: 0,
+    plannerWeightInvest: 0,
+    plannerWeightGrindTalent: 0,
 };
 
 /** @satisfies {readonly {[K in OptionName]: OptionType<K> extends number ? K : never}[OptionName][]} */
@@ -821,6 +828,11 @@ const numericOptions = [
     "plannerWeightTalent",
     "plannerWeightTravelRelief",
     "plannerWeightHeadroom",
+    "plannerWeightEfficiency",
+    "plannerWeightBuff",
+    "plannerWeightSoulstone",
+    "plannerWeightInvest",
+    "plannerWeightGrindTalent",
 ];
 /** @satisfies {readonly StringOptionName[]} */
 const stringOptions = [
@@ -964,6 +976,11 @@ const isStandardOption = {
     plannerWeightTalent: false,
     plannerWeightTravelRelief: false,
     plannerWeightHeadroom: false,
+    plannerWeightEfficiency: false,
+    plannerWeightBuff: false,
+    plannerWeightSoulstone: false,
+    plannerWeightInvest: false,
+    plannerWeightGrindTalent: false,
 };
 
 // Some options set or clear an indicator class on the root element so CSS can respond. Record these here.

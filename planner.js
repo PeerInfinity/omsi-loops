@@ -70,6 +70,14 @@ const DEFAULT_WEIGHTS = {
     // scale the Round-6 wall arithmetic used (price 18.6k vs headroom 10.8k):
     travelRelief: 3,   // permanent cheapening of routes to other towns (Old Shortcut -> Continue On); valued per mana like banked items (W.bank/10)
     headroom: 1,       // growth of disposable per-loop mana (capacity minus the capacity probe's pump ticks) vs the last committed loop
+    // §11.8 piece 3 — scored channels (census 2.2). ALL ship at 0 and every
+    // consumer is weight-gated (`if (W.x)`), so the reference trajectory is
+    // byte-inert by construction; values are chosen by the item-6 calibration.
+    efficiency: 0,     // generalized persistent cost/yield drift (census 2.2c): signed Δcost × expected future execs; goldCost drift signed by measured goldPerExec (yield vs price)
+    buff: 0,           // buff grants (census 2.2a): Δ buff levels, frontier-like unlock credit (full mana-equivalent valuation IS the calibration)
+    soulstone: 0,      // soulstone EV (census 2.2b): NET realized Δ soulstones.total; dungeon RNG swapped for its ssChance expectation
+    invest: 0,         // persistent-bank annuity (census piece-3 item 5): Δ goldInvested (interest×mana-equivalence folds into the weight; low priority until town 7)
+    grindTalent: 0,    // NOT a score term (W.talent stays the only talent credit) — a candidate-generation gate: >0 emits grind-talent:<action> candidates from expMult ≥ 4 rows
 };
 
 // RNG snapshot hooks: headless harnesses install get/set over their seeded
@@ -2262,6 +2270,33 @@ function generateCandidates(state, know, thresholds, sess, lastCommitted, opts =
             add(`discover:${a.name}`, q);
         }
     }
+    // §11.8 piece 3 item 4 (ruled): high-expMult talent-grind candidates.
+    // Talent's SCORE stays the existing W.talent term; what was missing is the
+    // candidate — efficient talent grinding uses expMult ≥ 4 actions (per-tick
+    // stat exp = expMult × manaCost/adjustedTicks; census: 8×4 + 5×5 rows).
+    // Gated on W.grindTalent > 0 (0 default): candidate-SET changes shift the
+    // screen cut, so generation itself must be inert at defaults.
+    if (opts.grindTalent) {
+        const talenters = unlockedOf(state)
+            .filter(a => a.townNum === 0 && (a.expMult ?? 1) >= 4)
+            .sort((x, y) => (y.expMult ?? 1) - (x.expMult ?? 1));
+        for (const a of talenters.slice(0, 2)) {
+            const eco = buildEconomy(state, know, { cheapPurchases: true });
+            if (!eco) continue;
+            const q = [...eco.q];
+            let cushion = eco.cushion;
+            // generous batch (min 1): entries past the realized budget never
+            // run, so overrun is free — n<1 skipping silently killed variants
+            // in Round 6 and would starve these on high-cost trainers
+            const n = Math.max(1, Math.floor(cushion * 0.7 / Math.max(1, a.cost)));
+            q.push([a.name, Math.min(n, a.allowed ?? n)]);
+            cushion -= n * a.cost;
+            appendInvest(q, Math.max(0, cushion), state, know, 0.9);
+            if (backstop) q.push([backstop.name, 99]);
+            add(`grind-talent:${a.name}`, q);
+        }
+    }
+
     // pure backstop grind (early game: no banks, no knowledge)
     if (backstop) add(`bare:${backstop.name}`, [[backstop.name, 99]]);
 
@@ -2497,6 +2532,82 @@ function scoreOutcome(pre, post, thresholds, r, prevCapacity, know, W, capacity,
     parts.bankPot = W.bankPot * bankPot / 100;
 
     parts.talent = W.talent * ((post.talentTotal ?? 0) - (pre.talentTotal ?? 0));
+
+    // ---- §11.8 piece 3 scored channels (census 2.2) -----------------------
+    // Every term is weight-gated: at the shipped 0 defaults none of this code
+    // runs and no part materializes, so the frozen byte-reference is inert by
+    // construction (a term only exists once the calibration turns it on).
+    if (W.efficiency) {
+        // Generalized efficiency relief (census 2.2c): persistent cost/yield
+        // drift on ALL actions — the exact arithmetic travelRelief does per
+        // route, widened beyond travel edges. Valued in mana as drift ×
+        // expected future execs (capacity / cost — the same style the bank
+        // term uses for future payouts). goldCost drift is credited SIGNED
+        // but ONLY on actions whose measured goldPerExec > 0, where it is a
+        // YIELD parameter (Pick Locks' per-item gold — persistent, grows
+        // with Practical Magic). Price-like goldCost drift is deliberately
+        // NOT priced: purchase prices carry per-loop TRANSIENTS (Haggle cuts
+        // suppliesCost until restart() resets it), which would credit
+        // vanishing state as if it were permanent. Gold converts at the
+        // same 50 mana/gold optimism valueOfVar uses.
+        const preBy = new Map(pre.actions.map(a => [a.name, a]));
+        let eff = 0;
+        for (const a of post.actions) {
+            const b = preBy.get(a.name);
+            if (!b || !a.unlocked) continue;
+            const execRate = capacity / Math.max(1, a.cost ?? 1);
+            const dCost = (b.cost ?? 0) - (a.cost ?? 0);       // >0 = cheapened
+            if (dCost) eff += dCost * execRate;
+            const dGold = (a.goldCost ?? 0) - (b.goldCost ?? 0); // >0 = rose
+            if (dGold && (know.get(a.name)?.goldPerExec ?? 0) > 0) {
+                eff += dGold * 50 * execRate;   // signed: a yield DROP debits
+            }
+        }
+        if (eff) parts.efficiency = W.efficiency * eff;
+    }
+    if (W.buff) {
+        // Buff grants (census 2.2a): frontier-like credit per level gained.
+        // Buff-specific mana-equivalent valuation is deliberately NOT
+        // hand-priced here — the weight carries the scale (calibration).
+        let dBuff = 0;
+        for (const [b, amt] of Object.entries(post.buffs ?? {})) {
+            dBuff += amt - (pre.buffs?.[b] ?? 0);
+        }
+        if (dBuff) parts.buff = W.buff * dBuff;
+    }
+    if (W.soulstone) {
+        // Soulstone EV (census 2.2b): net realized flux (grants − sacrifices
+        // — sacrifice actions reduce the total, so Δtotal is already NET).
+        // Dungeon grants are RNG (fire w.p. floor.ssChance, amount 10^di ×
+        // Divine bonus; ssChance ×= 0.98 per grant — finishDungeon), so the
+        // realized roll is swapped for its EXPECTATION: subtract the realized
+        // grant count estimated from the ssChance decay ratio and add
+        // dCompleted × ssChance_pre. Under rngMode cycle (error-diffusion)
+        // realized ≈ expectation and the swap is ~0 by construction.
+        let dss = (post.soulstones?.total ?? 0) - (pre.soulstones?.total ?? 0);
+        (post.dungeons ?? []).forEach((floors, di) => {
+            const amount = Math.pow(10, di);
+            floors.forEach((f, fi) => {
+                const pf = pre.dungeons?.[di]?.[fi];
+                if (!pf) return;
+                const dCompleted = (f.completed ?? 0) - (pf.completed ?? 0);
+                if (dCompleted <= 0) return;
+                let realized = 0;
+                if ((pf.ssChance ?? 0) > 0 && (f.ssChance ?? 0) < pf.ssChance) {
+                    realized = Math.min(dCompleted, Math.max(0,
+                        Math.round(Math.log(f.ssChance / pf.ssChance) / Math.log(0.98))));
+                }
+                dss += (dCompleted * (pf.ssChance ?? 0) - realized) * amount;
+            });
+        });
+        if (dss) parts.soulstone = W.soulstone * dss;
+    }
+    if (W.invest) {
+        // Persistent-bank annuity (piece-3 item 5): banked principal delta;
+        // the interest-rate × mana-per-gold factor folds into the weight.
+        const dgi = (post.goldInvested ?? 0) - (pre.goldInvested ?? 0);
+        if (dgi) parts.invest = W.invest * dgi;
+    }
 
     for (const v of Object.values(parts)) s += v;
     return { score: s, parts };
@@ -3140,7 +3251,8 @@ async function planRound(sess, P) {
     }
 
     const cands = generateCandidates(pre, P.know, P.thresholds, sess, P.lastCommitted,
-        { multiTown: P.multiTown, capacityHint: P.prevTimeNeeded });
+        { multiTown: P.multiTown, capacityHint: P.prevTimeNeeded,
+          grindTalent: (P.weights?.grindTalent ?? 0) > 0 });
     if (!cands.length) throw new Error(`loop ${P.loop}: no candidates`);
     sess.restore(snap);
     perf.gen += Date.now() - tPhase; tPhase = Date.now();

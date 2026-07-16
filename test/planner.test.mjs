@@ -353,6 +353,129 @@ test("scoring-horizon terms: gated off at townsUnlocked=[0], exact when active",
     assert.equal(s1.parts.headroom, W.headroom * 20, "headroom = d(capacity - probe ticks)");
 });
 
+// ---- §11.8 piece 3: scored channels (zero-default, weight-gated) -----------
+test("piece-3 channels: no part materializes at DEFAULT_WEIGHTS even when deltas exist", () => {
+    const ctx = makePlanner(786);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    const state = sess.read();
+    const pre = JSON.parse(JSON.stringify(state));
+    const post = JSON.parse(JSON.stringify(state));
+    // deltas on every piece-3 channel
+    const a = post.actions.find(x => x.name === "Wander");
+    a.cost -= 50; a.unlocked = true;
+    pre.actions.find(x => x.name === "Wander").unlocked = true;
+    post.buffs = { ...post.buffs, Ritual: (post.buffs?.Ritual ?? 0) + 2 };
+    post.soulstones = { perStat: {}, total: (post.soulstones?.total ?? 0) + 7 };
+    post.goldInvested = (post.goldInvested ?? 0) + 500;
+    const W = { ...IP.DEFAULT_WEIGHTS };
+    assert.equal(W.efficiency, 0); assert.equal(W.buff, 0);
+    assert.equal(W.soulstone, 0); assert.equal(W.invest, 0);
+    assert.equal(W.grindTalent, 0);
+    const s = IP.scoreOutcome(pre, post, {}, { lastExec: [] }, 250, new Map(), W, 250, {});
+    for (const k of ["efficiency", "buff", "soulstone", "invest"])
+        assert.ok(!(k in s.parts), `${k} absent at zero default`);
+});
+
+test("piece-3 channels: efficiency / buff / soulstone / invest compute when weighted", () => {
+    const ctx = makePlanner(786);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    const state = sess.read();
+    const W = { ...IP.DEFAULT_WEIGHTS, efficiency: 2, buff: 100, soulstone: 5, invest: 0.5 };
+    const capacity = 25000;
+    const mk = () => JSON.parse(JSON.stringify(state));
+
+    // efficiency: mana-cost cheapening × expected future execs (capacity/cost)
+    {
+        const pre = mk(), post = mk();
+        const edge = (st, cost) => { const a = st.actions.find(x => x.name === "Wander");
+            a.unlocked = true; a.cost = cost; return a; };
+        edge(pre, 300); const a = edge(post, 250);
+        const s = IP.scoreOutcome(pre, post, {}, { lastExec: [] }, capacity, new Map(), W, capacity, {});
+        assert.equal(s.parts.efficiency, W.efficiency * 50 * (capacity / a.cost),
+            "cost drift × capacity/cost");
+    }
+    // efficiency goldCost-as-yield: SIGNED, and ONLY where goldPerExec > 0 —
+    // price-like goldCost drift (e.g. Haggled suppliesCost, a per-loop
+    // transient) is deliberately not priced
+    {
+        const pre = mk(), post = mk();
+        const edge = (st, gc) => { const a = st.actions.find(x => x.name === "Smash Pots");
+            a.unlocked = true; a.cost = 100; a.goldCost = gc; return a; };
+        edge(pre, 10); edge(post, 14);   // yield rose by 4
+        const know = new Map([["Smash Pots", { goldPerExec: 3 }]]);
+        const sYield = IP.scoreOutcome(pre, post, {}, { lastExec: [] }, capacity, know, W, capacity, {});
+        assert.equal(sYield.parts.efficiency, W.efficiency * 4 * 50 * (capacity / 100),
+            "goldCost-as-yield: increase credited positive");
+        const sDrop = IP.scoreOutcome(post, pre, {}, { lastExec: [] }, capacity, know, W, capacity, {});
+        assert.equal(sDrop.parts.efficiency, W.efficiency * -4 * 50 * (capacity / 100),
+            "signed: a yield DROP debits");
+        const sPrice = IP.scoreOutcome(post, pre, {}, { lastExec: [] }, capacity, new Map(), W, capacity, {});
+        assert.ok(!("efficiency" in sPrice.parts),
+            "price-like goldCost drift (goldPerExec <= 0) not priced");
+    }
+    // buff grants: Δ levels, frontier-like
+    {
+        const pre = mk(), post = mk();
+        post.buffs = { ...post.buffs, Ritual: (post.buffs?.Ritual ?? 0) + 2 };
+        const s = IP.scoreOutcome(pre, post, {}, { lastExec: [] }, capacity, new Map(), W, capacity, {});
+        assert.equal(s.parts.buff, W.buff * 2, "buff = W.buff × Δlevels");
+    }
+    // soulstone: net realized Δtotal; dungeon rolls swapped for ssChance EV
+    {
+        const pre = mk(), post = mk();
+        pre.soulstones = { perStat: {}, total: 10 };
+        post.soulstones = { perStat: {}, total: 17 };            // net +7 (incl. any sacrifice)
+        // dungeon 0 floor 0: 2 completions, NO grant realized (ssChance flat)
+        pre.dungeons = [[{ completed: 0, ssChance: 0.5 }]];
+        post.dungeons = [[{ completed: 2, ssChance: 0.5 }]];
+        const s = IP.scoreOutcome(pre, post, {}, { lastExec: [] }, capacity, new Map(), W, capacity, {});
+        assert.equal(s.parts.soulstone, W.soulstone * (7 + 2 * 0.5),
+            "unrealized dungeon completions credited at EV");
+        // one realized grant (ssChance decayed ×0.98): EV swap nets to zero
+        post.dungeons = [[{ completed: 2, ssChance: 0.5 * 0.98 }]];
+        const s2 = IP.scoreOutcome(pre, post, {}, { lastExec: [] }, capacity, new Map(), W, capacity, {});
+        assert.equal(s2.parts.soulstone, W.soulstone * (7 - 1 + 2 * 0.5),
+            "realized grant estimated from ssChance decay and swapped for EV");
+    }
+    // invest annuity: banked principal delta
+    {
+        const pre = mk(), post = mk();
+        post.goldInvested = (post.goldInvested ?? 0) + 500;
+        const s = IP.scoreOutcome(pre, post, {}, { lastExec: [] }, capacity, new Map(), W, capacity, {});
+        assert.equal(s.parts.invest, W.invest * 500, "invest = W.invest × ΔgoldInvested");
+    }
+});
+
+test("piece-3 talent-grind candidates: emitted only behind the grindTalent gate", async () => {
+    const ctx = makePlanner(31337);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    const IP = ctx.ev("IdlePlanner");
+    const play = (queues) => { for (const q of queues) { sess.setQueue(q); sess.restart(); sess.runLoop(); } };
+    play(Array.from({ length: 12 }, () => [["Wander", 5], ["Smash Pots", 6]]));
+    // unlock the ONE town-0 expMult≥4 action (Train Strength: Met >= 5)
+    ctx.ev("towns[0].expMet = getExpOfLevel(6); adjustAll()");
+    const pre = sess.read();
+    const snap = sess.save();
+    const thresholds = sess.probe();
+    const P = IP.newPlanningState();
+    await IP.refreshKnowledge(sess, snap, pre, P.know, {});
+    sess.restore(snap);
+    const ts = pre.actions.find(a => a.name === "Train Strength");
+    assert.ok(ts?.unlocked && ts.expMult >= 4, "Train Strength unlocked with expMult 4");
+    const off = IP.generateCandidates(pre, P.know, thresholds, sess, null, {});
+    assert.ok(off.every(c => !c.label.startsWith("grind-talent:")),
+        "no talent-grind candidates without the gate (byte-inert default)");
+    sess.restore(snap);
+    const on = IP.generateCandidates(pre, P.know, thresholds, sess, null, { grindTalent: true });
+    const gt = on.filter(c => c.label.startsWith("grind-talent:"));
+    assert.ok(gt.some(c => c.label === "grind-talent:Train Strength"),
+        `gate emits grind-talent:Train Strength (got: ${on.map(c => c.label).join(", ")})`);
+    // the grind rides the standard economy scaffold: economy head + target
+    assert.ok(gt[0].q.some(([n]) => n === "Train Strength"), "queue grinds the target");
+});
+
 test("planning-state serialization round-trips through JSON", () => {
     const ctx = makePlanner(787);
     const IP = ctx.ev("IdlePlanner");
