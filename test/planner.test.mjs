@@ -998,13 +998,14 @@ test("updateStagnation: streak counts identical commits; drought counts no-new-a
 test("anti-fixation guard is byte-inert by margin (off by default; healthy streak stays under K)", async () => {
     // a short default run: the guard is OFF, so the trace matches the reference
     // path exactly, AND the observed committed-queue streak stays well under the
-    // K=32 threshold (the healthy runs never fixate — separation margin).
+    // K=256 threshold (session-28 retune: healthy runs carry mid-run streaks
+    // ~104 but CLOSE them; holes hold the counter open at the cap 311–682).
     const ctx = makePlanner(12345);
     const r = await ctx.ev("IdlePlanner").runStandalone({ maxLoops: 20 });
     const labels = r.trace.map(t => t.label);
     let maxStreak = 0, cur = 0;
     for (let i = 1; i < labels.length; i++) { cur = labels[i] === labels[i - 1] ? cur + 1 : 0; maxStreak = Math.max(maxStreak, cur); }
-    assert.ok(maxStreak < 32, `healthy committed-queue streak (${maxStreak}) well under K=32`);
+    assert.ok(maxStreak < 256, `healthy committed-queue streak (${maxStreak}) well under K=256`);
 });
 
 // ---- targeted-mode v2 (V1: sticky goal + per-branch stall persistence) ------

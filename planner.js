@@ -3194,16 +3194,19 @@ async function planTargeted(sess, P, snap, pre, opts = {}) {
 // Anti-fixation counters (§6): the committed-queue identity STREAK and the
 // no-new-action-availability DROUGHT, tracked on P (NOT serialized — a
 // within-run mechanism like `perf`). Updated after each round's `best`; the
-// trigger reads them at the START of the next round. Separation data (all 11
-// bank-sweep traces): healthy max streak 16 / drought 135; the bank:20 hole
-// 617 — so K=32 / D=256 are byte-inert by margin (the counters never reach
-// them on a healthy run).
+// trigger reads them at the START of the next round. Separation data
+// (session-28 DNF-aware sweeps, post-Part-A/recalibration): HEALTHY runs now
+// carry mid-run streaks ~104 (early repeat phase) but CLOSE them; every known
+// fixation hole is an absorbing state with the counter OPEN AT THE CAP
+// (endStreak 311–682, endDrought 260–738) vs healthy ends ≤50/≤149 — so
+// K=256 / D=256 separate cleanly (the original K=32 predates Part A and
+// fired on healthy runs).
 function updateStagnation(P, best, escalated) {
     const key = (q) => JSON.stringify(q ?? []);
     P.streak = (P.lastCommitted != null && key(best.c.q) === key(P.lastCommitted)) ? (P.streak ?? 0) + 1 : 0;
     // K backoff: an escalation round that RE-COMMITS the same queue (the escape
     // didn't take) doubles K so the guard fires less often. Sticky.
-    if (escalated && P.streak > 0) P.antiFixK = (P.antiFixK ?? 32) * 2;
+    if (escalated && P.streak > 0) P.antiFixK = (P.antiFixK ?? 256) * 2;
     // drought: rounds since ANY action gained visibility/unlock (measures real
     // progress, not queue churn)
     P.seenAvail = P.seenAvail ?? new Set();
@@ -3244,10 +3247,11 @@ async function planRound(sess, P) {
     // queue committed K rounds running, or D rounds with no new action becoming
     // available — auto-enter ONE all-in targeted round toward the blocked
     // frontier, then return to the scorer. Option-gated (plannerAntiFixation)
-    // and byte-inert by margin at defaults (healthy streak ≤16 < K 32; guard
-    // off). A failed escalation doubles K (updateStagnation).
+    // and byte-inert by margin at defaults (healthy runs close their streaks,
+    // ending ≤50 < K 256; holes hold the counter open at the cap; guard off).
+    // A failed escalation doubles K (updateStagnation).
     const escalate = P.antiFixation && P.strategy !== "targeted"
-        && ((P.streak ?? 0) >= (P.antiFixK ?? 32) || (P.drought ?? 0) >= (P.droughtLimit ?? 256));
+        && ((P.streak ?? 0) >= (P.antiFixK ?? 256) || (P.drought ?? 0) >= (P.droughtLimit ?? 256));
 
     // Targeted strategy (or an escalation round): goal-directed regression
     // first; a successful install returns straight away. Falling through to the
@@ -3402,7 +3406,7 @@ function newPlanningState(opts = {}) {
         // §6 stagnation trigger (auto-enter a targeted escalation round from the
         // heuristic when the queue fixates). Default off; counters live below.
         antiFixation: opts.antiFixation ?? false,
-        streak: 0, drought: 0, antiFixK: 32, droughtLimit: 256, seenAvail: new Set(),
+        streak: 0, drought: 0, antiFixK: 256, droughtLimit: 256, seenAvail: new Set(),
         // §V1 targeted-mode v2 persistence scaffolding: a STICKY top goal + the
         // currently-pursued leaf + per-branch stall counters + abandoned goals.
         // All byte-inert at defaults (touched only inside the targeted driver).
