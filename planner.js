@@ -2538,29 +2538,38 @@ function scoreOutcome(pre, post, thresholds, r, prevCapacity, know, W, capacity,
     // runs and no part materializes, so the frozen byte-reference is inert by
     // construction (a term only exists once the calibration turns it on).
     if (W.efficiency) {
-        // Generalized efficiency relief (census 2.2c): persistent cost/yield
-        // drift on ALL actions — the exact arithmetic travelRelief does per
-        // route, widened beyond travel edges. Valued in mana as drift ×
-        // expected future execs (capacity / cost — the same style the bank
-        // term uses for future payouts). goldCost drift is credited SIGNED
-        // but ONLY on actions whose measured goldPerExec > 0, where it is a
-        // YIELD parameter (Pick Locks' per-item gold — persistent, grows
-        // with Practical Magic). Price-like goldCost drift is deliberately
-        // NOT priced: purchase prices carry per-loop TRANSIENTS (Haggle cuts
-        // suppliesCost until restart() resets it), which would credit
-        // vanishing state as if it were permanent. Gold converts at the
-        // same 50 mana/gold optimism valueOfVar uses.
-        const preBy = new Map(pre.actions.map(a => [a.name, a]));
+        // Generalized efficiency relief (census 2.2c ∪ class 4, the skill-
+        // efficiency web). NOT the plan's original Δa.cost state-delta —
+        // that formulation is structurally wrong: base stats RESET every
+        // restart(), so pre-vs-post plAdjCost deltas measure transient
+        // within-loop leveling (verified: 30 loops of drift = 0 actions at
+        // loop start), never the persistent web. The persistent drivers are
+        // skill/buff dims, and their downstream effects are exactly what the
+        // W3 edgeRates channel measures: Δ(target channel) per exec of the
+        // grinding action, signed (manaCost drops negative = cheapening).
+        // Credit each executed action's measured edges × expected future
+        // execs of the target (capacity/cost — bank-style), gold at the same
+        // 50 mana/gold optimism valueOfVar uses. edgeRates populate only
+        // under the informed vocabulary, so this term is inert at default
+        // vocabulary REGARDLESS of the weight (double-gated).
+        const costOf = new Map(post.actions.map(a => [a.name, a.cost ?? 1]));
         let eff = 0;
-        for (const a of post.actions) {
-            const b = preBy.get(a.name);
-            if (!b || !a.unlocked) continue;
-            const execRate = capacity / Math.max(1, a.cost ?? 1);
-            const dCost = (b.cost ?? 0) - (a.cost ?? 0);       // >0 = cheapened
-            if (dCost) eff += dCost * execRate;
-            const dGold = (a.goldCost ?? 0) - (b.goldCost ?? 0); // >0 = rose
-            if (dGold && (know.get(a.name)?.goldPerExec ?? 0) > 0) {
-                eff += dGold * 50 * execRate;   // signed: a yield DROP debits
+        for (const e of r.lastExec ?? []) {
+            const execs = e.loops - e.loopsLeft;
+            if (execs <= 0) continue;
+            const er = know.get(e.name)?.edgeRates;
+            if (!er) continue;
+            for (const [tName, channels] of Object.entries(er)) {
+                const futureExecs = capacity / Math.max(1, costOf.get(tName) ?? 1);
+                for (const [ch, rate] of Object.entries(channels)) {
+                    if (!rate) continue;
+                    if (ch === "manaCost") eff += execs * -rate * futureExecs;          // cheapening credits
+                    else if (ch === "manaYield") eff += execs * rate * futureExecs;
+                    else if (ch === "goldYield") eff += execs * rate * 50 * futureExecs;
+                    // goldCost / segmentRate: no sound mana valuation yet
+                    // (price transients / multipart composition) — declared
+                    // data stays visible in dumps, unscored.
+                }
             }
         }
         if (eff) parts.efficiency = W.efficiency * eff;

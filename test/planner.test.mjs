@@ -386,34 +386,31 @@ test("piece-3 channels: efficiency / buff / soulstone / invest compute when weig
     const capacity = 25000;
     const mk = () => JSON.parse(JSON.stringify(state));
 
-    // efficiency: mana-cost cheapening × expected future execs (capacity/cost)
+    // efficiency = measured edgeRates ledger (the W3 skill-efficiency web):
+    // execs × Σ per-target rate × future execs (capacity/cost). manaCost
+    // rates are signed (drops negative = cheapening credits); goldYield at
+    // 50 mana/gold. NOT a pre/post cost delta — base stats reset every
+    // restart(), so state-delta drift is a within-loop transient.
     {
         const pre = mk(), post = mk();
-        const edge = (st, cost) => { const a = st.actions.find(x => x.name === "Wander");
-            a.unlocked = true; a.cost = cost; return a; };
-        edge(pre, 300); const a = edge(post, 250);
-        const s = IP.scoreOutcome(pre, post, {}, { lastExec: [] }, capacity, new Map(), W, capacity, {});
-        assert.equal(s.parts.efficiency, W.efficiency * 50 * (capacity / a.cost),
-            "cost drift × capacity/cost");
-    }
-    // efficiency goldCost-as-yield: SIGNED, and ONLY where goldPerExec > 0 —
-    // price-like goldCost drift (e.g. Haggled suppliesCost, a per-loop
-    // transient) is deliberately not priced
-    {
-        const pre = mk(), post = mk();
-        const edge = (st, gc) => { const a = st.actions.find(x => x.name === "Smash Pots");
-            a.unlocked = true; a.cost = 100; a.goldCost = gc; return a; };
-        edge(pre, 10); edge(post, 14);   // yield rose by 4
-        const know = new Map([["Smash Pots", { goldPerExec: 3 }]]);
-        const sYield = IP.scoreOutcome(pre, post, {}, { lastExec: [] }, capacity, know, W, capacity, {});
-        assert.equal(sYield.parts.efficiency, W.efficiency * 4 * 50 * (capacity / 100),
-            "goldCost-as-yield: increase credited positive");
-        const sDrop = IP.scoreOutcome(post, pre, {}, { lastExec: [] }, capacity, know, W, capacity, {});
-        assert.equal(sDrop.parts.efficiency, W.efficiency * -4 * 50 * (capacity / 100),
-            "signed: a yield DROP debits");
-        const sPrice = IP.scoreOutcome(post, pre, {}, { lastExec: [] }, capacity, new Map(), W, capacity, {});
-        assert.ok(!("efficiency" in sPrice.parts),
-            "price-like goldCost drift (goldPerExec <= 0) not priced");
+        const setCost = (name, cost) => { const a = post.actions.find(x => x.name === name);
+            a.cost = cost; };
+        setCost("Smash Pots", 100); setCost("Pick Locks", 400);
+        const know = new Map([["Investigate", { edgeRates: {
+            "Smash Pots": { manaCost: -0.05 },          // cheapens
+            "Pick Locks": { goldYield: 0.02 },          // yield grows
+        } }]]);
+        const r = { lastExec: [{ name: "Investigate", loops: 10, loopsLeft: 0 }] };
+        const s = IP.scoreOutcome(pre, post, {}, r, capacity, know, W, capacity, {});
+        const expected = W.efficiency * (10 * 0.05 * (capacity / 100)
+                                       + 10 * 0.02 * 50 * (capacity / 400));
+        assert.ok(Math.abs(s.parts.efficiency - expected) < 1e-9,
+            "edge ledger: execs × rate × capacity/cost, gold at 50 mana/gold");
+        // no edgeRates (default empirical vocabulary) => inert even weighted
+        const sEmp = IP.scoreOutcome(pre, post, {}, r, capacity,
+            new Map([["Investigate", {}]]), W, capacity, {});
+        assert.ok(!("efficiency" in sEmp.parts),
+            "term inert without measured edges (double-gated at default vocabulary)");
     }
     // buff grants: Δ levels, frontier-like
     {
