@@ -144,3 +144,39 @@ test("cycle mode reproduces byte-for-byte and consumes ZERO Math.random", () => 
     const r = run("random");
     assert.ok(r.rng > 0, "random mode draws Math.random");
 });
+
+test("cycle cursors + rngMode option persist through the save", () => {
+    // Persistence contract: doSave() writes BOTH the option (toSave.extraOptions
+    // .rngMode — fork options ride the extraOptions compat channel) and the
+    // cursors (toSave.rngCycle, saving.js §doSave); the browser load()
+    // restores them at :1319 / the options block, and plRestoreSave mirrors the
+    // same rngCycle line for every headless/planner restore. Full load() needs
+    // the view layer, so the load side is exercised via plRestoreSave here —
+    // it is the identical `if (toLoad.rngCycle) ... else resetRngCycle()` code.
+    const ctx = makeContext(1, ["planner-metadata.js", "planner.js"]);   // planner loaded for the plRestoreSave mirror
+    const saved = JSON.parse(ctx.ev(`
+        options.rngMode = "cycle";
+        rngCycleState.ssAcc = 0.42; rngCycleState.dungeonStat = 7;
+        rngCycleState.mineStat = 3; rngCycleState.zone = 2;
+        JSON.stringify(doSave());
+    `));
+    assert.equal(saved.extraOptions?.rngMode, "cycle",
+        "rngMode option rides the save (extraOptions — the fork-compat channel; isStandardOption:false)");
+    assert.deepEqual(saved.rngCycle, { ssAcc: 0.42, dungeonStat: 7, mineStat: 3, zone: 2 },
+        "cycle cursors ride the save (toSave.rngCycle)");
+    // load side (headless mirror): wipe, restore, cursors back; absent field
+    // in an original-fork save resets to zero (inert unless rngMode is cycle)
+    ctx.ev("resetRngCycle()");
+    ctx.sandbox.__saveJson = JSON.stringify(saved);
+    ctx.ev("IdlePlanner._internals.plRestoreSave(__saveJson)");
+    assert.deepEqual(JSON.parse(ctx.ev("JSON.stringify(rngCycleState)")),
+        { ssAcc: 0.42, dungeonStat: 7, mineStat: 3, zone: 2 },
+        "cursors restored on load (plRestoreSave mirrors load():1319)");
+    const legacy = { ...saved };
+    delete legacy.rngCycle;
+    ctx.sandbox.__saveJson = JSON.stringify(legacy);
+    ctx.ev("IdlePlanner._internals.plRestoreSave(__saveJson)");
+    assert.deepEqual(JSON.parse(ctx.ev("JSON.stringify(rngCycleState)")),
+        { ssAcc: 0, dungeonStat: 0, mineStat: 0, zone: 0 },
+        "original-fork save (no rngCycle field) defaults cleanly");
+});
