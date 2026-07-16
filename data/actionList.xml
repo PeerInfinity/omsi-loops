@@ -127,6 +127,7 @@
         <primaryValue value="10">
             <skillMod name="Practical" minExclusive="0" max="200" percentChange="1" />
             <skillBonus name="Thievery" />
+            <floor />
         </primaryValue>
         <reward>
             <numericResource name="gold">
@@ -160,6 +161,7 @@
             <if maxExclusive="100">
                 <function name="getExploreProgress" />
             </if>
+            <ifPrestige inverted="inverted" />
         </visible>
         <unlocked>
             <ifProgress varName="Wander" min="20" />

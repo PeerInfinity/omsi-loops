@@ -126,6 +126,11 @@
                 <ref name="optional-varName" />
                 <ref name="numericCondition" />
             </element>
+            <element name="ifPrestige">
+                <a:documentation>Test whether any prestige has been completed.</a:documentation>
+                <il:label>If prestiged</il:label>
+                <ref name="booleanCondition" />
+            </element>
         </choice>
     </define>
     <define name="required-statName">
@@ -443,6 +448,12 @@
         <attribute name="name" />
         <optional>
             <attribute name="varName" />
+        </optional>
+        <optional>
+            <!-- town the action belongs to; defaults to 0 -->
+            <attribute name="townNum">
+                <data type="integer" />
+            </attribute>
         </optional>
         <interleave>
             <element name="expMult">

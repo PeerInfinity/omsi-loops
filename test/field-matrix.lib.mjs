@@ -1,14 +1,15 @@
 // test/field-matrix.lib.mjs — Tier-1 declarative-field equivalence matrix
-// (XML migration plan §4 Phase 3).
+// (XML migration plan §4 Phase 3) + the JS-vs-XML differential (Phase 4).
 //
 // Builds a deterministic state corpus and records, for every action and every
-// state, the values of the declarative fields the XML will eventually model:
+// state, the values of the declarative fields the XML models:
 //   manaCost, goldCost, visible, unlocked, canStart, allowed, storyReqs(1..8).
 // These are pure functions of game state (verified: zero Math.random across
 // the whole matrix — the build asserts it), so the matrix is exact and needs
-// no seeding or tolerance. Phase 4's JS-vs-XML differential replays the same
-// corpus with === comparison; this golden pins the JS oracle itself against
-// drift in the meantime.
+// no seeding or tolerance. The golden (buildFieldMatrix) pins the JS oracle
+// against drift; the differential (buildXmlDifferential) replays the same
+// corpus comparing the hand-written JS implementation against the
+// actionListXml-compiled one, exact equality, no epsilon.
 //
 // Corpus strata (all deterministic):
 //   boot        — the harness boot state (loadDefaults + stonesUsed + [0]);
@@ -35,9 +36,13 @@
 // semantics, so the sum/survey disambiguation passes are deliberately absent.
 
 import crypto from "node:crypto";
-import { makeContext } from "./harness.mjs";
+import fs from "node:fs";
+import path from "node:path";
+import { makeContext, ROOT } from "./harness.mjs";
 
 export const FIELD_COLUMNS = ["manaCost", "goldCost", "visible", "unlocked", "canStart", "allowed", "storyReqs1to8"];
+
+const XML_FILES = ["xmlLite.js", "actionListXml.js"];
 
 const FM_INSTALL = `
 globalThis.__fm = (() => {
@@ -117,7 +122,6 @@ globalThis.__fm = (() => {
     const T = (p) => { try { return !!p.fn(); } catch (e) { return false; } };
 
     const bisect = (d, lo, hi, wantPassAt) => {
-        // smallest L in (lo, hi] with pred === wantPassAt(true) when raised
         while (lo + 1 < hi) {
             const mid = Math.floor((lo + hi) / 2);
             set(d, mid);
@@ -178,24 +182,27 @@ globalThis.__fm = (() => {
         if (typeof v === "number" || typeof v === "boolean" || v === null) return v;
         return "val:" + String(v);
     };
+    // works for a real Action and for an actionListXml-compiled field object
+    // alike: both carry the same field closures (or lack them)
+    const rowFor = (a) => {
+        const call = (fn) => {
+            if (typeof fn !== "function") return null;
+            try { return norm(fn.call(a)); } catch (e) { return "throws:" + e.message; }
+        };
+        const row = [a.name, call(a.manaCost), call(a.goldCost), call(a.visible),
+            call(a.unlocked), call(a.canStart), call(a.allowed)];
+        if (typeof a.storyReqs === "function") {
+            const sr = [];
+            for (let n = 1; n <= 8; n++) {
+                try { sr.push(norm(a.storyReqs(n))); } catch (e) { sr.push("throws:" + e.message); }
+            }
+            row.push(sr);
+        } else row.push(null);
+        return row;
+    };
     const evalFields = () => {
         const out = [];
-        for (const t of towns) for (const a of t.totalActionList) {
-            const call = (fn) => {
-                if (typeof fn !== "function") return null;
-                try { return norm(fn.call(a)); } catch (e) { return "throws:" + e.message; }
-            };
-            const row = [a.name, call(a.manaCost), call(a.goldCost), call(a.visible),
-                call(a.unlocked), call(a.canStart), call(a.allowed)];
-            if (typeof a.storyReqs === "function") {
-                const sr = [];
-                for (let n = 1; n <= 8; n++) {
-                    try { sr.push(norm(a.storyReqs(n))); } catch (e) { sr.push("throws:" + e.message); }
-                }
-                row.push(sr);
-            } else row.push(null);
-            out.push(row);
-        }
+        for (const t of towns) for (const a of t.totalActionList) out.push(rowFor(a));
         return out;
     };
 
@@ -205,9 +212,8 @@ globalThis.__fm = (() => {
     const rnd = () => { rs |= 0; rs = rs + 0x6D2B79F5 | 0; let t = Math.imul(rs ^ rs >>> 15, 1 | rs); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
     const applyState = (spec) => {
         resetExtras();
-        if (spec.profile === "zero") zeroAll();
-        else if (spec.profile === "max") maxAll();
-        else { zeroAll(); }   // "boot": dims zeroed, extras at boot defaults
+        if (spec.profile === "max") maxAll();
+        else zeroAll();   // "boot"/"zero": dims zeroed, extras at boot defaults
         for (const [i, L] of spec.dims ?? []) set(numericDims[i], L);
         for (const [i, on] of spec.bools ?? []) setBool(boolDims[i], on);
         if (spec.random != null) {
@@ -240,6 +246,9 @@ globalThis.__fm = (() => {
             trainingLimits = Math.floor(rnd() * 31);
             townsUnlocked = Array.from({ length: 1 + Math.floor(rnd() * 9) }, (_, i) => i);
         }
+    };
+    const applyAndEval = (spec) => {
+        applyState(spec);
         return JSON.stringify(evalFields());
     };
 
@@ -248,8 +257,75 @@ globalThis.__fm = (() => {
     return {
         nNumeric: numericDims.length, nBool: boolDims.length, nPreds: preds.length,
         maxOf: (i) => numericDims[i].max,
-        collectThresholds, applyState, evalFields, dimName, boolName,
+        collectThresholds, applyState, applyAndEval, evalFields, rowFor, norm,
+        dimName, boolName,
     };
+})();
+`;
+
+// JS-vs-XML comparison, run entirely inside the vm. Row columns (rowFor):
+// [name, manaCost, goldCost, visible, unlocked, canStart, allowed, storyReqs[8]].
+// Numeric columns compare ===; boolean columns compare by truthiness (the
+// engine consumes them in boolean position), but a MISSING field (null) never
+// equals a present one.
+const DIFF_INSTALL = `
+globalThis.__fmDiff = (() => {
+    const doc = ActionListXml.parseDocument(__xmlText);
+    if (typeof __xmlMutate === "function") __xmlMutate(doc);
+    const compiled = {};
+    for (const name in doc.actions) compiled[name] = ActionListXml.compileAction(doc.actions[name], doc);
+    const jsByName = new Map();
+    for (const t of towns) for (const a of t.totalActionList) jsByName.set(a.name, a);
+
+    const COLS = ["manaCost", "goldCost", "visible", "unlocked", "canStart", "allowed", "storyReqs"];
+    const BOOL = new Set(["visible", "unlocked", "canStart"]);
+    const same = (col, j, x) => {
+        if ((j === null) !== (x === null)) return false;
+        if (j === null) return true;
+        if (BOOL.has(col)) return !!j === !!x;
+        return j === x;
+    };
+    const compare = () => {
+        const out = [];
+        for (const name in compiled) {
+            const a = jsByName.get(name);
+            if (!a) { out.push({ name, col: "(exists)", js: null, xml: "defined" }); continue; }
+            const rj = __fm.rowFor(a), rx = __fm.rowFor(compiled[name]);
+            for (let i = 0; i < 6; i++) {
+                if (!same(COLS[i], rj[i + 1], rx[i + 1])) out.push({ name, col: COLS[i], js: rj[i + 1], xml: rx[i + 1] });
+            }
+            const sj = rj[7], sx = rx[7];
+            if ((sj === null) !== (sx === null)) out.push({ name, col: "storyReqs", js: sj, xml: sx });
+            else if (sj !== null) {
+                for (let n = 0; n < 8; n++) {
+                    if (!!sj[n] !== !!sx[n] || (typeof sj[n] === "string") !== (typeof sx[n] === "string")) {
+                        out.push({ name, col: "storyReqs(" + (n + 1) + ")", js: sj[n], xml: sx[n] });
+                    }
+                }
+            }
+        }
+        return out;
+    };
+    const statics = () => {
+        const out = [];
+        const sortedJson = (o) => o === undefined ? "undefined"
+            : JSON.stringify(o && typeof o === "object" && !Array.isArray(o)
+                ? Object.fromEntries(Object.entries(o).sort(([a], [b]) => a < b ? -1 : 1)) : o);
+        for (const name in compiled) {
+            const a = jsByName.get(name);
+            if (!a) continue;
+            for (const f of ["varName", "townNum", "type", "expMult"]) {
+                if (a[f] !== compiled[name][f]) out.push({ name, col: f, js: a[f], xml: compiled[name][f] });
+            }
+            for (const f of ["stats", "affectedBy"]) {
+                if (sortedJson(a[f]) !== sortedJson(compiled[name][f])) {
+                    out.push({ name, col: f, js: sortedJson(a[f]), xml: sortedJson(compiled[name][f]) });
+                }
+            }
+        }
+        return out;
+    };
+    return { names: Object.keys(compiled), compare, statics };
 })();
 `;
 
@@ -283,18 +359,49 @@ export const FIXTURE_RECIPES = {
     `,
 };
 
-export function buildFieldMatrix({ randomStates = 64, perturb = null, only = null } = {}) {
-    const ctx = makeContext(12345);
-    ctx.ev(FM_INSTALL);
-    const info = JSON.parse(ctx.ev("JSON.stringify({ n: __fm.nNumeric, b: __fm.nBool, p: __fm.nPreds })"));
+/** boot a context that has loaded a crafted save through the real load() */
+function makeFixtureContext(recipe, extraFiles = []) {
+    const crafter = makeContext(12345);
+    crafter.ev(recipe);
+    const blob = crafter.ev("JSON.stringify(doSave())");
+    const fixCtx = makeContext(12345, extraFiles);
+    fixCtx.ev(FM_INSTALL);
+    // DOM touches on the load() path: closeTutorial(), buff<name>Cap /
+    // pausePlay / etc. element writes. In a real browser every UI element
+    // exists during load(); mirror that with a permissive element stub, then
+    // restore the null stub (null is load-bearing for tick-path search-toggle
+    // semantics — see harness.mjs).
+    fixCtx.ev(`
+        closeTutorial = () => {};
+        globalThis.window = globalThis;      // doLoad reads window.localStorage
+        globalThis.loadChallenge = () => {}; // challenges.js is not a sim file; mode 0 is a no-op anyway
+        recalcInterval = () => {};           // would start a real setInterval in the vm
+        const __el = () => Object.assign(new HTMLInputElement(), {
+            classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
+            style: {}, textContent: "", value: "", checked: false,
+        });
+        document.getElementById = () => __el();
+        const __blob = JSON.parse(${JSON.stringify(blob)});
+        __blob.date = new Date().toISOString();  // zero offline gain, deterministic fields
+        load(false, JSON.stringify(__blob));
+        document.getElementById = () => null;
+    `);
+    return fixCtx;
+}
 
-    const th = JSON.parse(ctx.ev("JSON.stringify(__fm.collectThresholds())"));
-
-    // ---- assemble the state list (order is part of the golden) ----
-    const states = [];   // {id, spec}
+/** assemble the deterministic state list from the probed thresholds */
+function assembleStates(ctx, randomStates, probe = true) {
+    const states = [];
     states.push({ id: "boot", spec: { profile: "boot" } });
     states.push({ id: "all-zero", spec: { profile: "zero" } });
     states.push({ id: "all-max", spec: { profile: "max" } });
+    if (!probe) {
+        for (let k = 0; k < randomStates; k++) {
+            states.push({ id: `random:${k}`, spec: { profile: "zero", random: 0x51D0 + k * 7919 } });
+        }
+        return { states, probeEvals: 0 };
+    }
+    const th = JSON.parse(ctx.ev("JSON.stringify(__fm.collectThresholds())"));
     const dimName = (i) => ctx.ev(`__fm.dimName(${i})`);
     const boolName = (i) => ctx.ev(`__fm.boolName(${i})`);
     for (const [profile, list] of [["zero", th.zero], ["max", th.max]]) {
@@ -312,6 +419,15 @@ export function buildFieldMatrix({ randomStates = 64, perturb = null, only = nul
     for (let k = 0; k < randomStates; k++) {
         states.push({ id: `random:${k}`, spec: { profile: "zero", random: 0x51D0 + k * 7919 } });
     }
+    return { states, probeEvals: th.evals };
+}
+
+export function buildFieldMatrix({ randomStates = 64, perturb = null, only = null } = {}) {
+    const ctx = makeContext(12345);
+    ctx.ev(FM_INSTALL);
+    const info = JSON.parse(ctx.ev("JSON.stringify({ n: __fm.nNumeric, b: __fm.nBool, p: __fm.nPreds })"));
+
+    const { states, probeEvals } = assembleStates(ctx, randomStates);
 
     // optional single-state perturbation (anti-vacuity self-check support)
     if (perturb) {
@@ -326,42 +442,14 @@ export function buildFieldMatrix({ randomStates = 64, perturb = null, only = nul
     let baseline = null;
     const selected = only ? states.filter(s => only.includes(s.id)) : states;
     for (const s of selected) {
-        const json = ctx.ev(`__fm.applyState(${JSON.stringify(s.spec)})`);
+        const json = ctx.ev(`__fm.applyAndEval(${JSON.stringify(s.spec)})`);
         perState.push({ id: s.id, hash: sha(json) });
         if (s.id === "boot") baseline = JSON.parse(json);
     }
 
-    // fixtures: crafted save round-tripped through the real load() in a fresh
-    // context each (load() owns stonesUsed/townsUnlocked/loadouts init)
     for (const [name, recipe] of Object.entries(FIXTURE_RECIPES)) {
         if (only && !only.includes(`fixture:${name}`)) continue;
-        const crafter = makeContext(12345);
-        crafter.ev(recipe);
-        const blob = crafter.ev("JSON.stringify(doSave())");
-        const fixCtx = makeContext(12345);
-        fixCtx.ev(FM_INSTALL);
-        // DOM touches on the load() path: closeTutorial(), and doLoad WRITES
-        // buff<name>Cap input values (inputElement type-checks the stub class).
-        // Scoped to the load call — getElementById -> null is load-bearing
-        // otherwise (see harness.mjs).
-        fixCtx.ev(`
-            closeTutorial = () => {};
-            globalThis.window = globalThis;      // doLoad reads window.localStorage
-            globalThis.loadChallenge = () => {}; // challenges.js is not a sim file; mode 0 is a no-op anyway
-            recalcInterval = () => {};           // would start a real setInterval in the vm
-            // In a real browser every UI element exists during load(); mirror
-            // that with a permissive input stub, then restore the null stub
-            // (null is load-bearing for tick-path search-toggle semantics).
-            const __el = () => Object.assign(new HTMLInputElement(), {
-                classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
-                style: {}, textContent: "", value: "", checked: false,
-            });
-            document.getElementById = () => __el();
-            const __blob = JSON.parse(${JSON.stringify(blob)});
-            __blob.date = new Date().toISOString();  // zero offline gain, deterministic fields
-            load(false, JSON.stringify(__blob));
-            document.getElementById = () => null;
-        `);
+        const fixCtx = makeFixtureContext(recipe);
         const json = fixCtx.ev("JSON.stringify(__fm.evalFields())");
         perState.push({ id: `fixture:${name}`, hash: sha(json) });
     }
@@ -371,9 +459,62 @@ export function buildFieldMatrix({ randomStates = 64, perturb = null, only = nul
     return {
         meta: {
             dims: { numeric: info.n, bool: info.b }, predicates: info.p,
-            probeEvals: th.evals, states: perState.length, randomStates,
+            probeEvals, states: perState.length, randomStates,
             fieldColumns: FIELD_COLUMNS,
         },
         perState, matrixHash, baseline, rngConsumed,
     };
+}
+
+/**
+ * Phase 4 differential: compare every XML-defined action against its JS
+ * implementation across the full state corpus (and the load() fixtures).
+ *
+ * @param {object} [opts]
+ * @param {number} [opts.randomStates]
+ * @param {string} [opts.xmlText]  overrides data/actionList.xml
+ * @param {(doc: any) => void} [opts.mutate]  mutates the parsed document
+ *   before compilation (host-side function; the parsed tree is plain JSON) —
+ *   the perturbation-canary hook
+ * @param {number} [opts.maxMismatches]  stop collecting after this many
+ * @param {boolean} [opts.probe]  false skips the threshold sweep (canary runs)
+ * @param {boolean} [opts.fixtures]  false skips the load() fixture states
+ */
+export function buildXmlDifferential({ randomStates = 64, xmlText = null, mutate = null, maxMismatches = 200, probe = true, fixtures = true } = {}) {
+    xmlText ??= fs.readFileSync(path.join(ROOT, "data", "actionList.xml"), "utf8");
+    const install = (c) => {
+        c.sandbox.__xmlText = xmlText;
+        c.sandbox.__xmlMutate = mutate;
+        c.ev(DIFF_INSTALL);
+    };
+
+    const ctx = makeContext(12345, XML_FILES);
+    ctx.ev(FM_INSTALL);
+    install(ctx);
+    const names = JSON.parse(ctx.ev("JSON.stringify(__fmDiff.names)"));
+    const statics = JSON.parse(ctx.ev("JSON.stringify(__fmDiff.statics())"));
+
+    const { states } = assembleStates(ctx, randomStates, probe);
+    const rngBefore = ctx.rngCount();
+    const mismatches = [];
+    let statesChecked = 0;
+    for (const s of states) {
+        if (mismatches.length >= maxMismatches) break;
+        ctx.ev(`__fm.applyState(${JSON.stringify(s.spec)})`);
+        const diffs = JSON.parse(ctx.ev("JSON.stringify(__fmDiff.compare())"));
+        for (const d of diffs) mismatches.push({ state: s.id, ...d });
+        statesChecked++;
+    }
+    const rngConsumed = ctx.rngCount() - rngBefore;
+
+    for (const [name, recipe] of fixtures ? Object.entries(FIXTURE_RECIPES) : []) {
+        if (mismatches.length >= maxMismatches) break;
+        const fixCtx = makeFixtureContext(recipe, XML_FILES);
+        install(fixCtx);
+        const diffs = JSON.parse(fixCtx.ev("JSON.stringify(__fmDiff.compare())"));
+        for (const d of diffs) mismatches.push({ state: `fixture:${name}`, ...d });
+        statesChecked++;
+    }
+
+    return { names, statics, mismatches, statesChecked, rngConsumed };
 }
