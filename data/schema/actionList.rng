@@ -326,6 +326,24 @@
         </element>
     </define>
     <define name="baseValue" combine="choice">
+        <element name="skillExp">
+            <a:documentation>The raw experience in a given skill (within the current level).</a:documentation>
+            <il:label>Skill Exp</il:label>
+            <ref name="required-skillName" />
+        </element>
+    </define>
+    <define name="baseValue" combine="choice">
+        <element name="stonesUsed">
+            <a:documentation>Stones used from the given zone's ruins (the action's own town if townNum is omitted).</a:documentation>
+            <il:label>Stones used</il:label>
+            <optional>
+                <attribute name="townNum">
+                    <data type="integer" />
+                </attribute>
+            </optional>
+        </element>
+    </define>
+    <define name="baseValue" combine="choice">
         <element name="talentLevel">
             <a:documentation>The current talent level of a given stat, as an integer.</a:documentation>
             <il:label>Talent Level</il:label>
@@ -502,6 +520,14 @@
             <ref name="conditionalEvaluation" />
         </element>
     </define>
+    <define name="nativeMarker">
+        <a:documentation>This field keeps its hand-written JS implementation (the two-layer
+            model's behavior slot) — for runtime-coupled fields like Continue On's allowed(),
+            which reads the action queue.</a:documentation>
+        <attribute name="native">
+            <value>native</value>
+        </attribute>
+    </define>
     <define name="actionDefinition">
         <attribute name="name" />
         <optional>
@@ -563,6 +589,13 @@
             </element>
             <optional>
                 <element name="cost">
+                    <optional>
+                        <!-- implied="none": the cost is deducted on completion but does
+                             NOT gate canStart (e.g. Dark Magic drives reputation negative) -->
+                        <attribute name="implied">
+                            <value>none</value>
+                        </attribute>
+                    </optional>
                     <zeroOrMore>
                         <ref name="resourceStack" />
                     </zeroOrMore>
@@ -570,12 +603,18 @@
             </optional>
             <optional>
                 <element name="allowed">
-                    <ref name="numericEvaluation" />
+                    <choice>
+                        <ref name="nativeMarker" />
+                        <ref name="numericEvaluation" />
+                    </choice>
                 </element>
             </optional>
             <optional>
                 <element name="canStart">
-                    <ref name="conditionalEvaluation" />
+                    <choice>
+                        <ref name="nativeMarker" />
+                        <ref name="conditionalEvaluation" />
+                    </choice>
                 </element>
             </optional>
         </interleave>

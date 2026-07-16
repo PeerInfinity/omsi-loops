@@ -104,6 +104,7 @@ globalThis.__fm = (() => {
     const bootStones = structuredClone(stonesUsed);
     const bootGoldInvested = goldInvested, bootTrainingLimits = trainingLimits;
     const bootTalents = Object.fromEntries(Object.entries(stats).map(([k, v]) => [k, v.talentLevelExp.level]));
+    const bootSkillExp = Object.fromEntries(Object.entries(skills).map(([k, v]) => [k, v.levelExp.exp]));
     const resetExtras = () => {
         for (const k in resources) delete resources[k];
         Object.assign(resources, structuredClone(bootResources));
@@ -113,6 +114,7 @@ globalThis.__fm = (() => {
         goldInvested = bootGoldInvested;
         trainingLimits = bootTrainingLimits;
         for (const k in bootTalents) stats[k].talentLevelExp.level = bootTalents[k];
+        for (const k in bootSkillExp) skills[k].levelExp.exp = bootSkillExp[k];
         townsUnlocked = [0];
     };
 
@@ -245,7 +247,14 @@ globalThis.__fm = (() => {
                 t["total" + v] = total; t["checked" + v] = checked;
                 t["good" + v] = good; t["goodTemp" + v] = Math.floor(rnd() * (good + 1));
             }
-            for (const k of Object.keys(stonesUsed)) stonesUsed[k] = Math.floor(rnd() * 3);
+            // Haul-family thresholds: canStart < 250, storyReqs 1/100/250
+            const su = [0, 1, 2, 100, 249, 250];
+            for (const k of Object.keys(stonesUsed)) stonesUsed[k] = su[Math.floor(rnd() * su.length)];
+            // skill EXP within the current level (Learn Alchemy story 1 tests exp >= 50)
+            const se = [0, 49, 50, 77, 150];
+            for (const k of Object.keys(skills)) {
+                skills[k].levelExp.exp = rnd() < 0.5 ? 0 : se[Math.floor(rnd() * se.length)];
+            }
             const gi = [0, 999999, 1000000, 999999999, 1000000000, 999999999999];
             goldInvested = gi[Math.floor(rnd() * gi.length)];
             trainingLimits = Math.floor(rnd() * 31);
@@ -305,10 +314,14 @@ globalThis.__fmDiff = (() => {
         for (const name in compiled) {
             const a = jsByName.get(name);
             if (!a) { out.push({ name, col: "(exists)", js: null, xml: "defined" }); continue; }
+            // native fields keep the JS closure on both sides — nothing to compare
+            const nat = new Set(compiled[name].__nativeFields ?? []);
             const rj = __fm.rowFor(a), rx = __fm.rowFor(compiled[name]);
             for (let i = 0; i < 6; i++) {
+                if (nat.has(COLS[i])) continue;
                 if (!same(COLS[i], rj[i + 1], rx[i + 1])) out.push({ name, col: COLS[i], js: rj[i + 1], xml: rx[i + 1] });
             }
+            if (nat.has("storyReqs")) continue;
             const sj = rj[7], sx = rx[7];
             if ((sj === null) !== (sx === null)) out.push({ name, col: "storyReqs", js: sj, xml: sx });
             else if (sj !== null) {

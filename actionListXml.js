@@ -38,9 +38,9 @@
 const ActionListXml = (() => {
     /** @typedef {import("./xmlLite.js").XmlNode} XmlNode */
 
-    const BASE_VALUE_TAGS = new Set(["skillLevel", "buffLevel", "talentLevel", "primaryValue",
+    const BASE_VALUE_TAGS = new Set(["skillLevel", "skillExp", "buffLevel", "talentLevel", "primaryValue",
         "progressLevel", "goodItems", "discoveredItems", "checkedItems", "value", "function",
-        "resourceValue", "townValue", "globalValue"]);
+        "resourceValue", "townValue", "globalValue", "stonesUsed"]);
     const CONDITIONAL_TAGS = new Set(["if", "ifCurrentValue", "ifResource", "ifHasResource",
         "ifStoryFlag", "ifProgress", "ifGoodItems", "ifDiscoveredItems", "ifCheckedItems",
         "ifPrestige", "ifTownUnlocked", "anyOf", "never"]);
@@ -98,6 +98,9 @@ const ActionListXml = (() => {
 
     const ownVar = (node, ctx) => node.attrs.varName ?? ctx.action.varName;
 
+    const TEST_ATTRS = ["min", "minExclusive", "max", "maxExclusive", "equals", "notEquals"];
+    const hasTests = (node) => TEST_ATTRS.some(k => k in node.attrs);
+
     function testNumeric(node, value) {
         const a = node.attrs;
         if ("min" in a && !(value >= num(a.min, node.tag))) return false;
@@ -121,8 +124,13 @@ const ActionListXml = (() => {
                 if (ctx.current === undefined) throw new Error("actionListXml: ifCurrentValue outside numeric evaluation");
                 return testNumeric(node, ctx.current);
             }
-            case "ifResource":
-                return testNumeric(node, Number(resources[node.attrs.resourceName] ?? 0) || (resources[node.attrs.resourceName] === true ? 1 : 0));
+            case "ifResource": {
+                const v = resources[node.attrs.resourceName];
+                // no numeric tests = truthiness (upstream's Wander uses bare
+                // <ifResource resourceName="glasses"/> for `glasses ? ...`)
+                if (!hasTests(node)) return !!v !== inverted;
+                return testNumeric(node, Number(v ?? 0));
+            }
             case "ifHasResource":
                 return !!resources[node.attrs.resourceName] !== inverted;
             case "ifStoryFlag":
@@ -165,8 +173,13 @@ const ActionListXml = (() => {
     function evalBase(node, ctx) {
         switch (node.tag) {
             case "skillLevel": return getSkillLevel(node.attrs.skillName);
+            case "skillExp": return skills[node.attrs.skillName].exp;
             case "buffLevel": return getBuffLevel(node.attrs.buffName);
             case "talentLevel": return getTalent(node.attrs.statName);
+            case "stonesUsed": {
+                const t = node.attrs.townNum !== undefined ? num(node.attrs.townNum, "stonesUsed") : ctx.action.townNum;
+                return stonesUsed[t];
+            }
             case "resourceValue": return resources[node.attrs.name];
             case "townValue": {
                 const t = node.attrs.townNum !== undefined ? num(node.attrs.townNum, "townValue") : ctx.action.townNum;
@@ -323,6 +336,15 @@ const ActionListXml = (() => {
 
         /** @type {Record<string, any>} */
         const fields = { name, varName, townNum, type: def.attrs.type };
+        // fields marked native="native" keep their hand-written JS closures —
+        // the two-layer model's behavior slot (e.g. Continue On's allowed()
+        // reads the action queue). Consumers skip compiling/comparing them.
+        const nativeFields = [];
+        const native = (node, field) => {
+            if (node?.attrs.native === undefined) return false;
+            nativeFields.push(field);
+            return true;
+        };
 
         const expMultNode = need("expMult");
         fields.expMult = evalNumeric(expMultNode, ctx);
@@ -337,26 +359,32 @@ const ActionListXml = (() => {
         if (affectedBy) fields.affectedBy = affectedBy.children.map(c => c.attrs.name);
 
         const effortCost = need("effortCost");
-        fields.manaCost = () => evalNumeric(effortCost, ctx);
+        if (!native(effortCost, "manaCost")) fields.manaCost = () => evalNumeric(effortCost, ctx);
 
         const primaryValue = child(def, "primaryValue");
-        if (primaryValue) fields.goldCost = () => evalNumeric(primaryValue, ctx);
+        if (primaryValue && !native(primaryValue, "goldCost")) {
+            fields.goldCost = () => evalNumeric(primaryValue, ctx);
+        }
 
         const visible = need("visible");
-        fields.visible = () => evalConditionList(visible.children, ctx);
+        if (!native(visible, "visible")) fields.visible = () => evalConditionList(visible.children, ctx);
         const unlocked = need("unlocked");
-        fields.unlocked = () => evalConditionList(unlocked.children, ctx);
+        if (!native(unlocked, "unlocked")) fields.unlocked = () => evalConditionList(unlocked.children, ctx);
 
         const allowed = child(def, "allowed");
-        if (allowed) fields.allowed = () => evalNumeric(allowed, ctx);
+        if (allowed && !native(allowed, "allowed")) fields.allowed = () => evalNumeric(allowed, ctx);
 
         // canStart: the explicit <canStart> conditions AND the affordability
         // implied by <cost> numeric resources (JS canStart bodies are the
         // affordability check)
         const canStart = child(def, "canStart");
         const cost = child(def, "cost");
-        if (canStart || cost) {
-            const costChecks = (cost?.children ?? [])
+        if (native(canStart, "canStart")) {
+            // canStart stays JS; cost (if any) is Phase-6 data only
+        } else if (canStart || cost) {
+            // implied="none": the cost is deducted but not gated on (e.g.
+            // Dark Magic pushes reputation negative)
+            const costChecks = (cost?.attrs.implied === "none" ? [] : cost?.children ?? [])
                 .filter(c => c.tag === "numericResource" || c.tag === "booleanResource")
                 .map(c => ({ kind: c.tag, resource: c.attrs.name, node: c }));
             fields.canStart = () => {
@@ -373,7 +401,7 @@ const ActionListXml = (() => {
         }
 
         const storyReqs = child(def, "storyReqs");
-        if (storyReqs) {
+        if (storyReqs && !native(storyReqs, "storyReqs")) {
             /** @type {Map<number, XmlNode>} */
             const stories = new Map();
             for (const s of childs(storyReqs, "story")) {
@@ -385,6 +413,7 @@ const ActionListXml = (() => {
             };
         }
 
+        fields.__nativeFields = nativeFields;
         return fields;
     }
 

@@ -84,6 +84,29 @@ const TARGETED_CANARIES = [
         },
     },
     {
+        label: "skillExp (Learn Alchemy story 1, 50 -> 51)",
+        expect: { name: "Learn Alchemy", col: "storyReqs(1)" },
+        mutate: (doc) => {
+            const sr = doc.actions["Learn Alchemy"].children.find(c => c.tag === "storyReqs");
+            sr.children.find(s => s.attrs.num === "1").children.find(c => c.tag === "if").attrs.min = "51";
+        },
+    },
+    {
+        label: "stonesUsed (HaulZ1 canStart, < 250 -> < 249)",
+        expect: { name: "HaulZ1", col: "canStart" },
+        mutate: (doc) => {
+            const cs = doc.actions["HaulZ1"].children.find(c => c.tag === "canStart");
+            cs.children.find(c => c.tag === "if").attrs.maxExclusive = "249";
+        },
+    },
+    {
+        label: "cost implied=none (Dark Magic: dropping it re-implies reputation >= 1)",
+        expect: { name: "Dark Magic", col: "canStart" },
+        mutate: (doc) => {
+            delete doc.actions["Dark Magic"].children.find(c => c.tag === "cost").attrs.implied;
+        },
+    },
+    {
         label: "ifTownUnlocked (Start Journey story 1, town 1 -> 2)",
         expect: { name: "Start Journey", col: "storyReqs(1)" },
         mutate: (doc) => {
