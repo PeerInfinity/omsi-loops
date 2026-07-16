@@ -989,3 +989,119 @@ test("§V1 a targeted goal stays ACTIVE across loops (sticky) while byte-inert v
 });
 // goalKey is a planner internal; recompute the key the same way for the assertion
 function IP_goalKeyOf(g) { return g ? (g.kind === "a" ? `a:${g.action}` : `b:${g.target?.type}:${g.target?.name ?? ""}:${g.value ?? ""}`) : null; }
+
+// ===========================================================================
+// §V2 — recursive prerequisite finder (DAG walk + pool-cap discovery)
+// ===========================================================================
+
+test("§V2 plProbePoolCap: perturbation-probes the pool cap driver; leaves state bit-identical", () => {
+    const ctx = makePlanner(950);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+    sess.setQueue([["Wander", 1]]); sess.restart();
+    // low Secrets base (level ~10) so the probe's bump to L100 clearly RAISES the cap
+    ctx.ev("towns[0].expSecrets = 100*10*11/2; adjustAll()");
+    const before = sess.snapshot();
+    // Secrets drives baseLQuests (actionList.js:1291-1294 — the TEST cross-check
+    // oracle); Met drives SQuests, NOT LQuests — the wrong-branch trap V0 flagged.
+    const ranked = sess.probePoolCap("LQuests", 0,
+        [{ kind: "p", v: "Secrets", town: 0 }, { kind: "p", v: "Met", town: 0 }]);
+    const sec = ranked.find(d => d.v === "Secrets");
+    assert.ok(sec && sec.delta > 0, `Secrets drives totalLQuests (got ${JSON.stringify(ranked)})`);
+    assert.ok(!ranked.some(d => d.v === "Met"), "Met drives SQuests not LQuests ⇒ Δ=0 ⇒ not reported");
+    assert.equal(sess.snapshot(), before, "the probe restores the full-state snapshot bit-for-bit");
+});
+
+test("§V2 poolCapCandidates: grindable dims in; unreachable multipliers out (reachability filter)", () => {
+    const IP = makePlanner(951).ev("IdlePlanner");
+    // town-0-only state: Secrets has a grinder (Investigate), Ghost has none,
+    // Practical has a town-0 trainer, Spatiomancy's trainer is elsewhere (locked).
+    const state = { townsUnlocked: [0], skills: { Spatiomancy: { level: 0 }, Practical: { level: 0 } },
+        towns: [{ index: 0, progress: { Secrets: { level: 5 }, Ghost: { level: 0 } }, limited: {} }],
+        actions: [
+            { name: "Investigate", townNum: 0, type: "progress", varName: "Secrets", visible: true, unlocked: true, cost: 300, skillsGained: [] },
+            { name: "Pickpocket", townNum: 0, type: "normal", visible: true, unlocked: true, cost: 100, skillsGained: ["Practical"] },
+        ] };
+    const cands = IP.poolCapCandidates(state);
+    assert.ok(cands.some(d => d.kind === "p" && d.v === "Secrets"), "Secrets is grindable (Investigate) ⇒ candidate");
+    assert.ok(!cands.some(d => d.kind === "p" && d.v === "Ghost"), "Ghost has no grinder ⇒ excluded");
+    assert.ok(cands.some(d => d.kind === "s" && d.v === "Practical"), "Practical has a town-0 trainer ⇒ candidate");
+    assert.ok(!cands.some(d => d.kind === "s" && d.v === "Spatiomancy"), "Spatiomancy has no reachable trainer ⇒ excluded (disambiguates the town-0 driver)");
+});
+
+test("§V2 poolGood target: readStateValue reads pool `good`; rankValueProviders returns the limited action", () => {
+    const IP = makePlanner(952).ev("IdlePlanner");
+    const state = { townsUnlocked: [0],
+        towns: [{ index: 0, limited: { LQuests: { good: 4, checked: 20, total: 25 } }, progress: {} }],
+        actions: [{ name: "Long Quest", townNum: 0, type: "limited", varName: "LQuests", visible: true, unlocked: true, cost: 2000 }] };
+    assert.equal(IP.readStateValue(state, { type: "poolGood", name: "LQuests", town: 0 }), 4);
+    const provs = IP.rankValueProviders(state, new Map(), { type: "poolGood", name: "LQuests", town: 0 });
+    assert.equal(provs.length, 1);
+    assert.equal(provs[0].a.name, "Long Quest", "the pool's own limited action checks items ⇒ grows good");
+});
+
+// Shared synthetic near-fixated scenario: a rep-capacity-bound Start Journey push
+// (Buy Supplies toll + Haggle reducer) over a Long Quest rep pool, plus a Secrets
+// grinder (Investigate). The pool's checked/total decides whether the finder
+// enriches `good` directly or must recurse to the cap driver.
+function v2Scenario(lquests) {
+    const state = {
+        townsUnlocked: [0], baseMana: 250, skills: {},
+        towns: [{ index: 0, limited: { LQuests: lquests }, progress: { Secrets: { level: 31 } } }],
+        actions: [
+            { name: "Start Journey", townNum: 0, type: "normal", visible: true, unlocked: true, cost: 1000, travelDests: [1], skillsGained: [] },
+            { name: "Buy Supplies", townNum: 0, type: "normal", visible: true, unlocked: true, cost: 100, goldCost: 240, skillsGained: [] },
+            { name: "Haggle", townNum: 0, type: "normal", visible: true, unlocked: true, cost: 100, skillsGained: [] },
+            { name: "Long Quest", townNum: 0, type: "limited", varName: "LQuests", visible: true, unlocked: true, cost: 2000, skillsGained: [] },
+            { name: "Investigate", townNum: 0, type: "progress", varName: "Secrets", visible: true, unlocked: true, cost: 300, skillsGained: [] },
+        ],
+    };
+    const know = new Map([
+        ["Buy Supplies", { exec: 1, grants: { supplies: 1 }, goldPerExec: -240, costReductions: {}, repPerExec: 0, ticksPerExec: 100, manaPerExec: 0, manaPerGold: 0 }],
+        ["Haggle", { exec: 1, grants: {}, goldPerExec: 0, costReductions: { "Buy Supplies": 20 }, repPerExec: -1, ticksPerExec: 100, manaPerExec: 0, manaPerGold: 0 }],
+        ["Long Quest", { exec: 1, grants: {}, goldPerExec: 5, costReductions: {}, repPerExec: 1, ticksPerExec: 2000, manaPerExec: 0, manaPerGold: 0 }],
+        ["Investigate", { exec: 1, grants: {}, goldPerExec: 0, costReductions: {}, repPerExec: 0, ticksPerExec: 300, manaPerExec: 0, manaPerGold: 0 }],
+    ]);
+    // stub sess: Start Journey needs supplies; the pool-cap probe reports Secrets
+    // (the real probe is exercised by the plProbePoolCap harness test above).
+    const sess = {
+        needs: (n) => n === "Start Journey" ? ["supplies"] : [],
+        probePoolCap: () => [{ kind: "p", v: "Secrets", town: 0, delta: 34 }],
+    };
+    return { state, know, sess };
+}
+
+test("§V2 analyzePushBottleneck: a rep-capacity-bound push returns the growable rep pool", () => {
+    const IP = makePlanner(953).ev("IdlePlanner");
+    const { state, know, sess } = v2Scenario({ good: 3, checked: 16, total: 16 });
+    const X = state.actions.find(a => a.name === "Start Journey");
+    const pool = IP.analyzePushBottleneck(state, know, sess, X);
+    assert.ok(pool, "the push IS rep-capacity-bound (Haggle hMax = floor(repCap/repPerUse) = 3 < ceil(240/20)=12)");
+    assert.equal(pool.a.name, "Long Quest", "the binding pool is the rep-yielding Long Quest pool");
+    // a fat rep pool (repCapacity high enough) is NOT bound ⇒ no bottleneck to grow
+    const fat = v2Scenario({ good: 20, checked: 16, total: 16 });
+    assert.equal(IP.analyzePushBottleneck(fat.state, fat.know, fat.sess, X), null,
+        "hMax rep-term no longer binds (repCap 20 >= cost-term 12) ⇒ null");
+});
+
+test("§V2 findSetupLeaf: EXHAUSTED rep pool ⇒ recurse through the cap edge to the Secrets leaf", () => {
+    const IP = makePlanner(954).ev("IdlePlanner");
+    const { state, know, sess } = v2Scenario({ good: 3, checked: 16, total: 16 });   // checked>=total ⇒ exhausted
+    const leaf = IP.findSetupLeaf(state, know, sess, { kind: "a", action: "Start Journey" });
+    assert.deepEqual(j(leaf), { kind: "b", target: { type: "progress", name: "Secrets", town: 0 } },
+        "pool exhausted ⇒ the leaf is the probed cap driver (Secrets), recursed to arbitrary depth");
+});
+
+test("§V2 findSetupLeaf: rep pool with UNCHECKED headroom ⇒ the leaf is enriching good (poolGood)", () => {
+    const IP = makePlanner(955).ev("IdlePlanner");
+    const { state, know, sess } = v2Scenario({ good: 3, checked: 16, total: 25 });   // 9 unchecked ⇒ actionable now
+    const leaf = IP.findSetupLeaf(state, know, sess, { kind: "a", action: "Start Journey" });
+    assert.deepEqual(j(leaf), { kind: "b", target: { type: "poolGood", name: "LQuests", town: 0 } },
+        "unchecked headroom ⇒ CHECK items directly (poolGood), no cap recursion");
+});
+
+test("§V2 findSetupLeaf: a fat/unbound push has no prerequisite leaf (⇒ heuristic fallback)", () => {
+    const IP = makePlanner(956).ev("IdlePlanner");
+    const { state, know, sess } = v2Scenario({ good: 20, checked: 16, total: 16 });
+    assert.equal(IP.findSetupLeaf(state, know, sess, { kind: "a", action: "Start Journey" }), null,
+        "no rep-capacity bottleneck ⇒ no setup leaf");
+});

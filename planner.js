@@ -373,6 +373,52 @@ function plProbeThresholds(maxSkillLevel) {
     return JSON.stringify(out);
 }
 
+// ---- pool-capacity driver probing (targeted-mode v2) ----------------------
+// The ONE edge V0 flagged that the within-loop `know` profiles don't carry: a
+// limited pool's `total<Var>` (its cap) is a CONTENT-FORMULA function of some
+// LOCAL progress/skill dim (LQuests <= Secrets; Pots/Locks <= Wander; ...). To
+// grow a rep pool whose bank is EXHAUSTED (checked>=total), we must first grow
+// its cap — so the finder needs to know WHICH dim drives it. We discover that by
+// PERTURBATION, not by transcribing the formula (AP rewires content; the
+// substrate arc probes): bump each candidate dim to a high level, recompute the
+// caps (adjustAll), read the pool's Δtotal, restore. Δ>0 ⇒ that dim drives the
+// cap. Reachability (the caller's grindable-from-here filter) then disambiguates
+// the town-0 driver (Secrets) from the global multipliers that ALSO raise the
+// total but aren't trainable from here (Spatiomancy=town4, Survey). Leaves the
+// full-state snapshot bit-identical (restore + a final adjustAll from the
+// restored levels), same discipline as plProbeThresholds.
+function plProbePoolCap(varName, townIdx, candidatesJson) {
+    const candidates = JSON.parse(candidatesJson);   // [{kind:'p'|'s', v, town?}]
+    const totalKey = "total" + varName;
+    const expOfProgressLevel = (t, v, L) =>
+        towns[t].progressScaling[v] === "linear" ? 5050 * L : 100 * L * (L + 1) / 2;
+    const readTotal = () => { adjustAll(); return towns[townIdx][totalKey] ?? 0; };
+    const out = [];
+    try {
+        const base = readTotal();
+        for (const d of candidates) {
+            let restore;
+            if (d.kind === "p") {
+                const dt = d.town ?? 0;
+                const saved = towns[dt]["exp" + d.v];
+                towns[dt]["exp" + d.v] = expOfProgressLevel(dt, d.v, 100);   // MAXP
+                restore = () => { towns[dt]["exp" + d.v] = saved; };
+            } else {
+                const saved = skills[d.v].levelExp.level;
+                skills[d.v].levelExp.level = 500;
+                restore = () => { skills[d.v].levelExp.level = saved; };
+            }
+            const delta = readTotal() - base;
+            restore();
+            if (delta > 0) out.push({ ...d, delta });
+        }
+    } finally {
+        adjustAll();   // recompute caps from the (restored) levels ⇒ bit-identical
+    }
+    out.sort((a, b) => b.delta - a.delta);
+    return JSON.stringify(out);
+}
+
 // ---- canStart resource-requirement probing --------------------------------
 function plProbeCanStartNeeds(name) {
     const a = towns.flatMap(t => t.totalActionList).find(x => x.name === name);
@@ -594,6 +640,7 @@ class Session {
     read() { return JSON.parse(plReadState()); }
     probe() { return JSON.parse(plProbeThresholds(500)); }
     needs(name) { return JSON.parse(plProbeCanStartNeeds(name)); }
+    probePoolCap(varName, town, candidates) { return JSON.parse(plProbePoolCap(varName, town, JSON.stringify(candidates))); }
     save() { return { save: plSaveClone(), rng: rngHooks.get() }; }
     restore(snap) { plRestoreSave(snap.save); rngHooks.set(snap.rng); }
     setQueue(q) { plSetQueue(q); }
@@ -1949,6 +1996,11 @@ function readStateValue(state, t) {
     if (t.type === "buff") return state.buffs?.[t.name] ?? 0;
     if (t.type === "soulstones") return state.soulstones?.total ?? 0;
     if (t.type === "goldInvested") return state.goldInvested ?? 0;
+    // poolGood (V2 leaf): the PERMANENT `good` count of a limited pool (checked
+    // items that keep yielding across loops). Grows by CHECKING unchecked items;
+    // its cap is the pool's `total` (the pool-cap recursion grows that). Used as
+    // the leaf-dim delta when the finder pursues "enrich a rep pool".
+    if (t.type === "poolGood") return state.towns?.[t.town ?? 0]?.limited?.[t.name]?.good ?? 0;
     return 0;
 }
 
@@ -1962,6 +2014,15 @@ function rankValueProviders(state, know, t) {
                                        : { kind: "p", v: t.name, town: t.town ?? 0 };
         const g = grindActionFor(state, dim, t.town ?? null);
         return g ? [{ a: g, rate: 1 / Math.max(1, g.cost) }] : [];
+    }
+    // poolGood (V2): the ONLY provider is the limited action itself — executing it
+    // beyond the harvested `good` bank CHECKS unchecked items (finishRegular), which
+    // is what grows `good`. regressTarget caps its fill by pool availability so the
+    // grind checks rather than runs dry (engine facts, memory Session 22).
+    if (t.type === "poolGood") {
+        const a = unlockedOf(state).find(x => x.type === "limited"
+            && x.varName === t.name && x.townNum === (t.town ?? 0));
+        return a ? [{ a, rate: 1 / Math.max(1, a.cost) }] : [];
     }
     const dR = (p) => {
         if (!p?.persistentDelta) return 0;
@@ -2566,7 +2627,11 @@ function clearActiveGoal(P) { P.activeGoal = null; P.activeLeaf = null; P.branch
 // active even when the push isn't achievable this loop (the greedy driver used
 // to drop it). Switching to a different top goal resets the branch bookkeeping.
 // `achieved` = the top goal itself advanced this round (its push confirmed).
-function updateGoalStall(P, topGoal, pre, post, achieved) {
+// `leaf` (V2) = the DAG leaf the recursive finder settled on this loop: pass the
+// leaf goal to track progress on IT (so a top kind-a goal stays alive while a
+// prerequisite grinds), null to reset the branch to the goal itself, or omit
+// (undefined) to leave the current leaf untouched (V1 callers / lower-goal wins).
+function updateGoalStall(P, topGoal, pre, post, achieved, leaf = undefined) {
     if (goalKey(P.activeGoal) !== goalKey(topGoal)) {
         P.activeGoal = topGoal;
         P.activeLeaf = null;          // V2 sets the DAG leaf; V1 stub = the goal itself
@@ -2574,10 +2639,11 @@ function updateGoalStall(P, topGoal, pre, post, achieved) {
     } else {
         P.activeGoal = topGoal;       // refresh the handle (budget / list position may drift)
     }
-    const leaf = activeLeafGoal(P);
-    const lk = goalKey(leaf);
+    if (leaf !== undefined) P.activeLeaf = leaf;   // V2: the finder's current DAG leaf
+    const l = activeLeafGoal(P);
+    const lk = goalKey(l);
     const bs = P.branchStall[lk] ?? 0;
-    P.branchStall[lk] = branchProgressed(leaf, pre, post, achieved) ? 0 : bs + 1;
+    P.branchStall[lk] = branchProgressed(l, pre, post, achieved) ? 0 : bs + 1;
 }
 
 // Abandon hook (V1: single-branch DAG ⇒ a stalled branch abandons the whole
@@ -2594,6 +2660,170 @@ function maybeAbandonGoal(P) {
     if (gk) P.abandonedGoals.add(gk);
     clearActiveGoal(P);
     return true;
+}
+
+// ===========================================================================
+// §V2 — recursive prerequisite finder (the DAG walk). When a sticky top goal's
+// push is infeasible this loop (V1's null path), walk the prerequisite DAG from
+// the current state down to an ACTIONABLE leaf — a kind-b grind reachable now —
+// and pursue THAT for a setup loop. The walk is recomputed each loop (persist
+// only the minimal handle; the DAG is cheap), so the leaf naturally advances as
+// state changes: for the V0-proven town-1 chain it starts at Secrets (grow the
+// LQuests cap), transitions to enriching goodLQuests once unchecked items appear,
+// and the top goal (Start Journey) confirms once the rep pool funds a high enough
+// Haggle. Arbitrary depth falls out of the recursion (deeper towns go deeper);
+// only two levels are exercised today. All of this is behind the targeted path
+// (planTargeted), so it is byte-inert at defaults.
+// ---------------------------------------------------------------------------
+
+function dimTarget(dim) {
+    return dim.kind === "p" ? { type: "progress", name: dim.v, town: dim.town ?? 0 }
+                            : { type: "skill", name: dim.v };
+}
+// The first unlocked town that has a grinder for `dim` (reachability filter).
+function firstGrindTown(state, dim) {
+    for (const t of state.townsUnlocked) if (grindActionFor(state, dim, t)) return t;
+    return null;
+}
+// Grindable-from-here progress + skill dims: the pool-cap probe's candidate set.
+// The grindability filter IS the reachability filter that disambiguates the
+// town-0 cap driver from global multipliers the probe would also flag.
+function poolCapCandidates(state) {
+    const out = [], seen = new Set();
+    for (const t of state.townsUnlocked) {
+        for (const v of Object.keys(state.towns[t]?.progress ?? {})) {
+            const d = { kind: "p", v, town: t };
+            const k = `p:${t}:${v}`;
+            if (!seen.has(k) && grindActionFor(state, d, t)) { seen.add(k); out.push(d); }
+        }
+    }
+    for (const s of Object.keys(state.skills ?? {})) {
+        const k = `s:${s}`;
+        if (!seen.has(k) && firstGrindTown(state, { kind: "s", v: s }) != null) { seen.add(k); out.push({ kind: "s", v: s }); }
+    }
+    return out;
+}
+// The pool-cap edge: which grindable-from-here dim drives `pool`'s total cap?
+// Perturbation-probe (plProbePoolCap) + reachability filter; return the top
+// grindable driver (largest Δtotal), or null.
+function probePoolCapDriver(state, know, sess, pool) {
+    const cands = poolCapCandidates(state);
+    if (!cands.length || !sess.probePoolCap) return null;
+    const ranked = sess.probePoolCap(pool.a.varName, pool.a.townNum, cands);  // Δ>0, desc
+    for (const d of ranked) {
+        const town = d.kind === "p" ? (d.town ?? 0) : firstGrindTown(state, d);
+        if (town != null && grindActionFor(state, d, town)) return d;
+    }
+    return null;
+}
+
+// A persistent progress/skill dim: grindable-from-here ⇒ it is itself the leaf;
+// otherwise (locked/out-of-town) bounded recursion stops (deeper = future work).
+function growDim(state, know, sess, dim, depth) {
+    const town = dim.kind === "p" ? (dim.town ?? 0) : firstGrindTown(state, dim);
+    if (town != null && grindActionFor(state, dim, town)) return { kind: "b", target: dimTarget(dim) };
+    return null;
+}
+// Grow a rep pool's `good`: if it has unchecked headroom, CHECKING it is the leaf
+// (a poolGood grind of the limited action itself); if the pool is EXHAUSTED
+// (checked>=total), recurse to the cap driver (the one new edge V0 flagged).
+function growPoolGood(state, know, sess, pool, depth) {
+    if (depth > 6) return null;
+    if ((pool.unchecked ?? 0) > 0)
+        return { kind: "b", target: { type: "poolGood", name: pool.a.varName, town: pool.a.townNum } };
+    const driver = probePoolCapDriver(state, know, sess, pool);
+    if (!driver) return null;
+    return growDim(state, know, sess, driver, depth + 1);
+}
+
+// Is a kind-a push infeasible because its Haggle-style toll reducer is REP-
+// CAPACITY-bound? Recomputes the SAME route/grantor/reducer/repCapacity terms as
+// regressAction (planner.js §3.1) — reusing its shortfall math, not reinventing
+// it — and, when the `floor(repCapacity/repPerUse)` term binds hMax below what the
+// toll needs, returns the growable rep-yielding pool that lifts it (the binding
+// dim). Returns null when the push fails for a reason V2 doesn't yet regress
+// (no reducer / structural gate / route unreachable) ⇒ heuristic fallback.
+function analyzePushBottleneck(state, know, sess, X) {
+    const gate = X.gate ?? gateFor(X.name);
+    if (gate && (gate.guild || gate.guildEmpty || gate.soulstoneSac || gate.talentFloor
+                 || gate.buffFloor || gate.timeMax || gate.skillFloor
+                 || gate.resourceMax || gate.resourceMin)) return null;
+    const route = routeTo(state, sess, X.townNum);
+    if (!route) return null;
+    const resolved = resolveRouteGrantors(state, know, sess, route.hops, { action: X });
+    if (!resolved) return null;
+    const { grantors } = resolved;
+    if (!grantors.length) return null;
+    const costOf = (g) => Math.max(g.goldCost || 0, -(know.get(g.name)?.goldPerExec ?? 0));
+    const totalCost = grantors.reduce((s, g) => s + costOf(g), 0);
+    if (totalCost <= 0) return null;
+    const reducers = unlockedOf(state)
+        .map(a => ({ a, p: know.get(a.name) }))
+        .filter(({ a, p }) => a.townNum === 0 && p && grantors.some(g => (p.costReductions[g.name] ?? 0) > 0));
+    if (!reducers.length) return null;   // no h lever ⇒ growing rep doesn't help
+    const repCapacity = limitedPools(state, know, 0)
+        .filter(p => p.repPer > 0.1 && p.good > 0)
+        .reduce((s, p) => s + Math.floor(p.good * p.repPer), 0);
+    let repBound = false;
+    for (const { p } of reducers) {
+        const red = Math.max(...grantors.map(g => p.costReductions[g.name] ?? 0));
+        const repPerUse = Math.max(0.01, -(p.repPerExec ?? -1));
+        const costTerm = Math.ceil(totalCost / red);
+        const capTerm = Math.floor(repCapacity / repPerUse);
+        if (capTerm < Math.min(costTerm, 15)) { repBound = true; break; }
+    }
+    if (!repBound) return null;
+    // binding pool = the rep-yielding limited pool we can grow (highest rep/exec);
+    // growing its good lifts repCapacity ⇒ a higher Haggle h ⇒ a cheaper toll.
+    const repPools = limitedPools(state, know, 0)
+        .filter(p => p.repPer > 0.1)
+        .sort((x, y) => y.repPer - x.repPer);
+    return repPools[0] ?? null;
+}
+
+// The DAG walk: from a sticky top goal to the highest-priority ACTIONABLE leaf.
+// Returns a kind-b leaf goal ({kind:'b', target}) or null (no actionable
+// prerequisite this loop ⇒ heuristic fallback). v2.0 handles the kind-a push /
+// rep-capacity / pool-cap chain (the V0-proven escape); other shapes fall back.
+function findSetupLeaf(state, know, sess, goal, depth = 0) {
+    if (depth > 6 || !goal) return null;
+    if (goal.kind === "a") {
+        const X = unlockedOf(state).find(a => a.name === goal.action);
+        if (!X) return null;
+        const pool = analyzePushBottleneck(state, know, sess, X);
+        if (!pool) return null;
+        return growPoolGood(state, know, sess, pool, depth + 1);
+    }
+    // kind-b top goal that reached the null path ⇒ its own provider is blocked;
+    // deeper regression of a value goal is future work (V0's goal is kind-a).
+    return null;
+}
+
+// Build + engine-confirm a setup round toward `leaf` and return a planRound-shaped
+// result (or null). The engine confirm is the achievability oracle AND the
+// independent stratum: a setup round is accepted only when it MOVES the leaf dim
+// this loop (never assume a setup loop helped — memory pitfall).
+async function planSetupRound(sess, P, snap, pre, leaf) {
+    const cands = regressTarget(pre, P.know, sess, leaf,
+        { multiTown: P.multiTown, capacityHint: P.prevTimeNeeded ?? pre.baseMana, fillShare: 0.7 });
+    if (!cands.length) return null;
+    const preV = readStateValue(pre, leaf.target);
+    for (const c of cands) {
+        sess.restore(snap);
+        const conf = confirmCandidate(sess, snap, c.q, P.know, P.multiTown);
+        sess.restore(snap);
+        if (conf.degenerate) continue;
+        if (readStateValue(conf.post, leaf.target) <= preV) continue;   // measured leaf progress required
+        const { score, parts } = scoreOutcome(pre, conf.post, P.thresholds, conf.r,
+            P.prevTimeNeeded, P.know, P.weights, conf.capacity,
+            { probeTicks: conf.probeTicks, prevProbeTicks: P.prevProbeTicks });
+        const best = { c, r: conf.r, post: conf.post, score, parts, postSnap: conf.postSnap,
+                       capacity: conf.capacity, probeTicks: conf.probeTicks, nCands: 1, nScreened: 1 };
+        return { result: { best, snap, pre, nCands: 1, nScreened: 1,
+                           evals: [{ label: c.label, score: Math.round(score * 10) / 10, parts }] },
+                 post: conf.post };
+    }
+    return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -2629,49 +2859,67 @@ async function planTargeted(sess, P, snap, pre, opts = {}) {
         if (!opts.escalate) clearActiveGoal(P);   // nothing outstanding ⇒ drop the handle
         return null;
     }
+    const topGoal = goals[0];
     const assembled = assembleTargetedQueue(pre, P.know, sess, goals, P.thresholds,
         { multiTown: P.multiTown, capacityHint: P.prevTimeNeeded });
-    if (!assembled) {
-        // No goal's scaffold forms this loop. The top goal stays ACTIVE (sticky)
-        // — count this as a stalled loop on its branch and maybe abandon it.
-        if (!opts.escalate) { updateGoalStall(P, goals[0], pre, pre, false); maybeAbandonGoal(P); }
-        return null;
+    let result = null;
+    if (assembled) {
+        const g = assembled.spineGoal;
+        const achieves = (post, r) => g.kind === "a"
+            ? execCountOf(r, g.action) > 0
+            : readStateValue(post, g.target) > readStateValue(pre, g.target);
+        const install = (q, label) => {
+            sess.restore(snap);
+            const conf = confirmCandidate(sess, snap, q, P.know, P.multiTown);
+            sess.restore(snap);
+            if (conf.degenerate || !achieves(conf.post, conf.r)) return null;
+            const { score, parts } = scoreOutcome(pre, conf.post, P.thresholds, conf.r,
+                P.prevTimeNeeded, P.know, P.weights, conf.capacity,
+                { probeTicks: conf.probeTicks, prevProbeTicks: P.prevProbeTicks });
+            const c = { label, q, goal: g };
+            const best = { c, r: conf.r, post: conf.post, score, parts, postSnap: conf.postSnap,
+                           capacity: conf.capacity, probeTicks: conf.probeTicks, nCands: 1, nScreened: 1 };
+            return { best, snap, pre, nCands: 1, nScreened: 1,
+                     evals: [{ label, score: Math.round(score * 10) / 10, parts }] };
+        };
+        // full assembly first; if the residual layers starved the spine, retry the
+        // bare spine (the budget caps FILL — the cushion still decides feasibility).
+        result = install(assembled.q, assembled.label)
+            ?? (assembled.bareQ.length !== assembled.q.length ? install(assembled.bareQ, assembled.label) : null);
     }
-    const g = assembled.spineGoal;
-    const achieves = (post, r) => g.kind === "a"
-        ? execCountOf(r, g.action) > 0
-        : readStateValue(post, g.target) > readStateValue(pre, g.target);
-    const install = (q, label) => {
-        sess.restore(snap);
-        const conf = confirmCandidate(sess, snap, q, P.know, P.multiTown);
-        sess.restore(snap);
-        if (conf.degenerate || !achieves(conf.post, conf.r)) return null;
-        const { score, parts } = scoreOutcome(pre, conf.post, P.thresholds, conf.r,
-            P.prevTimeNeeded, P.know, P.weights, conf.capacity,
-            { probeTicks: conf.probeTicks, prevProbeTicks: P.prevProbeTicks });
-        const c = { label, q, goal: g };
-        const best = { c, r: conf.r, post: conf.post, score, parts, postSnap: conf.postSnap,
-                       capacity: conf.capacity, probeTicks: conf.probeTicks, nCands: 1, nScreened: 1 };
-        return { best, snap, pre, nCands: 1, nScreened: 1,
-                 evals: [{ label, score: Math.round(score * 10) / 10, parts }] };
-    };
-    // full assembly first; if the residual layers starved the spine, retry the
-    // bare spine (the budget caps FILL — the cushion still decides feasibility).
-    const result = install(assembled.q, assembled.label)
-        ?? (assembled.bareQ.length !== assembled.q.length ? install(assembled.bareQ, assembled.label) : null);
-    // §V1 persistence: keep the TOP priority goal (goals[0]) active across loops
-    // and advance its branch stall counter. It stays active even when the push
-    // isn't achievable this loop — the greedy driver used to forget it. The top
-    // goal counts as advanced only when the SPINE is the top goal AND its install
-    // confirmed (a lower-priority spine winning does not reset the top branch).
-    if (!opts.escalate) {
-        const topGoal = goals[0];
-        const post = result ? result.best.post : pre;
-        const achieved = !!result && goalKey(assembled.spineGoal) === goalKey(topGoal);
-        updateGoalStall(P, topGoal, pre, post, achieved);
-        maybeAbandonGoal(P);
+    // A goal INSTALLED this loop: keep the TOP priority goal (goals[0]) active and
+    // advance its branch stall counter. The top goal counts as advanced only when
+    // the installed SPINE is the top goal (a lower-priority spine winning does not
+    // reset the top branch). Achieving the top goal resets its branch to the goal
+    // itself (leaf ← null); a lower goal winning leaves the leaf untouched.
+    if (result) {
+        if (!opts.escalate) {
+            const achieved = goalKey(assembled.spineGoal) === goalKey(topGoal);
+            updateGoalStall(P, topGoal, pre, result.best.post, achieved, achieved ? null : undefined);
+            maybeAbandonGoal(P);
+        }
+        return result;
     }
-    return result;
+    // §V2 — the top goal's push is INFEASIBLE this loop (V1 returned null here).
+    // Escalation rounds keep their one-shot semantics (no sticky pursuit). Else
+    // walk the prerequisite DAG to an actionable leaf and spend the loop building
+    // it; SET P.activeLeaf so the branch counter tracks the LEAF dim (the top goal
+    // stays alive while the prerequisite grinds).
+    if (opts.escalate) return null;
+    const leaf = findSetupLeaf(pre, P.know, sess, topGoal);
+    if (leaf) {
+        const setup = await planSetupRound(sess, P, snap, pre, leaf);
+        if (setup) {
+            updateGoalStall(P, topGoal, pre, setup.post, false, leaf);
+            maybeAbandonGoal(P);
+            return setup.result;
+        }
+    }
+    // No achievable setup leaf ⇒ count a stalled loop on the bare goal and fall
+    // back to the heuristic scorer (the leaf, if any, stays the tracked branch).
+    updateGoalStall(P, topGoal, pre, pre, false);
+    maybeAbandonGoal(P);
+    return null;
 }
 
 // Anti-fixation counters (§6): the committed-queue identity STREAK and the
@@ -3208,7 +3456,9 @@ return {
     assembleTargetedQueue, heuristicGrindTail, autoRankGoals, updateStagnation,
     // targeted-mode v2 persistence scaffolding (§V1)
     goalKey, branchProgressed, updateGoalStall, maybeAbandonGoal, clearActiveGoal,
-    _internals: { plReadState, plProbeThresholds, plProbeCanStartNeeds, plSaveClone,
+    // targeted-mode v2 recursive prerequisite finder (§V2)
+    findSetupLeaf, analyzePushBottleneck, probePoolCapDriver, poolCapCandidates, planSetupRound,
+    _internals: { plReadState, plProbeThresholds, plProbeCanStartNeeds, plProbePoolCap, plSaveClone,
                   plRestoreSave, plRunOneLoopChunk, plInjectResources, plSnapshot,
                   plSetQueue, plGetQueue, plPredictQueue },
 };
