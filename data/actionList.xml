@@ -611,6 +611,114 @@
         <!-- finish() not yet modeled (Phase 6): Magic exp 100*(1+Alchemy/100); reputation required, not consumed -->
         <reward />
     </action>
+    <action type="multipart" name="Small Dungeon" varName="SDungeon" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="smallDungeonAttempted" />
+            </story>
+            <story num="2">
+                <ifDiscoveredItems min="1000" />
+            </story>
+            <story num="3">
+                <ifDiscoveredItems min="5000" />
+            </story>
+            <story num="4">
+                <ifDiscoveredItems min="10000" />
+            </story>
+            <story num="5">
+                <ifStoryFlag storyFlagName="clearSDungeon" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Str">10</stat>
+            <stat statName="Dex">40</stat>
+            <stat statName="Con">30</stat>
+            <stat statName="Cha">10</stat>
+            <stat statName="Luck">10</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Dex" />
+            <stat statName="Con" />
+            <stat statName="Dex" />
+            <stat statName="Cha" />
+            <stat statName="Dex" />
+            <stat statName="Str" />
+            <stat statName="Luck" />
+        </loopStats>
+        <effortCost>2000</effortCost>
+        <visible>
+            <if min="15">
+                <skillLevel skillName="Combat" />
+                <addition>
+                    <skillLevel skillName="Magic" />
+                </addition>
+            </if>
+        </visible>
+        <unlocked>
+            <if min="35">
+                <skillLevel skillName="Combat" />
+                <addition>
+                    <skillLevel skillName="Magic" />
+                </addition>
+            </if>
+        </unlocked>
+        <canStart>
+            <ifResource resourceName="reputation" min="2" />
+            <!-- current floor < floor count -->
+            <if minExclusive="0">
+                <dungeonFloors dungeonNum="0" />
+                <subtraction>
+                    <loopCounter />
+                    <divisor>
+                        <segments />
+                    </divisor>
+                    <addition value="0.0000001" />
+                    <floor />
+                </subtraction>
+            </if>
+        </canStart>
+        <loopCost>
+            <power base="2">
+                <loopCounter />
+                <addition>
+                    <segment />
+                </addition>
+                <divisor>
+                    <segments />
+                </divisor>
+                <addition value="0.0000001" />
+                <floor />
+            </power>
+            <multiplier value="15000" />
+            <precision3 />
+        </loopCost>
+        <tickProgress>
+            <function name="getSelfCombat" />
+            <addition>
+                <skillLevel skillName="Magic" />
+            </addition>
+        <multiplier>
+            <value value="1">
+                <addition>
+                    <dungeonCompleted dungeonNum="0">
+                        <loopCounter />
+                        <divisor>
+                            <segments />
+                        </divisor>
+                        <addition value="0.0000001" />
+                        <floor />
+                    </dungeonCompleted>
+                    <divisor value="200" />
+                </addition>
+                <squareRoot />
+            </value>
+        </multiplier>
+        </tickProgress>
+        <!-- loopsFinished rolls the floor's soulstone chance (an RNG site) and
+             unlocks global stories 1/2 (Phase 6) -->
+        <loopReward />
+    </action>
     <action type="multipart" name="Heal The Sick" varName="Heal" townNum="0">
         <expMult>1</expMult>
         <storyReqs>
@@ -2039,6 +2147,111 @@
         <!-- finish() not yet modeled (Phase 6): Dark exp scaled by Ritual buff -->
         <reward />
     </action>
+    <action type="multipart" name="Dark Ritual" varName="DarkRitual" townNum="1">
+        <expMult>10</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="darkRitualThirdSegmentReached" />
+            </story>
+            <story num="2">
+                <if min="1">
+                    <buffLevel buffName="Ritual" />
+                </if>
+            </story>
+            <story num="3">
+                <if min="50">
+                    <buffLevel buffName="Ritual" />
+                </if>
+            </story>
+            <story num="4">
+                <if min="300">
+                    <buffLevel buffName="Ritual" />
+                </if>
+            </story>
+            <story num="5">
+                <if min="666">
+                    <buffLevel buffName="Ritual" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Spd">10</stat>
+            <stat statName="Int">10</stat>
+            <stat statName="Soul">80</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Spd" />
+            <stat statName="Int" />
+            <stat statName="Soul" />
+        </loopStats>
+        <allowed>1</allowed>
+        <!-- soulstones needed for the sacrifice -->
+        <primaryValue value="50">
+            <multiplier>
+                <buffLevel buffName="Ritual" />
+                <addition value="1" />
+            </multiplier>
+            <skillBonus name="Commune" />
+            <ceil />
+        </primaryValue>
+        <effortCost value="50000">
+            <multiplier>
+                <value value="1">
+                    <subtraction>
+                        <progressLevel varName="Witch" />
+                        <multiplier value="0.005" />
+                    </subtraction>
+                </value>
+            </multiplier>
+            <ceil />
+        </effortCost>
+        <visible>
+            <ifProgress varName="Witch" min="20" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Witch" min="50" />
+            <if min="50">
+                <skillLevel skillName="Dark" />
+            </if>
+        </unlocked>
+        <canStart>
+            <ifResource resourceName="reputation" max="-5" />
+            <if equals="0">
+                <loopCounter />
+            </if>
+            <ifSoulstoneSac>
+                <primaryValue />
+            </ifSoulstoneSac>
+            <!-- Ritual < its cap; getBuffCap reads a DOM input and throws
+                 headless, identically on both sides -->
+            <if minExclusive="0">
+                <buffCap buffName="Ritual" />
+                <subtraction>
+                    <buffLevel buffName="Ritual" />
+                </subtraction>
+            </if>
+        </canStart>
+        <loopCost>
+            <segment />
+            <multiplier value="2" />
+            <addition value="1" />
+            <multiplier value="1000000" />
+        </loopCost>
+        <tickProgress>
+            <skillLevel skillName="Dark" />
+            <divisor>
+                <value value="1">
+                    <subtraction>
+                        <progressLevel varName="Witch" />
+                        <multiplier value="0.005" />
+                    </subtraction>
+                </value>
+            </divisor>
+        </tickProgress>
+        <!-- loopsFinished sacrifices primaryValue soulstones and grants +1
+             Ritual (Phase 6) -->
+        <loopReward />
+    </action>
     <action type="normal" name="Continue On" townNum="1">
         <expMult>2</expMult>
         <storyReqs>
@@ -2987,6 +3200,207 @@
             </setStoryFlag>
         </loopReward>
     </action>
+    <action type="multipart" name="Large Dungeon" varName="LDungeon" townNum="2">
+        <expMult>2</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="largeDungeonAttempted" />
+            </story>
+            <story num="2">
+                <ifDiscoveredItems min="2000" />
+            </story>
+            <story num="3">
+                <ifDiscoveredItems min="10000" />
+            </story>
+            <story num="4">
+                <ifDiscoveredItems min="20000" />
+            </story>
+            <story num="5">
+                <ifStoryFlag storyFlagName="clearLDungeon" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Str">20</stat>
+            <stat statName="Dex">20</stat>
+            <stat statName="Con">20</stat>
+            <stat statName="Cha">30</stat>
+            <stat statName="Luck">10</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Cha" />
+            <stat statName="Spd" />
+            <stat statName="Str" />
+            <stat statName="Cha" />
+            <stat statName="Dex" />
+            <stat statName="Dex" />
+            <stat statName="Str" />
+        </loopStats>
+        <affectedBy>
+            <action name="Gather Team" />
+        </affectedBy>
+        <effortCost>6000</effortCost>
+        <visible>
+            <ifProgress varName="Drunk" min="5" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Drunk" min="20" />
+        </unlocked>
+        <canStart>
+            <ifResource resourceName="teamMembers" min="1" />
+            <!-- current floor < floor count -->
+            <if minExclusive="0">
+                <dungeonFloors dungeonNum="1" />
+                <subtraction>
+                    <loopCounter />
+                    <divisor>
+                        <segments />
+                    </divisor>
+                    <addition value="0.0000001" />
+                    <floor />
+                </subtraction>
+            </if>
+        </canStart>
+        <loopCost>
+            <power base="3">
+                <loopCounter />
+                <addition>
+                    <segment />
+                </addition>
+                <divisor>
+                    <segments />
+                </divisor>
+                <addition value="0.0000001" />
+                <floor />
+            </power>
+            <multiplier value="500000" />
+            <precision3 />
+        </loopCost>
+        <tickProgress>
+            <function name="getTeamCombat" />
+            <addition>
+                <skillLevel skillName="Magic" />
+            </addition>
+        <multiplier>
+            <value value="1">
+                <addition>
+                    <dungeonCompleted dungeonNum="1">
+                        <loopCounter />
+                        <divisor>
+                            <segments />
+                        </divisor>
+                        <addition value="0.0000001" />
+                        <floor />
+                    </dungeonCompleted>
+                    <divisor value="200" />
+                </addition>
+                <squareRoot />
+            </value>
+        </multiplier>
+        </tickProgress>
+        <!-- loopsFinished rolls the floor's soulstone chance (an RNG site) (Phase 6) -->
+        <loopReward />
+    </action>
+    <action type="multipart" name="Heroes Trial" varName="HTrial" townNum="2">
+        <expMult>0.2</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="heroTrial1Done" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="heroTrial10Done" />
+            </story>
+            <story num="3">
+                <ifStoryFlag storyFlagName="heroTrial25Done" />
+            </story>
+            <story num="4">
+                <ifStoryFlag storyFlagName="heroTrial50Done" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Dex">11</stat>
+            <stat statName="Str">11</stat>
+            <stat statName="Con">11</stat>
+            <stat statName="Spd">11</stat>
+            <stat statName="Per">11</stat>
+            <stat statName="Cha">11</stat>
+            <stat statName="Int">11</stat>
+            <stat statName="Luck">11</stat>
+            <stat statName="Soul">11</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Dex" />
+            <stat statName="Str" />
+            <stat statName="Con" />
+            <stat statName="Spd" />
+            <stat statName="Per" />
+            <stat statName="Cha" />
+            <stat statName="Int" />
+            <stat statName="Luck" />
+            <stat statName="Soul" />
+        </loopStats>
+        <affectedBy>
+            <action name="Team" />
+        </affectedBy>
+        <effortCost>100000</effortCost>
+        <visible>
+            <ifProgress varName="SurveyZ2" min="100" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="SurveyZ2" min="100" />
+        </unlocked>
+        <canStart>
+            <!-- current floor < floor count -->
+            <if minExclusive="0">
+                <trialFloors trialNum="0" />
+                <subtraction>
+                    <loopCounter source="town" />
+                    <divisor>
+                        <segments />
+                    </divisor>
+                    <addition value="0.0000001" />
+                    <floor />
+                </subtraction>
+            </if>
+        </canStart>
+        <loopCost>
+            <power base="2">
+                <loopCounter />
+                <addition>
+                    <segment />
+                </addition>
+                <divisor>
+                    <segments />
+                </divisor>
+                <addition value="0.0000001" />
+                <floor />
+            </power>
+            <multiplier value="100000000" />
+            <skillBonus name="Assassin" />
+            <precision3 />
+        </loopCost>
+        <tickProgress>
+            <function name="getTeamCombat" />
+        <multiplier>
+            <value value="1">
+                <addition>
+                    <trialCompleted trialNum="0">
+                        <loopCounter />
+                        <divisor>
+                            <segments />
+                        </divisor>
+                        <addition value="0.0000001" />
+                        <floor />
+                    </trialCompleted>
+                    <divisor value="200" />
+                </addition>
+                <squareRoot />
+            </value>
+        </multiplier>
+        </tickProgress>
+        <!-- loopsFinished records the floor and pays the floor reward
+             (Heroism buff) (Phase 6) -->
+        <loopReward />
+    </action>
     <action type="progress" name="RuinsZ3" townNum="3">
         <expMult>1</expMult>
         <storyReqs>
@@ -3664,6 +4078,184 @@
         <loopReward>
             <numericResource name="blood">1</numericResource>
         </loopReward>
+    </action>
+    <action type="multipart" name="Imbue Mind" townNum="3">
+        <expMult>5</expMult>
+        <storyReqs>
+            <story num="1">
+                <anyOf>
+                    <ifStoryFlag storyFlagName="imbueMindThirdSegmentReached" />
+                    <if min="1">
+                        <buffLevel buffName="Imbuement" />
+                    </if>
+                </anyOf>
+            </story>
+            <story num="2">
+                <if min="1">
+                    <buffLevel buffName="Imbuement" />
+                </if>
+            </story>
+            <story num="3">
+                <if min="50">
+                    <buffLevel buffName="Imbuement" />
+                </if>
+            </story>
+            <story num="4">
+                <if min="500">
+                    <buffLevel buffName="Imbuement" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Spd">10</stat>
+            <stat statName="Per">10</stat>
+            <stat statName="Int">80</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Spd" />
+            <stat statName="Per" />
+            <stat statName="Int" />
+        </loopStats>
+        <allowed>1</allowed>
+        <!-- soulstones needed for the sacrifice -->
+        <primaryValue value="20">
+            <multiplier>
+                <buffLevel buffName="Imbuement" />
+                <addition value="1" />
+            </multiplier>
+        </primaryValue>
+        <effortCost>500000</effortCost>
+        <visible>
+            <ifProgress varName="Illusions" min="50" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Illusions" min="70" />
+            <if min="300">
+                <skillLevel skillName="Magic" />
+            </if>
+        </unlocked>
+        <canStart>
+            <if equals="0">
+                <loopCounter />
+            </if>
+            <ifSoulstoneSac>
+                <primaryValue />
+            </ifSoulstoneSac>
+            <!-- Imbuement < its cap; getBuffCap throws headless on both sides -->
+            <if minExclusive="0">
+                <buffCap buffName="Imbuement" />
+                <subtraction>
+                    <buffLevel buffName="Imbuement" />
+                </subtraction>
+            </if>
+        </canStart>
+        <loopCost>
+            <segment />
+            <multiplier value="5" />
+            <addition value="1" />
+            <multiplier value="100000000" />
+        </loopCost>
+        <tickProgress>
+            <skillLevel skillName="Magic" />
+        </tickProgress>
+        <!-- loopsFinished sacrifices the soulstones, raises trainingLimits and
+             grants +1 Imbuement (Phase 6) -->
+        <loopReward />
+    </action>
+    <action type="multipart" name="Imbue Body" townNum="3">
+        <expMult>5</expMult>
+        <storyReqs>
+            <story num="1">
+                <anyOf>
+                    <ifStoryFlag storyFlagName="imbueBodyThirdSegmentReached" />
+                    <if min="1">
+                        <buffLevel buffName="Imbuement2" />
+                    </if>
+                </anyOf>
+            </story>
+            <story num="2">
+                <if min="1">
+                    <buffLevel buffName="Imbuement2" />
+                </if>
+            </story>
+            <story num="3">
+                <if min="50">
+                    <buffLevel buffName="Imbuement2" />
+                </if>
+            </story>
+            <story num="4">
+                <if min="500">
+                    <buffLevel buffName="Imbuement2" />
+                </if>
+            </story>
+            <story num="5">
+                <anyOf>
+                    <ifStoryFlag storyFlagName="failedImbueBody" />
+                    <if min="500">
+                        <buffLevel buffName="Imbuement2" />
+                    </if>
+                </anyOf>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Dex">10</stat>
+            <stat statName="Str">10</stat>
+            <stat statName="Con">80</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Dex" />
+            <stat statName="Str" />
+            <stat statName="Con" />
+        </loopStats>
+        <allowed>1</allowed>
+        <!-- talent levels consumed by the sacrifice -->
+        <primaryValue>
+            <buffLevel buffName="Imbuement2" />
+            <addition value="1" />
+        </primaryValue>
+        <effortCost>500000</effortCost>
+        <visible>
+            <if min="1">
+                <buffLevel buffName="Imbuement" />
+            </if>
+        </visible>
+        <unlocked>
+            <if min="1">
+                <buffLevel buffName="Imbuement" />
+            </if>
+        </unlocked>
+        <canStart>
+            <if equals="0">
+                <loopCounter />
+            </if>
+            <!-- Imbuement > Imbuement2 -->
+            <if minExclusive="0">
+                <buffLevel buffName="Imbuement" />
+                <subtraction>
+                    <buffLevel buffName="Imbuement2" />
+                </subtraction>
+            </if>
+            <!-- every talent >= Imbuement2 + 1 -->
+            <if min="0">
+                <function name="minTalent" />
+                <subtraction>
+                    <buffLevel buffName="Imbuement2" />
+                    <addition value="1" />
+                </subtraction>
+            </if>
+        </canStart>
+        <loopCost>
+            <segment />
+            <multiplier value="5" />
+            <addition value="1" />
+            <multiplier value="100000000" />
+        </loopCost>
+        <tickProgress>
+            <skillLevel skillName="Magic" />
+        </tickProgress>
+        <!-- loopsFinished spends Imbuement2+1 levels of every talent and grants
+             +1 Imbuement2 (Phase 6) -->
+        <loopReward />
     </action>
     <action type="progress" name="Guided Tour" varName="Tour" townNum="4">
         <expMult>1</expMult>
@@ -4746,6 +5338,73 @@
         <!-- loopsFinished grants Combat exp 1500 (Phase 6) -->
         <loopReward />
     </action>
+    <action type="multipart" name="Great Feast" townNum="4">
+        <expMult>5</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="feastAttempted" />
+            </story>
+            <story num="2">
+                <if min="1">
+                    <buffLevel buffName="Feast" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Spd">10</stat>
+            <stat statName="Int">10</stat>
+            <stat statName="Soul">80</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Spd" />
+            <stat statName="Int" />
+            <stat statName="Soul" />
+        </loopStats>
+        <allowed>1</allowed>
+        <!-- soulstones needed for the sacrifice -->
+        <primaryValue value="5000">
+            <multiplier>
+                <buffLevel buffName="Feast" />
+                <addition value="1" />
+            </multiplier>
+            <skillBonus name="Gluttony" />
+            <ceil />
+        </primaryValue>
+        <effortCost>5000000</effortCost>
+        <visible>
+            <ifProgress varName="Tour" min="80" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Tour" min="100" />
+        </unlocked>
+        <canStart>
+            <ifResource resourceName="reputation" min="100" />
+            <if equals="0">
+                <loopCounter />
+            </if>
+            <ifSoulstoneSac>
+                <primaryValue />
+            </ifSoulstoneSac>
+            <!-- Feast < its cap; getBuffCap throws headless on both sides -->
+            <if minExclusive="0">
+                <buffCap buffName="Feast" />
+                <subtraction>
+                    <buffLevel buffName="Feast" />
+                </subtraction>
+            </if>
+        </canStart>
+        <loopCost>
+            <segment />
+            <multiplier value="5" />
+            <addition value="1" />
+            <multiplier value="1000000000" />
+        </loopCost>
+        <tickProgress>
+            <skillLevel skillName="Practical" />
+        </tickProgress>
+        <!-- loopsFinished sacrifices the soulstones and grants +1 Feast (Phase 6) -->
+        <loopReward />
+    </action>
     <action type="progress" name="Meander" townNum="5">
         <expMult>1</expMult>
         <storyReqs>
@@ -5021,6 +5680,210 @@
         </cost>
         <!-- finish() not yet modeled (Phase 6): unlockTown(6); story() unlocks global story 8 -->
         <reward />
+    </action>
+    <action type="multipart" name="The Spire" varName="TheSpire" townNum="5">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="spireAttempted" />
+            </story>
+            <story num="2">
+                <ifDiscoveredItems min="1000" />
+            </story>
+            <story num="3">
+                <ifDiscoveredItems min="5000" />
+            </story>
+            <story num="4">
+                <ifStoryFlag storyFlagName="clearedSpire" />
+            </story>
+            <story num="5">
+                <ifStoryFlag storyFlagName="spire10Pylons" />
+            </story>
+            <story num="6">
+                <ifStoryFlag storyFlagName="spire20Pylons" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Str">10</stat>
+            <stat statName="Dex">10</stat>
+            <stat statName="Spd">10</stat>
+            <stat statName="Con">10</stat>
+            <stat statName="Per">20</stat>
+            <stat statName="Int">20</stat>
+            <stat statName="Soul">20</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Per" />
+            <stat statName="Int" />
+            <stat statName="Con" />
+            <stat statName="Spd" />
+            <stat statName="Dex" />
+            <stat statName="Per" />
+            <stat statName="Int" />
+            <stat statName="Str" />
+            <stat statName="Soul" />
+        </loopStats>
+        <affectedBy>
+            <action name="Team" />
+        </affectedBy>
+        <effortCost>100000</effortCost>
+        <visible>
+            <ifProgress varName="Meander" min="5" />
+        </visible>
+        <unlocked>
+            <if min="35">
+                <skillLevel skillName="Combat" />
+                <addition>
+                    <skillLevel skillName="Magic" />
+                </addition>
+            </if>
+        </unlocked>
+        <canStart>
+            <!-- current floor < floor count -->
+            <if minExclusive="0">
+                <dungeonFloors dungeonNum="2" />
+                <subtraction>
+                    <loopCounter />
+                    <divisor>
+                        <segments />
+                    </divisor>
+                    <addition value="0.0000001" />
+                    <floor />
+                </subtraction>
+            </if>
+        </canStart>
+        <loopCost>
+            <power base="2">
+                <loopCounter />
+                <addition>
+                    <segment />
+                </addition>
+                <divisor>
+                    <segments />
+                </divisor>
+                <addition value="0.0000001" />
+                <floor />
+            </power>
+            <multiplier value="10000000" />
+            <precision3 />
+        </loopCost>
+        <tickProgress>
+            <function name="getTeamCombat" />
+            <multiplier>
+                <value value="1">
+                    <addition>
+                        <resourceValue name="pylons" />
+                        <multiplier value="0.1" />
+                    </addition>
+                </value>
+            </multiplier>
+        <multiplier>
+            <value value="1">
+                <addition>
+                    <dungeonCompleted dungeonNum="2">
+                        <loopCounter />
+                        <divisor>
+                            <segments />
+                        </divisor>
+                        <addition value="0.0000001" />
+                        <floor />
+                    </dungeonCompleted>
+                    <divisor value="200" />
+                </addition>
+                <squareRoot />
+            </value>
+        </multiplier>
+        </tickProgress>
+        <!-- loopsFinished rolls the soulstone chance (RNG), grants Aspirant on
+             new floors and sets clearedSpire at the top (Phase 6) -->
+        <loopReward />
+    </action>
+    <action type="multipart" name="Dead Trial" varName="DeadTrial" townNum="5">
+        <expMult>0.25</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="deadTrial1Done" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="deadTrial10Done" />
+            </story>
+            <story num="3">
+                <ifStoryFlag storyFlagName="deadTrial25Done" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Cha">25</stat>
+            <stat statName="Int">25</stat>
+            <stat statName="Luck">25</stat>
+            <stat statName="Soul">25</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Cha" />
+            <stat statName="Int" />
+            <stat statName="Luck" />
+            <stat statName="Soul" />
+        </loopStats>
+        <affectedBy>
+            <action name="RaiseZombie" />
+        </affectedBy>
+        <effortCost>100000</effortCost>
+        <visible>
+            <ifProgress varName="SurveyZ5" min="100" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="SurveyZ5" min="100" />
+        </unlocked>
+        <canStart>
+            <!-- current floor < floor count -->
+            <if minExclusive="0">
+                <trialFloors trialNum="4" />
+                <subtraction>
+                    <loopCounter source="town" />
+                    <divisor>
+                        <segments />
+                    </divisor>
+                    <addition value="0.0000001" />
+                    <floor />
+                </subtraction>
+            </if>
+        </canStart>
+        <loopCost>
+            <power base="2">
+                <loopCounter />
+                <addition>
+                    <segment />
+                </addition>
+                <divisor>
+                    <segments />
+                </divisor>
+                <addition value="0.0000001" />
+                <floor />
+            </power>
+            <multiplier value="1000000000" />
+            <skillBonus name="Assassin" />
+            <precision3 />
+        </loopCost>
+        <tickProgress>
+            <function name="getZombieStrength" />
+        <multiplier>
+            <value value="1">
+                <addition>
+                    <trialCompleted trialNum="4">
+                        <loopCounter />
+                        <divisor>
+                            <segments />
+                        </divisor>
+                        <addition value="0.0000001" />
+                        <floor />
+                    </trialCompleted>
+                    <divisor value="200" />
+                </addition>
+                <squareRoot />
+            </value>
+        </multiplier>
+        </tickProgress>
+        <!-- loopsFinished records the floor; floorReward grants a zombie (Phase 6) -->
+        <loopReward />
     </action>
     <action type="progress" name="RuinsZ5" townNum="5">
         <expMult>1</expMult>
@@ -5676,6 +6539,121 @@
         </segmentReward>
         <loopReward />
     </action>
+    <action type="multipart" name="Secret Trial" varName="STrial" townNum="7">
+        <expMult>0</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="trailSecretFaced" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="trailSecret1Done" />
+            </story>
+            <story num="3">
+                <ifStoryFlag storyFlagName="trailSecret10Done" />
+            </story>
+            <story num="4">
+                <ifStoryFlag storyFlagName="trailSecret100Done" />
+            </story>
+            <story num="5">
+                <ifStoryFlag storyFlagName="trailSecret500Done" />
+            </story>
+            <story num="6">
+                <ifStoryFlag storyFlagName="trailSecretAllDone" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Dex">11</stat>
+            <stat statName="Str">11</stat>
+            <stat statName="Con">11</stat>
+            <stat statName="Spd">11</stat>
+            <stat statName="Per">11</stat>
+            <stat statName="Cha">11</stat>
+            <stat statName="Int">11</stat>
+            <stat statName="Luck">11</stat>
+            <stat statName="Soul">11</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Dex" />
+            <stat statName="Str" />
+            <stat statName="Con" />
+            <stat statName="Spd" />
+            <stat statName="Per" />
+            <stat statName="Cha" />
+            <stat statName="Int" />
+            <stat statName="Luck" />
+            <stat statName="Soul" />
+        </loopStats>
+        <affectedBy>
+            <action name="Team" />
+        </affectedBy>
+        <effortCost>100000</effortCost>
+        <visible>
+            <if min="12">
+                <globalValue name="storyMax" />
+            </if>
+            <if min="7">
+                <buffLevel buffName="Imbuement3" />
+            </if>
+        </visible>
+        <unlocked>
+            <if min="12">
+                <globalValue name="storyMax" />
+            </if>
+            <if min="7">
+                <buffLevel buffName="Imbuement3" />
+            </if>
+        </unlocked>
+        <canStart>
+            <!-- current floor < floor count -->
+            <if minExclusive="0">
+                <trialFloors trialNum="3" />
+                <subtraction>
+                    <loopCounter source="town" />
+                    <divisor>
+                        <segments />
+                    </divisor>
+                    <addition value="0.0000001" />
+                    <floor />
+                </subtraction>
+            </if>
+        </canStart>
+        <loopCost>
+            <power base="1.25">
+                <loopCounter />
+                <addition>
+                    <segment />
+                </addition>
+                <divisor>
+                    <segments />
+                </divisor>
+                <addition value="0.0000001" />
+                <floor />
+            </power>
+            <multiplier value="10000000000" />
+            <skillBonus name="Assassin" />
+            <precision3 />
+        </loopCost>
+        <tickProgress>
+            <function name="getTeamCombat" />
+        <multiplier>
+            <value value="1">
+                <addition>
+                    <trialCompleted trialNum="3">
+                        <loopCounter />
+                        <divisor>
+                            <segments />
+                        </divisor>
+                        <addition value="0.0000001" />
+                        <floor />
+                    </trialCompleted>
+                    <divisor value="200" />
+                </addition>
+                <squareRoot />
+            </value>
+        </multiplier>
+        </tickProgress>
+        <loopReward />
+    </action>
     <action type="normal" name="Invest" townNum="7">
         <expMult>1</expMult>
         <storyReqs>
@@ -6161,6 +7139,347 @@
         <!-- finish() not yet modeled (Phase 6): joins the Assassin guild; Assassin
              exp 100 * hearts^2 (or 100 the first time), hearts reset -->
         <reward />
+    </action>
+    <action type="multipart" name="Imbue Soul" townNum="8">
+        <expMult>5</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="soulInfusionAttempted" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="soulInfusionAttempted" />
+                <if minExclusive="0">
+                    <buffLevel buffName="Imbuement3" />
+                </if>
+            </story>
+            <story num="3">
+                <ifStoryFlag storyFlagName="soulInfusionAttempted" />
+                <if minExclusive="6">
+                    <buffLevel buffName="Imbuement3" />
+                </if>
+            </story>
+            <story num="4">
+                <ifStoryFlag storyFlagName="soulInfusionAttempted" />
+                <if minExclusive="499">
+                    <buffLevel buffName="Imbuement" />
+                </if>
+                <if minExclusive="499">
+                    <buffLevel buffName="Imbuement2" />
+                </if>
+                <if minExclusive="6">
+                    <buffLevel buffName="Imbuement3" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Soul">100</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Soul" />
+            <stat statName="Soul" />
+            <stat statName="Soul" />
+        </loopStats>
+        <allowed>1</allowed>
+        <effortCost>5000000</effortCost>
+        <visible/>
+        <unlocked>
+            <if minExclusive="499">
+                <buffLevel buffName="Imbuement" />
+            </if>
+            <if minExclusive="499">
+                <buffLevel buffName="Imbuement2" />
+            </if>
+        </unlocked>
+        <canStart>
+            <if equals="0">
+                <loopCounter />
+            </if>
+            <if minExclusive="499">
+                <buffLevel buffName="Imbuement" />
+            </if>
+            <if minExclusive="499">
+                <buffLevel buffName="Imbuement2" />
+            </if>
+            <if maxExclusive="7">
+                <buffLevel buffName="Imbuement3" />
+            </if>
+        </canStart>
+        <loopCost>
+            <segment />
+            <multiplier value="5" />
+            <addition value="1" />
+            <multiplier value="100000000" />
+        </loopCost>
+        <tickProgress>
+            <skillLevel skillName="Magic" />
+        </tickProgress>
+        <!-- loopsFinished zeroes all talents/soulstones and both Imbuements,
+             sets trainingLimits to 10 and grants +1 Imbuement3 (Phase 6) -->
+        <loopReward />
+    </action>
+    <action type="multipart" name="Gods Trial" varName="GTrial" townNum="8">
+        <expMult>0.2</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="trailGodsFaced" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="trailGods10Done" />
+            </story>
+            <story num="3">
+                <ifStoryFlag storyFlagName="trailGods20Done" />
+            </story>
+            <story num="4">
+                <ifStoryFlag storyFlagName="trailGods30Done" />
+            </story>
+            <story num="5">
+                <ifStoryFlag storyFlagName="trailGods40Done" />
+            </story>
+            <story num="6">
+                <ifStoryFlag storyFlagName="trailGods50Done" />
+            </story>
+            <story num="7">
+                <ifStoryFlag storyFlagName="trailGods60Done" />
+            </story>
+            <story num="8">
+                <ifStoryFlag storyFlagName="trailGods70Done" />
+            </story>
+            <story num="9">
+                <ifStoryFlag storyFlagName="trailGods80Done" />
+            </story>
+            <story num="10">
+                <ifStoryFlag storyFlagName="trailGods90Done" />
+            </story>
+            <story num="11">
+                <ifStoryFlag storyFlagName="trailGodsAllDone" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Dex">11</stat>
+            <stat statName="Str">11</stat>
+            <stat statName="Con">11</stat>
+            <stat statName="Spd">11</stat>
+            <stat statName="Per">11</stat>
+            <stat statName="Cha">11</stat>
+            <stat statName="Int">11</stat>
+            <stat statName="Luck">11</stat>
+            <stat statName="Soul">11</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Dex" />
+            <stat statName="Str" />
+            <stat statName="Con" />
+            <stat statName="Spd" />
+            <stat statName="Per" />
+            <stat statName="Cha" />
+            <stat statName="Int" />
+            <stat statName="Luck" />
+            <stat statName="Soul" />
+        </loopStats>
+        <affectedBy>
+            <action name="Team" />
+        </affectedBy>
+        <effortCost>50000</effortCost>
+        <visible>
+            <ifProgress varName="BuildTower" min="100" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="BuildTower" min="100" />
+        </unlocked>
+        <canStart>
+            <!-- current floor < floor count -->
+            <if minExclusive="0">
+                <trialFloors trialNum="1" />
+                <subtraction>
+                    <loopCounter source="town" />
+                    <divisor>
+                        <segments />
+                    </divisor>
+                    <addition value="0.0000001" />
+                    <floor />
+                </subtraction>
+            </if>
+            <ifResource resourceName="power" maxExclusive="7" />
+        </canStart>
+        <loopCost>
+            <power base="1.3">
+                <loopCounter />
+                <addition>
+                    <segment />
+                </addition>
+                <divisor>
+                    <segments />
+                </divisor>
+                <addition value="0.0000001" />
+                <floor />
+            </power>
+            <multiplier value="10000000" />
+            <skillBonus name="Assassin" />
+            <precision3 />
+        </loopCost>
+        <tickProgress>
+            <function name="getTeamCombat" />
+        <multiplier>
+            <value value="1">
+                <addition>
+                    <trialCompleted trialNum="1">
+                        <loopCounter />
+                        <divisor>
+                            <segments />
+                        </divisor>
+                        <addition value="0.0000001" />
+                        <floor />
+                    </trialCompleted>
+                    <divisor value="200" />
+                </addition>
+                <squareRoot />
+            </value>
+        </multiplier>
+        </tickProgress>
+        <!-- floorReward grants power at milestones and Combat exp (Phase 6) -->
+        <loopReward />
+    </action>
+    <action type="multipart" name="Challenge Gods" varName="GFight" townNum="8">
+        <expMult>0.5</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="fightGods01" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="fightGods02" />
+            </story>
+            <story num="3">
+                <ifStoryFlag storyFlagName="fightGods03" />
+            </story>
+            <story num="4">
+                <ifStoryFlag storyFlagName="fightGods04" />
+            </story>
+            <story num="5">
+                <ifStoryFlag storyFlagName="fightGods05" />
+            </story>
+            <story num="6">
+                <ifStoryFlag storyFlagName="fightGods06" />
+            </story>
+            <story num="7">
+                <ifStoryFlag storyFlagName="fightGods07" />
+            </story>
+            <story num="8">
+                <ifStoryFlag storyFlagName="fightGods08" />
+            </story>
+            <story num="9">
+                <ifStoryFlag storyFlagName="fightGods09" />
+            </story>
+            <story num="10">
+                <ifStoryFlag storyFlagName="fightGods10" />
+            </story>
+            <story num="11">
+                <ifStoryFlag storyFlagName="fightGods11" />
+            </story>
+            <story num="12">
+                <ifStoryFlag storyFlagName="fightGods12" />
+            </story>
+            <story num="13">
+                <ifStoryFlag storyFlagName="fightGods13" />
+            </story>
+            <story num="14">
+                <ifStoryFlag storyFlagName="fightGods14" />
+            </story>
+            <story num="15">
+                <ifStoryFlag storyFlagName="fightGods15" />
+            </story>
+            <story num="16">
+                <ifStoryFlag storyFlagName="fightGods16" />
+            </story>
+            <story num="17">
+                <ifStoryFlag storyFlagName="fightGods17" />
+            </story>
+            <story num="18">
+                <ifStoryFlag storyFlagName="fightGods18" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Dex">11</stat>
+            <stat statName="Str">11</stat>
+            <stat statName="Con">11</stat>
+            <stat statName="Spd">11</stat>
+            <stat statName="Per">11</stat>
+            <stat statName="Cha">11</stat>
+            <stat statName="Int">11</stat>
+            <stat statName="Luck">11</stat>
+            <stat statName="Soul">11</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Dex" />
+            <stat statName="Str" />
+            <stat statName="Con" />
+            <stat statName="Spd" />
+            <stat statName="Per" />
+            <stat statName="Cha" />
+            <stat statName="Int" />
+            <stat statName="Luck" />
+            <stat statName="Soul" />
+        </loopStats>
+        <effortCost>50000</effortCost>
+        <visible>
+            <ifProgress varName="BuildTower" min="100" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="BuildTower" min="100" />
+        </unlocked>
+        <canStart>
+            <!-- current floor < floor count -->
+            <if minExclusive="0">
+                <trialFloors trialNum="2" />
+                <subtraction>
+                    <loopCounter source="town" />
+                    <divisor>
+                        <segments />
+                    </divisor>
+                    <addition value="0.0000001" />
+                    <floor />
+                </subtraction>
+            </if>
+            <ifResource resourceName="power" minExclusive="0" />
+            <ifResource resourceName="power" maxExclusive="8" />
+        </canStart>
+        <loopCost>
+            <power base="2">
+                <loopCounter />
+                <addition>
+                    <segment />
+                </addition>
+                <divisor>
+                    <segments />
+                </divisor>
+                <addition value="0.0000001" />
+                <floor />
+            </power>
+            <multiplier value="10000000000000000" />
+            <skillBonus name="Assassin" />
+            <precision3 />
+        </loopCost>
+        <tickProgress>
+            <function name="getSelfCombat" />
+        <multiplier>
+            <value value="1">
+                <addition>
+                    <trialCompleted trialNum="2">
+                        <loopCounter />
+                        <divisor>
+                            <segments />
+                        </divisor>
+                        <addition value="0.0000001" />
+                        <floor />
+                    </trialCompleted>
+                    <divisor value="200" />
+                </addition>
+                <squareRoot />
+            </value>
+        </multiplier>
+        </tickProgress>
+        <!-- segmentFinished increments curGodsSegment and sets the fightGods
+             story flags (talent-gated in round 7) (Phase 6) -->
+        <loopReward />
     </action>
     <action type="progress" name="Build Tower" townNum="8">
         <expMult>1</expMult>

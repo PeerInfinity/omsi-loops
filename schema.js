@@ -15,6 +15,7 @@ class Schema {
             getCraftGuildRankBonus: () => getCraftGuildRank().bonus,
             getSelfCombat,
             getTeamCombat,
+            getZombieStrength,
             minTalent: () => Math.min(...statList.map(s => getTalent(s))),
         };
     }

@@ -230,6 +230,51 @@ const TARGETED_CANARIES = [
                 .find(c => c.tag === "clampMin").attrs.value = "2";
         },
     },
+    {
+        label: "ifSoulstoneSac (Dark Ritual canStart, amount -> 999999999999)",
+        expect: { name: "Dark Ritual", col: "canStart" },
+        mutate: (doc) => {
+            const cs = doc.actions["Dark Ritual"].children.find(c => c.tag === "canStart");
+            const sac = cs.children.find(c => c.tag === "ifSoulstoneSac");
+            sac.attrs.value = "999999999999";
+            sac.children = [];   // drop the <primaryValue/> base the attr replaces
+        },
+    },
+    {
+        label: "buffCap path (Dark Ritual canStart, Ritual -> Imbuement cap changes the throw)",
+        expect: { name: "Dark Ritual", col: "canStart" },
+        mutate: (doc) => {
+            const cs = doc.actions["Dark Ritual"].children.find(c => c.tag === "canStart");
+            cs.children.filter(c => c.tag === "if").at(-1).children
+                .find(c => c.tag === "buffCap").attrs.buffName = "Imbuement";
+        },
+    },
+    {
+        label: "dungeonCompleted (Small Dungeon tickProgress, /200 -> /201)",
+        expect: { name: "Small Dungeon", col: "tick[" },
+        mutate: (doc) => {
+            const tp = doc.actions["Small Dungeon"].children.find(c => c.tag === "tickProgress");
+            tp.children.find(c => c.tag === "multiplier").children[0].children
+                .find(c => c.tag === "addition").children.find(c => c.tag === "divisor").attrs.value = "201";
+        },
+    },
+    {
+        label: "trialFloors + town-sourced loopCounter (Heroes Trial canStart, trial 0 -> 2)",
+        expect: { name: "Heroes Trial", col: "canStart" },
+        mutate: (doc) => {
+            const cs = doc.actions["Heroes Trial"].children.find(c => c.tag === "canStart");
+            cs.children.find(c => c.tag === "if").children
+                .find(c => c.tag === "trialFloors").attrs.trialNum = "2";
+        },
+    },
+    {
+        label: "trial power-base loopCost (Secret Trial, 1.25 -> 1.3)",
+        expect: { name: "Secret Trial", col: "loopCost[" },
+        mutate: (doc) => {
+            const lc = doc.actions["Secret Trial"].children.find(c => c.tag === "loopCost");
+            lc.children.find(c => c.tag === "power").attrs.base = "1.3";
+        },
+    },
 ];
 
 for (const { label, expect, mutate } of TARGETED_CANARIES) {

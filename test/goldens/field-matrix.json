@@ -6,7 +6,7 @@
   },
   "predicates": 314,
   "probeEvals": 170572,
-  "states": 757,
+  "states": 759,
   "randomStates": 64,
   "fieldColumns": [
    "manaCost",
@@ -19,7 +19,7 @@
    "multipartSweep"
   ]
  },
- "matrixHash": "1ff31f1a2b8123d9",
+ "matrixHash": "1ac0a48bf87c9e5e",
  "perState": [
   {
    "id": "boot",
@@ -2784,6 +2784,14 @@
   {
    "id": "soulstones:1000000",
    "hash": "1485aa888d099a73"
+  },
+  {
+   "id": "soulstoneSac:ritual",
+   "hash": "7d5bc79d6457b8b2"
+  },
+  {
+   "id": "soulstoneSac:feast",
+   "hash": "4742c060562bd08c"
   },
   {
    "id": "random:0",

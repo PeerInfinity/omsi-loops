@@ -56,6 +56,7 @@ const ActionListXml = (() => {
         getCraftGuildRankBonus: () => getCraftGuildRank().bonus,
         getSelfCombat: () => getSelfCombat(),
         getTeamCombat: () => getTeamCombat(),
+        getZombieStrength: () => getZombieStrength(),
         // fork wrapper: Imbue Body gates every talent >= a threshold
         minTalent: () => Math.min(...statList.map(s => getTalent(s))),
     };
@@ -237,6 +238,9 @@ const ActionListXml = (() => {
                 return ctx.mp.segment;
             }
             case "loopCounter":
+                // source="town" always reads the town's counter (trial
+                // canStart bodies ignore their loopCounter argument)
+                if (node.attrs.source === "town") return towns[ctx.action.townNum][ctx.action.varName + "LoopCounter"];
                 return ctx.mp?.loopCounter
                     ?? towns[ctx.action.townNum][ctx.action.varName + "LoopCounter"];
             case "totalCompletions":

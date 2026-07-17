@@ -445,6 +445,8 @@ globalThis.__fmDiff = (() => {
     const same = (col, j, x) => {
         if ((j === null) !== (x === null)) return false;
         if (j === null) return true;
+        // throws must match verbatim, even in boolean position (throw-parity)
+        if (typeof j === "string" || typeof x === "string") return j === x;
         if (BOOL.has(col)) return !!j === !!x;
         return j === x;
     };
@@ -482,9 +484,9 @@ globalThis.__fmDiff = (() => {
                     if (nat.has(natName)) continue;
                     for (let i = 0; i < mj[key].length; i++) {
                         const j = mj[key][i], x = mx[key][i];
-                        const eq = (j === null) === (x === null) && (j === null || (bool
-                            ? !!j === !!x && (typeof j === "string") === (typeof x === "string")
-                            : j === x));
+                        const eq = (j === null) === (x === null) && (j === null
+                            || (typeof j === "string" || typeof x === "string" ? j === x
+                                : bool ? !!j === !!x : j === x));
                         if (!eq) out.push({ name, col: key + "[" + i + "]", js: j, xml: x });
                     }
                 }
@@ -649,6 +651,12 @@ function assembleStates(ctx, randomStates, probe = true) {
     for (const v of [1000, 1000000]) {
         states.push({ id: `soulstones:${v}`, spec: { profile: "max", soulstones: v } });
     }
+    // soulstone-sacrifice gates need sac() to actually PASS alongside their
+    // reputation gates: zero profile keeps buff levels (and so goldCost) low.
+    // Dark Ritual wants rep <= -5, Great Feast rep >= 100 — a canary proved
+    // the rest of the corpus never reaches the sac/cap clauses.
+    states.push({ id: "soulstoneSac:ritual", spec: { profile: "zero", soulstones: 1000000, resources: { reputation: -10 } } });
+    states.push({ id: "soulstoneSac:feast", spec: { profile: "zero", soulstones: 1000000, resources: { reputation: 100 } } });
     for (let k = 0; k < randomStates; k++) {
         states.push({ id: `random:${k}`, spec: { profile: "zero", random: 0x51D0 + k * 7919 } });
     }

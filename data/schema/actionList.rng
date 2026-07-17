@@ -449,6 +449,7 @@
                     <value>getCraftGuildRankBonus</value>
                     <value>getSelfCombat</value>
                     <value>getTeamCombat</value>
+                    <value>getZombieStrength</value>
                     <value>minTalent</value>
                 </choice>
             </attribute>
@@ -464,9 +465,14 @@
             </element>
             <element name="loopCounter">
                 <a:documentation>Multipart context: the loop counter argument, defaulting to the
-                    town's counter for this action.</a:documentation>
+                    town's counter for this action. source="town" ignores the argument and always
+                    reads the town's counter (trial canStart bodies do this).</a:documentation>
                 <il:label>Loop counter</il:label>
-                <empty />
+                <optional>
+                    <attribute name="source">
+                        <value>town</value>
+                    </attribute>
+                </optional>
             </element>
             <element name="totalCompletions">
                 <a:documentation>Multipart context: the total-completions argument, defaulting to
