@@ -46,12 +46,25 @@ import fs from "node:fs";
 import path from "node:path";
 import { makeContext, ROOT } from "./harness.mjs";
 
-export const FIELD_COLUMNS = ["manaCost", "goldCost", "visible", "unlocked", "canStart", "allowed", "storyReqs1to8"];
+export const FIELD_COLUMNS = ["manaCost", "goldCost", "visible", "unlocked", "canStart", "allowed", "storyReqs1to18", "multipartSweep"];
 
 const XML_FILES = ["xmlLite.js", "actionListXml.js"];
 
 const FM_INSTALL = `
 globalThis.__fm = (() => {
+    // dungeons/trials are populated by load(), not loadDefaults() — mirror
+    // load()'s fresh-init branch so multipart fields evaluate instead of
+    // throwing across the synthetic corpus (fixture contexts re-run load()
+    // afterwards, which overwrites this)
+    for (let i = 0; i < dungeons.length; i++) {
+        dungeons[i].length = 0;
+        for (let j = 0; j < dungeonFloors[i]; j++) dungeons[i][j] = { ssChance: 1, completed: 0, lastStat: "NA" };
+    }
+    for (let i = 0; i < trials.length; i++) {
+        trials[i].length = 0;
+        trials[i].highestFloor = 0;
+        for (let j = 0; j < trialFloors[i]; j++) trials[i][j] = { completed: 0 };
+    }
     // ---- probe dims (adapted from the unlock-extract prototype) ----
     const numericDims = [];   // {kind, town?, v, max}
     for (const t of towns) {
@@ -136,7 +149,19 @@ globalThis.__fm = (() => {
         escapeStarted = false;   // Escape.canStart is a latch; keep states independent
         curCraftGuildSegment = 0;
         curWizCollegeSegment = 0;
+        curAdvGuildSegment = 0;
+        curThievesGuildSegment = 0;
+        curFightFrostGiantsSegment = 0;
+        curFightJungleMonstersSegment = 0;
+        curGodsSegment = 0;
         Object.assign(storyVars, bootStoryVars);
+        // multipart state
+        for (const t of towns) for (const v of t.allVarNames) {
+            if (typeof t[v + "LoopCounter"] === "number") t[v + "LoopCounter"] = 0;
+        }
+        for (const d of dungeons) for (const f of d) { f.ssChance = 1; f.completed = 0; f.lastStat = "NA"; }
+        for (const t of trials) { t.highestFloor = 0; for (const f of t) f.completed = 0; }
+        for (const s of Object.keys(stats)) stats[s].soulstone = 0;
     };
 
     // ---- predicates for threshold probing ----
@@ -211,18 +236,37 @@ globalThis.__fm = (() => {
     // works for a real Action and for an actionListXml-compiled field object
     // alike: both carry the same field closures (or lack them)
     const rowFor = (a) => {
-        const call = (fn) => {
+        const call = (fn, args = []) => {
             if (typeof fn !== "function") return null;
-            try { return norm(fn.call(a)); } catch (e) { return "throws:" + e.message; }
+            try { return norm(fn.apply(a, args)); } catch (e) { return "throws:" + e.message; }
         };
         const row = [a.name, call(a.manaCost), call(a.goldCost), call(a.visible),
             call(a.unlocked), call(a.canStart), call(a.allowed)];
         if (typeof a.storyReqs === "function") {
             const sr = [];
-            for (let n = 1; n <= 8; n++) {
+            // multiparts number stories up to 18 (Gods Trial); 8 covered the
+            // non-multipart set only
+            for (let n = 1; n <= 18; n++) {
                 try { sr.push(norm(a.storyReqs(n))); } catch (e) { sr.push("throws:" + e.message); }
             }
             row.push(sr);
+        } else row.push(null);
+        // multipart argument sweep: loopCost(segment, loopCounter),
+        // tickProgress(offset, loopCounter, totalCompletions) and
+        // canStart(loopCounter) at explicit tuples (undefined exercises the
+        // town-state default parameter). Pins arg plumbing, not just defaults.
+        if (typeof a.loopCost === "function") {
+            const segs = a.segments || 3;
+            const lcs = [undefined, 0, 1, segs, 3 * segs + 1, 7 * segs + 2];
+            const mp = { loopCost: [], tick: [], canStartAt: [] };
+            for (const s of [0, 1, segs - 1]) {
+                for (const lc of lcs) mp.loopCost.push(call(a.loopCost, [s, lc]));
+            }
+            for (const lc of lcs) {
+                for (const tc of [undefined, 0, 99, 999]) mp.tick.push(call(a.tickProgress, [0, lc, tc]));
+            }
+            for (const lc of lcs) mp.canStartAt.push(call(a.canStart, [lc]));
+            row.push(mp);
         } else row.push(null);
         return row;
     };
@@ -308,6 +352,33 @@ globalThis.__fm = (() => {
             for (const t of towns) for (const k of ["totalPockets", "totalWarehouses", "totalInsurance"]) {
                 if (rnd() < 0.5) t[k] = Math.floor(rnd() * 300); else delete t[k];
             }
+            // multipart state: loop counters (floor boundaries fall at
+            // multiples of segments), dungeon/trial floor completions
+            // (sqrt(1 + c/200) thresholds), soulstone pools, the remaining
+            // cur*Segment rank counters
+            const lcv = [0, 1, 2, 3, 5, 7, 9, 14, 21, 27, 45, 63];
+            for (const t of towns) for (const v of t.allVarNames) {
+                if (typeof t[v + "LoopCounter"] === "number" && rnd() < 0.5) {
+                    t[v + "LoopCounter"] = lcv[Math.floor(rnd() * lcv.length)];
+                }
+            }
+            const dcv = [0, 1, 50, 199, 200, 999];
+            for (const d of dungeons) for (const f of d) {
+                if (rnd() < 0.3) f.completed = dcv[Math.floor(rnd() * dcv.length)];
+            }
+            for (const t of trials) for (const f of t) {
+                if (rnd() < 0.02) f.completed = dcv[Math.floor(rnd() * dcv.length)];
+            }
+            const ssv = [0, 100, 5000, 1000000, 1000000000];
+            for (const s of Object.keys(stats)) {
+                stats[s].soulstone = rnd() < 0.5 ? 0 : ssv[Math.floor(rnd() * ssv.length)];
+            }
+            const xseg = [0, 1, 2, 3, 9, 30, 42, 55, 57, 63];
+            curAdvGuildSegment = xseg[Math.floor(rnd() * xseg.length)];
+            curThievesGuildSegment = xseg[Math.floor(rnd() * xseg.length)];
+            curFightFrostGiantsSegment = xseg[Math.floor(rnd() * xseg.length)];
+            curFightJungleMonstersSegment = xseg[Math.floor(rnd() * xseg.length)];
+            curGodsSegment = xseg[Math.floor(rnd() * xseg.length)];
         }
         if (spec.guild != null) guild = spec.guild;
         if (spec.effectiveTime != null) effectiveTime = spec.effectiveTime;
@@ -315,7 +386,20 @@ globalThis.__fm = (() => {
         if (spec.guildSegments != null) {
             curCraftGuildSegment = spec.guildSegments;
             curWizCollegeSegment = spec.guildSegments;
+            curAdvGuildSegment = spec.guildSegments;
+            curThievesGuildSegment = spec.guildSegments;
+            curFightFrostGiantsSegment = spec.guildSegments;
+            curFightJungleMonstersSegment = spec.guildSegments;
+            curGodsSegment = spec.guildSegments;
         }
+        if (spec.loopCounters != null) {
+            for (const t of towns) for (const v of t.allVarNames) {
+                if (typeof t[v + "LoopCounter"] === "number") t[v + "LoopCounter"] = spec.loopCounters;
+            }
+        }
+        if (spec.soulstones != null) for (const s of Object.keys(stats)) stats[s].soulstone = spec.soulstones;
+        if (spec.dungeonCompleted != null) for (const d of dungeons) for (const f of d) f.completed = spec.dungeonCompleted;
+        if (spec.trialCompleted != null) for (const t of trials) for (const f of t) f.completed = spec.trialCompleted;
         if (spec.fullSurveys != null) {
             for (const d of numericDims) {
                 if (d.kind === "surveyLevel" && d.town < spec.fullSurveys) set(d, 100);
@@ -376,13 +460,32 @@ globalThis.__fmDiff = (() => {
                 if (nat.has(COLS[i])) continue;
                 if (!same(COLS[i], rj[i + 1], rx[i + 1])) out.push({ name, col: COLS[i], js: rj[i + 1], xml: rx[i + 1] });
             }
-            if (nat.has("storyReqs")) continue;
-            const sj = rj[7], sx = rx[7];
-            if ((sj === null) !== (sx === null)) out.push({ name, col: "storyReqs", js: sj, xml: sx });
-            else if (sj !== null) {
-                for (let n = 0; n < 8; n++) {
-                    if (!!sj[n] !== !!sx[n] || (typeof sj[n] === "string") !== (typeof sx[n] === "string")) {
-                        out.push({ name, col: "storyReqs(" + (n + 1) + ")", js: sj[n], xml: sx[n] });
+            if (!nat.has("storyReqs")) {
+                const sj = rj[7], sx = rx[7];
+                if ((sj === null) !== (sx === null)) out.push({ name, col: "storyReqs", js: sj, xml: sx });
+                else if (sj !== null) {
+                    for (let n = 0; n < 18; n++) {
+                        if (!!sj[n] !== !!sx[n] || (typeof sj[n] === "string") !== (typeof sx[n] === "string")) {
+                            out.push({ name, col: "storyReqs(" + (n + 1) + ")", js: sj[n], xml: sx[n] });
+                        }
+                    }
+                }
+            }
+            // multipart argument sweep (loopCost/tickProgress numeric ===,
+            // canStart-at-loopCounter by truthiness)
+            const mj = rj[8], mx = rx[8];
+            if ((mj === null) !== (mx === null)) {
+                out.push({ name, col: "multipart", js: mj && "swept", xml: mx && "swept" });
+            } else if (mj !== null) {
+                const SWEEPS = [["loopCost", "loopCost", false], ["tick", "tickProgress", false], ["canStartAt", "canStart", true]];
+                for (const [key, natName, bool] of SWEEPS) {
+                    if (nat.has(natName)) continue;
+                    for (let i = 0; i < mj[key].length; i++) {
+                        const j = mj[key][i], x = mx[key][i];
+                        const eq = (j === null) === (x === null) && (j === null || (bool
+                            ? !!j === !!x && (typeof j === "string") === (typeof x === "string")
+                            : j === x));
+                        if (!eq) out.push({ name, col: key + "[" + i + "]", js: j, xml: x });
                     }
                 }
             }
@@ -534,6 +637,17 @@ function assembleStates(ctx, randomStates, probe = true) {
     // totalAssassinations() counts zones with totalAssassinZ > 0 (Guild Assassin stories 3/5)
     for (const k of [3, 4, 7, 8]) {
         states.push({ id: `assassinations:${k}`, spec: { profile: "zero", assassinations: k } });
+    }
+    // multipart state: loop counters (all multipart vars at once), dungeon/
+    // trial floor completions, soulstone pools (checkSoulstoneSac gates)
+    for (const k of [0, 1, 3, 9, 14, 27, 63]) {
+        states.push({ id: `loopCounters:${k}`, spec: { profile: "zero", loopCounters: k } });
+    }
+    for (const v of [1, 199, 200]) {
+        states.push({ id: `floorsCompleted:${v}`, spec: { profile: "zero", dungeonCompleted: v, trialCompleted: v } });
+    }
+    for (const v of [1000, 1000000]) {
+        states.push({ id: `soulstones:${v}`, spec: { profile: "max", soulstones: v } });
     }
     for (let k = 0; k < randomStates; k++) {
         states.push({ id: `random:${k}`, spec: { profile: "zero", random: 0x51D0 + k * 7919 } });

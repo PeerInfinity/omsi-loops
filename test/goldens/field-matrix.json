@@ -6,7 +6,7 @@
   },
   "predicates": 314,
   "probeEvals": 170572,
-  "states": 745,
+  "states": 757,
   "randomStates": 64,
   "fieldColumns": [
    "manaCost",
@@ -15,2990 +15,3039 @@
    "unlocked",
    "canStart",
    "allowed",
-   "storyReqs1to8"
+   "storyReqs1to18",
+   "multipartSweep"
   ]
  },
- "matrixHash": "0e7894744eb9d755",
+ "matrixHash": "1ff31f1a2b8123d9",
  "perState": [
   {
    "id": "boot",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "all-zero",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "all-max",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "zero:townLevel:0:Wander@2",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:townLevel:0:Wander@3",
-   "hash": "4624e9f63098f976"
+   "hash": "60271c98a22c799c"
   },
   {
    "id": "zero:townLevel:0:Wander@9",
-   "hash": "4624e9f63098f976"
+   "hash": "60271c98a22c799c"
   },
   {
    "id": "zero:townLevel:0:Wander@10",
-   "hash": "07d32d8fc3d7aebd"
+   "hash": "2af8ff989c686fd6"
   },
   {
    "id": "zero:townLevel:0:Wander@19",
-   "hash": "07d32d8fc3d7aebd"
+   "hash": "2af8ff989c686fd6"
   },
   {
    "id": "zero:townLevel:0:Wander@20",
-   "hash": "eefb42fe318a6ece"
+   "hash": "68326ad0776ef8a2"
   },
   {
    "id": "zero:townLevel:0:Wander@21",
-   "hash": "eefb42fe318a6ece"
+   "hash": "68326ad0776ef8a2"
   },
   {
    "id": "zero:townLevel:0:Wander@22",
-   "hash": "f60c80029e51ffbc"
+   "hash": "f3d02f276f6bd1d5"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@1",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@1",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@2",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@24",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@25",
-   "hash": "5a7f4e7389d3fea2"
+   "hash": "553dd514d4adb3e7"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@25",
-   "hash": "5a7f4e7389d3fea2"
+   "hash": "553dd514d4adb3e7"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@26",
-   "hash": "bdbf433b70bed394"
+   "hash": "0678b55b2fc01ac6"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@49",
-   "hash": "bdbf433b70bed394"
+   "hash": "0678b55b2fc01ac6"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@50",
-   "hash": "07d41eefcc34cdb0"
+   "hash": "63732678bf47e28d"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@50",
-   "hash": "07d41eefcc34cdb0"
+   "hash": "63732678bf47e28d"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@51",
-   "hash": "187a66cb8d03e087"
+   "hash": "fc340e70b0aedc0e"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@75",
-   "hash": "187a66cb8d03e087"
+   "hash": "fc340e70b0aedc0e"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@76",
-   "hash": "50dd532d6be4f6fc"
+   "hash": "e8b45c5aaf2b1749"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@99",
-   "hash": "50dd532d6be4f6fc"
+   "hash": "e8b45c5aaf2b1749"
   },
   {
    "id": "zero:exploreProgress::exploreProgress@100",
-   "hash": "48cbd5dafae8954a"
+   "hash": "655c03ff4f1974b7"
   },
   {
    "id": "zero:townLevel:0:Met@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:townLevel:0:Met@1",
-   "hash": "69cd4324bf69cdaa"
+   "hash": "50086e7ee1aba4bf"
   },
   {
    "id": "zero:townLevel:0:Met@4",
-   "hash": "69cd4324bf69cdaa"
+   "hash": "50086e7ee1aba4bf"
   },
   {
    "id": "zero:townLevel:0:Met@5",
-   "hash": "d37ac31a98f2ecd7"
+   "hash": "479d0926885ebde7"
   },
   {
    "id": "zero:townLevel:0:Met@24",
-   "hash": "70eeee77ac859310"
+   "hash": "2fba886a0f49a167"
   },
   {
    "id": "zero:townLevel:0:Met@25",
-   "hash": "326344a60877b8a4"
+   "hash": "60bb94210600a56c"
   },
   {
    "id": "zero:townLevel:0:Secrets@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:townLevel:0:Secrets@1",
-   "hash": "a868541397c4b811"
+   "hash": "9dd7d333ffbc4870"
   },
   {
    "id": "zero:townLevel:0:Secrets@9",
-   "hash": "a868541397c4b811"
+   "hash": "9dd7d333ffbc4870"
   },
   {
    "id": "zero:townLevel:0:Secrets@10",
-   "hash": "69b0d956aab44cc2"
+   "hash": "b5cd710344675386"
   },
   {
    "id": "zero:townLevel:0:Secrets@19",
-   "hash": "69b0d956aab44cc2"
+   "hash": "b5cd710344675386"
   },
   {
    "id": "zero:townLevel:0:Secrets@20",
-   "hash": "eaeeb5c11d421d94"
+   "hash": "8a20522ac931beaa"
   },
   {
    "id": "zero:townLevel:0:Secrets@29",
-   "hash": "eaeeb5c11d421d94"
+   "hash": "8a20522ac931beaa"
   },
   {
    "id": "zero:townLevel:0:Secrets@30",
-   "hash": "564836da5dd2c51c"
+   "hash": "ff1b848151245c6d"
   },
   {
    "id": "zero:skillLevel::Magic@11",
-   "hash": "869d002fe582711f"
+   "hash": "08645146de16f199"
   },
   {
    "id": "zero:skillLevel::Magic@12",
-   "hash": "362aa53e3c0ade14"
+   "hash": "4789f05735ef83af"
   },
   {
    "id": "zero:skillLevel::Magic@14",
-   "hash": "362aa53e3c0ade14"
+   "hash": "21ba6fb3490165b2"
   },
   {
    "id": "zero:skillLevel::Magic@15",
-   "hash": "403dc6dec6645a3a"
+   "hash": "98fe32be96476dbe"
   },
   {
    "id": "zero:skillLevel::Magic@34",
-   "hash": "403dc6dec6645a3a"
+   "hash": "e4b1da67f20624a5"
   },
   {
    "id": "zero:skillLevel::Magic@35",
-   "hash": "42367729bdc7de4a"
+   "hash": "eb7e88f98e2f3fa5"
   },
   {
    "id": "zero:skillLevel::Combat@9",
-   "hash": "a4eafae5e57c83a7"
+   "hash": "971f393f02ff3e65"
   },
   {
    "id": "zero:skillLevel::Combat@10",
-   "hash": "076f23727d85200f"
+   "hash": "c69836646af231eb"
   },
   {
    "id": "zero:skillLevel::Combat@14",
-   "hash": "076f23727d85200f"
+   "hash": "ea2f768e3dfad7e8"
   },
   {
    "id": "zero:skillLevel::Combat@15",
-   "hash": "aa2f1e45074fb959"
+   "hash": "b4c0089a559a9537"
   },
   {
    "id": "zero:skillLevel::Combat@34",
-   "hash": "aa2f1e45074fb959"
+   "hash": "1ca5bbad6d10e838"
   },
   {
    "id": "zero:skillLevel::Combat@35",
-   "hash": "fd281713f83095dc"
+   "hash": "2d4cfcf14f356008"
   },
   {
    "id": "zero:surveyLevel:0:SurveyZ0@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:surveyLevel:0:SurveyZ0@1",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:0:SurveyZ0@17",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:0:SurveyZ0@18",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:1:SurveyZ1@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:surveyLevel:1:SurveyZ1@1",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:1:SurveyZ1@17",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:1:SurveyZ1@18",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:1:SurveyZ1@99",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:1:SurveyZ1@100",
-   "hash": "505195ab78eee75b"
+   "hash": "ae9b2935797b4aad"
   },
   {
    "id": "zero:surveyLevel:2:SurveyZ2@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:surveyLevel:2:SurveyZ2@1",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:2:SurveyZ2@17",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:2:SurveyZ2@18",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:2:SurveyZ2@99",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:2:SurveyZ2@100",
-   "hash": "3e166e124d8f35cb"
+   "hash": "c50fec54d6974eeb"
   },
   {
    "id": "zero:surveyLevel:3:SurveyZ3@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:surveyLevel:3:SurveyZ3@1",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:3:SurveyZ3@17",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:3:SurveyZ3@18",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:3:SurveyZ3@99",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:3:SurveyZ3@100",
-   "hash": "cfb6d6b6881d2c1f"
+   "hash": "4924a6e160b9a4ca"
   },
   {
    "id": "zero:surveyLevel:4:SurveyZ4@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:surveyLevel:4:SurveyZ4@1",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:4:SurveyZ4@17",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:4:SurveyZ4@18",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:5:SurveyZ5@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:surveyLevel:5:SurveyZ5@1",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:5:SurveyZ5@17",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:5:SurveyZ5@18",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:5:SurveyZ5@99",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:5:SurveyZ5@100",
-   "hash": "72e95610a52f1190"
+   "hash": "32d8b3f0d45eb384"
   },
   {
    "id": "zero:surveyLevel:6:SurveyZ6@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:surveyLevel:6:SurveyZ6@1",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:6:SurveyZ6@17",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:6:SurveyZ6@18",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:6:SurveyZ6@99",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:6:SurveyZ6@100",
-   "hash": "dcadd99a6cad0cd1"
+   "hash": "cf1a5cdcb3e709b4"
   },
   {
    "id": "zero:surveyLevel:7:SurveyZ7@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:surveyLevel:7:SurveyZ7@1",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:7:SurveyZ7@17",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:7:SurveyZ7@18",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:7:SurveyZ7@99",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:surveyLevel:7:SurveyZ7@100",
-   "hash": "603f7f702e463779"
+   "hash": "abe847c51bd5ed58"
   },
   {
    "id": "zero:surveyLevel:8:SurveyZ8@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:surveyLevel:8:SurveyZ8@1",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:8:SurveyZ8@17",
-   "hash": "5c3109bb0e713ec8"
+   "hash": "4a87ec89105ed91b"
   },
   {
    "id": "zero:surveyLevel:8:SurveyZ8@18",
-   "hash": "27caf923c78ad895"
+   "hash": "727c4855391356dc"
   },
   {
    "id": "zero:skillLevel::Assassin@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:skillLevel::Assassin@1",
-   "hash": "31c4746adf00020a"
+   "hash": "52651c0d639de709"
   },
   {
    "id": "zero:townLevel:5:Meander@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:townLevel:5:Meander@1",
-   "hash": "11ce930b7abc50db"
+   "hash": "000c7934b8ec759b"
   },
   {
    "id": "zero:townLevel:5:Meander@1",
-   "hash": "11ce930b7abc50db"
+   "hash": "000c7934b8ec759b"
   },
   {
    "id": "zero:townLevel:5:Meander@2",
-   "hash": "ef6e0943f903ff44"
+   "hash": "f2fbab6dd38a789b"
   },
   {
    "id": "zero:townLevel:5:Meander@4",
-   "hash": "ef6e0943f903ff44"
+   "hash": "f2fbab6dd38a789b"
   },
   {
    "id": "zero:townLevel:5:Meander@5",
-   "hash": "9a8affddfdf72a33"
+   "hash": "c2352ae621f99a8d"
   },
   {
    "id": "zero:townLevel:5:Meander@14",
-   "hash": "9a8affddfdf72a33"
+   "hash": "c2352ae621f99a8d"
   },
   {
    "id": "zero:townLevel:5:Meander@15",
-   "hash": "5ef3329ebffd0627"
+   "hash": "77474af6cba9bb55"
   },
   {
    "id": "zero:townLevel:5:Meander@24",
-   "hash": "5ef3329ebffd0627"
+   "hash": "77474af6cba9bb55"
   },
   {
    "id": "zero:townLevel:5:Meander@25",
-   "hash": "d4e1b5cccd6c75e4"
+   "hash": "f15a16975d54eca7"
   },
   {
    "id": "zero:townLevel:5:Meander@49",
-   "hash": "d4e1b5cccd6c75e4"
+   "hash": "f15a16975d54eca7"
   },
   {
    "id": "zero:townLevel:5:Meander@50",
-   "hash": "4bff1776b2a28f99"
+   "hash": "e2193381d4e4dd00"
   },
   {
    "id": "zero:townLevel:5:Meander@74",
-   "hash": "4bff1776b2a28f99"
+   "hash": "e2193381d4e4dd00"
   },
   {
    "id": "zero:townLevel:5:Meander@75",
-   "hash": "1d1bf87d626cca6d"
+   "hash": "4f299779f694b3cb"
   },
   {
    "id": "zero:townLevel:5:Meander@99",
-   "hash": "1d1bf87d626cca6d"
+   "hash": "4f299779f694b3cb"
   },
   {
    "id": "zero:townLevel:5:Meander@100",
-   "hash": "90383645b644b07a"
+   "hash": "5be776f95d0c02c1"
   },
   {
    "id": "zero:townLevel:1:Forest@1",
-   "hash": "ac64982e3ab0dcbb"
+   "hash": "3fc09cf80f4c2ab8"
   },
   {
    "id": "zero:townLevel:1:Forest@2",
-   "hash": "6967ea9a30be5656"
+   "hash": "32af863fc38ce2a6"
   },
   {
    "id": "zero:townLevel:1:Forest@9",
-   "hash": "6967ea9a30be5656"
+   "hash": "32af863fc38ce2a6"
   },
   {
    "id": "zero:townLevel:1:Forest@10",
-   "hash": "65d29dcbc6a354e9"
+   "hash": "e63961fd37f35681"
   },
   {
    "id": "zero:townLevel:1:Forest@19",
-   "hash": "65d29dcbc6a354e9"
+   "hash": "e63961fd37f35681"
   },
   {
    "id": "zero:townLevel:1:Forest@20",
-   "hash": "3d6d44bfc6bfd71d"
+   "hash": "5e77553b2df4716d"
   },
   {
    "id": "zero:townLevel:1:Forest@29",
-   "hash": "3d6d44bfc6bfd71d"
+   "hash": "5e77553b2df4716d"
   },
   {
    "id": "zero:townLevel:1:Forest@30",
-   "hash": "83a79710de55451b"
+   "hash": "86ae7b4b6834cdce"
   },
   {
    "id": "zero:townLevel:1:Forest@39",
-   "hash": "83a79710de55451b"
+   "hash": "86ae7b4b6834cdce"
   },
   {
    "id": "zero:townLevel:1:Forest@40",
-   "hash": "577147ec19e239ab"
+   "hash": "248bc6aeabce30bd"
   },
   {
    "id": "zero:townLevel:1:Forest@49",
-   "hash": "577147ec19e239ab"
+   "hash": "248bc6aeabce30bd"
   },
   {
    "id": "zero:townLevel:1:Forest@50",
-   "hash": "793d5ac021304d5e"
+   "hash": "79ec84b926a5f3a1"
   },
   {
    "id": "zero:townLevel:1:Forest@59",
-   "hash": "793d5ac021304d5e"
+   "hash": "79ec84b926a5f3a1"
   },
   {
    "id": "zero:townLevel:1:Forest@60",
-   "hash": "8ba42a4412c72602"
+   "hash": "06889c3ba199117d"
   },
   {
    "id": "zero:townLevel:1:Forest@69",
-   "hash": "8ba42a4412c72602"
+   "hash": "06889c3ba199117d"
   },
   {
    "id": "zero:townLevel:1:Forest@70",
-   "hash": "9c71ac6c3df1ec6b"
+   "hash": "1713b2e213c5e503"
   },
   {
    "id": "zero:townLevel:1:Forest@79",
-   "hash": "9c71ac6c3df1ec6b"
+   "hash": "1713b2e213c5e503"
   },
   {
    "id": "zero:townLevel:1:Forest@80",
-   "hash": "9299429df2532285"
+   "hash": "172e5310f1eec886"
   },
   {
    "id": "zero:townLevel:1:Hermit@9",
-   "hash": "5cc1f0970f9f9dcf"
+   "hash": "1908cb4d0be29465"
   },
   {
    "id": "zero:townLevel:1:Hermit@10",
-   "hash": "d81dd625fa3172ca"
+   "hash": "5c4dad49bc8c3f96"
   },
   {
    "id": "zero:skillLevel::Alchemy@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:skillLevel::Alchemy@1",
-   "hash": "3cf0a32b5dce5b4e"
+   "hash": "2a2164a468af0e89"
   },
   {
    "id": "zero:skillLevel::Alchemy@9",
-   "hash": "3cf0a32b5dce5b4e"
+   "hash": "2a2164a468af0e89"
   },
   {
    "id": "zero:skillLevel::Alchemy@10",
-   "hash": "16cadfa07a4248fc"
+   "hash": "7059544365fb408f"
   },
   {
    "id": "zero:skillLevel::Alchemy@199",
-   "hash": "84b11dbcd8374b9f"
+   "hash": "5833c188b243d87d"
   },
   {
    "id": "zero:skillLevel::Alchemy@200",
-   "hash": "98bbbe9e11276292"
+   "hash": "5a870511b874a2af"
   },
   {
    "id": "zero:townLevel:1:Flowers@9",
-   "hash": "91e4f32f845160ac"
+   "hash": "a89c873cd5f3a73d"
   },
   {
    "id": "zero:townLevel:1:Flowers@10",
-   "hash": "1d584cdd23489ffc"
+   "hash": "ffb16c1a84b7c279"
   },
   {
    "id": "zero:townLevel:1:Flowers@19",
-   "hash": "1d584cdd23489ffc"
+   "hash": "ffb16c1a84b7c279"
   },
   {
    "id": "zero:townLevel:1:Flowers@20",
-   "hash": "c54ddfde56885ea4"
+   "hash": "3a92e2f72051c889"
   },
   {
    "id": "zero:townLevel:1:Flowers@29",
-   "hash": "c54ddfde56885ea4"
+   "hash": "3a92e2f72051c889"
   },
   {
    "id": "zero:townLevel:1:Flowers@30",
-   "hash": "a6d5969ccb6436f3"
+   "hash": "4230f0bcbaffeaa7"
   },
   {
    "id": "zero:townLevel:1:Flowers@79",
-   "hash": "55b95807d081d3d4"
+   "hash": "8105822f3a4977bb"
   },
   {
    "id": "zero:townLevel:1:Flowers@80",
-   "hash": "ea98c47ac22278ee"
+   "hash": "114a0fc3d342b8ca"
   },
   {
    "id": "zero:townLevel:1:Thicket@19",
-   "hash": "6ce2a8137b3e5722"
+   "hash": "80d23e6f28a9ad90"
   },
   {
    "id": "zero:townLevel:1:Thicket@20",
-   "hash": "c2a135ce20a1ea92"
+   "hash": "cc52a3b828905461"
   },
   {
    "id": "zero:townLevel:1:Witch@9",
-   "hash": "3f19ff0c01780340"
+   "hash": "7e08a8d69320500c"
   },
   {
    "id": "zero:townLevel:1:Witch@10",
-   "hash": "1b91b493fc63dc3b"
+   "hash": "d34c91d49c030565"
   },
   {
    "id": "zero:townLevel:1:Witch@19",
-   "hash": "5d5db7aa2756fe52"
+   "hash": "ec251907420c9ba8"
   },
   {
    "id": "zero:townLevel:1:Witch@20",
-   "hash": "7ba91c3d326e1781"
+   "hash": "c5ffb92f70e4388d"
   },
   {
    "id": "zero:townLevel:1:RuinsZ1@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:townLevel:1:RuinsZ1@1",
-   "hash": "8d988d11014e1efc"
+   "hash": "8221dcf7ede638ba"
   },
   {
    "id": "zero:townLevel:2:City@4",
-   "hash": "881c2cf8ed45678b"
+   "hash": "06c9d1bf33d850db"
   },
   {
    "id": "zero:townLevel:2:City@5",
-   "hash": "8e66253b10417adb"
+   "hash": "d915f5fef9d19971"
   },
   {
    "id": "zero:townLevel:2:City@9",
-   "hash": "8e66253b10417adb"
+   "hash": "d915f5fef9d19971"
   },
   {
    "id": "zero:townLevel:2:City@10",
-   "hash": "a1f986a828a4631b"
+   "hash": "ddc3c8f3790b32fc"
   },
   {
    "id": "zero:townLevel:2:City@19",
-   "hash": "a1f986a828a4631b"
+   "hash": "ddc3c8f3790b32fc"
   },
   {
    "id": "zero:townLevel:2:City@20",
-   "hash": "77aca82d969ce66e"
+   "hash": "3fc09a87bd29fb63"
   },
   {
    "id": "zero:townLevel:2:City@29",
-   "hash": "77aca82d969ce66e"
+   "hash": "3fc09a87bd29fb63"
   },
   {
    "id": "zero:townLevel:2:City@30",
-   "hash": "b14dfeeb89703fb3"
+   "hash": "b09674e0b920d87b"
   },
   {
    "id": "zero:townLevel:2:City@49",
-   "hash": "92bfdb88e21058ce"
+   "hash": "b606c48f1f437ed3"
   },
   {
    "id": "zero:townLevel:2:City@50",
-   "hash": "bc145c344cfcd4dd"
+   "hash": "565d1a7582de920b"
   },
   {
    "id": "zero:townLevel:2:City@59",
-   "hash": "bc145c344cfcd4dd"
+   "hash": "565d1a7582de920b"
   },
   {
    "id": "zero:townLevel:2:City@60",
-   "hash": "cf9591fa46f0bcc0"
+   "hash": "dea178f64af0b8fd"
   },
   {
    "id": "zero:townLevel:2:City@89",
-   "hash": "abe661c8671ec6bb"
+   "hash": "c51e63b102464041"
   },
   {
    "id": "zero:townLevel:2:City@90",
-   "hash": "cfb63af672520768"
+   "hash": "e711ee90da5e422a"
   },
   {
    "id": "zero:townLevel:2:Drunk@4",
-   "hash": "7d6cfe0005c9a921"
+   "hash": "7e2a49e9c9be2f59"
   },
   {
    "id": "zero:townLevel:2:Drunk@5",
-   "hash": "87ae4245115a0d8b"
+   "hash": "efdd99f7c4fa362d"
   },
   {
    "id": "zero:townLevel:2:Drunk@9",
-   "hash": "87ae4245115a0d8b"
+   "hash": "efdd99f7c4fa362d"
   },
   {
    "id": "zero:townLevel:2:Drunk@10",
-   "hash": "42d2c71d81ee6883"
+   "hash": "837316bc2b4f2f85"
   },
   {
    "id": "zero:townLevel:2:Drunk@14",
-   "hash": "42d2c71d81ee6883"
+   "hash": "837316bc2b4f2f85"
   },
   {
    "id": "zero:townLevel:2:Drunk@15",
-   "hash": "841e2d59169d31f9"
+   "hash": "8e516bc634b5d5d0"
   },
   {
    "id": "zero:townLevel:2:Drunk@19",
-   "hash": "841e2d59169d31f9"
+   "hash": "8e516bc634b5d5d0"
   },
   {
    "id": "zero:townLevel:2:Drunk@20",
-   "hash": "0f51fa471d544ac2"
+   "hash": "830504e56a43ac9a"
   },
   {
    "id": "zero:townLevel:2:Drunk@29",
-   "hash": "0f51fa471d544ac2"
+   "hash": "830504e56a43ac9a"
   },
   {
    "id": "zero:townLevel:2:Drunk@30",
-   "hash": "450b49d5fc77f68a"
+   "hash": "67834d76f0574f7c"
   },
   {
    "id": "zero:townLevel:2:Drunk@39",
-   "hash": "450b49d5fc77f68a"
+   "hash": "67834d76f0574f7c"
   },
   {
    "id": "zero:townLevel:2:Drunk@40",
-   "hash": "583b8e36e03f54eb"
+   "hash": "b317dda54d859573"
   },
   {
    "id": "zero:townLevel:2:Drunk@59",
-   "hash": "583b8e36e03f54eb"
+   "hash": "b317dda54d859573"
   },
   {
    "id": "zero:townLevel:2:Drunk@60",
-   "hash": "183fe20ec88fb31e"
+   "hash": "7e817c3186c0f3e5"
   },
   {
    "id": "zero:townLevel:3:Mountain@1",
-   "hash": "198664049188406e"
+   "hash": "de5a61c6f6331fc7"
   },
   {
    "id": "zero:townLevel:3:Mountain@2",
-   "hash": "a122ccfce6adbcf8"
+   "hash": "da45cc783e4d3267"
   },
   {
    "id": "zero:townLevel:3:Mountain@9",
-   "hash": "a122ccfce6adbcf8"
+   "hash": "da45cc783e4d3267"
   },
   {
    "id": "zero:townLevel:3:Mountain@10",
-   "hash": "381cef0d1356df4c"
+   "hash": "78d63d2a2569ffb7"
   },
   {
    "id": "zero:townLevel:3:Mountain@19",
-   "hash": "381cef0d1356df4c"
+   "hash": "78d63d2a2569ffb7"
   },
   {
    "id": "zero:townLevel:3:Mountain@20",
-   "hash": "f8c6d3aa5fc8f744"
+   "hash": "36ccf96b8b220d60"
   },
   {
    "id": "zero:townLevel:3:Mountain@39",
-   "hash": "f8c6d3aa5fc8f744"
+   "hash": "36ccf96b8b220d60"
   },
   {
    "id": "zero:townLevel:3:Mountain@40",
-   "hash": "40e8f34cea0af76a"
+   "hash": "34df9fd6598e03b4"
   },
   {
    "id": "zero:townLevel:3:Mountain@99",
-   "hash": "962c1b7177ce382d"
+   "hash": "0d6d78162d61b9cb"
   },
   {
    "id": "zero:townLevel:3:Mountain@100",
-   "hash": "9728d380cb0034d1"
+   "hash": "b95a9c177a75b806"
   },
   {
    "id": "zero:townLevel:3:Runes@7",
-   "hash": "8389f68cf2064bc5"
+   "hash": "c9cfa8d0594f114e"
   },
   {
    "id": "zero:townLevel:3:Runes@8",
-   "hash": "3a8b6f77bcc412df"
+   "hash": "ed4fb573d4d15dfa"
   },
   {
    "id": "zero:townLevel:3:Runes@15",
-   "hash": "a9cfff4bf4f7893b"
+   "hash": "df6a23ee4a505cc9"
   },
   {
    "id": "zero:townLevel:3:Runes@16",
-   "hash": "a114fe1d4e946cfc"
+   "hash": "367443af66993a8f"
   },
   {
    "id": "zero:skillLevel::Spatiomancy@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:skillLevel::Spatiomancy@1",
-   "hash": "35ebad15f0f0d89e"
+   "hash": "77338d7d05567451"
   },
   {
    "id": "zero:townLevel:3:Cavern@1",
-   "hash": "07d096534f527b9b"
+   "hash": "4f4dda46984ef617"
   },
   {
    "id": "zero:townLevel:3:Cavern@2",
-   "hash": "9d250ef8808b42a3"
+   "hash": "c806add7487f34d1"
   },
   {
    "id": "zero:townLevel:3:Cavern@4",
-   "hash": "9d250ef8808b42a3"
+   "hash": "c806add7487f34d1"
   },
   {
    "id": "zero:townLevel:3:Cavern@5",
-   "hash": "7ec89999189f988e"
+   "hash": "cf9f55fc04e0adf8"
   },
   {
    "id": "zero:townLevel:3:Cavern@19",
-   "hash": "3f298c1c8334fea0"
+   "hash": "6c21f9092fa71f6b"
   },
   {
    "id": "zero:townLevel:3:Cavern@20",
-   "hash": "172458cb4216074c"
+   "hash": "b0c2036c0e311330"
   },
   {
    "id": "zero:townLevel:3:Cavern@39",
-   "hash": "172458cb4216074c"
+   "hash": "b0c2036c0e311330"
   },
   {
    "id": "zero:townLevel:3:Cavern@40",
-   "hash": "f52fb0054da0eaf5"
+   "hash": "7b2a88ed3752f561"
   },
   {
    "id": "zero:townLevel:3:Cavern@49",
-   "hash": "f52fb0054da0eaf5"
+   "hash": "7b2a88ed3752f561"
   },
   {
    "id": "zero:townLevel:3:Cavern@50",
-   "hash": "e36aa1ef830a0eed"
+   "hash": "e36552bab9a73032"
   },
   {
    "id": "zero:townLevel:3:Cavern@79",
-   "hash": "39db6e1f964d3b2b"
+   "hash": "33d9b778ea4fa8c8"
   },
   {
    "id": "zero:townLevel:3:Cavern@80",
-   "hash": "fd4f334b3f40de23"
+   "hash": "655dc4abcbcab5fc"
   },
   {
    "id": "zero:townLevel:3:Illusions@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:townLevel:3:Illusions@1",
-   "hash": "7ddfb88d7f632fb1"
+   "hash": "ab3d7ba50b514d9a"
   },
   {
    "id": "zero:townLevel:3:Illusions@4",
-   "hash": "7ddfb88d7f632fb1"
+   "hash": "ab3d7ba50b514d9a"
   },
   {
    "id": "zero:townLevel:3:Illusions@5",
-   "hash": "e25d01ff166c6110"
+   "hash": "69aae3b44141559a"
   },
   {
    "id": "zero:townLevel:3:Illusions@49",
-   "hash": "bc5908132be2a7bc"
+   "hash": "31ee6cc9b9e77fa7"
   },
   {
    "id": "zero:townLevel:3:Illusions@50",
-   "hash": "544f30dbf5d70198"
+   "hash": "0aaf2158667a01fe"
   },
   {
    "id": "zero:buffLevel::Imbuement@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:buffLevel::Imbuement@1",
-   "hash": "fea061d824f239e9"
+   "hash": "47d392e434e7a5ea"
   },
   {
    "id": "zero:townLevel:3:RuinsZ3@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:townLevel:3:RuinsZ3@1",
-   "hash": "cbdfcd6232903093"
+   "hash": "6c2d96aa9c8cdade"
   },
   {
    "id": "zero:townLevel:4:Tour@9",
-   "hash": "822e857d68fe7bc6"
+   "hash": "6c9380158d7774b0"
   },
   {
    "id": "zero:townLevel:4:Tour@10",
-   "hash": "18c6656c684d379f"
+   "hash": "56dea87874ab7ff6"
   },
   {
    "id": "zero:townLevel:4:Tour@19",
-   "hash": "18c6656c684d379f"
+   "hash": "56dea87874ab7ff6"
   },
   {
    "id": "zero:townLevel:4:Tour@20",
-   "hash": "2ccca5fa2dfb5564"
+   "hash": "8c0bf240c8bae4a2"
   },
   {
    "id": "zero:townLevel:4:Tour@29",
-   "hash": "2ccca5fa2dfb5564"
+   "hash": "8c0bf240c8bae4a2"
   },
   {
    "id": "zero:townLevel:4:Tour@30",
-   "hash": "45ce44613cd57fe8"
+   "hash": "202e9eed08f1d369"
   },
   {
    "id": "zero:townLevel:4:Tour@39",
-   "hash": "45ce44613cd57fe8"
+   "hash": "202e9eed08f1d369"
   },
   {
    "id": "zero:townLevel:4:Tour@40",
-   "hash": "c8f97e040561e066"
+   "hash": "a625a9509f2b44df"
   },
   {
    "id": "zero:townLevel:4:Tour@59",
-   "hash": "c8f97e040561e066"
+   "hash": "a625a9509f2b44df"
   },
   {
    "id": "zero:townLevel:4:Tour@60",
-   "hash": "93a1024048c4cd3e"
+   "hash": "a03cdd1e4df71388"
   },
   {
    "id": "zero:townLevel:4:Tour@69",
-   "hash": "93a1024048c4cd3e"
+   "hash": "a03cdd1e4df71388"
   },
   {
    "id": "zero:townLevel:4:Tour@70",
-   "hash": "e5fa895662f919f0"
+   "hash": "4c1837c5c1212ed4"
   },
   {
    "id": "zero:townLevel:4:Tour@79",
-   "hash": "e5fa895662f919f0"
+   "hash": "4c1837c5c1212ed4"
   },
   {
    "id": "zero:townLevel:4:Tour@80",
-   "hash": "7480fcd77f5c3c36"
+   "hash": "084c6d8315d961b4"
   },
   {
    "id": "zero:townLevel:4:Tour@89",
-   "hash": "7480fcd77f5c3c36"
+   "hash": "084c6d8315d961b4"
   },
   {
    "id": "zero:townLevel:4:Tour@90",
-   "hash": "5d40f12ff2334167"
+   "hash": "674478446b2ef3f6"
   },
   {
    "id": "zero:townLevel:4:Tour@99",
-   "hash": "5d40f12ff2334167"
+   "hash": "674478446b2ef3f6"
   },
   {
    "id": "zero:townLevel:4:Tour@100",
-   "hash": "b9f95ff416544951"
+   "hash": "4ccfea531851301a"
   },
   {
    "id": "zero:townLevel:4:Canvassed@4",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:townLevel:4:Canvassed@5",
-   "hash": "5a486764d22518bf"
+   "hash": "286b72a9bc698fc4"
   },
   {
    "id": "zero:townLevel:4:Canvassed@9",
-   "hash": "5a486764d22518bf"
+   "hash": "286b72a9bc698fc4"
   },
   {
    "id": "zero:townLevel:4:Canvassed@10",
-   "hash": "feebf9c06baad286"
+   "hash": "5dcde2d37f87414b"
   },
   {
    "id": "zero:townLevel:4:Canvassed@29",
-   "hash": "f778f9b8bc810b04"
+   "hash": "afd52bec1cf33abc"
   },
   {
    "id": "zero:townLevel:4:Canvassed@30",
-   "hash": "183689afba17592c"
+   "hash": "0e630ca56e2a5311"
   },
   {
    "id": "zero:townLevel:4:Citizen@59",
-   "hash": "7d2d95fbe8d14451"
+   "hash": "6421a6189e196c1d"
   },
   {
    "id": "zero:townLevel:4:Citizen@60",
-   "hash": "e134560c506d16c6"
+   "hash": "1a298226e33f73cc"
   },
   {
    "id": "zero:townLevel:4:Citizen@79",
-   "hash": "e134560c506d16c6"
+   "hash": "1a298226e33f73cc"
   },
   {
    "id": "zero:townLevel:4:Citizen@80",
-   "hash": "4a6001b23a376db7"
+   "hash": "1e9a71930ba0f123"
   },
   {
    "id": "zero:townLevel:4:Citizen@99",
-   "hash": "4a6001b23a376db7"
+   "hash": "1e9a71930ba0f123"
   },
   {
    "id": "zero:townLevel:4:Citizen@100",
-   "hash": "717c5281fb4a4f88"
+   "hash": "96b4d2fe0a0a402b"
   },
   {
    "id": "zero:skillLevel::Pyromancy@199",
-   "hash": "d01f4460d8f0d523"
+   "hash": "dda4c61a8a959ed3"
   },
   {
    "id": "zero:skillLevel::Pyromancy@200",
-   "hash": "92d07e2d9c40667b"
+   "hash": "ddf01f474d040294"
   },
   {
    "id": "zero:skillLevel::Dark@999",
-   "hash": "712881871cac793b"
+   "hash": "c52c12a62064e696"
   },
   {
    "id": "zero:skillLevel::Dark@1000",
-   "hash": "37b647f92e60c197"
+   "hash": "9b861fea8d567049"
   },
   {
    "id": "zero:buffLevel::Ritual@59",
-   "hash": "284c531a87f8bdca"
+   "hash": "12e7a90d9d2fa73c"
   },
   {
    "id": "zero:buffLevel::Ritual@60",
-   "hash": "41b368613cb86f16"
+   "hash": "5a81287a4119d74b"
   },
   {
    "id": "zero:townLevel:5:RuinsZ5@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:townLevel:5:RuinsZ5@1",
-   "hash": "19f9c0c276dbd418"
+   "hash": "ab7c685bd4613acd"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@9",
-   "hash": "b5259040a912b324"
+   "hash": "9defd23ebbf27fff"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@10",
-   "hash": "280d27c77347b912"
+   "hash": "4b975e2b689abb9a"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@14",
-   "hash": "280d27c77347b912"
+   "hash": "4b975e2b689abb9a"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@15",
-   "hash": "b62128fd5ebad923"
+   "hash": "4cfd4b82a2cb0a08"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@19",
-   "hash": "b62128fd5ebad923"
+   "hash": "4cfd4b82a2cb0a08"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@20",
-   "hash": "f45b3690d9c14f32"
+   "hash": "8fd9b25ed69e23df"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@24",
-   "hash": "f45b3690d9c14f32"
+   "hash": "8fd9b25ed69e23df"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@25",
-   "hash": "2eb05c4178eba305"
+   "hash": "d9e7d57ec723ef18"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@49",
-   "hash": "436f1e9a5d169667"
+   "hash": "d82736594e818c59"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@50",
-   "hash": "b543c68dde7ce505"
+   "hash": "3cf92b07d310dc1a"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@74",
-   "hash": "9eafc9cfc365f0cd"
+   "hash": "3f7bbc4070060779"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@75",
-   "hash": "84947b54442b4263"
+   "hash": "e0a7d107de3b6299"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@99",
-   "hash": "69b9e3e3729a4b88"
+   "hash": "61e3b8cd94006078"
   },
   {
    "id": "zero:townLevel:6:ExploreJungle@100",
-   "hash": "3bf044a2a4e56fb6"
+   "hash": "59aeba88354fbd18"
   },
   {
    "id": "zero:townLevel:6:RuinsZ6@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:townLevel:6:RuinsZ6@1",
-   "hash": "4e3c752d0ea62153"
+   "hash": "f693ecd7d5fbeaef"
   },
   {
    "id": "zero:townLevel:7:Excursion@4",
-   "hash": "f9207f9b20117e42"
+   "hash": "8df343351ffeddd6"
   },
   {
    "id": "zero:townLevel:7:Excursion@5",
-   "hash": "0f0351b63809a02e"
+   "hash": "8ee3ec79f3bd05e1"
   },
   {
    "id": "zero:townLevel:7:Excursion@9",
-   "hash": "0f0351b63809a02e"
+   "hash": "8ee3ec79f3bd05e1"
   },
   {
    "id": "zero:townLevel:7:Excursion@10",
-   "hash": "0b4897471f0f9ae6"
+   "hash": "0db9706604286d38"
   },
   {
    "id": "zero:townLevel:7:Excursion@19",
-   "hash": "0b4897471f0f9ae6"
+   "hash": "0db9706604286d38"
   },
   {
    "id": "zero:townLevel:7:Excursion@20",
-   "hash": "4fb383b869c8feb3"
+   "hash": "5ffe114e2e546418"
   },
   {
    "id": "zero:townLevel:7:Excursion@24",
-   "hash": "4fb383b869c8feb3"
+   "hash": "5ffe114e2e546418"
   },
   {
    "id": "zero:townLevel:7:Excursion@25",
-   "hash": "67327e613dbe9e56"
+   "hash": "b3a1057a5f941d8f"
   },
   {
    "id": "zero:skillLevel::Thievery@0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "zero:skillLevel::Thievery@1",
-   "hash": "eb1cf5b96c70a61e"
+   "hash": "92fbe2ad42ac4e9c"
   },
   {
    "id": "zero:townLevel:7:PickPockets@24",
-   "hash": "9104c68a1a2d7ef8"
+   "hash": "ae6dc58e440033ff"
   },
   {
    "id": "zero:townLevel:7:PickPockets@25",
-   "hash": "70594325e71a9238"
+   "hash": "acac4e728f6e3e25"
   },
   {
    "id": "zero:townLevel:7:PickPockets@99",
-   "hash": "4d2636cfe8a467fd"
+   "hash": "5f9390f392f59a14"
   },
   {
    "id": "zero:townLevel:7:PickPockets@100",
-   "hash": "9fc86c1b8f2d5903"
+   "hash": "2589c43a50d6204b"
   },
   {
    "id": "zero:townLevel:7:RobWarehouse@49",
-   "hash": "21dd0de481738f02"
+   "hash": "a0692ee07e4d88b6"
   },
   {
    "id": "zero:townLevel:7:RobWarehouse@50",
-   "hash": "f1b3ecfd236fde5e"
+   "hash": "0eb86a9476ba62e2"
   },
   {
    "id": "zero:townLevel:7:RobWarehouse@99",
-   "hash": "e265d5dfa3fd1a69"
+   "hash": "501e6d67bde690b0"
   },
   {
    "id": "zero:townLevel:7:RobWarehouse@100",
-   "hash": "d70c8455119ad53e"
+   "hash": "284feab993b81373"
   },
   {
    "id": "zero:townLevel:7:InsuranceFraud@74",
-   "hash": "c1d84a18ce7c25d8"
+   "hash": "da7f1dc2ef3c4a41"
   },
   {
    "id": "zero:townLevel:7:InsuranceFraud@75",
-   "hash": "1a9c91f6e5a369c2"
+   "hash": "ad5117bdfa58a0de"
   },
   {
    "id": "zero:townLevel:7:InsuranceFraud@99",
-   "hash": "1a9c91f6e5a369c2"
+   "hash": "ad5117bdfa58a0de"
   },
   {
    "id": "zero:townLevel:7:InsuranceFraud@100",
-   "hash": "6ed9b94bd935c97b"
+   "hash": "a901303beb518fd8"
   },
   {
    "id": "zero:townLevel:8:BuildTower@99",
-   "hash": "83dbcb1597e987af"
+   "hash": "82efdc00e1ed5347"
   },
   {
    "id": "zero:townLevel:8:BuildTower@100",
-   "hash": "52b6b7a1f43cd30f"
+   "hash": "74f5a828e79385fa"
   },
   {
    "id": "max:townLevel:0:Wander@2",
-   "hash": "ee45707f41658938"
+   "hash": "b926c541e64b4d4b"
   },
   {
    "id": "max:townLevel:0:Wander@3",
-   "hash": "ba8fae81d6dbb045"
+   "hash": "9c115bb96a2b1099"
   },
   {
    "id": "max:townLevel:0:Wander@9",
-   "hash": "ba8fae81d6dbb045"
+   "hash": "9c115bb96a2b1099"
   },
   {
    "id": "max:townLevel:0:Wander@10",
-   "hash": "94f74b2e6ff420b4"
+   "hash": "c33559872f9f5dba"
   },
   {
    "id": "max:townLevel:0:Wander@19",
-   "hash": "94f74b2e6ff420b4"
+   "hash": "c33559872f9f5dba"
   },
   {
    "id": "max:townLevel:0:Wander@20",
-   "hash": "993abbb934ed536b"
+   "hash": "565b984f24c1212d"
   },
   {
    "id": "max:townLevel:0:Wander@21",
-   "hash": "993abbb934ed536b"
+   "hash": "565b984f24c1212d"
   },
   {
    "id": "max:townLevel:0:Wander@22",
-   "hash": "fb7717eff8797de5"
+   "hash": "3f30304a51be9f01"
   },
   {
    "id": "max:townLevel:0:Met@0",
-   "hash": "e7611a552b158de8"
+   "hash": "692345ab7abf79f6"
   },
   {
    "id": "max:townLevel:0:Met@1",
-   "hash": "5e8aa8eed3be3e86"
+   "hash": "bcf47337aa09742e"
   },
   {
    "id": "max:townLevel:0:Met@4",
-   "hash": "5e8aa8eed3be3e86"
+   "hash": "bcf47337aa09742e"
   },
   {
    "id": "max:townLevel:0:Met@5",
-   "hash": "3db858f144769f38"
+   "hash": "f37a41ba41d29a8b"
   },
   {
    "id": "max:townLevel:0:Met@24",
-   "hash": "cb8832e9898f8d4d"
+   "hash": "757d48b5e7e2dc12"
   },
   {
    "id": "max:townLevel:0:Met@25",
-   "hash": "47d05a7fd1da1a10"
+   "hash": "7ed4e5c113ea0de8"
   },
   {
    "id": "max:townLevel:0:Secrets@0",
-   "hash": "41898f9c9faa4d86"
+   "hash": "38231df781b8836d"
   },
   {
    "id": "max:townLevel:0:Secrets@1",
-   "hash": "63eb7c305c1d5965"
+   "hash": "4a3732816050c209"
   },
   {
    "id": "max:townLevel:0:Secrets@9",
-   "hash": "63eb7c305c1d5965"
+   "hash": "4a3732816050c209"
   },
   {
    "id": "max:townLevel:0:Secrets@10",
-   "hash": "48032daf7d436951"
+   "hash": "aa344b0a094f681e"
   },
   {
    "id": "max:townLevel:0:Secrets@19",
-   "hash": "48032daf7d436951"
+   "hash": "aa344b0a094f681e"
   },
   {
    "id": "max:townLevel:0:Secrets@20",
-   "hash": "d1d18a1769a12051"
+   "hash": "4cb52050b5133240"
   },
   {
    "id": "max:townLevel:0:Secrets@29",
-   "hash": "d1d18a1769a12051"
+   "hash": "4cb52050b5133240"
   },
   {
    "id": "max:townLevel:0:Secrets@30",
-   "hash": "05aa021a0b7c515e"
+   "hash": "fb0fbe78beca97cb"
   },
   {
    "id": "max:skillLevel::Magic@11",
-   "hash": "29e61dc0d9b5d0c3"
+   "hash": "86f0100d1ddedd68"
   },
   {
    "id": "max:skillLevel::Magic@12",
-   "hash": "17e76426bff8b3a0"
+   "hash": "589f1ff7ced7c0d8"
   },
   {
    "id": "max:skillLevel::Magic@39",
-   "hash": "17e76426bff8b3a0"
+   "hash": "37516fb31488ed05"
   },
   {
    "id": "max:skillLevel::Magic@40",
-   "hash": "659e43417de5cd6a"
+   "hash": "7e16d03e1d6a21f7"
   },
   {
    "id": "max:skillLevel::Magic@49",
-   "hash": "659e43417de5cd6a"
+   "hash": "2c347fe48fb0b555"
   },
   {
    "id": "max:skillLevel::Magic@50",
-   "hash": "15143d0a126390b7"
+   "hash": "05790ae038dd6677"
   },
   {
    "id": "max:skillLevel::Magic@59",
-   "hash": "15143d0a126390b7"
+   "hash": "641164504a11959a"
   },
   {
    "id": "max:skillLevel::Magic@60",
-   "hash": "13870c5b7136d987"
+   "hash": "972a685e0699d204"
   },
   {
    "id": "max:skillLevel::Magic@79",
-   "hash": "13870c5b7136d987"
+   "hash": "5ebf5f8ecb626765"
   },
   {
    "id": "max:skillLevel::Magic@80",
-   "hash": "670bd43820ec7eca"
+   "hash": "ea51bb45fa4ab24a"
   },
   {
    "id": "max:skillLevel::Magic@99",
-   "hash": "670bd43820ec7eca"
+   "hash": "726228009a4bd67f"
   },
   {
    "id": "max:skillLevel::Magic@100",
-   "hash": "7a688139108c6b29"
+   "hash": "ee7e701dfd9c2c2a"
   },
   {
    "id": "max:skillLevel::Magic@149",
-   "hash": "7a688139108c6b29"
+   "hash": "5d8a403a99e3fc64"
   },
   {
    "id": "max:skillLevel::Magic@150",
-   "hash": "2589e4774d8647a4"
+   "hash": "fde1420d6d5130c2"
   },
   {
    "id": "max:skillLevel::Magic@199",
-   "hash": "2589e4774d8647a4"
+   "hash": "a78cf1788d368f2a"
   },
   {
    "id": "max:skillLevel::Magic@200",
-   "hash": "d5ee12b795965f44"
+   "hash": "f5e05fdb7873dd23"
   },
   {
    "id": "max:skillLevel::Magic@299",
-   "hash": "4927d7dae3907254"
+   "hash": "994efde67b76236c"
   },
   {
    "id": "max:skillLevel::Magic@300",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "153162e9c880e380"
   },
   {
    "id": "max:skillLevel::Combat@9",
-   "hash": "e46e9eabc5eab710"
+   "hash": "f16e0a84228086c4"
   },
   {
    "id": "max:skillLevel::Combat@10",
-   "hash": "6aca292a96c506ed"
+   "hash": "c3062eb4a2ad3b53"
   },
   {
    "id": "max:exploreProgress::exploreProgress@0",
-   "hash": "8a88cc40a41d5303"
+   "hash": "0c68d84c4302c8ef"
   },
   {
    "id": "max:exploreProgress::exploreProgress@1",
-   "hash": "8e4c1370357f3061"
+   "hash": "b56ab592a57f83b8"
   },
   {
    "id": "max:exploreProgress::exploreProgress@1",
-   "hash": "8e4c1370357f3061"
+   "hash": "b56ab592a57f83b8"
   },
   {
    "id": "max:exploreProgress::exploreProgress@2",
-   "hash": "827179ec6f15ff19"
+   "hash": "a46c0cdb444de068"
   },
   {
    "id": "max:exploreProgress::exploreProgress@24",
-   "hash": "827179ec6f15ff19"
+   "hash": "a46c0cdb444de068"
   },
   {
    "id": "max:exploreProgress::exploreProgress@25",
-   "hash": "88077d7ee9585e1b"
+   "hash": "6fdd244da621c1dd"
   },
   {
    "id": "max:exploreProgress::exploreProgress@25",
-   "hash": "88077d7ee9585e1b"
+   "hash": "6fdd244da621c1dd"
   },
   {
    "id": "max:exploreProgress::exploreProgress@26",
-   "hash": "11efe72b079b8a45"
+   "hash": "859da5d19e928a39"
   },
   {
    "id": "max:exploreProgress::exploreProgress@49",
-   "hash": "11efe72b079b8a45"
+   "hash": "859da5d19e928a39"
   },
   {
    "id": "max:exploreProgress::exploreProgress@50",
-   "hash": "957a8ab41c35d185"
+   "hash": "707ee39a7201215b"
   },
   {
    "id": "max:exploreProgress::exploreProgress@50",
-   "hash": "957a8ab41c35d185"
+   "hash": "707ee39a7201215b"
   },
   {
    "id": "max:exploreProgress::exploreProgress@51",
-   "hash": "e97ce47897cc9821"
+   "hash": "45b94f770153e089"
   },
   {
    "id": "max:exploreProgress::exploreProgress@74",
-   "hash": "e97ce47897cc9821"
+   "hash": "45b94f770153e089"
   },
   {
    "id": "max:exploreProgress::exploreProgress@75",
-   "hash": "5c9721923802ef25"
+   "hash": "b21a91ebf016a8a7"
   },
   {
    "id": "max:exploreProgress::exploreProgress@75",
-   "hash": "5c9721923802ef25"
+   "hash": "b21a91ebf016a8a7"
   },
   {
    "id": "max:exploreProgress::exploreProgress@76",
-   "hash": "b02322497b5134b6"
+   "hash": "c6d886ddea6eb422"
   },
   {
    "id": "max:exploreProgress::exploreProgress@99",
-   "hash": "b02322497b5134b6"
+   "hash": "c6d886ddea6eb422"
   },
   {
    "id": "max:exploreProgress::exploreProgress@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:skillLevel::Assassin@0",
-   "hash": "d323fc28a7d95c50"
+   "hash": "9d6294af8eef5b94"
   },
   {
    "id": "max:skillLevel::Assassin@1",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "2c82ea798dca0247"
   },
   {
    "id": "max:townLevel:5:Meander@0",
-   "hash": "6cc6363398f4bfe1"
+   "hash": "15e0d7070262368e"
   },
   {
    "id": "max:townLevel:5:Meander@1",
-   "hash": "17bad0238f684572"
+   "hash": "05d22288213ff455"
   },
   {
    "id": "max:townLevel:5:Meander@1",
-   "hash": "17bad0238f684572"
+   "hash": "05d22288213ff455"
   },
   {
    "id": "max:townLevel:5:Meander@2",
-   "hash": "93768099e8574035"
+   "hash": "8dc7fd9706ace51f"
   },
   {
    "id": "max:townLevel:5:Meander@4",
-   "hash": "93768099e8574035"
+   "hash": "8dc7fd9706ace51f"
   },
   {
    "id": "max:townLevel:5:Meander@5",
-   "hash": "9dc9293038a330d5"
+   "hash": "fff27f090f4e39c7"
   },
   {
    "id": "max:townLevel:5:Meander@14",
-   "hash": "9dc9293038a330d5"
+   "hash": "fff27f090f4e39c7"
   },
   {
    "id": "max:townLevel:5:Meander@15",
-   "hash": "7a1454519fe45cc1"
+   "hash": "b97f5610d40303c5"
   },
   {
    "id": "max:townLevel:5:Meander@24",
-   "hash": "7a1454519fe45cc1"
+   "hash": "b97f5610d40303c5"
   },
   {
    "id": "max:townLevel:5:Meander@25",
-   "hash": "76e9a42cad595ca7"
+   "hash": "7c091d8e69fb14c0"
   },
   {
    "id": "max:townLevel:5:Meander@49",
-   "hash": "76e9a42cad595ca7"
+   "hash": "7c091d8e69fb14c0"
   },
   {
    "id": "max:townLevel:5:Meander@50",
-   "hash": "66e5eac94fd40e80"
+   "hash": "20874ad9a4f7d65b"
   },
   {
    "id": "max:townLevel:5:Meander@74",
-   "hash": "66e5eac94fd40e80"
+   "hash": "20874ad9a4f7d65b"
   },
   {
    "id": "max:townLevel:5:Meander@75",
-   "hash": "5d56d2d50e1d05dd"
+   "hash": "82dd80bb8dd1e418"
   },
   {
    "id": "max:townLevel:5:Meander@99",
-   "hash": "5d56d2d50e1d05dd"
+   "hash": "82dd80bb8dd1e418"
   },
   {
    "id": "max:townLevel:5:Meander@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:skillLevel::Dark@49",
-   "hash": "09a23dd8d338189c"
+   "hash": "f247516d663e898c"
   },
   {
    "id": "max:skillLevel::Dark@50",
-   "hash": "399a939c0068fe18"
+   "hash": "fea8db0677e326c0"
   },
   {
    "id": "max:skillLevel::Dark@299",
-   "hash": "ead7ffa12265f282"
+   "hash": "61f760a929a1e2e4"
   },
   {
    "id": "max:skillLevel::Dark@300",
-   "hash": "e4ef97580ae001dd"
+   "hash": "40385975d172eefd"
   },
   {
    "id": "max:skillLevel::Dark@999",
-   "hash": "89bb84bd11d6b9a9"
+   "hash": "f2883b0c11c887b5"
   },
   {
    "id": "max:skillLevel::Dark@1000",
-   "hash": "1211a2cb167f54dd"
+   "hash": "e60fcf153df4dfa4"
   },
   {
    "id": "max:skillLevel::Spatiomancy@0",
-   "hash": "dae8f35456320b6a"
+   "hash": "241f20c43bede2b5"
   },
   {
    "id": "max:skillLevel::Spatiomancy@1",
-   "hash": "8b5f294a8df07efb"
+   "hash": "54d439e6303c2309"
   },
   {
    "id": "max:skillLevel::Spatiomancy@99",
-   "hash": "4e608cb18a3dae42"
+   "hash": "124ebde4d475ab8b"
   },
   {
    "id": "max:skillLevel::Spatiomancy@100",
-   "hash": "ab1f792ac437f0b9"
+   "hash": "c3c248ead1eb36c4"
   },
   {
    "id": "max:townLevel:1:Forest@1",
-   "hash": "5d60e0039972afd1"
+   "hash": "e5ac34132ae83b42"
   },
   {
    "id": "max:townLevel:1:Forest@2",
-   "hash": "a933edbf4e374876"
+   "hash": "30177d35b420cb7e"
   },
   {
    "id": "max:townLevel:1:Forest@9",
-   "hash": "a933edbf4e374876"
+   "hash": "30177d35b420cb7e"
   },
   {
    "id": "max:townLevel:1:Forest@10",
-   "hash": "49b15136566b9dc0"
+   "hash": "f00e780b53f3cd07"
   },
   {
    "id": "max:townLevel:1:Forest@19",
-   "hash": "49b15136566b9dc0"
+   "hash": "f00e780b53f3cd07"
   },
   {
    "id": "max:townLevel:1:Forest@20",
-   "hash": "7c69e89c7f18ecd4"
+   "hash": "fadec15e34ac4f99"
   },
   {
    "id": "max:townLevel:1:Forest@29",
-   "hash": "7c69e89c7f18ecd4"
+   "hash": "fadec15e34ac4f99"
   },
   {
    "id": "max:townLevel:1:Forest@30",
-   "hash": "1f127c100fd219a9"
+   "hash": "f063ed4f32ae880d"
   },
   {
    "id": "max:townLevel:1:Forest@39",
-   "hash": "1f127c100fd219a9"
+   "hash": "f063ed4f32ae880d"
   },
   {
    "id": "max:townLevel:1:Forest@40",
-   "hash": "740d32a11bc28555"
+   "hash": "3549ff6266682a85"
   },
   {
    "id": "max:townLevel:1:Forest@49",
-   "hash": "740d32a11bc28555"
+   "hash": "3549ff6266682a85"
   },
   {
    "id": "max:townLevel:1:Forest@50",
-   "hash": "fc688f590003dc95"
+   "hash": "4d2b059c73c41365"
   },
   {
    "id": "max:townLevel:1:Forest@59",
-   "hash": "fc688f590003dc95"
+   "hash": "4d2b059c73c41365"
   },
   {
    "id": "max:townLevel:1:Forest@60",
-   "hash": "97431a65136c34b2"
+   "hash": "4b5664f033855a3f"
   },
   {
    "id": "max:townLevel:1:Forest@69",
-   "hash": "97431a65136c34b2"
+   "hash": "4b5664f033855a3f"
   },
   {
    "id": "max:townLevel:1:Forest@70",
-   "hash": "96ffe766fa8f2cdd"
+   "hash": "03ddd170888be890"
   },
   {
    "id": "max:townLevel:1:Forest@79",
-   "hash": "96ffe766fa8f2cdd"
+   "hash": "03ddd170888be890"
   },
   {
    "id": "max:townLevel:1:Forest@80",
-   "hash": "3c457a8974a92cb3"
+   "hash": "e3618a4a8f00ba55"
   },
   {
    "id": "max:townLevel:1:Shortcut@19",
-   "hash": "b6f5e7cdc22bddf5"
+   "hash": "be5453e2f4206cb2"
   },
   {
    "id": "max:townLevel:1:Shortcut@20",
-   "hash": "9dd8d9172e563622"
+   "hash": "92c6ba2f62c1aac2"
   },
   {
    "id": "max:townLevel:1:Hermit@9",
-   "hash": "534981d697c5ae77"
+   "hash": "38e7ea6c06d914d5"
   },
   {
    "id": "max:townLevel:1:Hermit@10",
-   "hash": "01228dff6b9856c0"
+   "hash": "8979f1d39cf69a0a"
   },
   {
    "id": "max:townLevel:1:Hermit@19",
-   "hash": "3b0b096a0a1a669d"
+   "hash": "7e6aac6d850c4644"
   },
   {
    "id": "max:townLevel:1:Hermit@20",
-   "hash": "9414e3d642c52d02"
+   "hash": "f74f53b2189b286c"
   },
   {
    "id": "max:townLevel:1:Hermit@39",
-   "hash": "3b264d156cd2535e"
+   "hash": "90249c7424ba19da"
   },
   {
    "id": "max:townLevel:1:Hermit@40",
-   "hash": "cfa4f7c8bbca3668"
+   "hash": "276b7eea976764d3"
   },
   {
    "id": "max:skillLevel::Alchemy@0",
-   "hash": "ca3bb4480641f286"
+   "hash": "41242bdf788f7d8b"
   },
   {
    "id": "max:skillLevel::Alchemy@1",
-   "hash": "aeb803b00fa1c115"
+   "hash": "6a171248b5e2bd86"
   },
   {
    "id": "max:skillLevel::Alchemy@9",
-   "hash": "aeb803b00fa1c115"
+   "hash": "6a171248b5e2bd86"
   },
   {
    "id": "max:skillLevel::Alchemy@10",
-   "hash": "45d16af2315eb1d4"
+   "hash": "98a9ac44d5737021"
   },
   {
    "id": "max:skillLevel::Alchemy@199",
-   "hash": "5b83e64b69dc4320"
+   "hash": "1e3fdb5d6259b258"
   },
   {
    "id": "max:skillLevel::Alchemy@200",
-   "hash": "584869b4644e4307"
+   "hash": "2e7dc194203cbe18"
   },
   {
    "id": "max:townLevel:1:Flowers@9",
-   "hash": "e3c5e9c3bf1e3d36"
+   "hash": "5180d28c35fa4130"
   },
   {
    "id": "max:townLevel:1:Flowers@10",
-   "hash": "217fca24dcf01d52"
+   "hash": "f00dfba05ceef331"
   },
   {
    "id": "max:townLevel:1:Flowers@19",
-   "hash": "217fca24dcf01d52"
+   "hash": "f00dfba05ceef331"
   },
   {
    "id": "max:townLevel:1:Flowers@20",
-   "hash": "ca0f7cb3515bc5c5"
+   "hash": "382dbeeef019bb17"
   },
   {
    "id": "max:townLevel:1:Flowers@29",
-   "hash": "ca0f7cb3515bc5c5"
+   "hash": "382dbeeef019bb17"
   },
   {
    "id": "max:townLevel:1:Flowers@30",
-   "hash": "23d0db606cb31d3b"
+   "hash": "1533231b6b9038d5"
   },
   {
    "id": "max:townLevel:1:Flowers@79",
-   "hash": "30523df5e9d906f6"
+   "hash": "fb713682b18ed72c"
   },
   {
    "id": "max:townLevel:1:Flowers@80",
-   "hash": "3fa3340c0037d850"
+   "hash": "0c560da5b3c2d937"
   },
   {
    "id": "max:townLevel:1:Thicket@19",
-   "hash": "4cdc2df92676978b"
+   "hash": "8596575975255173"
   },
   {
    "id": "max:townLevel:1:Thicket@20",
-   "hash": "3bb6bb0e878190c5"
+   "hash": "c7f6ac14fbcec52a"
   },
   {
    "id": "max:townLevel:1:Thicket@59",
-   "hash": "fc7be916b3dd36b0"
+   "hash": "935b73cd88f4d49b"
   },
   {
    "id": "max:townLevel:1:Thicket@60",
-   "hash": "62af3fed410e24af"
+   "hash": "2aca5df04ded0c7e"
   },
   {
    "id": "max:townLevel:1:Witch@9",
-   "hash": "4d423ae10e52137c"
+   "hash": "1268074618a0e445"
   },
   {
    "id": "max:townLevel:1:Witch@10",
-   "hash": "81bccc277d383d10"
+   "hash": "e0411db1e221c986"
   },
   {
    "id": "max:townLevel:1:Witch@19",
-   "hash": "bfe4145cf19bf88f"
+   "hash": "31e0d79e6ff8d538"
   },
   {
    "id": "max:townLevel:1:Witch@20",
-   "hash": "5f77da2f9cdb74e4"
+   "hash": "eb1f6efbc2c570d4"
   },
   {
    "id": "max:townLevel:1:Witch@49",
-   "hash": "a018042116fec39f"
+   "hash": "a63914ca575258ee"
   },
   {
    "id": "max:townLevel:1:Witch@50",
-   "hash": "859d3f58e2eb4d4f"
+   "hash": "e5d43bcc239eeef2"
   },
   {
    "id": "max:surveyLevel:1:SurveyZ1@99",
-   "hash": "3e23f3913cc05a18"
+   "hash": "a3436ddbbf4adf2e"
   },
   {
    "id": "max:surveyLevel:1:SurveyZ1@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:townLevel:1:RuinsZ1@0",
-   "hash": "1a70b16cbbdfb01c"
+   "hash": "04ee0558276ab848"
   },
   {
    "id": "max:townLevel:1:RuinsZ1@1",
-   "hash": "76c15c672e559a66"
+   "hash": "f1fd76ae2ef4b871"
   },
   {
    "id": "max:townLevel:2:City@4",
-   "hash": "8947806f9e50abbf"
+   "hash": "16659215ce941612"
   },
   {
    "id": "max:townLevel:2:City@5",
-   "hash": "d883854602888c6d"
+   "hash": "ff3e404070ad4e04"
   },
   {
    "id": "max:townLevel:2:City@9",
-   "hash": "d883854602888c6d"
+   "hash": "ff3e404070ad4e04"
   },
   {
    "id": "max:townLevel:2:City@10",
-   "hash": "d634ff58aafd8736"
+   "hash": "8d3cf78aa03ca54c"
   },
   {
    "id": "max:townLevel:2:City@19",
-   "hash": "d634ff58aafd8736"
+   "hash": "8d3cf78aa03ca54c"
   },
   {
    "id": "max:townLevel:2:City@20",
-   "hash": "e618888a1257869d"
+   "hash": "6d3e167566732cab"
   },
   {
    "id": "max:townLevel:2:City@29",
-   "hash": "e618888a1257869d"
+   "hash": "6d3e167566732cab"
   },
   {
    "id": "max:townLevel:2:City@30",
-   "hash": "312d6e63d586e476"
+   "hash": "0d1965b65b68665f"
   },
   {
    "id": "max:townLevel:2:City@49",
-   "hash": "deec0715c2900351"
+   "hash": "09f8dc55e919d24e"
   },
   {
    "id": "max:townLevel:2:City@50",
-   "hash": "4d6d1691edfc06ca"
+   "hash": "b20c0860a51ffc16"
   },
   {
    "id": "max:townLevel:2:City@59",
-   "hash": "4d6d1691edfc06ca"
+   "hash": "b20c0860a51ffc16"
   },
   {
    "id": "max:townLevel:2:City@60",
-   "hash": "3b3473b757e9ffbd"
+   "hash": "4cfc34a064b8846b"
   },
   {
    "id": "max:townLevel:2:City@89",
-   "hash": "ba347d0767de4170"
+   "hash": "dfc26c155ab1b389"
   },
   {
    "id": "max:townLevel:2:City@90",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "e97a7558734c5f03"
   },
   {
    "id": "max:townLevel:2:Drunk@4",
-   "hash": "9d0c007728efb503"
+   "hash": "64d6ac25568b4c4e"
   },
   {
    "id": "max:townLevel:2:Drunk@5",
-   "hash": "988944fa240af004"
+   "hash": "a21a5a599b2fd798"
   },
   {
    "id": "max:townLevel:2:Drunk@9",
-   "hash": "988944fa240af004"
+   "hash": "a21a5a599b2fd798"
   },
   {
    "id": "max:townLevel:2:Drunk@10",
-   "hash": "886e503de77d9f8a"
+   "hash": "d1ac0fbcfc456261"
   },
   {
    "id": "max:townLevel:2:Drunk@14",
-   "hash": "886e503de77d9f8a"
+   "hash": "d1ac0fbcfc456261"
   },
   {
    "id": "max:townLevel:2:Drunk@15",
-   "hash": "1d17e87c9c1c51ed"
+   "hash": "2d9044ba550b798d"
   },
   {
    "id": "max:townLevel:2:Drunk@19",
-   "hash": "1d17e87c9c1c51ed"
+   "hash": "2d9044ba550b798d"
   },
   {
    "id": "max:townLevel:2:Drunk@20",
-   "hash": "5e647de5c773022e"
+   "hash": "b81f6c1f320b8418"
   },
   {
    "id": "max:townLevel:2:Drunk@29",
-   "hash": "5e647de5c773022e"
+   "hash": "b81f6c1f320b8418"
   },
   {
    "id": "max:townLevel:2:Drunk@30",
-   "hash": "d54a8a02171a6ed5"
+   "hash": "3f9c436b71c58a91"
   },
   {
    "id": "max:townLevel:2:Drunk@39",
-   "hash": "d54a8a02171a6ed5"
+   "hash": "3f9c436b71c58a91"
   },
   {
    "id": "max:townLevel:2:Drunk@40",
-   "hash": "ca6a114aa558c9b4"
+   "hash": "faf5238c7d566906"
   },
   {
    "id": "max:townLevel:2:Drunk@59",
-   "hash": "ca6a114aa558c9b4"
+   "hash": "faf5238c7d566906"
   },
   {
    "id": "max:townLevel:2:Drunk@60",
-   "hash": "784a676e9507f5e1"
+   "hash": "c5ff76d768187977"
   },
   {
    "id": "max:townLevel:2:Drunk@79",
-   "hash": "784a676e9507f5e1"
+   "hash": "c5ff76d768187977"
   },
   {
    "id": "max:townLevel:2:Drunk@80",
-   "hash": "661097e8c9c7e6d8"
+   "hash": "01214a4b26dd2f86"
   },
   {
    "id": "max:townLevel:2:Apprentice@99",
-   "hash": "542ad8c5ee9d0f29"
+   "hash": "a73e4fa146939d5d"
   },
   {
    "id": "max:townLevel:2:Apprentice@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:townLevel:2:Mason@99",
-   "hash": "7beca3976854f1e3"
+   "hash": "afa1f798a4edbf20"
   },
   {
    "id": "max:townLevel:2:Mason@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:surveyLevel:2:SurveyZ2@99",
-   "hash": "15b6e2318085867e"
+   "hash": "cefb5794f3835be7"
   },
   {
    "id": "max:surveyLevel:2:SurveyZ2@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:townLevel:3:Mountain@1",
-   "hash": "ed46b589b549abfb"
+   "hash": "70a669a62ec03998"
   },
   {
    "id": "max:townLevel:3:Mountain@2",
-   "hash": "c86f36fdb5bfc261"
+   "hash": "7c3e2a2261111ec2"
   },
   {
    "id": "max:townLevel:3:Mountain@9",
-   "hash": "c86f36fdb5bfc261"
+   "hash": "7c3e2a2261111ec2"
   },
   {
    "id": "max:townLevel:3:Mountain@10",
-   "hash": "2134ab292e8d49c1"
+   "hash": "97c63b6f8d151146"
   },
   {
    "id": "max:townLevel:3:Mountain@19",
-   "hash": "2134ab292e8d49c1"
+   "hash": "97c63b6f8d151146"
   },
   {
    "id": "max:townLevel:3:Mountain@20",
-   "hash": "5c60b74fdf0cc488"
+   "hash": "2233dd1302f95b97"
   },
   {
    "id": "max:townLevel:3:Mountain@39",
-   "hash": "5c60b74fdf0cc488"
+   "hash": "2233dd1302f95b97"
   },
   {
    "id": "max:townLevel:3:Mountain@40",
-   "hash": "3dabdcc787bf195d"
+   "hash": "ec6d9e38478fc2e0"
   },
   {
    "id": "max:townLevel:3:Mountain@99",
-   "hash": "bbde8c96836ed594"
+   "hash": "3f4766b1977ae979"
   },
   {
    "id": "max:townLevel:3:Mountain@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:townLevel:3:Runes@7",
-   "hash": "53af5205753aa644"
+   "hash": "1de3501405dd9ea3"
   },
   {
    "id": "max:townLevel:3:Runes@8",
-   "hash": "d9f3c5774c8d2731"
+   "hash": "fc8f0b767042ce38"
   },
   {
    "id": "max:townLevel:3:Runes@15",
-   "hash": "779ee363ceb680af"
+   "hash": "f01a54f4855629a6"
   },
   {
    "id": "max:townLevel:3:Runes@16",
-   "hash": "18f5b942d4917235"
+   "hash": "1affffd09eb9be9b"
   },
   {
    "id": "max:townLevel:3:Runes@29",
-   "hash": "2b094f64207c1a49"
+   "hash": "1e0c0b5746b14ace"
   },
   {
    "id": "max:townLevel:3:Runes@30",
-   "hash": "d8b9eafaa0993587"
+   "hash": "49a0c6a34802c329"
   },
   {
    "id": "max:townLevel:3:Runes@59",
-   "hash": "1ec2affb03583783"
+   "hash": "9adf131dc3ca9f49"
   },
   {
    "id": "max:townLevel:3:Runes@60",
-   "hash": "cd8a9eb26cab2904"
+   "hash": "ad6de3b0041dbf04"
   },
   {
    "id": "max:townLevel:3:Cavern@1",
-   "hash": "2adf805a222bb8cd"
+   "hash": "effc69b5ec59ed85"
   },
   {
    "id": "max:townLevel:3:Cavern@2",
-   "hash": "42021600bc7d31e5"
+   "hash": "b873816375704f4c"
   },
   {
    "id": "max:townLevel:3:Cavern@4",
-   "hash": "42021600bc7d31e5"
+   "hash": "b873816375704f4c"
   },
   {
    "id": "max:townLevel:3:Cavern@5",
-   "hash": "33e2dcf41746a6ad"
+   "hash": "8016ec7944f06a77"
   },
   {
    "id": "max:townLevel:3:Cavern@19",
-   "hash": "87668ab18b2288bd"
+   "hash": "eea6933631d95ca1"
   },
   {
    "id": "max:townLevel:3:Cavern@20",
-   "hash": "263cbe537d0db8b5"
+   "hash": "dcc18ce2c9bad21b"
   },
   {
    "id": "max:townLevel:3:Cavern@39",
-   "hash": "263cbe537d0db8b5"
+   "hash": "dcc18ce2c9bad21b"
   },
   {
    "id": "max:townLevel:3:Cavern@40",
-   "hash": "2d19b11aad45e34c"
+   "hash": "20e14ed0615656cb"
   },
   {
    "id": "max:townLevel:3:Cavern@49",
-   "hash": "2d19b11aad45e34c"
+   "hash": "20e14ed0615656cb"
   },
   {
    "id": "max:townLevel:3:Cavern@50",
-   "hash": "67d809bc31fab01b"
+   "hash": "0e2c790f61ebafac"
   },
   {
    "id": "max:townLevel:3:Cavern@79",
-   "hash": "baacd68956770cb5"
+   "hash": "cb7a5d6702316f77"
   },
   {
    "id": "max:townLevel:3:Cavern@80",
-   "hash": "9ec7fffcc7debb38"
+   "hash": "bcc37dfc48187bdd"
   },
   {
    "id": "max:townLevel:3:Illusions@0",
-   "hash": "ab3fa8db6690a15e"
+   "hash": "f7770594d928c41e"
   },
   {
    "id": "max:townLevel:3:Illusions@1",
-   "hash": "ce000d0567d2ae61"
+   "hash": "095a3e1e7878de15"
   },
   {
    "id": "max:townLevel:3:Illusions@4",
-   "hash": "ce000d0567d2ae61"
+   "hash": "095a3e1e7878de15"
   },
   {
    "id": "max:townLevel:3:Illusions@5",
-   "hash": "133cda552c429d5a"
+   "hash": "bf68ef99abe29189"
   },
   {
    "id": "max:townLevel:3:Illusions@49",
-   "hash": "0c2d02994502db10"
+   "hash": "c574454fbc4fca97"
   },
   {
    "id": "max:townLevel:3:Illusions@50",
-   "hash": "8aaf1db9a2e295dd"
+   "hash": "9cdedd0711798536"
   },
   {
    "id": "max:townLevel:3:Illusions@69",
-   "hash": "25e157789ccf1e7e"
+   "hash": "95d164869051b752"
   },
   {
    "id": "max:townLevel:3:Illusions@70",
-   "hash": "e64ebbd04f25d80a"
+   "hash": "1c06a3e6d0e82552"
   },
   {
    "id": "max:buffLevel::Imbuement@0",
-   "hash": "af1a5c63d1f7dfc7"
+   "hash": "344134bce8dacfe5"
   },
   {
    "id": "max:buffLevel::Imbuement@1",
-   "hash": "2065a264dc251a8f"
+   "hash": "39868a2335ebf7ad"
   },
   {
    "id": "max:buffLevel::Imbuement@499",
-   "hash": "797ae54799a8f8e0"
+   "hash": "3206c3b497e9af6b"
   },
   {
    "id": "max:buffLevel::Imbuement@500",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:surveyLevel:3:SurveyZ3@99",
-   "hash": "c33ab7f0f33ecb8e"
+   "hash": "70ddd40f2a920478"
   },
   {
    "id": "max:surveyLevel:3:SurveyZ3@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:townLevel:3:RuinsZ3@0",
-   "hash": "33a940c35026a418"
+   "hash": "43e0b81b521615ae"
   },
   {
    "id": "max:townLevel:3:RuinsZ3@1",
-   "hash": "99e35ce90484c117"
+   "hash": "c77f93d021c3d981"
   },
   {
    "id": "max:surveyLevel:0:SurveyZ0@99",
-   "hash": "7c0389e8e77aa1e0"
+   "hash": "e7c1f1c9749c083c"
   },
   {
    "id": "max:surveyLevel:0:SurveyZ0@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:surveyLevel:4:SurveyZ4@99",
-   "hash": "19f23f7daf8052a9"
+   "hash": "c04b4420716378ae"
   },
   {
    "id": "max:surveyLevel:4:SurveyZ4@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:surveyLevel:5:SurveyZ5@99",
-   "hash": "270313ca72dcf8f2"
+   "hash": "4b3448ebe3de7ec3"
   },
   {
    "id": "max:surveyLevel:5:SurveyZ5@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:surveyLevel:6:SurveyZ6@99",
-   "hash": "d20a18ba1caddd4d"
+   "hash": "e1185ddad8576f97"
   },
   {
    "id": "max:surveyLevel:6:SurveyZ6@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:surveyLevel:7:SurveyZ7@99",
-   "hash": "3c95d7c3d6f35161"
+   "hash": "6599fe51d28d467b"
   },
   {
    "id": "max:surveyLevel:7:SurveyZ7@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:surveyLevel:8:SurveyZ8@99",
-   "hash": "be1dc1c5834753d9"
+   "hash": "78e688062762e908"
   },
   {
    "id": "max:surveyLevel:8:SurveyZ8@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:townLevel:4:Tour@9",
-   "hash": "7b31191e0627b120"
+   "hash": "a63efc13c50b75cb"
   },
   {
    "id": "max:townLevel:4:Tour@10",
-   "hash": "b325e5b111a10d70"
+   "hash": "9977d751ec0f0a3c"
   },
   {
    "id": "max:townLevel:4:Tour@19",
-   "hash": "b325e5b111a10d70"
+   "hash": "9977d751ec0f0a3c"
   },
   {
    "id": "max:townLevel:4:Tour@20",
-   "hash": "298446c84ea3f845"
+   "hash": "cb3ca015f40b0086"
   },
   {
    "id": "max:townLevel:4:Tour@29",
-   "hash": "298446c84ea3f845"
+   "hash": "cb3ca015f40b0086"
   },
   {
    "id": "max:townLevel:4:Tour@30",
-   "hash": "8dd8552a5e33573f"
+   "hash": "f52a96ddec4616a2"
   },
   {
    "id": "max:townLevel:4:Tour@39",
-   "hash": "8dd8552a5e33573f"
+   "hash": "f52a96ddec4616a2"
   },
   {
    "id": "max:townLevel:4:Tour@40",
-   "hash": "fa159a25145941b8"
+   "hash": "1fd47f4b5fa691d3"
   },
   {
    "id": "max:townLevel:4:Tour@59",
-   "hash": "fa159a25145941b8"
+   "hash": "1fd47f4b5fa691d3"
   },
   {
    "id": "max:townLevel:4:Tour@60",
-   "hash": "b61232fde6d074c2"
+   "hash": "c9d3e85c77917314"
   },
   {
    "id": "max:townLevel:4:Tour@69",
-   "hash": "b61232fde6d074c2"
+   "hash": "c9d3e85c77917314"
   },
   {
    "id": "max:townLevel:4:Tour@70",
-   "hash": "0999870c094a7d8e"
+   "hash": "4629d83fa5586303"
   },
   {
    "id": "max:townLevel:4:Tour@79",
-   "hash": "0999870c094a7d8e"
+   "hash": "4629d83fa5586303"
   },
   {
    "id": "max:townLevel:4:Tour@80",
-   "hash": "d0a76ff1883faf25"
+   "hash": "41c4ab22688ddefb"
   },
   {
    "id": "max:townLevel:4:Tour@89",
-   "hash": "d0a76ff1883faf25"
+   "hash": "41c4ab22688ddefb"
   },
   {
    "id": "max:townLevel:4:Tour@90",
-   "hash": "18caec8140b0c0a3"
+   "hash": "2b6bbcb50c06bf6f"
   },
   {
    "id": "max:townLevel:4:Tour@99",
-   "hash": "18caec8140b0c0a3"
+   "hash": "2b6bbcb50c06bf6f"
   },
   {
    "id": "max:townLevel:4:Tour@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:townLevel:4:Canvassed@4",
-   "hash": "7b36d8d874afe41d"
+   "hash": "d65a4b04bbbdf7a2"
   },
   {
    "id": "max:townLevel:4:Canvassed@5",
-   "hash": "f27d86da042a8cf8"
+   "hash": "a4ae9819a73faa22"
   },
   {
    "id": "max:townLevel:4:Canvassed@9",
-   "hash": "f27d86da042a8cf8"
+   "hash": "a4ae9819a73faa22"
   },
   {
    "id": "max:townLevel:4:Canvassed@10",
-   "hash": "b664348f64d15ea6"
+   "hash": "779c27f4a1c44b0a"
   },
   {
    "id": "max:townLevel:4:Canvassed@29",
-   "hash": "4e27f875f4ca57d5"
+   "hash": "36f831dbd6137edd"
   },
   {
    "id": "max:townLevel:4:Canvassed@30",
-   "hash": "603df459cf0137c5"
+   "hash": "01f900481a508ef0"
   },
   {
    "id": "max:townLevel:4:Citizen@59",
-   "hash": "c37d478d6ca28f3a"
+   "hash": "321f2f9a9b10aacb"
   },
   {
    "id": "max:townLevel:4:Citizen@60",
-   "hash": "7bc8b89853ede55e"
+   "hash": "ef7102662661d089"
   },
   {
    "id": "max:townLevel:4:Citizen@79",
-   "hash": "7bc8b89853ede55e"
+   "hash": "ef7102662661d089"
   },
   {
    "id": "max:townLevel:4:Citizen@80",
-   "hash": "29b7d9c05a6451c7"
+   "hash": "d414ac46b48ccfa6"
   },
   {
    "id": "max:townLevel:4:Citizen@99",
-   "hash": "29b7d9c05a6451c7"
+   "hash": "d414ac46b48ccfa6"
   },
   {
    "id": "max:townLevel:4:Citizen@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:skillLevel::Mercantilism@0",
-   "hash": "db6b2c15f08ab5de"
+   "hash": "2dfbe1e26e13bd1c"
   },
   {
    "id": "max:skillLevel::Mercantilism@1",
-   "hash": "2d6195a7ca10e477"
+   "hash": "0a844bf3dfaa05f5"
   },
   {
    "id": "max:skillLevel::Pyromancy@199",
-   "hash": "22694b3fde4fd923"
+   "hash": "5b2a948c6eedf711"
   },
   {
    "id": "max:skillLevel::Pyromancy@200",
-   "hash": "3307aad13b0ee102"
+   "hash": "04d16a73590691bc"
   },
   {
    "id": "max:buffLevel::Ritual@59",
-   "hash": "cffd34db89c17910"
+   "hash": "6fc4b7760e23d051"
   },
   {
    "id": "max:buffLevel::Ritual@60",
-   "hash": "8e471b450582900e"
+   "hash": "b7819855fffcc1ba"
   },
   {
    "id": "max:townLevel:5:RuinsZ5@0",
-   "hash": "33d6345bb42221cb"
+   "hash": "d350211378190da7"
   },
   {
    "id": "max:townLevel:5:RuinsZ5@1",
-   "hash": "912e9ce840552d03"
+   "hash": "86b0c6292c3250c0"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@9",
-   "hash": "5c8a1b28a949ff39"
+   "hash": "207c15237fc63d1b"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@10",
-   "hash": "d0d1a28fa9a73991"
+   "hash": "56554c082ff4aa4d"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@14",
-   "hash": "d0d1a28fa9a73991"
+   "hash": "56554c082ff4aa4d"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@15",
-   "hash": "ebc0f0e6cd033a79"
+   "hash": "55d7ba429e7793e7"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@19",
-   "hash": "ebc0f0e6cd033a79"
+   "hash": "55d7ba429e7793e7"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@20",
-   "hash": "f1fc47a812344370"
+   "hash": "09e6f720b244633e"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@24",
-   "hash": "f1fc47a812344370"
+   "hash": "09e6f720b244633e"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@25",
-   "hash": "bd9145ce17a645cf"
+   "hash": "36363cdfc5d148cb"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@49",
-   "hash": "2caabee5b294347b"
+   "hash": "a7e42d778f2e2a63"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@50",
-   "hash": "c32a5fb00eb15537"
+   "hash": "566799f3e11931de"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@74",
-   "hash": "4540b9dd216d219b"
+   "hash": "aead14e6149d3cba"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@75",
-   "hash": "2518fa6e8c936713"
+   "hash": "2e32efede230dbf7"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@99",
-   "hash": "be815c12458a6be7"
+   "hash": "7b6c2783851bdd86"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:townLevel:6:RuinsZ6@0",
-   "hash": "8e328ee24a6506a0"
+   "hash": "13934ecdec30d541"
   },
   {
    "id": "max:townLevel:6:RuinsZ6@1",
-   "hash": "6796a0b2a0f26b2c"
+   "hash": "0581fc33d133381f"
   },
   {
    "id": "max:skillLevel::Restoration@999",
-   "hash": "81d69a551669f68e"
+   "hash": "1bd63e36c5324e14"
   },
   {
    "id": "max:skillLevel::Restoration@1000",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "3d70e56bd43b5c3c"
   },
   {
    "id": "max:townLevel:7:Excursion@4",
-   "hash": "e93aa218b2040e03"
+   "hash": "46e23f81ed9842a0"
   },
   {
    "id": "max:townLevel:7:Excursion@5",
-   "hash": "9e391bb0209f0348"
+   "hash": "e35d0361344c4c93"
   },
   {
    "id": "max:townLevel:7:Excursion@9",
-   "hash": "9e391bb0209f0348"
+   "hash": "e35d0361344c4c93"
   },
   {
    "id": "max:townLevel:7:Excursion@10",
-   "hash": "073fea37b439bb9d"
+   "hash": "748e61a72adf7d71"
   },
   {
    "id": "max:townLevel:7:Excursion@19",
-   "hash": "073fea37b439bb9d"
+   "hash": "748e61a72adf7d71"
   },
   {
    "id": "max:townLevel:7:Excursion@20",
-   "hash": "fd2af387dc3a09aa"
+   "hash": "fc213be8854837c1"
   },
   {
    "id": "max:townLevel:7:Excursion@24",
-   "hash": "fd2af387dc3a09aa"
+   "hash": "fc213be8854837c1"
   },
   {
    "id": "max:townLevel:7:Excursion@25",
-   "hash": "239d50e743059794"
+   "hash": "af1f1b42c154a64b"
   },
   {
    "id": "max:skillLevel::Thievery@0",
-   "hash": "c44ecf58a9765183"
+   "hash": "fcc7e41dd80ef2b0"
   },
   {
    "id": "max:skillLevel::Thievery@1",
-   "hash": "b71a4c092a475dde"
+   "hash": "964c8224c64b1630"
   },
   {
    "id": "max:townLevel:7:PickPockets@24",
-   "hash": "5d67d97ae61bb9cb"
+   "hash": "e635ce2ad3b356e6"
   },
   {
    "id": "max:townLevel:7:PickPockets@25",
-   "hash": "d83c106c4891b3f1"
+   "hash": "fe4244c4d44957c4"
   },
   {
    "id": "max:townLevel:7:PickPockets@99",
-   "hash": "9462c49abf49f6ec"
+   "hash": "63c249348842088d"
   },
   {
    "id": "max:townLevel:7:PickPockets@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:townLevel:7:RobWarehouse@49",
-   "hash": "83564677bb7c0fb4"
+   "hash": "3123a25c37791854"
   },
   {
    "id": "max:townLevel:7:RobWarehouse@50",
-   "hash": "2ef56eed5b21fef6"
+   "hash": "c69332c27f0f24c9"
   },
   {
    "id": "max:townLevel:7:RobWarehouse@99",
-   "hash": "f6684d4483dc94a3"
+   "hash": "e02e0c56ca0b0fce"
   },
   {
    "id": "max:townLevel:7:RobWarehouse@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:townLevel:7:InsuranceFraud@74",
-   "hash": "1d8fafc95a6e7c78"
+   "hash": "18da629b918bf3a3"
   },
   {
    "id": "max:townLevel:7:InsuranceFraud@75",
-   "hash": "74d47bd0d2b29e4a"
+   "hash": "9b2376bab163ce54"
   },
   {
    "id": "max:townLevel:7:InsuranceFraud@99",
-   "hash": "74d47bd0d2b29e4a"
+   "hash": "9b2376bab163ce54"
   },
   {
    "id": "max:townLevel:7:InsuranceFraud@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:buffLevel::Imbuement3@6",
-   "hash": "3b365dc949dc0e73"
+   "hash": "567a7ea7ef46d72f"
   },
   {
    "id": "max:buffLevel::Imbuement3@7",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:storyMax::storyMax@11",
-   "hash": "4d6edfb5f4c1dc6a"
+   "hash": "3f6a07c59c9660a5"
   },
   {
    "id": "max:storyMax::storyMax@12",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:buffLevel::Imbuement2@499",
-   "hash": "fd2400a8cea0a97a"
+   "hash": "d93c22d0111a3b93"
   },
   {
    "id": "max:buffLevel::Imbuement2@500",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "max:townLevel:8:BuildTower@99",
-   "hash": "e15cd1cb1344e961"
+   "hash": "10a1fafb52c74ac0"
   },
   {
    "id": "max:townLevel:8:BuildTower@100",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "zero:prestige:completedAnyPrestige=on",
-   "hash": "0ff5003c70d1f9ab"
+   "hash": "fd9cca2757aeb974"
   },
   {
    "id": "zero:storyFlag:acquiredPegasus=on",
-   "hash": "1d48b8508cbc4095"
+   "hash": "8de4cb7c159c2762"
   },
   {
    "id": "talents:0",
-   "hash": "ef781c620a848678"
+   "hash": "56b2e2d2dc8bf194"
   },
   {
    "id": "talents:99",
-   "hash": "ef781c620a848678"
+   "hash": "56b2e2d2dc8bf194"
   },
   {
    "id": "talents:100",
-   "hash": "52590bb663c95449"
+   "hash": "ce2f07487eb0b58b"
   },
   {
    "id": "talents:150",
-   "hash": "52590bb663c95449"
+   "hash": "ce2f07487eb0b58b"
   },
   {
    "id": "talents:999",
-   "hash": "52590bb663c95449"
+   "hash": "ce2f07487eb0b58b"
   },
   {
    "id": "talents:1000",
-   "hash": "62969595b1ed9f7c"
+   "hash": "5f26f123b19cd3bf"
   },
   {
    "id": "talents:5000",
-   "hash": "62969595b1ed9f7c"
+   "hash": "5f26f123b19cd3bf"
   },
   {
    "id": "talents:9999",
-   "hash": "62969595b1ed9f7c"
+   "hash": "5f26f123b19cd3bf"
   },
   {
    "id": "talents:10000",
-   "hash": "5805fc30c457b17e"
+   "hash": "0bc7b38c5659f72a"
   },
   {
    "id": "talents:99999",
-   "hash": "5805fc30c457b17e"
+   "hash": "0bc7b38c5659f72a"
   },
   {
    "id": "talents:100000",
-   "hash": "e6bcb99a45b66312"
+   "hash": "f3a1743832bde6ca"
   },
   {
    "id": "talents:500000",
-   "hash": "e6bcb99a45b66312"
+   "hash": "f3a1743832bde6ca"
   },
   {
    "id": "zero:guild=none",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "max:guild=none",
-   "hash": "b537ea6e0ee61b54"
+   "hash": "dd5e15ee156c8aac"
   },
   {
    "id": "zero:guild=Adventure",
-   "hash": "c746e1756a0fd275"
+   "hash": "fbcd01fe1eef219f"
   },
   {
    "id": "max:guild=Adventure",
-   "hash": "d4ec5a28e19009e8"
+   "hash": "a0a2c5f2b7e5241e"
   },
   {
    "id": "zero:guild=Crafting",
-   "hash": "c35d9006fb777911"
+   "hash": "1fad4e64dcf34ff2"
   },
   {
    "id": "max:guild=Crafting",
-   "hash": "1ef3d6eaf8ff9dd9"
+   "hash": "852a3cbbfa50006c"
   },
   {
    "id": "zero:guild=Explorer",
-   "hash": "1299459bae62f068"
+   "hash": "e7fccca315f36a3e"
   },
   {
    "id": "max:guild=Explorer",
-   "hash": "f327b28d8a839c45"
+   "hash": "ad7d7e34b29834b6"
   },
   {
    "id": "zero:guild=Thieves",
-   "hash": "1c702dcfd8f98516"
+   "hash": "b0c20ec60757481e"
   },
   {
    "id": "max:guild=Thieves",
-   "hash": "5f1eba3d6f21ef51"
+   "hash": "cd7be65624e43013"
   },
   {
    "id": "zero:guild=Assassin",
-   "hash": "c746e1756a0fd275"
+   "hash": "fbcd01fe1eef219f"
   },
   {
    "id": "max:guild=Assassin",
-   "hash": "d4ec5a28e19009e8"
+   "hash": "a0a2c5f2b7e5241e"
   },
   {
    "id": "effectiveTime:0",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "effectiveTime:59",
-   "hash": "bffa9a377a753ed0"
+   "hash": "d753a8e19bd31893"
   },
   {
    "id": "effectiveTime:60",
-   "hash": "6f385dcdc25b7a68"
+   "hash": "93dae7d929ef13d0"
   },
   {
    "id": "effectiveTime:499",
-   "hash": "6dd95b6f677cc3be"
+   "hash": "338f31925bb2c250"
   },
   {
    "id": "effectiveTime:500",
-   "hash": "f22088a7d81ec61e"
+   "hash": "a40f01992ec0d4e0"
   },
   {
    "id": "effectiveTime:501",
-   "hash": "f22088a7d81ec61e"
+   "hash": "a40f01992ec0d4e0"
   },
   {
    "id": "storyVar:maxZombiesRaised@9",
-   "hash": "ee3f69783becf66a"
+   "hash": "3568914bbded8205"
   },
   {
    "id": "storyVar:maxZombiesRaised@10",
-   "hash": "96fa5481bb4985b2"
+   "hash": "d3e0706d344ab053"
   },
   {
    "id": "storyVar:maxZombiesRaised@24",
-   "hash": "96fa5481bb4985b2"
+   "hash": "d3e0706d344ab053"
   },
   {
    "id": "storyVar:maxZombiesRaised@25",
-   "hash": "f7e0e2ac2a429d70"
+   "hash": "a823a957c3447d4b"
   },
   {
    "id": "guildSegments:1",
-   "hash": "fdc266283691a7ac"
+   "hash": "1a578b439aa6750c"
   },
   {
    "id": "guildSegments:3",
-   "hash": "73be4fb7cd269aec"
+   "hash": "0620c177bcc57cd5"
   },
   {
    "id": "guildSegments:29",
-   "hash": "244f8d77ea395a06"
+   "hash": "dc08c7d423ff047e"
   },
   {
    "id": "guildSegments:30",
-   "hash": "66f7251b3e7e7a0e"
+   "hash": "fbe0fd9d538e239a"
   },
   {
    "id": "guildSegments:42",
-   "hash": "033017f9b6868335"
+   "hash": "2f80f0c5394e3305"
   },
   {
    "id": "guildSegments:57",
-   "hash": "13a39f070e2c2665"
+   "hash": "544d6cc53e2852ed"
   },
   {
    "id": "max:guild=Crafting@seg30+houses20",
-   "hash": "59e793b65eaade3c"
+   "hash": "b917eed383e2d983"
   },
   {
    "id": "fullSurveys:1",
-   "hash": "8a534c2e837ae9d3"
+   "hash": "f85e445a1f1f34b3"
   },
   {
    "id": "fullSurveys:3",
-   "hash": "a3abf5a40a9aebf0"
+   "hash": "9a90884acaa3db9f"
   },
   {
    "id": "fullSurveys:4",
-   "hash": "befd8093bdbc5fad"
+   "hash": "4ba2a533ea62f978"
   },
   {
    "id": "fullSurveys:8",
-   "hash": "68ee7ef99dc3b722"
+   "hash": "b4c1ef6a2d2a0208"
   },
   {
    "id": "fullSurveys:9",
-   "hash": "48cbd5dafae8954a"
+   "hash": "655c03ff4f1974b7"
   },
   {
    "id": "assassinations:3",
-   "hash": "2c658e6fa78395d4"
+   "hash": "bd855b9a699fd560"
   },
   {
    "id": "assassinations:4",
-   "hash": "6287897d986b8815"
+   "hash": "a52aca51d3a60d60"
   },
   {
    "id": "assassinations:7",
-   "hash": "f862cc66c9aee449"
+   "hash": "92529b8c169e6508"
   },
   {
    "id": "assassinations:8",
-   "hash": "d6af6e26e5f696c2"
+   "hash": "f6ef2f674e154b34"
+  },
+  {
+   "id": "loopCounters:0",
+   "hash": "3568914bbded8205"
+  },
+  {
+   "id": "loopCounters:1",
+   "hash": "dd38f5ef7d94cca5"
+  },
+  {
+   "id": "loopCounters:3",
+   "hash": "a6616b0cbb877075"
+  },
+  {
+   "id": "loopCounters:9",
+   "hash": "dcf2c9787ce0b558"
+  },
+  {
+   "id": "loopCounters:14",
+   "hash": "5538386f4d4cb164"
+  },
+  {
+   "id": "loopCounters:27",
+   "hash": "aa78dc17580efe01"
+  },
+  {
+   "id": "loopCounters:63",
+   "hash": "6376d76ab5a735de"
+  },
+  {
+   "id": "floorsCompleted:1",
+   "hash": "3568914bbded8205"
+  },
+  {
+   "id": "floorsCompleted:199",
+   "hash": "3568914bbded8205"
+  },
+  {
+   "id": "floorsCompleted:200",
+   "hash": "3568914bbded8205"
+  },
+  {
+   "id": "soulstones:1000",
+   "hash": "dd5e15ee156c8aac"
+  },
+  {
+   "id": "soulstones:1000000",
+   "hash": "1485aa888d099a73"
   },
   {
    "id": "random:0",
-   "hash": "43f92896d350c2ae"
+   "hash": "7ab12a9a07ff658f"
   },
   {
    "id": "random:1",
-   "hash": "81cedd9714dae5d2"
+   "hash": "db075cf3aeeb2db7"
   },
   {
    "id": "random:2",
-   "hash": "0d730db625d1a539"
+   "hash": "98a4ba1804b89abd"
   },
   {
    "id": "random:3",
-   "hash": "e98148078862e239"
+   "hash": "7576e390d596c561"
   },
   {
    "id": "random:4",
-   "hash": "65ab1f18151927de"
+   "hash": "7c5f0082596853a8"
   },
   {
    "id": "random:5",
-   "hash": "71e0f513830e3403"
+   "hash": "1b937eb7ed81a052"
   },
   {
    "id": "random:6",
-   "hash": "0970e5a27a51745b"
+   "hash": "5e42004337a3ef09"
   },
   {
    "id": "random:7",
-   "hash": "a23c24082712e226"
+   "hash": "98650de2785d40d6"
   },
   {
    "id": "random:8",
-   "hash": "39feca3216e17ba9"
+   "hash": "e9b222c197f7b60d"
   },
   {
    "id": "random:9",
-   "hash": "15a513ff6eced8b9"
+   "hash": "b86c05a645ccfe2d"
   },
   {
    "id": "random:10",
-   "hash": "6908143e8cebc099"
+   "hash": "837eb7fbc2a9d032"
   },
   {
    "id": "random:11",
-   "hash": "c07e35c8c332bfed"
+   "hash": "38bba553b26b767c"
   },
   {
    "id": "random:12",
-   "hash": "df26d076bce4ba61"
+   "hash": "49234372d17552fc"
   },
   {
    "id": "random:13",
-   "hash": "f9e2bacaea918d89"
+   "hash": "2e33307cf4f76946"
   },
   {
    "id": "random:14",
-   "hash": "1dc384d1867b3cbf"
+   "hash": "0f2fc3289a11e4bf"
   },
   {
    "id": "random:15",
-   "hash": "eb144ad8e45df761"
+   "hash": "1ef2e4dd809aca7b"
   },
   {
    "id": "random:16",
-   "hash": "1b76193a11a01aeb"
+   "hash": "e1b8d91f56d4cc3a"
   },
   {
    "id": "random:17",
-   "hash": "b1d86bb3c4529f13"
+   "hash": "76716c1e1a8f9bbb"
   },
   {
    "id": "random:18",
-   "hash": "f4841b8aae4e4098"
+   "hash": "b5bb52aa1dee52fa"
   },
   {
    "id": "random:19",
-   "hash": "3dbdbfdc66aef521"
+   "hash": "36fad858d1c08f18"
   },
   {
    "id": "random:20",
-   "hash": "6982b080ef2050fd"
+   "hash": "b2c2180e8191fff9"
   },
   {
    "id": "random:21",
-   "hash": "53b421b419ba8ef6"
+   "hash": "12a264c56da43970"
   },
   {
    "id": "random:22",
-   "hash": "5c2f4771efb87197"
+   "hash": "92ac14d2242eb594"
   },
   {
    "id": "random:23",
-   "hash": "429fce3bb097a8b0"
+   "hash": "46eb5fea195a57ab"
   },
   {
    "id": "random:24",
-   "hash": "24629d48e8851c6b"
+   "hash": "203b9c29810b9c3a"
   },
   {
    "id": "random:25",
-   "hash": "8e5e89be6aa22035"
+   "hash": "4cb7b29da3d0c816"
   },
   {
    "id": "random:26",
-   "hash": "cd502af49520a748"
+   "hash": "9abb4d24a68c419e"
   },
   {
    "id": "random:27",
-   "hash": "92df289e9c5e579f"
+   "hash": "473029ad90361a04"
   },
   {
    "id": "random:28",
-   "hash": "73d5a4dfed674da8"
+   "hash": "7cd58c3810f9a691"
   },
   {
    "id": "random:29",
-   "hash": "8b51da4cf4492d54"
+   "hash": "13a90455858e9425"
   },
   {
    "id": "random:30",
-   "hash": "bda91b0fce1c1f5e"
+   "hash": "090802108ebdfcea"
   },
   {
    "id": "random:31",
-   "hash": "99483230a07d73c3"
+   "hash": "b290f3d1f63f5e0a"
   },
   {
    "id": "random:32",
-   "hash": "f39c1aca38794fea"
+   "hash": "9cd4385115518eab"
   },
   {
    "id": "random:33",
-   "hash": "4aef85c8302ebda9"
+   "hash": "97103f0caa81b4a3"
   },
   {
    "id": "random:34",
-   "hash": "9519c6fe42506eb0"
+   "hash": "7b81f9373a8c3af6"
   },
   {
    "id": "random:35",
-   "hash": "3bedf5dfbd52afd7"
+   "hash": "ac09b4c752c09257"
   },
   {
    "id": "random:36",
-   "hash": "52548a69128b0fbe"
+   "hash": "ef0913b9914d4113"
   },
   {
    "id": "random:37",
-   "hash": "958ffb8852dd81bf"
+   "hash": "600016469c06f8c4"
   },
   {
    "id": "random:38",
-   "hash": "93e710b8ebd17a80"
+   "hash": "1e3c7c1ff9c4c273"
   },
   {
    "id": "random:39",
-   "hash": "5fa6bcb834fc118c"
+   "hash": "9d753d8de6f54361"
   },
   {
    "id": "random:40",
-   "hash": "00659faa165a44d6"
+   "hash": "757724c25b7588af"
   },
   {
    "id": "random:41",
-   "hash": "6ba230681b965867"
+   "hash": "076421cee97441fb"
   },
   {
    "id": "random:42",
-   "hash": "eac20601b2a786c1"
+   "hash": "3e8321e35b2e92d9"
   },
   {
    "id": "random:43",
-   "hash": "8965be01d11d237b"
+   "hash": "3f6b39e5998dd67b"
   },
   {
    "id": "random:44",
-   "hash": "5d98e147d2da8353"
+   "hash": "a3b624b9707d5fe2"
   },
   {
    "id": "random:45",
-   "hash": "163a906fece7912c"
+   "hash": "71ada48506612263"
   },
   {
    "id": "random:46",
-   "hash": "63aff847b7e3a954"
+   "hash": "21a91e932504126d"
   },
   {
    "id": "random:47",
-   "hash": "feeb8def99392389"
+   "hash": "36baca898be30fe9"
   },
   {
    "id": "random:48",
-   "hash": "ddb32fa928dc114a"
+   "hash": "9afcb012f38ad793"
   },
   {
    "id": "random:49",
-   "hash": "125a132f04254357"
+   "hash": "a5eacdafb8b2c581"
   },
   {
    "id": "random:50",
-   "hash": "47f55ea8f1e7203b"
+   "hash": "1bc0d114f1aaf6ff"
   },
   {
    "id": "random:51",
-   "hash": "7ede836795633de4"
+   "hash": "f0343b6392a60e73"
   },
   {
    "id": "random:52",
-   "hash": "e07facfae4af4e83"
+   "hash": "9e4efe7c72bf692b"
   },
   {
    "id": "random:53",
-   "hash": "2c6308509fd9272b"
+   "hash": "556f8f5d9cc08669"
   },
   {
    "id": "random:54",
-   "hash": "e51ada8c5106daf4"
+   "hash": "ba3088c26d73c559"
   },
   {
    "id": "random:55",
-   "hash": "9ea8644fd505123d"
+   "hash": "0f47c2a0c0fdf297"
   },
   {
    "id": "random:56",
-   "hash": "6c282deb3b1fdf6e"
+   "hash": "3bd2093f0d1b1930"
   },
   {
    "id": "random:57",
-   "hash": "89b40f2ceebf8874"
+   "hash": "bde974265b29f5f0"
   },
   {
    "id": "random:58",
-   "hash": "99799e563e03cf5c"
+   "hash": "60bc39c9d82c3156"
   },
   {
    "id": "random:59",
-   "hash": "bb2dd63220c5bfc4"
+   "hash": "dc51e3d7a686f1a7"
   },
   {
    "id": "random:60",
-   "hash": "ad2d03f31f99961d"
+   "hash": "720a6132b48ed706"
   },
   {
    "id": "random:61",
-   "hash": "0acd82bd2df9ecc6"
+   "hash": "6c9fd7ae264d1c91"
   },
   {
    "id": "random:62",
-   "hash": "7a4f4a81467d3562"
+   "hash": "4431edf7721dab1d"
   },
   {
    "id": "random:63",
-   "hash": "f305edec6ee499ce"
+   "hash": "61f4304c60764e92"
   },
   {
    "id": "fixture:mid",
-   "hash": "489c91dd9a781266"
+   "hash": "aaf9c97bdff955e7"
   },
   {
    "id": "fixture:deep",
-   "hash": "a19cf2f7db42d067"
+   "hash": "d48ec1e3aa261866"
   }
  ],
  "bootSample": [
@@ -3018,8 +3067,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Smash Pots",
@@ -3037,8 +3097,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Pick Locks",
@@ -3056,8 +3127,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Buy Glasses",
@@ -3075,8 +3157,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Found Glasses",
@@ -3086,6 +3179,7 @@
    false,
    false,
    0,
+   null,
    null
   ],
   [
@@ -3104,8 +3198,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Meet People",
@@ -3123,8 +3228,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Train Strength",
@@ -3142,8 +3258,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Short Quest",
@@ -3161,8 +3288,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Investigate",
@@ -3180,8 +3318,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Long Quest",
@@ -3199,8 +3348,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Throw Party",
@@ -3218,8 +3378,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Warrior Lessons",
@@ -3237,8 +3408,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Mage Lessons",
@@ -3256,8 +3438,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Heal The Sick",
@@ -3275,8 +3468,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     10000,
+     10000,
+     10000,
+     15000,
+     40000,
+     275000,
+     10000,
+     10000,
+     10000,
+     15000,
+     40000,
+     445000,
+     10000,
+     10000,
+     15000,
+     15000,
+     65000,
+     445000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Fight Monsters",
@@ -3294,8 +3553,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     10000,
+     10000,
+     10000,
+     20000,
+     130000,
+     9870000,
+     10000,
+     10000,
+     10000,
+     30000,
+     210000,
+     15970000,
+     20000,
+     20000,
+     20000,
+     50000,
+     340000,
+     25840000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Small Dungeon",
@@ -3313,8 +3638,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     15000,
+     15000,
+     15000,
+     30000,
+     120000,
+     1920000,
+     15000,
+     15000,
+     15000,
+     30000,
+     120000,
+     1920000,
+     15000,
+     15000,
+     30000,
+     30000,
+     240000,
+     3840000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     "throws:Cannot read properties of undefined (reading 'completed')",
+     "throws:Cannot read properties of undefined (reading 'completed')",
+     "throws:Cannot read properties of undefined (reading 'completed')",
+     "throws:Cannot read properties of undefined (reading 'completed')"
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Buy Supplies",
@@ -3332,8 +3723,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Haggle",
@@ -3351,8 +3753,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "SurveyZ0",
@@ -3361,6 +3774,7 @@
    false,
    false,
    false,
+   null,
    null,
    null
   ],
@@ -3380,8 +3794,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Map",
@@ -3399,8 +3879,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Start Journey",
@@ -3418,8 +3909,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Hitch Ride",
@@ -3437,8 +3939,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Open Rift",
@@ -3456,8 +3969,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Explore Forest",
@@ -3475,8 +3999,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Wild Mana",
@@ -3494,8 +4029,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Gather Herbs",
@@ -3513,8 +4059,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Hunt",
@@ -3532,8 +4089,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Sit By Waterfall",
@@ -3551,8 +4119,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Old Shortcut",
@@ -3570,8 +4149,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Talk To Hermit",
@@ -3589,8 +4179,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Practical Magic",
@@ -3608,8 +4209,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Learn Alchemy",
@@ -3627,8 +4239,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Brew Potions",
@@ -3646,8 +4269,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Train Dexterity",
@@ -3665,8 +4299,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Train Speed",
@@ -3684,8 +4329,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Follow Flowers",
@@ -3703,8 +4359,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Bird Watching",
@@ -3722,8 +4389,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Clear Thicket",
@@ -3741,8 +4419,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Talk To Witch",
@@ -3760,8 +4449,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Dark Magic",
@@ -3779,8 +4479,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Dark Ritual",
@@ -3798,8 +4509,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     1000000,
+     1000000,
+     1000000,
+     1000000,
+     1000000,
+     1000000,
+     3000000,
+     3000000,
+     3000000,
+     3000000,
+     3000000,
+     3000000,
+     5000000,
+     5000000,
+     5000000,
+     5000000,
+     5000000,
+     5000000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "SurveyZ1",
@@ -3808,6 +4585,7 @@
    false,
    false,
    false,
+   null,
    null,
    null
   ],
@@ -3827,8 +4605,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "HaulZ1",
@@ -3846,8 +4635,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "AssassinZ1",
@@ -3865,8 +4665,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Continue On",
@@ -3884,8 +4750,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Explore City",
@@ -3903,8 +4780,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Gamble",
@@ -3922,8 +4810,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Get Drunk",
@@ -3941,8 +4840,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Buy Mana Z3",
@@ -3960,8 +4870,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Sell Potions",
@@ -3979,8 +4900,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Adventure Guild",
@@ -3998,8 +4930,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     5000000,
+     5000000,
+     6000000,
+     8650000,
+     30950000.000000004,
+     331000000,
+     6000000,
+     6000000,
+     7200000,
+     10350000,
+     37150000,
+     397500000,
+     7200000,
+     7200000,
+     8650000,
+     12450000.000000002,
+     44600000,
+     477000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
   ],
   [
    "Gather Team",
@@ -4017,8 +5015,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Large Dungeon",
@@ -4036,8 +5045,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     500000,
+     500000,
+     500000,
+     1500000,
+     13500000,
+     1090000000,
+     500000,
+     500000,
+     500000,
+     1500000,
+     13500000,
+     1090000000,
+     500000,
+     500000,
+     1500000,
+     1500000,
+     40500000,
+     3280000000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Crafting Guild",
@@ -4055,8 +5130,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     2000000,
+     2000000,
+     2400000,
+     3460000,
+     12380000,
+     132400000,
+     2400000,
+     2400000,
+     2880000,
+     4139999.9999999995,
+     14860000,
+     159000000,
+     2880000,
+     2880000,
+     3460000,
+     4980000,
+     17840000,
+     190800000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
   ],
   [
    "Craft Armor",
@@ -4074,8 +5215,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Apprentice",
@@ -4093,8 +5245,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Mason",
@@ -4112,8 +5275,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Architect",
@@ -4131,8 +5305,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Read Books",
@@ -4150,8 +5335,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Buy Pickaxe",
@@ -4169,8 +5365,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Heroes Trial",
@@ -4188,8 +5395,74 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   {
+    "loopCost": [
+     100000000,
+     100000000,
+     100000000,
+     200000000,
+     800000000,
+     12800000000,
+     100000000,
+     100000000,
+     100000000,
+     200000000,
+     800000000,
+     12800000000,
+     100000000,
+     100000000,
+     200000000,
+     200000000,
+     1600000000,
+     25600000000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
   ],
   [
    "SurveyZ2",
@@ -4198,6 +5471,7 @@
    false,
    false,
    false,
+   null,
    null,
    null
   ],
@@ -4217,8 +5491,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Start Trek",
@@ -4236,8 +5576,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Underworld",
@@ -4255,8 +5606,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Climb Mountain",
@@ -4274,8 +5636,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Mana Geyser",
@@ -4293,8 +5666,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Decipher Runes",
@@ -4312,8 +5696,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Chronomancy",
@@ -4331,8 +5726,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Looping Potion",
@@ -4350,8 +5756,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Pyromancy",
@@ -4369,8 +5786,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Explore Cavern",
@@ -4388,8 +5816,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Mine Soulstones",
@@ -4407,8 +5846,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Hunt Trolls",
@@ -4426,8 +5876,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     1000000,
+     1000000,
+     1000000,
+     2000000,
+     8000000,
+     128000000,
+     1000000,
+     1000000,
+     1000000,
+     2000000,
+     8000000,
+     128000000,
+     1000000,
+     1000000,
+     2000000,
+     2000000,
+     16000000,
+     256000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ]
+   }
   ],
   [
    "Check Walls",
@@ -4445,8 +5961,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Take Artifacts",
@@ -4464,8 +5991,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Imbue Mind",
@@ -4483,8 +6021,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     100000000,
+     100000000,
+     100000000,
+     100000000,
+     100000000,
+     100000000,
+     600000000,
+     600000000,
+     600000000,
+     600000000,
+     600000000,
+     600000000,
+     1100000000,
+     1100000000,
+     1100000000,
+     1100000000,
+     1100000000,
+     1100000000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Imbue Body",
@@ -4502,8 +6106,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     100000000,
+     100000000,
+     100000000,
+     100000000,
+     100000000,
+     100000000,
+     600000000,
+     600000000,
+     600000000,
+     600000000,
+     600000000,
+     600000000,
+     1100000000,
+     1100000000,
+     1100000000,
+     1100000000,
+     1100000000,
+     1100000000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "SurveyZ3",
@@ -4512,6 +6182,7 @@
    false,
    false,
    false,
+   null,
    null,
    null
   ],
@@ -4531,8 +6202,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "HaulZ3",
@@ -4550,8 +6232,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "AssassinZ3",
@@ -4569,8 +6262,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Face Judgement",
@@ -4588,8 +6347,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Guru",
@@ -4607,8 +6377,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Guided Tour",
@@ -4626,8 +6407,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Canvass",
@@ -4645,8 +6437,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Donate",
@@ -4664,8 +6467,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Accept Donations",
@@ -4683,8 +6497,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Tidy Up",
@@ -4702,8 +6527,74 @@
     false,
     false,
     false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   {
+    "loopCost": [
+     1000000,
+     1000000,
+     1000000,
+     2000000,
+     34000000,
+     10946000000,
+     1000000,
+     1000000,
+     1000000,
+     3000000,
+     55000000,
+     17711000000,
+     3000000,
+     3000000,
+     3000000,
+     8000000,
+     144000000,
+     46368000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ]
+   }
   ],
   [
    "Buy Mana Z5",
@@ -4721,8 +6612,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Sell Artifact",
@@ -4740,8 +6642,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Gift Artifact",
@@ -4759,8 +6672,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Mercantilism",
@@ -4778,8 +6702,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Charm School",
@@ -4797,8 +6732,19 @@
     false,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Oracle",
@@ -4816,8 +6762,19 @@
     false,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Enchant Armor",
@@ -4835,8 +6792,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Wizard College",
@@ -4854,8 +6822,74 @@
     null,
     false,
     null,
-    false
-   ]
+    false,
+    null,
+    false,
+    null,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   {
+    "loopCost": [
+     10000000,
+     10000000,
+     13000000,
+     22000000,
+     138000000,
+     4180000000,
+     13000000,
+     13000000,
+     16900000,
+     28600000,
+     179000000,
+     5430000000,
+     16900000,
+     16900000,
+     22000000,
+     37100000,
+     233000000,
+     7060000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Restoration",
@@ -4873,8 +6907,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Spatiomancy",
@@ -4892,8 +6937,19 @@
     false,
     false,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Seek Citizenship",
@@ -4911,8 +6967,19 @@
     false,
     false,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Build Housing",
@@ -4930,8 +6997,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Collect Taxes",
@@ -4949,8 +7027,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Pegasus",
@@ -4968,8 +7057,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Fight Frost Giants",
@@ -4987,8 +7087,74 @@
     false,
     false,
     false,
-    false
-   ]
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   {
+    "loopCost": [
+     10000000,
+     10000000,
+     13000000,
+     22000000,
+     138000000,
+     4180000000,
+     13000000,
+     13000000,
+     16900000,
+     28600000,
+     179000000,
+     5430000000,
+     16900000,
+     16900000,
+     22000000,
+     37100000,
+     233000000,
+     7060000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Seek Blessing",
@@ -5006,8 +7172,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Great Feast",
@@ -5025,8 +7202,74 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   {
+    "loopCost": [
+     1000000000,
+     1000000000,
+     1000000000,
+     1000000000,
+     1000000000,
+     1000000000,
+     6000000000,
+     6000000000,
+     6000000000,
+     6000000000,
+     6000000000,
+     6000000000,
+     11000000000,
+     11000000000,
+     11000000000,
+     11000000000,
+     11000000000,
+     11000000000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "SurveyZ4",
@@ -5035,6 +7278,7 @@
    false,
    false,
    false,
+   null,
    null,
    null
   ],
@@ -5054,8 +7298,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Fall From Grace",
@@ -5073,8 +7383,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "Meander",
@@ -5092,8 +7413,19 @@
     false,
     false,
     false,
-    false
-   ]
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   null
   ],
   [
    "Mana Well",
@@ -5111,8 +7443,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Destroy Pylons",
@@ -5130,8 +7473,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Raise Zombie",
@@ -5149,8 +7503,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Dark Sacrifice",
@@ -5168,8 +7533,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "The Spire",
@@ -5177,7 +7553,7 @@
    null,
    false,
    false,
-   false,
+   true,
    null,
    [
     false,
@@ -5187,8 +7563,74 @@
     false,
     false,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   {
+    "loopCost": [
+     10000000,
+     10000000,
+     10000000,
+     20000000,
+     80000000,
+     1280000000,
+     10000000,
+     10000000,
+     10000000,
+     20000000,
+     80000000,
+     1280000000,
+     10000000,
+     10000000,
+     20000000,
+     20000000,
+     160000000,
+     2560000000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
   ],
   [
    "Purchase Supplies",
@@ -5206,8 +7648,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Dead Trial",
@@ -5225,8 +7678,74 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   {
+    "loopCost": [
+     1000000000,
+     1000000000,
+     1000000000,
+     2000000000,
+     8000000000,
+     128000000000,
+     1000000000,
+     1000000000,
+     1000000000,
+     2000000000,
+     8000000000,
+     128000000000,
+     1000000000,
+     1000000000,
+     2000000000,
+     2000000000,
+     16000000000,
+     256000000000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
   ],
   [
    "SurveyZ5",
@@ -5235,6 +7754,7 @@
    false,
    false,
    false,
+   null,
    null,
    null
   ],
@@ -5254,8 +7774,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "HaulZ5",
@@ -5273,8 +7804,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "AssassinZ5",
@@ -5292,8 +7834,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Journey Forth",
@@ -5311,8 +7919,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Explore Jungle",
@@ -5330,8 +7949,19 @@
     false,
     false,
     false,
-    false
-   ]
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   null
   ],
   [
    "Fight Jungle Monsters",
@@ -5349,8 +7979,74 @@
     false,
     false,
     false,
-    false
-   ]
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   {
+    "loopCost": [
+     100000000,
+     100000000,
+     130000000,
+     220000000.00000003,
+     1380000000,
+     41800000000,
+     130000000,
+     130000000,
+     169000000,
+     286000000,
+     1789999999.9999998,
+     54300000000,
+     169000000,
+     169000000,
+     220000000.00000003,
+     371000000,
+     2330000000,
+     70600000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
   ],
   [
    "Rescue Survivors",
@@ -5368,8 +8064,74 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   {
+    "loopCost": [
+     10000,
+     10000,
+     10000,
+     15000,
+     40000,
+     275000,
+     10000,
+     10000,
+     10000,
+     15000,
+     40000,
+     445000,
+     10000,
+     10000,
+     15000,
+     15000,
+     65000,
+     445000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
   ],
   [
    "Prepare Buffet",
@@ -5387,8 +8149,19 @@
     false,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Totem",
@@ -5406,8 +8179,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "SurveyZ6",
@@ -5416,6 +8200,7 @@
    false,
    false,
    false,
+   null,
    null,
    null
   ],
@@ -5435,8 +8220,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "HaulZ6",
@@ -5454,8 +8250,19 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   null
   ],
   [
    "AssassinZ6",
@@ -5473,8 +8280,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Escape",
@@ -5492,8 +8365,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Open Portal",
@@ -5511,8 +8395,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Excursion",
@@ -5530,8 +8425,19 @@
     false,
     false,
     false,
-    false
-   ]
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   null
   ],
   [
    "Explorers Guild",
@@ -5549,8 +8455,19 @@
     false,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Thieves Guild",
@@ -5568,8 +8485,74 @@
     false,
     false,
     false,
-    false
-   ]
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   {
+    "loopCost": [
+     500000000,
+     500000000,
+     600000000,
+     865000000,
+     3095000000,
+     33100000000,
+     600000000,
+     600000000,
+     720000000,
+     1034999999.9999999,
+     3715000000,
+     39750000000,
+     720000000,
+     720000000,
+     865000000,
+     1245000000,
+     4460000000,
+     47700000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Pick Pockets",
@@ -5587,8 +8570,19 @@
     false,
     false,
     false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Rob Warehouse",
@@ -5606,8 +8600,19 @@
     false,
     false,
     false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Insurance Fraud",
@@ -5625,8 +8630,19 @@
     false,
     false,
     false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Guild Assassin",
@@ -5644,8 +8660,19 @@
     false,
     false,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Invest",
@@ -5663,8 +8690,19 @@
     false,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Collect Interest",
@@ -5682,8 +8720,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Seminar",
@@ -5701,8 +8750,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Purchase Key",
@@ -5720,8 +8780,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Secret Trial",
@@ -5739,8 +8810,74 @@
     false,
     false,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   {
+    "loopCost": [
+     10000000000,
+     10000000000,
+     10000000000,
+     12500000000,
+     19500000000,
+     47700000000,
+     10000000000,
+     10000000000,
+     10000000000,
+     12500000000,
+     19500000000,
+     47700000000,
+     10000000000,
+     10000000000,
+     12500000000,
+     12500000000,
+     24400000000,
+     59600000000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
   ],
   [
    "SurveyZ7",
@@ -5749,6 +8886,7 @@
    false,
    false,
    false,
+   null,
    null,
    null
   ],
@@ -5768,8 +8906,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000,
+     50000000
+    ],
+    "tick": [
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0,
+     "num:NaN",
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Leave City",
@@ -5787,8 +8991,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "SurveyZ8",
@@ -5797,6 +9012,7 @@
    false,
    false,
    false,
+   null,
    null,
    null
   ],
@@ -5816,8 +9032,74 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   {
+    "loopCost": [
+     100000000,
+     100000000,
+     100000000,
+     100000000,
+     100000000,
+     100000000,
+     600000000,
+     600000000,
+     600000000,
+     600000000,
+     600000000,
+     600000000,
+     1100000000,
+     1100000000,
+     1100000000,
+     1100000000,
+     1100000000,
+     1100000000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Build Tower",
@@ -5835,8 +9117,19 @@
     false,
     false,
     false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ],
   [
    "Gods Trial",
@@ -5854,8 +9147,74 @@
     false,
     false,
     false,
-    false
-   ]
+    false,
+    false,
+    false,
+    false,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   {
+    "loopCost": [
+     10000000,
+     10000000,
+     10000000,
+     13000000,
+     22000000,
+     62700000,
+     10000000,
+     10000000,
+     10000000,
+     13000000,
+     22000000,
+     62700000,
+     10000000,
+     10000000,
+     13000000,
+     13000000,
+     28600000,
+     81600000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "canStartAt": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
   ],
   [
    "Challenge Gods",
@@ -5873,8 +9232,74 @@
     false,
     false,
     false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false
-   ]
+   ],
+   {
+    "loopCost": [
+     10000000000000000,
+     10000000000000000,
+     10000000000000000,
+     20000000000000000,
+     80000000000000000,
+     1280000000000000000,
+     10000000000000000,
+     10000000000000000,
+     10000000000000000,
+     20000000000000000,
+     80000000000000000,
+     1280000000000000000,
+     10000000000000000,
+     10000000000000000,
+     20000000000000000,
+     20000000000000000,
+     160000000000000000,
+     2560000000000000000
+    ],
+    "tick": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     "throws:Cannot read properties of undefined (reading 'completed')",
+     "throws:Cannot read properties of undefined (reading 'completed')",
+     "throws:Cannot read properties of undefined (reading 'completed')",
+     "throws:Cannot read properties of undefined (reading 'completed')"
+    ],
+    "canStartAt": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
   ],
   [
    "Restore Time",
@@ -5892,8 +9317,19 @@
     null,
     null,
     null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null
-   ]
+   ],
+   null
   ]
  ]
 }
