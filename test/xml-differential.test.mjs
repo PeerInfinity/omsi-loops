@@ -130,6 +130,39 @@ const TARGETED_CANARIES = [
             delete cs.children.find(c => c.tag === "ifGlobalFlag").attrs.inverted;
         },
     },
+    {
+        label: "globalValue effectiveTime (Mana Well drain rate, x10 -> x11)",
+        expect: { name: "Mana Well", col: "goldCost" },
+        mutate: (doc) => {
+            const pv = doc.actions["Mana Well"].children.find(c => c.tag === "primaryValue");
+            pv.children.find(c => c.tag === "subtraction").children.find(c => c.tag === "multiplier").attrs.value = "11";
+        },
+    },
+    {
+        label: "storyVar (Raise Zombie story 3, maxZombiesRaised 10 -> 11)",
+        expect: { name: "Raise Zombie", col: "storyReqs(3)" },
+        mutate: (doc) => {
+            const sr = doc.actions["Raise Zombie"].children.find(c => c.tag === "storyReqs");
+            sr.children.find(s => s.attrs.num === "3").children.find(c => c.tag === "if").attrs.min = "11";
+        },
+    },
+    {
+        label: "function getWizCollegeRankBonus (Restoration effortCost divisor -> craft bonus)",
+        expect: { name: "Restoration", col: "manaCost" },
+        mutate: (doc) => {
+            const ec = doc.actions["Restoration"].children.find(c => c.tag === "effortCost");
+            ec.children.find(c => c.tag === "divisor").children[0].attrs.name = "getCraftGuildRankBonus";
+        },
+    },
+    {
+        label: "function getCraftGuildRankBonus (Build Housing maxHouses -> wiz bonus)",
+        expect: { name: "Build Housing", col: "canStart" },
+        mutate: (doc) => {
+            const cs = doc.actions["Build Housing"].children.find(c => c.tag === "canStart");
+            cs.children.find(c => c.tag === "if").children.find(c => c.tag === "value")
+                .children.find(c => c.tag === "function").attrs.name = "getWizCollegeRankBonus";
+        },
+    },
 ];
 
 for (const { label, expect, mutate } of TARGETED_CANARIES) {
