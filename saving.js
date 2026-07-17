@@ -699,6 +699,16 @@ const options = {
     // multipart/dungeon progress, buffs, soulstones — are deliberately NOT
     // multiplied: the game's economy stays real. 1 = byte-exact vanilla.
     expGainMultiplier: 1,
+    // XML action data (migration plan Phases 4/5 wiring): when ON, the
+    // declarative action fields compiled from data/actionList.xml (delivered
+    // through the generated data/actionListXml.data.js carrier) override the
+    // hand-written JS closures on the live Action objects. finish()/story()
+    // side effects stay JS until Phase 6. Default OFF = byte-exact vanilla;
+    // ON should be behaviorally identical too — the compiled fields are
+    // proven === the JS ones across the Phase-3 corpus
+    // (test/xml-differential.test.mjs) and the wired path reproduces the
+    // matrix golden (test/xml-wiring.test.mjs).
+    useActionListXml: false,
     // ---- fork: Advanced Automation (queue planner) — everything off by default ----
     // advancedAutomation = SHOWN (Extras "Show advanced automation"): reveals the
     // Advanced settings + internals sections and (with either tier shown) the
@@ -947,6 +957,7 @@ const isStandardOption = {
     autoAddReps: false,
     autoAddRepsAuto: false,
     expGainMultiplier: false,
+    useActionListXml: false,
     advancedAutomation: false,
     advancedAutomationEnabled: false,
     plannerMode: false,
@@ -1092,7 +1103,17 @@ const optionValueHandlers = {
         if (!init && options.predictor) {
             view.requestUpdate("updateNextActions");
         }
-    }
+    },
+    useActionListXml(value) {
+        // apply/revert is idempotent; runs at load (init) and on toggle alike.
+        // A context that hasn't loaded the interpreter stays on JS.
+        if (typeof ActionListXml === "undefined") {
+            if (value) console.error("useActionListXml is on but actionListXml.js is not loaded; keeping JS definitions");
+            return;
+        }
+        if (value) ActionListXml.applyOverrides();
+        else ActionListXml.revertOverrides();
+    },
 };
 
 /** @type {<K extends OptionName>(option: K, value: OptionType<K>, init: boolean, getInput: () => HTMLValueElement) => void} */

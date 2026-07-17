@@ -3,6 +3,9 @@ importScripts(
     "localization.js",
     "helpers.js",
     "actionList.js",
+    "xmlLite.js",
+    "actionListXml.js",
+    "data/actionListXml.data.js",
     "driver.js",
     "stats.js",
     "actions.js",
@@ -80,6 +83,10 @@ function handleMessage(data) {
         //     break;
         case "setOptions":
             predictor.setOptions(data.options);
+            // fork: mirror the main window's XML-actions option in this
+            // context (apply/revert is idempotent)
+            if (data.options.useActionListXml) ActionListXml.applyOverrides();
+            else ActionListXml.revertOverrides();
             // console.debug("set options");
             break;
         case "verifyDefaultIds":

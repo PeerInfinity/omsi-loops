@@ -707,6 +707,122 @@ export function buildFieldMatrix({ randomStates = 64, perturb = null, only = nul
     };
 }
 
+// Phase 4/5 wiring: what the game loads on top of the sim files when
+// options.useActionListXml is on (interpreter + the generated XML carrier).
+export const WIRED_FILES = [...XML_FILES, "data/actionListXml.data.js"];
+
+// applied-count golden: the wired path must override every XML-defined
+// action — a compile failure falls back to JS silently (by design for the
+// game, vacuously green for the matrix test), so the count is asserted
+export const WIRED_PREP = `
+{
+    const r = ActionListXml.applyOverrides();
+    if (!r) throw new Error("applyOverrides failed (no carrier / parse error)");
+    if (r.applied !== r.total) throw new Error("applyOverrides fell back to JS for " + (r.total - r.applied) + " of " + r.total + " actions");
+    globalThis.__wiredCounts = r;
+}
+`;
+
+// Wired-path row comparison, host-side. Mirrors DIFF_INSTALL's semantics
+// EXACTLY (the Phase-4 blessed gate): numeric columns ===, boolean-position
+// columns by truthiness (several JS visible()/unlocked() bodies return
+// truthy non-booleans the engine consumes in boolean position; the XML
+// answers true), throws verbatim in the main columns, storyReqs by
+// truthiness + string-ness, multipart sweeps numeric ===. Unlike the
+// differential there are no native-field skips: native fields keep the SAME
+// JS closure on both sides, so they must agree — a disagreement there is a
+// real state divergence between the two contexts.
+const ROW_BOOL_COLS = new Set([3, 4, 5]);   // visible, unlocked, canStart
+const ROW_COL_NAMES = [null, "manaCost", "goldCost", "visible", "unlocked", "canStart", "allowed"];
+function compareRows(rowsJs, rowsWired, stateId, out) {
+    if (rowsJs.length !== rowsWired.length) {
+        out.push({ state: stateId, name: "(corpus)", col: "(rowCount)", js: rowsJs.length, wired: rowsWired.length });
+        return;
+    }
+    const same = (boolCol, j, x) => {
+        if ((j === null) !== (x === null)) return false;
+        if (j === null) return true;
+        if (typeof j === "string" || typeof x === "string") return j === x;
+        if (boolCol) return !!j === !!x;
+        return j === x;
+    };
+    for (let r = 0; r < rowsJs.length; r++) {
+        const rj = rowsJs[r], rx = rowsWired[r];
+        const name = rj[0];
+        if (name !== rx[0]) { out.push({ state: stateId, name, col: "(name)", js: name, wired: rx[0] }); continue; }
+        for (let i = 1; i <= 6; i++) {
+            if (!same(ROW_BOOL_COLS.has(i), rj[i], rx[i])) {
+                out.push({ state: stateId, name, col: ROW_COL_NAMES[i], js: rj[i], wired: rx[i] });
+            }
+        }
+        const sj = rj[7], sx = rx[7];
+        if ((sj === null) !== (sx === null)) out.push({ state: stateId, name, col: "storyReqs", js: sj, wired: sx });
+        else if (sj !== null) {
+            for (let n = 0; n < 18; n++) {
+                if (!!sj[n] !== !!sx[n] || (typeof sj[n] === "string") !== (typeof sx[n] === "string")) {
+                    out.push({ state: stateId, name, col: `storyReqs(${n + 1})`, js: sj[n], wired: sx[n] });
+                }
+            }
+        }
+        const mj = rj[8], mx = rx[8];
+        if ((mj === null) !== (mx === null)) out.push({ state: stateId, name, col: "multipart", js: mj && "swept", wired: mx && "swept" });
+        else if (mj !== null) {
+            for (const [key, bool] of [["loopCost", false], ["tick", false], ["canStartAt", true]]) {
+                for (let i = 0; i < mj[key].length; i++) {
+                    if (!same(bool, mj[key][i], mx[key][i])) {
+                        out.push({ state: stateId, name, col: `${key}[${i}]`, js: mj[key][i], wired: mx[key][i] });
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Phase 4/5 wiring gate: replay the full corpus in TWO contexts — plain JS
+ * and one with ActionListXml.applyOverrides() applied to the LIVE Action
+ * objects (the exact mechanism options.useActionListXml uses) — and compare
+ * every row with the Phase-4 differential's semantics. The JS side is
+ * separately pinned by the field-matrix golden, so this proves the live game
+ * answers identically on the XML path.
+ */
+export function buildWiredDifferential({ randomStates = 64, maxMismatches = 200 } = {}) {
+    const jsCtx = makeContext(12345);
+    jsCtx.ev(FM_INSTALL);
+    const wiredCtx = makeContext(12345, WIRED_FILES);
+    wiredCtx.ev(WIRED_PREP);
+    wiredCtx.ev(FM_INSTALL);
+    const wiredCounts = JSON.parse(wiredCtx.ev("JSON.stringify(__wiredCounts)"));
+
+    const { states } = assembleStates(jsCtx, randomStates);
+    const rngBefore = jsCtx.rngCount() + wiredCtx.rngCount();
+    const mismatches = [];
+    let statesChecked = 0;
+    for (const s of states) {
+        if (mismatches.length >= maxMismatches) break;
+        const rowsJs = JSON.parse(jsCtx.ev(`__fm.applyAndEval(${JSON.stringify(s.spec)})`));
+        const rowsWired = JSON.parse(wiredCtx.ev(`__fm.applyAndEval(${JSON.stringify(s.spec)})`));
+        compareRows(rowsJs, rowsWired, s.id, mismatches);
+        statesChecked++;
+    }
+    const rngConsumed = jsCtx.rngCount() + wiredCtx.rngCount() - rngBefore;
+
+    for (const [name, recipe] of Object.entries(FIXTURE_RECIPES)) {
+        if (mismatches.length >= maxMismatches) break;
+        const fixJs = makeFixtureContext(recipe);
+        const fixWired = makeFixtureContext(recipe, WIRED_FILES);
+        // the override applies after load() in the game too (the load-time
+        // option handler runs at the end of load())
+        fixWired.ev(WIRED_PREP);
+        const rowsJs = JSON.parse(fixJs.ev("JSON.stringify(__fm.evalFields())"));
+        const rowsWired = JSON.parse(fixWired.ev("JSON.stringify(__fm.evalFields())"));
+        compareRows(rowsJs, rowsWired, `fixture:${name}`, mismatches);
+        statesChecked++;
+    }
+
+    return { wiredCounts, mismatches, statesChecked, totalStates: states.length + Object.keys(FIXTURE_RECIPES).length, rngConsumed };
+}
+
 /**
  * Phase 4 differential: compare every XML-defined action against its JS
  * implementation across the full state corpus (and the load() fixtures).

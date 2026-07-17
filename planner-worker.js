@@ -62,6 +62,9 @@ importScripts(
     "localization.js",
     "helpers.js",
     "actionList.js",
+    "xmlLite.js",
+    "actionListXml.js",
+    "data/actionListXml.data.js",
     "driver.js",
     "stats.js",
     "actions.js",
@@ -82,6 +85,9 @@ if (!townsUnlocked.length) townsUnlocked = [0];   // load() defaults this; loadD
 options.pauseBeforeRestart = false;
 options.pauseOnFailedLoop = false;
 options.pauseOnComplete = false;
+// fork: XML-actions option — the worker's options are the defaults (off)
+// unless a driver flips it before boot completes; inert by default
+if (options.useActionListXml) ActionListXml.applyOverrides();
 
 const sess = new IdlePlanner.Session();
 let P = IdlePlanner.newPlanningState();

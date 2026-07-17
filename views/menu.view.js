@@ -328,6 +328,16 @@ const menuView = Views.registerView("menu", {
                         economy stays real. 1 = exactly vanilla behavior.</div>
                     </label>
                     <input id='expGainMultiplierInput' type='number' value='1' min='0.1' step='1' style='width: 60px;' oninput='setOption("expGainMultiplier", parseFloat(this.value) || 1)'>
+                    <br>
+                    <label class='showthat' for='useActionListXmlInput'>Use XML action data
+                        <div class='showthis'>Fork testing aid (XML migration wiring): overrides the declarative
+                        action fields — mana/gold cost, visible, unlocked, canStart, allowed, story requirements,
+                        multipart loop cost/progress — with the versions compiled from data/actionList.xml (via the
+                        generated data/actionListXml.data.js carrier). Action completion effects (finish) stay JS
+                        either way. The compiled fields are machine-verified equal to the hand-written ones, so
+                        behavior should be identical; this toggle runs the game on the XML path. Off = vanilla.</div>
+                    </label>
+                    <input id='useActionListXmlInput' type='checkbox' onchange='setOption("useActionListXml", this.checked)'>
                 </div>
             </div>
         </li>`;

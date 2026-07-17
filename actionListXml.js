@@ -543,5 +543,82 @@ const ActionListXml = (() => {
         return out;
     }
 
-    return { parseDocument, compileAction, compileAll };
+    // ---- game-side wiring (options.useActionListXml) ---------------------
+    // Overrides the compiled field closures onto the LIVE Action objects,
+    // per-action, restorably. Only function-valued fields are overridden:
+    // the data fields (stats, affectedBy, expMult, loopStats, segments, ...)
+    // are value-identical by the differential gate and the JS objects stay
+    // authoritative for them until cutover, which keeps object identity
+    // stable for anything that might hold a reference. Incremental fallback:
+    // an action absent from the XML, or one whose compile throws, keeps its
+    // JS definition (with a console warning). The XML text arrives via the
+    // generated data/actionListXml.data.js carrier — the sim boots
+    // synchronously in three contexts (main window <script>, predictor-worker
+    // and planner-worker importScripts) and none of them can load .xml
+    // synchronously (regen: node test/regen-xml-carrier.mjs).
+
+    /** @type {{action: object, saved: Record<string, PropertyDescriptor|undefined>}[] | null} */
+    let overrideBackup = null;
+
+    /**
+     * @param {string} [xmlText]
+     * @returns {{applied: number, total: number} | null} counts, or null if
+     *   nothing could be applied (no carrier / parse failure)
+     */
+    function applyOverrides(xmlText = globalThis.actionListXmlText) {
+        if (overrideBackup) return { applied: overrideBackup.length, total: overrideBackup.length };
+        if (typeof xmlText !== "string") {
+            console.error("actionListXml: no XML text available (data/actionListXml.data.js not loaded?)");
+            return null;
+        }
+        let doc;
+        try {
+            doc = parseDocument(xmlText);
+        } catch (e) {
+            console.error("actionListXml: parse failed; keeping JS definitions", e);
+            return null;
+        }
+        const byName = new Map();
+        for (const prop in Action) {
+            if (Action[prop] instanceof Action) byName.set(Action[prop].name, Action[prop]);
+        }
+        const backup = [];
+        for (const name in doc.actions) {
+            const action = byName.get(name);
+            if (!action) {
+                console.warn(`actionListXml: no JS action named "${name}"; skipping`);
+                continue;
+            }
+            let fields;
+            try {
+                fields = compileAction(doc.actions[name], doc);
+            } catch (e) {
+                console.warn(`actionListXml: compile failed for "${name}"; keeping JS`, e);
+                continue;
+            }
+            /** @type {Record<string, PropertyDescriptor|undefined>} */
+            const saved = { __proto__: null };
+            for (const [key, value] of Object.entries(fields)) {
+                if (typeof value !== "function") continue;
+                saved[key] = Object.getOwnPropertyDescriptor(action, key);
+                Object.defineProperty(action, key, { value, writable: true, configurable: true, enumerable: true });
+            }
+            backup.push({ action, saved });
+        }
+        overrideBackup = backup;
+        return { applied: backup.length, total: Object.keys(doc.actions).length };
+    }
+
+    function revertOverrides() {
+        if (!overrideBackup) return;
+        for (const { action, saved } of overrideBackup) {
+            for (const key in saved) {
+                if (saved[key]) Object.defineProperty(action, key, saved[key]);
+                else delete action[key];
+            }
+        }
+        overrideBackup = null;
+    }
+
+    return { parseDocument, compileAction, compileAll, applyOverrides, revertOverrides };
 })();
