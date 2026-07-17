@@ -114,6 +114,22 @@ const TARGETED_CANARIES = [
             sr.children[0].children.find(c => c.tag === "ifTownUnlocked").attrs.townNum = "2";
         },
     },
+    {
+        label: "ifGuild (Apprentice canStart, Crafting -> Thieves)",
+        expect: { name: "Apprentice", col: "canStart" },
+        mutate: (doc) => {
+            const cs = doc.actions["Apprentice"].children.find(c => c.tag === "canStart");
+            cs.children.find(c => c.tag === "ifGuild").attrs.guild = "Thieves";
+        },
+    },
+    {
+        label: "ifGlobalFlag (Buy Mana Z3 canStart, dropping inverted flips the portalUsed gate)",
+        expect: { name: "Buy Mana Z3", col: "canStart" },
+        mutate: (doc) => {
+            const cs = doc.actions["Buy Mana Z3"].children.find(c => c.tag === "canStart");
+            delete cs.children.find(c => c.tag === "ifGlobalFlag").attrs.inverted;
+        },
+    },
 ];
 
 for (const { label, expect, mutate } of TARGETED_CANARIES) {
