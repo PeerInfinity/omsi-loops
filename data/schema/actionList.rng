@@ -149,6 +149,32 @@
                 <il:label>Never</il:label>
                 <empty />
             </element>
+            <element name="ifGuild">
+                <a:documentation>Test the player's guild membership (guild="" tests for no guild).</a:documentation>
+                <il:label>If guild</il:label>
+                <attribute name="guild">
+                    <choice>
+                        <value></value>
+                        <value>Adventure</value>
+                        <value>Crafting</value>
+                        <value>Explorer</value>
+                        <value>Thieves</value>
+                        <value>Assassin</value>
+                    </choice>
+                </attribute>
+                <ref name="booleanCondition" />
+            </element>
+            <element name="ifGlobalFlag">
+                <a:documentation>Test a whitelisted boolean loop-temp global.</a:documentation>
+                <il:label>If global flag</il:label>
+                <!-- Names here must also be whitelisted in actionListXml.js -->
+                <attribute name="name">
+                    <choice>
+                        <value>portalUsed</value>
+                    </choice>
+                </attribute>
+                <ref name="booleanCondition" />
+            </element>
         </choice>
     </define>
     <define name="required-statName">
@@ -379,6 +405,19 @@
                     <value>trainingLimits</value>
                     <value>goldInvested</value>
                     <value>storyMax</value>
+                    <value>effectiveTime</value>
+                </choice>
+            </attribute>
+        </element>
+    </define>
+    <define name="baseValue" combine="choice">
+        <element name="storyVar">
+            <a:documentation>A persistent numeric story variable (-1 until first set).</a:documentation>
+            <il:label>Story variable</il:label>
+            <attribute name="name">
+                <choice>
+                    <value>maxWizardGuildSegmentCleared</value>
+                    <value>maxZombiesRaised</value>
                 </choice>
             </attribute>
         </element>
@@ -387,10 +426,16 @@
         <element name="function">
             <a:documentation>The result of calling a named JavaScript function.</a:documentation>
             <il:label>JS function</il:label>
-            <!-- Functions named here must also be named in schema.js -->
+            <!-- Functions named here must also be named in schema.js; the
+                 *Bonus names are fork wrappers for getXRank().bonus (a
+                 <function> must return a number) -->
             <attribute name="name">
                 <choice>
                     <value>getExploreProgress</value>
+                    <value>fullyExploredZones</value>
+                    <value>totalAssassinations</value>
+                    <value>getWizCollegeRankBonus</value>
+                    <value>getCraftGuildRankBonus</value>
                 </choice>
             </attribute>
         </element>

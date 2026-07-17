@@ -2,11 +2,11 @@
  "meta": {
   "dims": {
    "numeric": 75,
-   "bool": 210
+   "bool": 211
   },
   "predicates": 314,
-  "probeEvals": 169996,
-  "states": 707,
+  "probeEvals": 170572,
+  "states": 745,
   "randomStates": 64,
   "fieldColumns": [
    "manaCost",
@@ -18,7 +18,7 @@
    "storyReqs1to8"
   ]
  },
- "matrixHash": "198dd28eca6f630b",
+ "matrixHash": "0e7894744eb9d755",
  "perState": [
   {
    "id": "boot",
@@ -30,7 +30,7 @@
   },
   {
    "id": "all-max",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "zero:townLevel:0:Wander@2",
@@ -1242,1291 +1242,1291 @@
   },
   {
    "id": "max:townLevel:0:Wander@2",
-   "hash": "95d8ed6f72bbace2"
+   "hash": "ee45707f41658938"
   },
   {
    "id": "max:townLevel:0:Wander@3",
-   "hash": "abadc8376baa612d"
+   "hash": "ba8fae81d6dbb045"
   },
   {
    "id": "max:townLevel:0:Wander@9",
-   "hash": "abadc8376baa612d"
+   "hash": "ba8fae81d6dbb045"
   },
   {
    "id": "max:townLevel:0:Wander@10",
-   "hash": "cdef594fd6257736"
+   "hash": "94f74b2e6ff420b4"
   },
   {
    "id": "max:townLevel:0:Wander@19",
-   "hash": "cdef594fd6257736"
+   "hash": "94f74b2e6ff420b4"
   },
   {
    "id": "max:townLevel:0:Wander@20",
-   "hash": "23475ef0bb23e1b6"
+   "hash": "993abbb934ed536b"
   },
   {
    "id": "max:townLevel:0:Wander@21",
-   "hash": "23475ef0bb23e1b6"
+   "hash": "993abbb934ed536b"
   },
   {
    "id": "max:townLevel:0:Wander@22",
-   "hash": "cbf84cbdedeaddae"
+   "hash": "fb7717eff8797de5"
   },
   {
    "id": "max:townLevel:0:Met@0",
-   "hash": "67b62d019ee0abb0"
+   "hash": "e7611a552b158de8"
   },
   {
    "id": "max:townLevel:0:Met@1",
-   "hash": "47505e892356285a"
+   "hash": "5e8aa8eed3be3e86"
   },
   {
    "id": "max:townLevel:0:Met@4",
-   "hash": "47505e892356285a"
+   "hash": "5e8aa8eed3be3e86"
   },
   {
    "id": "max:townLevel:0:Met@5",
-   "hash": "6adb0c4a334300f1"
+   "hash": "3db858f144769f38"
   },
   {
    "id": "max:townLevel:0:Met@24",
-   "hash": "f0b5d7d9cb7c65d5"
+   "hash": "cb8832e9898f8d4d"
   },
   {
    "id": "max:townLevel:0:Met@25",
-   "hash": "904c41ed76b8c825"
+   "hash": "47d05a7fd1da1a10"
   },
   {
    "id": "max:townLevel:0:Secrets@0",
-   "hash": "d882d61b221f9c0a"
+   "hash": "41898f9c9faa4d86"
   },
   {
    "id": "max:townLevel:0:Secrets@1",
-   "hash": "8fb0361fa8d2f250"
+   "hash": "63eb7c305c1d5965"
   },
   {
    "id": "max:townLevel:0:Secrets@9",
-   "hash": "8fb0361fa8d2f250"
+   "hash": "63eb7c305c1d5965"
   },
   {
    "id": "max:townLevel:0:Secrets@10",
-   "hash": "02e327088d6a1c0a"
+   "hash": "48032daf7d436951"
   },
   {
    "id": "max:townLevel:0:Secrets@19",
-   "hash": "02e327088d6a1c0a"
+   "hash": "48032daf7d436951"
   },
   {
    "id": "max:townLevel:0:Secrets@20",
-   "hash": "4d2ffc2db92b0191"
+   "hash": "d1d18a1769a12051"
   },
   {
    "id": "max:townLevel:0:Secrets@29",
-   "hash": "4d2ffc2db92b0191"
+   "hash": "d1d18a1769a12051"
   },
   {
    "id": "max:townLevel:0:Secrets@30",
-   "hash": "248084b521394cad"
+   "hash": "05aa021a0b7c515e"
   },
   {
    "id": "max:skillLevel::Magic@11",
-   "hash": "abdd5af493a7dca0"
+   "hash": "29e61dc0d9b5d0c3"
   },
   {
    "id": "max:skillLevel::Magic@12",
-   "hash": "019da78ad3358337"
+   "hash": "17e76426bff8b3a0"
   },
   {
    "id": "max:skillLevel::Magic@39",
-   "hash": "019da78ad3358337"
+   "hash": "17e76426bff8b3a0"
   },
   {
    "id": "max:skillLevel::Magic@40",
-   "hash": "8117a23fc4dcff72"
+   "hash": "659e43417de5cd6a"
   },
   {
    "id": "max:skillLevel::Magic@49",
-   "hash": "8117a23fc4dcff72"
+   "hash": "659e43417de5cd6a"
   },
   {
    "id": "max:skillLevel::Magic@50",
-   "hash": "baeed978dfe28db3"
+   "hash": "15143d0a126390b7"
   },
   {
    "id": "max:skillLevel::Magic@59",
-   "hash": "baeed978dfe28db3"
+   "hash": "15143d0a126390b7"
   },
   {
    "id": "max:skillLevel::Magic@60",
-   "hash": "da3d1940daf143ce"
+   "hash": "13870c5b7136d987"
   },
   {
    "id": "max:skillLevel::Magic@79",
-   "hash": "da3d1940daf143ce"
+   "hash": "13870c5b7136d987"
   },
   {
    "id": "max:skillLevel::Magic@80",
-   "hash": "8108da0cd6f5171f"
+   "hash": "670bd43820ec7eca"
   },
   {
    "id": "max:skillLevel::Magic@99",
-   "hash": "8108da0cd6f5171f"
+   "hash": "670bd43820ec7eca"
   },
   {
    "id": "max:skillLevel::Magic@100",
-   "hash": "2e755757623fa24d"
+   "hash": "7a688139108c6b29"
   },
   {
    "id": "max:skillLevel::Magic@149",
-   "hash": "2e755757623fa24d"
+   "hash": "7a688139108c6b29"
   },
   {
    "id": "max:skillLevel::Magic@150",
-   "hash": "2adb84193ea032bf"
+   "hash": "2589e4774d8647a4"
   },
   {
    "id": "max:skillLevel::Magic@199",
-   "hash": "2adb84193ea032bf"
+   "hash": "2589e4774d8647a4"
   },
   {
    "id": "max:skillLevel::Magic@200",
-   "hash": "28152a84c159881a"
+   "hash": "d5ee12b795965f44"
   },
   {
    "id": "max:skillLevel::Magic@299",
-   "hash": "4a45d77a3a7a040d"
+   "hash": "4927d7dae3907254"
   },
   {
    "id": "max:skillLevel::Magic@300",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:skillLevel::Combat@9",
-   "hash": "fc5ddd5a66591676"
+   "hash": "e46e9eabc5eab710"
   },
   {
    "id": "max:skillLevel::Combat@10",
-   "hash": "5b28b0c632aea11f"
+   "hash": "6aca292a96c506ed"
   },
   {
    "id": "max:exploreProgress::exploreProgress@0",
-   "hash": "0c5bfa1ef09e4ad8"
+   "hash": "8a88cc40a41d5303"
   },
   {
    "id": "max:exploreProgress::exploreProgress@1",
-   "hash": "f7902ab514b0d62a"
+   "hash": "8e4c1370357f3061"
   },
   {
    "id": "max:exploreProgress::exploreProgress@1",
-   "hash": "f7902ab514b0d62a"
+   "hash": "8e4c1370357f3061"
   },
   {
    "id": "max:exploreProgress::exploreProgress@2",
-   "hash": "798b6fdafd96dd61"
+   "hash": "827179ec6f15ff19"
   },
   {
    "id": "max:exploreProgress::exploreProgress@24",
-   "hash": "798b6fdafd96dd61"
+   "hash": "827179ec6f15ff19"
   },
   {
    "id": "max:exploreProgress::exploreProgress@25",
-   "hash": "9c32547724559cd6"
+   "hash": "88077d7ee9585e1b"
   },
   {
    "id": "max:exploreProgress::exploreProgress@25",
-   "hash": "9c32547724559cd6"
+   "hash": "88077d7ee9585e1b"
   },
   {
    "id": "max:exploreProgress::exploreProgress@26",
-   "hash": "cdfafa18dd6866df"
+   "hash": "11efe72b079b8a45"
   },
   {
    "id": "max:exploreProgress::exploreProgress@49",
-   "hash": "cdfafa18dd6866df"
+   "hash": "11efe72b079b8a45"
   },
   {
    "id": "max:exploreProgress::exploreProgress@50",
-   "hash": "b69b1904a3534d8c"
+   "hash": "957a8ab41c35d185"
   },
   {
    "id": "max:exploreProgress::exploreProgress@50",
-   "hash": "b69b1904a3534d8c"
+   "hash": "957a8ab41c35d185"
   },
   {
    "id": "max:exploreProgress::exploreProgress@51",
-   "hash": "6995495fd1ceff4b"
+   "hash": "e97ce47897cc9821"
   },
   {
    "id": "max:exploreProgress::exploreProgress@74",
-   "hash": "6995495fd1ceff4b"
+   "hash": "e97ce47897cc9821"
   },
   {
    "id": "max:exploreProgress::exploreProgress@75",
-   "hash": "b341e2342b0c1071"
+   "hash": "5c9721923802ef25"
   },
   {
    "id": "max:exploreProgress::exploreProgress@75",
-   "hash": "b341e2342b0c1071"
+   "hash": "5c9721923802ef25"
   },
   {
    "id": "max:exploreProgress::exploreProgress@76",
-   "hash": "ab7df2b16d7cbb12"
+   "hash": "b02322497b5134b6"
   },
   {
    "id": "max:exploreProgress::exploreProgress@99",
-   "hash": "ab7df2b16d7cbb12"
+   "hash": "b02322497b5134b6"
   },
   {
    "id": "max:exploreProgress::exploreProgress@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:skillLevel::Assassin@0",
-   "hash": "93bc84adb0534b42"
+   "hash": "d323fc28a7d95c50"
   },
   {
    "id": "max:skillLevel::Assassin@1",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:5:Meander@0",
-   "hash": "bb19a4d07d0578f6"
+   "hash": "6cc6363398f4bfe1"
   },
   {
    "id": "max:townLevel:5:Meander@1",
-   "hash": "83badb7c51d7f425"
+   "hash": "17bad0238f684572"
   },
   {
    "id": "max:townLevel:5:Meander@1",
-   "hash": "83badb7c51d7f425"
+   "hash": "17bad0238f684572"
   },
   {
    "id": "max:townLevel:5:Meander@2",
-   "hash": "ba232385f4dc31c9"
+   "hash": "93768099e8574035"
   },
   {
    "id": "max:townLevel:5:Meander@4",
-   "hash": "ba232385f4dc31c9"
+   "hash": "93768099e8574035"
   },
   {
    "id": "max:townLevel:5:Meander@5",
-   "hash": "086b65bc984c6716"
+   "hash": "9dc9293038a330d5"
   },
   {
    "id": "max:townLevel:5:Meander@14",
-   "hash": "086b65bc984c6716"
+   "hash": "9dc9293038a330d5"
   },
   {
    "id": "max:townLevel:5:Meander@15",
-   "hash": "dd946cb32c77f1fa"
+   "hash": "7a1454519fe45cc1"
   },
   {
    "id": "max:townLevel:5:Meander@24",
-   "hash": "dd946cb32c77f1fa"
+   "hash": "7a1454519fe45cc1"
   },
   {
    "id": "max:townLevel:5:Meander@25",
-   "hash": "0ee6aae742686bd6"
+   "hash": "76e9a42cad595ca7"
   },
   {
    "id": "max:townLevel:5:Meander@49",
-   "hash": "0ee6aae742686bd6"
+   "hash": "76e9a42cad595ca7"
   },
   {
    "id": "max:townLevel:5:Meander@50",
-   "hash": "1e81173a071ad355"
+   "hash": "66e5eac94fd40e80"
   },
   {
    "id": "max:townLevel:5:Meander@74",
-   "hash": "1e81173a071ad355"
+   "hash": "66e5eac94fd40e80"
   },
   {
    "id": "max:townLevel:5:Meander@75",
-   "hash": "364eea07a2c473e2"
+   "hash": "5d56d2d50e1d05dd"
   },
   {
    "id": "max:townLevel:5:Meander@99",
-   "hash": "364eea07a2c473e2"
+   "hash": "5d56d2d50e1d05dd"
   },
   {
    "id": "max:townLevel:5:Meander@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:skillLevel::Dark@49",
-   "hash": "8408d9ed34e46165"
+   "hash": "09a23dd8d338189c"
   },
   {
    "id": "max:skillLevel::Dark@50",
-   "hash": "bcb93fe81e7d938b"
+   "hash": "399a939c0068fe18"
   },
   {
    "id": "max:skillLevel::Dark@299",
-   "hash": "2dc2091622a24750"
+   "hash": "ead7ffa12265f282"
   },
   {
    "id": "max:skillLevel::Dark@300",
-   "hash": "332783f213de9e16"
+   "hash": "e4ef97580ae001dd"
   },
   {
    "id": "max:skillLevel::Dark@999",
-   "hash": "acf5e6869ad2cff9"
+   "hash": "89bb84bd11d6b9a9"
   },
   {
    "id": "max:skillLevel::Dark@1000",
-   "hash": "176bf4ddb60b730a"
+   "hash": "1211a2cb167f54dd"
   },
   {
    "id": "max:skillLevel::Spatiomancy@0",
-   "hash": "b952242564066a51"
+   "hash": "dae8f35456320b6a"
   },
   {
    "id": "max:skillLevel::Spatiomancy@1",
-   "hash": "47e82cf09e73c0e8"
+   "hash": "8b5f294a8df07efb"
   },
   {
    "id": "max:skillLevel::Spatiomancy@99",
-   "hash": "d79704ad4879a21b"
+   "hash": "4e608cb18a3dae42"
   },
   {
    "id": "max:skillLevel::Spatiomancy@100",
-   "hash": "1fdcc89bd2ccf5fe"
+   "hash": "ab1f792ac437f0b9"
   },
   {
    "id": "max:townLevel:1:Forest@1",
-   "hash": "a7b9e1856b0215e0"
+   "hash": "5d60e0039972afd1"
   },
   {
    "id": "max:townLevel:1:Forest@2",
-   "hash": "56195a7a85d23fdf"
+   "hash": "a933edbf4e374876"
   },
   {
    "id": "max:townLevel:1:Forest@9",
-   "hash": "56195a7a85d23fdf"
+   "hash": "a933edbf4e374876"
   },
   {
    "id": "max:townLevel:1:Forest@10",
-   "hash": "746dda10227a7bcd"
+   "hash": "49b15136566b9dc0"
   },
   {
    "id": "max:townLevel:1:Forest@19",
-   "hash": "746dda10227a7bcd"
+   "hash": "49b15136566b9dc0"
   },
   {
    "id": "max:townLevel:1:Forest@20",
-   "hash": "6a4f85676c3df284"
+   "hash": "7c69e89c7f18ecd4"
   },
   {
    "id": "max:townLevel:1:Forest@29",
-   "hash": "6a4f85676c3df284"
+   "hash": "7c69e89c7f18ecd4"
   },
   {
    "id": "max:townLevel:1:Forest@30",
-   "hash": "0c3a71ff6993f731"
+   "hash": "1f127c100fd219a9"
   },
   {
    "id": "max:townLevel:1:Forest@39",
-   "hash": "0c3a71ff6993f731"
+   "hash": "1f127c100fd219a9"
   },
   {
    "id": "max:townLevel:1:Forest@40",
-   "hash": "3f2247529199ff4f"
+   "hash": "740d32a11bc28555"
   },
   {
    "id": "max:townLevel:1:Forest@49",
-   "hash": "3f2247529199ff4f"
+   "hash": "740d32a11bc28555"
   },
   {
    "id": "max:townLevel:1:Forest@50",
-   "hash": "61db78961be77ed0"
+   "hash": "fc688f590003dc95"
   },
   {
    "id": "max:townLevel:1:Forest@59",
-   "hash": "61db78961be77ed0"
+   "hash": "fc688f590003dc95"
   },
   {
    "id": "max:townLevel:1:Forest@60",
-   "hash": "2de2cd1f3b42e842"
+   "hash": "97431a65136c34b2"
   },
   {
    "id": "max:townLevel:1:Forest@69",
-   "hash": "2de2cd1f3b42e842"
+   "hash": "97431a65136c34b2"
   },
   {
    "id": "max:townLevel:1:Forest@70",
-   "hash": "bc457a1aee2a191b"
+   "hash": "96ffe766fa8f2cdd"
   },
   {
    "id": "max:townLevel:1:Forest@79",
-   "hash": "bc457a1aee2a191b"
+   "hash": "96ffe766fa8f2cdd"
   },
   {
    "id": "max:townLevel:1:Forest@80",
-   "hash": "604e9dd4c08e304d"
+   "hash": "3c457a8974a92cb3"
   },
   {
    "id": "max:townLevel:1:Shortcut@19",
-   "hash": "db40e99639fc6387"
+   "hash": "b6f5e7cdc22bddf5"
   },
   {
    "id": "max:townLevel:1:Shortcut@20",
-   "hash": "3ec195ba9fbc7734"
+   "hash": "9dd8d9172e563622"
   },
   {
    "id": "max:townLevel:1:Hermit@9",
-   "hash": "3296d0e3764e03ed"
+   "hash": "534981d697c5ae77"
   },
   {
    "id": "max:townLevel:1:Hermit@10",
-   "hash": "9ae1275be0bd03bb"
+   "hash": "01228dff6b9856c0"
   },
   {
    "id": "max:townLevel:1:Hermit@19",
-   "hash": "42a106f6ebc5ce74"
+   "hash": "3b0b096a0a1a669d"
   },
   {
    "id": "max:townLevel:1:Hermit@20",
-   "hash": "ed3d8c6e827de941"
+   "hash": "9414e3d642c52d02"
   },
   {
    "id": "max:townLevel:1:Hermit@39",
-   "hash": "2c6ca204cabf421d"
+   "hash": "3b264d156cd2535e"
   },
   {
    "id": "max:townLevel:1:Hermit@40",
-   "hash": "1635811b58d258a4"
+   "hash": "cfa4f7c8bbca3668"
   },
   {
    "id": "max:skillLevel::Alchemy@0",
-   "hash": "e1cb47647a580242"
+   "hash": "ca3bb4480641f286"
   },
   {
    "id": "max:skillLevel::Alchemy@1",
-   "hash": "ea542e01a2f467ab"
+   "hash": "aeb803b00fa1c115"
   },
   {
    "id": "max:skillLevel::Alchemy@9",
-   "hash": "ea542e01a2f467ab"
+   "hash": "aeb803b00fa1c115"
   },
   {
    "id": "max:skillLevel::Alchemy@10",
-   "hash": "a0072a191a508c4a"
+   "hash": "45d16af2315eb1d4"
   },
   {
    "id": "max:skillLevel::Alchemy@199",
-   "hash": "cfcd601ab82562dc"
+   "hash": "5b83e64b69dc4320"
   },
   {
    "id": "max:skillLevel::Alchemy@200",
-   "hash": "7a7528d667221def"
+   "hash": "584869b4644e4307"
   },
   {
    "id": "max:townLevel:1:Flowers@9",
-   "hash": "483bb88f4401af4f"
+   "hash": "e3c5e9c3bf1e3d36"
   },
   {
    "id": "max:townLevel:1:Flowers@10",
-   "hash": "b2d7a0a6f746b1bc"
+   "hash": "217fca24dcf01d52"
   },
   {
    "id": "max:townLevel:1:Flowers@19",
-   "hash": "b2d7a0a6f746b1bc"
+   "hash": "217fca24dcf01d52"
   },
   {
    "id": "max:townLevel:1:Flowers@20",
-   "hash": "e8e34255b181cd4a"
+   "hash": "ca0f7cb3515bc5c5"
   },
   {
    "id": "max:townLevel:1:Flowers@29",
-   "hash": "e8e34255b181cd4a"
+   "hash": "ca0f7cb3515bc5c5"
   },
   {
    "id": "max:townLevel:1:Flowers@30",
-   "hash": "326b83cf1c380d9a"
+   "hash": "23d0db606cb31d3b"
   },
   {
    "id": "max:townLevel:1:Flowers@79",
-   "hash": "20c5d80c14484570"
+   "hash": "30523df5e9d906f6"
   },
   {
    "id": "max:townLevel:1:Flowers@80",
-   "hash": "ffa80dc417f337ea"
+   "hash": "3fa3340c0037d850"
   },
   {
    "id": "max:townLevel:1:Thicket@19",
-   "hash": "ed5eb05bb4d28d18"
+   "hash": "4cdc2df92676978b"
   },
   {
    "id": "max:townLevel:1:Thicket@20",
-   "hash": "6eed5e67c67eaaa6"
+   "hash": "3bb6bb0e878190c5"
   },
   {
    "id": "max:townLevel:1:Thicket@59",
-   "hash": "b352d23546882dda"
+   "hash": "fc7be916b3dd36b0"
   },
   {
    "id": "max:townLevel:1:Thicket@60",
-   "hash": "5ebb8a83f76ad37f"
+   "hash": "62af3fed410e24af"
   },
   {
    "id": "max:townLevel:1:Witch@9",
-   "hash": "6d4de166e2004ba3"
+   "hash": "4d423ae10e52137c"
   },
   {
    "id": "max:townLevel:1:Witch@10",
-   "hash": "f9603e0677ea8488"
+   "hash": "81bccc277d383d10"
   },
   {
    "id": "max:townLevel:1:Witch@19",
-   "hash": "d737c83b7b15518f"
+   "hash": "bfe4145cf19bf88f"
   },
   {
    "id": "max:townLevel:1:Witch@20",
-   "hash": "a4b59aef57222491"
+   "hash": "5f77da2f9cdb74e4"
   },
   {
    "id": "max:townLevel:1:Witch@49",
-   "hash": "84e9baf86b49f4ad"
+   "hash": "a018042116fec39f"
   },
   {
    "id": "max:townLevel:1:Witch@50",
-   "hash": "653951a14d3a52a9"
+   "hash": "859d3f58e2eb4d4f"
   },
   {
    "id": "max:surveyLevel:1:SurveyZ1@99",
-   "hash": "f17e4d3da5a348fd"
+   "hash": "3e23f3913cc05a18"
   },
   {
    "id": "max:surveyLevel:1:SurveyZ1@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:1:RuinsZ1@0",
-   "hash": "658b3b2df1ee90fe"
+   "hash": "1a70b16cbbdfb01c"
   },
   {
    "id": "max:townLevel:1:RuinsZ1@1",
-   "hash": "0b95a84fe6b7d1a7"
+   "hash": "76c15c672e559a66"
   },
   {
    "id": "max:townLevel:2:City@4",
-   "hash": "b77c6d7737099040"
+   "hash": "8947806f9e50abbf"
   },
   {
    "id": "max:townLevel:2:City@5",
-   "hash": "e0c0f74aecaf2682"
+   "hash": "d883854602888c6d"
   },
   {
    "id": "max:townLevel:2:City@9",
-   "hash": "e0c0f74aecaf2682"
+   "hash": "d883854602888c6d"
   },
   {
    "id": "max:townLevel:2:City@10",
-   "hash": "46def6bfa2b8dcae"
+   "hash": "d634ff58aafd8736"
   },
   {
    "id": "max:townLevel:2:City@19",
-   "hash": "46def6bfa2b8dcae"
+   "hash": "d634ff58aafd8736"
   },
   {
    "id": "max:townLevel:2:City@20",
-   "hash": "38288d38fbc4f86c"
+   "hash": "e618888a1257869d"
   },
   {
    "id": "max:townLevel:2:City@29",
-   "hash": "38288d38fbc4f86c"
+   "hash": "e618888a1257869d"
   },
   {
    "id": "max:townLevel:2:City@30",
-   "hash": "621b898f8b3ef065"
+   "hash": "312d6e63d586e476"
   },
   {
    "id": "max:townLevel:2:City@49",
-   "hash": "9711658c1115d2a9"
+   "hash": "deec0715c2900351"
   },
   {
    "id": "max:townLevel:2:City@50",
-   "hash": "4d29749399a51733"
+   "hash": "4d6d1691edfc06ca"
   },
   {
    "id": "max:townLevel:2:City@59",
-   "hash": "4d29749399a51733"
+   "hash": "4d6d1691edfc06ca"
   },
   {
    "id": "max:townLevel:2:City@60",
-   "hash": "f2fd3542afd9fd0a"
+   "hash": "3b3473b757e9ffbd"
   },
   {
    "id": "max:townLevel:2:City@89",
-   "hash": "977b3a33e1144959"
+   "hash": "ba347d0767de4170"
   },
   {
    "id": "max:townLevel:2:City@90",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:2:Drunk@4",
-   "hash": "85c12c1f90d82fc9"
+   "hash": "9d0c007728efb503"
   },
   {
    "id": "max:townLevel:2:Drunk@5",
-   "hash": "f9b875096653830d"
+   "hash": "988944fa240af004"
   },
   {
    "id": "max:townLevel:2:Drunk@9",
-   "hash": "f9b875096653830d"
+   "hash": "988944fa240af004"
   },
   {
    "id": "max:townLevel:2:Drunk@10",
-   "hash": "2a7c70661650b012"
+   "hash": "886e503de77d9f8a"
   },
   {
    "id": "max:townLevel:2:Drunk@14",
-   "hash": "2a7c70661650b012"
+   "hash": "886e503de77d9f8a"
   },
   {
    "id": "max:townLevel:2:Drunk@15",
-   "hash": "e8901690a4222423"
+   "hash": "1d17e87c9c1c51ed"
   },
   {
    "id": "max:townLevel:2:Drunk@19",
-   "hash": "e8901690a4222423"
+   "hash": "1d17e87c9c1c51ed"
   },
   {
    "id": "max:townLevel:2:Drunk@20",
-   "hash": "6dc6dab59cdb67c4"
+   "hash": "5e647de5c773022e"
   },
   {
    "id": "max:townLevel:2:Drunk@29",
-   "hash": "6dc6dab59cdb67c4"
+   "hash": "5e647de5c773022e"
   },
   {
    "id": "max:townLevel:2:Drunk@30",
-   "hash": "aac6469bd5e1658c"
+   "hash": "d54a8a02171a6ed5"
   },
   {
    "id": "max:townLevel:2:Drunk@39",
-   "hash": "aac6469bd5e1658c"
+   "hash": "d54a8a02171a6ed5"
   },
   {
    "id": "max:townLevel:2:Drunk@40",
-   "hash": "a34fa1c4cc6c74c1"
+   "hash": "ca6a114aa558c9b4"
   },
   {
    "id": "max:townLevel:2:Drunk@59",
-   "hash": "a34fa1c4cc6c74c1"
+   "hash": "ca6a114aa558c9b4"
   },
   {
    "id": "max:townLevel:2:Drunk@60",
-   "hash": "5a56a90f3d7c2a6b"
+   "hash": "784a676e9507f5e1"
   },
   {
    "id": "max:townLevel:2:Drunk@79",
-   "hash": "5a56a90f3d7c2a6b"
+   "hash": "784a676e9507f5e1"
   },
   {
    "id": "max:townLevel:2:Drunk@80",
-   "hash": "151ea2b5ecbb6d57"
+   "hash": "661097e8c9c7e6d8"
   },
   {
    "id": "max:townLevel:2:Apprentice@99",
-   "hash": "9a3f10a3e613f074"
+   "hash": "542ad8c5ee9d0f29"
   },
   {
    "id": "max:townLevel:2:Apprentice@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:2:Mason@99",
-   "hash": "e5adcded691b57ec"
+   "hash": "7beca3976854f1e3"
   },
   {
    "id": "max:townLevel:2:Mason@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:surveyLevel:2:SurveyZ2@99",
-   "hash": "37c90a0ff87baf40"
+   "hash": "15b6e2318085867e"
   },
   {
    "id": "max:surveyLevel:2:SurveyZ2@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:3:Mountain@1",
-   "hash": "95f731e3c86127e4"
+   "hash": "ed46b589b549abfb"
   },
   {
    "id": "max:townLevel:3:Mountain@2",
-   "hash": "c45642531c62459b"
+   "hash": "c86f36fdb5bfc261"
   },
   {
    "id": "max:townLevel:3:Mountain@9",
-   "hash": "c45642531c62459b"
+   "hash": "c86f36fdb5bfc261"
   },
   {
    "id": "max:townLevel:3:Mountain@10",
-   "hash": "85d2a5701c68db38"
+   "hash": "2134ab292e8d49c1"
   },
   {
    "id": "max:townLevel:3:Mountain@19",
-   "hash": "85d2a5701c68db38"
+   "hash": "2134ab292e8d49c1"
   },
   {
    "id": "max:townLevel:3:Mountain@20",
-   "hash": "c58929b2a52e6528"
+   "hash": "5c60b74fdf0cc488"
   },
   {
    "id": "max:townLevel:3:Mountain@39",
-   "hash": "c58929b2a52e6528"
+   "hash": "5c60b74fdf0cc488"
   },
   {
    "id": "max:townLevel:3:Mountain@40",
-   "hash": "258baa07cf668c07"
+   "hash": "3dabdcc787bf195d"
   },
   {
    "id": "max:townLevel:3:Mountain@99",
-   "hash": "d81ae3e782891866"
+   "hash": "bbde8c96836ed594"
   },
   {
    "id": "max:townLevel:3:Mountain@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:3:Runes@7",
-   "hash": "a9bf5f76743df184"
+   "hash": "53af5205753aa644"
   },
   {
    "id": "max:townLevel:3:Runes@8",
-   "hash": "3549f7b54f803eb1"
+   "hash": "d9f3c5774c8d2731"
   },
   {
    "id": "max:townLevel:3:Runes@15",
-   "hash": "a85be882513b1812"
+   "hash": "779ee363ceb680af"
   },
   {
    "id": "max:townLevel:3:Runes@16",
-   "hash": "f22ab393261d2783"
+   "hash": "18f5b942d4917235"
   },
   {
    "id": "max:townLevel:3:Runes@29",
-   "hash": "4883845ee7f18ec4"
+   "hash": "2b094f64207c1a49"
   },
   {
    "id": "max:townLevel:3:Runes@30",
-   "hash": "2913420e4de075b8"
+   "hash": "d8b9eafaa0993587"
   },
   {
    "id": "max:townLevel:3:Runes@59",
-   "hash": "4251c1dd662df5b5"
+   "hash": "1ec2affb03583783"
   },
   {
    "id": "max:townLevel:3:Runes@60",
-   "hash": "7bedeb0bcf1d6e75"
+   "hash": "cd8a9eb26cab2904"
   },
   {
    "id": "max:townLevel:3:Cavern@1",
-   "hash": "e8d54d5f514d2427"
+   "hash": "2adf805a222bb8cd"
   },
   {
    "id": "max:townLevel:3:Cavern@2",
-   "hash": "4d84566012764b90"
+   "hash": "42021600bc7d31e5"
   },
   {
    "id": "max:townLevel:3:Cavern@4",
-   "hash": "4d84566012764b90"
+   "hash": "42021600bc7d31e5"
   },
   {
    "id": "max:townLevel:3:Cavern@5",
-   "hash": "13ea45edf75f03d3"
+   "hash": "33e2dcf41746a6ad"
   },
   {
    "id": "max:townLevel:3:Cavern@19",
-   "hash": "f2423a9446c625a5"
+   "hash": "87668ab18b2288bd"
   },
   {
    "id": "max:townLevel:3:Cavern@20",
-   "hash": "44df6c652bc5bcb4"
+   "hash": "263cbe537d0db8b5"
   },
   {
    "id": "max:townLevel:3:Cavern@39",
-   "hash": "44df6c652bc5bcb4"
+   "hash": "263cbe537d0db8b5"
   },
   {
    "id": "max:townLevel:3:Cavern@40",
-   "hash": "8ab568683c0613e3"
+   "hash": "2d19b11aad45e34c"
   },
   {
    "id": "max:townLevel:3:Cavern@49",
-   "hash": "8ab568683c0613e3"
+   "hash": "2d19b11aad45e34c"
   },
   {
    "id": "max:townLevel:3:Cavern@50",
-   "hash": "3f7a58f93c6c14e4"
+   "hash": "67d809bc31fab01b"
   },
   {
    "id": "max:townLevel:3:Cavern@79",
-   "hash": "8578b5f5c018bdb1"
+   "hash": "baacd68956770cb5"
   },
   {
    "id": "max:townLevel:3:Cavern@80",
-   "hash": "16e2b58d32814c93"
+   "hash": "9ec7fffcc7debb38"
   },
   {
    "id": "max:townLevel:3:Illusions@0",
-   "hash": "2a18d2005470b539"
+   "hash": "ab3fa8db6690a15e"
   },
   {
    "id": "max:townLevel:3:Illusions@1",
-   "hash": "424a14acda50a737"
+   "hash": "ce000d0567d2ae61"
   },
   {
    "id": "max:townLevel:3:Illusions@4",
-   "hash": "424a14acda50a737"
+   "hash": "ce000d0567d2ae61"
   },
   {
    "id": "max:townLevel:3:Illusions@5",
-   "hash": "350220d9915ef67c"
+   "hash": "133cda552c429d5a"
   },
   {
    "id": "max:townLevel:3:Illusions@49",
-   "hash": "18c6d2fef5d73958"
+   "hash": "0c2d02994502db10"
   },
   {
    "id": "max:townLevel:3:Illusions@50",
-   "hash": "1ad64a6040dec0f9"
+   "hash": "8aaf1db9a2e295dd"
   },
   {
    "id": "max:townLevel:3:Illusions@69",
-   "hash": "17a532123e3be926"
+   "hash": "25e157789ccf1e7e"
   },
   {
    "id": "max:townLevel:3:Illusions@70",
-   "hash": "7728439e8775c164"
+   "hash": "e64ebbd04f25d80a"
   },
   {
    "id": "max:buffLevel::Imbuement@0",
-   "hash": "a4ef214d1cdd412d"
+   "hash": "af1a5c63d1f7dfc7"
   },
   {
    "id": "max:buffLevel::Imbuement@1",
-   "hash": "7cd9abb15589d2f9"
+   "hash": "2065a264dc251a8f"
   },
   {
    "id": "max:buffLevel::Imbuement@499",
-   "hash": "cd9f62c472124368"
+   "hash": "797ae54799a8f8e0"
   },
   {
    "id": "max:buffLevel::Imbuement@500",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:surveyLevel:3:SurveyZ3@99",
-   "hash": "1207a5c45311bd69"
+   "hash": "c33ab7f0f33ecb8e"
   },
   {
    "id": "max:surveyLevel:3:SurveyZ3@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:3:RuinsZ3@0",
-   "hash": "b0e058ebf3a6902c"
+   "hash": "33a940c35026a418"
   },
   {
    "id": "max:townLevel:3:RuinsZ3@1",
-   "hash": "7772ddd21ceae838"
+   "hash": "99e35ce90484c117"
   },
   {
    "id": "max:surveyLevel:0:SurveyZ0@99",
-   "hash": "be7625cd5a031bc5"
+   "hash": "7c0389e8e77aa1e0"
   },
   {
    "id": "max:surveyLevel:0:SurveyZ0@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:surveyLevel:4:SurveyZ4@99",
-   "hash": "c2fa9506d3332cd7"
+   "hash": "19f23f7daf8052a9"
   },
   {
    "id": "max:surveyLevel:4:SurveyZ4@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:surveyLevel:5:SurveyZ5@99",
-   "hash": "6a34aaa75faeee3f"
+   "hash": "270313ca72dcf8f2"
   },
   {
    "id": "max:surveyLevel:5:SurveyZ5@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:surveyLevel:6:SurveyZ6@99",
-   "hash": "7bd068eeffd94bd0"
+   "hash": "d20a18ba1caddd4d"
   },
   {
    "id": "max:surveyLevel:6:SurveyZ6@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:surveyLevel:7:SurveyZ7@99",
-   "hash": "8857982fe3885ac8"
+   "hash": "3c95d7c3d6f35161"
   },
   {
    "id": "max:surveyLevel:7:SurveyZ7@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:surveyLevel:8:SurveyZ8@99",
-   "hash": "7ca7ebcd8a4f017d"
+   "hash": "be1dc1c5834753d9"
   },
   {
    "id": "max:surveyLevel:8:SurveyZ8@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:4:Tour@9",
-   "hash": "47a312acfa46cda5"
+   "hash": "7b31191e0627b120"
   },
   {
    "id": "max:townLevel:4:Tour@10",
-   "hash": "3140bf1c3ca5b401"
+   "hash": "b325e5b111a10d70"
   },
   {
    "id": "max:townLevel:4:Tour@19",
-   "hash": "3140bf1c3ca5b401"
+   "hash": "b325e5b111a10d70"
   },
   {
    "id": "max:townLevel:4:Tour@20",
-   "hash": "0983a20eea35b241"
+   "hash": "298446c84ea3f845"
   },
   {
    "id": "max:townLevel:4:Tour@29",
-   "hash": "0983a20eea35b241"
+   "hash": "298446c84ea3f845"
   },
   {
    "id": "max:townLevel:4:Tour@30",
-   "hash": "49c8791f2633920c"
+   "hash": "8dd8552a5e33573f"
   },
   {
    "id": "max:townLevel:4:Tour@39",
-   "hash": "49c8791f2633920c"
+   "hash": "8dd8552a5e33573f"
   },
   {
    "id": "max:townLevel:4:Tour@40",
-   "hash": "ef04c579457508ee"
+   "hash": "fa159a25145941b8"
   },
   {
    "id": "max:townLevel:4:Tour@59",
-   "hash": "ef04c579457508ee"
+   "hash": "fa159a25145941b8"
   },
   {
    "id": "max:townLevel:4:Tour@60",
-   "hash": "9db7d7cf2b533f04"
+   "hash": "b61232fde6d074c2"
   },
   {
    "id": "max:townLevel:4:Tour@69",
-   "hash": "9db7d7cf2b533f04"
+   "hash": "b61232fde6d074c2"
   },
   {
    "id": "max:townLevel:4:Tour@70",
-   "hash": "013dd10920e2bb54"
+   "hash": "0999870c094a7d8e"
   },
   {
    "id": "max:townLevel:4:Tour@79",
-   "hash": "013dd10920e2bb54"
+   "hash": "0999870c094a7d8e"
   },
   {
    "id": "max:townLevel:4:Tour@80",
-   "hash": "73bfe4620ba9b5bd"
+   "hash": "d0a76ff1883faf25"
   },
   {
    "id": "max:townLevel:4:Tour@89",
-   "hash": "73bfe4620ba9b5bd"
+   "hash": "d0a76ff1883faf25"
   },
   {
    "id": "max:townLevel:4:Tour@90",
-   "hash": "b26dae63b9e3b374"
+   "hash": "18caec8140b0c0a3"
   },
   {
    "id": "max:townLevel:4:Tour@99",
-   "hash": "b26dae63b9e3b374"
+   "hash": "18caec8140b0c0a3"
   },
   {
    "id": "max:townLevel:4:Tour@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:4:Canvassed@4",
-   "hash": "4ca047c71f0b52b1"
+   "hash": "7b36d8d874afe41d"
   },
   {
    "id": "max:townLevel:4:Canvassed@5",
-   "hash": "5128bea8eb044cf0"
+   "hash": "f27d86da042a8cf8"
   },
   {
    "id": "max:townLevel:4:Canvassed@9",
-   "hash": "5128bea8eb044cf0"
+   "hash": "f27d86da042a8cf8"
   },
   {
    "id": "max:townLevel:4:Canvassed@10",
-   "hash": "cb7b830c61593bbe"
+   "hash": "b664348f64d15ea6"
   },
   {
    "id": "max:townLevel:4:Canvassed@29",
-   "hash": "8ce50b72171dcdbc"
+   "hash": "4e27f875f4ca57d5"
   },
   {
    "id": "max:townLevel:4:Canvassed@30",
-   "hash": "303021a99849a3ad"
+   "hash": "603df459cf0137c5"
   },
   {
    "id": "max:townLevel:4:Citizen@59",
-   "hash": "2952026da79a676f"
+   "hash": "c37d478d6ca28f3a"
   },
   {
    "id": "max:townLevel:4:Citizen@60",
-   "hash": "08cd3b5a4857255c"
+   "hash": "7bc8b89853ede55e"
   },
   {
    "id": "max:townLevel:4:Citizen@79",
-   "hash": "08cd3b5a4857255c"
+   "hash": "7bc8b89853ede55e"
   },
   {
    "id": "max:townLevel:4:Citizen@80",
-   "hash": "0ae00eca8af857ca"
+   "hash": "29b7d9c05a6451c7"
   },
   {
    "id": "max:townLevel:4:Citizen@99",
-   "hash": "0ae00eca8af857ca"
+   "hash": "29b7d9c05a6451c7"
   },
   {
    "id": "max:townLevel:4:Citizen@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:skillLevel::Mercantilism@0",
-   "hash": "994a84ce56283bcf"
+   "hash": "db6b2c15f08ab5de"
   },
   {
    "id": "max:skillLevel::Mercantilism@1",
-   "hash": "401bc7ef7a60c856"
+   "hash": "2d6195a7ca10e477"
   },
   {
    "id": "max:skillLevel::Pyromancy@199",
-   "hash": "7aa58ef44d47ad3a"
+   "hash": "22694b3fde4fd923"
   },
   {
    "id": "max:skillLevel::Pyromancy@200",
-   "hash": "8cdd09b6e68f180a"
+   "hash": "3307aad13b0ee102"
   },
   {
    "id": "max:buffLevel::Ritual@59",
-   "hash": "916ee32e0b8225fa"
+   "hash": "cffd34db89c17910"
   },
   {
    "id": "max:buffLevel::Ritual@60",
-   "hash": "763b1b6e61904a08"
+   "hash": "8e471b450582900e"
   },
   {
    "id": "max:townLevel:5:RuinsZ5@0",
-   "hash": "72f859fc2ac2f5fa"
+   "hash": "33d6345bb42221cb"
   },
   {
    "id": "max:townLevel:5:RuinsZ5@1",
-   "hash": "3648f36f901cf043"
+   "hash": "912e9ce840552d03"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@9",
-   "hash": "76c27de72637eeae"
+   "hash": "5c8a1b28a949ff39"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@10",
-   "hash": "2eb93aa6eaf21196"
+   "hash": "d0d1a28fa9a73991"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@14",
-   "hash": "2eb93aa6eaf21196"
+   "hash": "d0d1a28fa9a73991"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@15",
-   "hash": "dbbf91679b8ba156"
+   "hash": "ebc0f0e6cd033a79"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@19",
-   "hash": "dbbf91679b8ba156"
+   "hash": "ebc0f0e6cd033a79"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@20",
-   "hash": "c134853e0169accd"
+   "hash": "f1fc47a812344370"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@24",
-   "hash": "c134853e0169accd"
+   "hash": "f1fc47a812344370"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@25",
-   "hash": "d9ce6118b1ce5c2e"
+   "hash": "bd9145ce17a645cf"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@49",
-   "hash": "bc29ea9e36cb28b0"
+   "hash": "2caabee5b294347b"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@50",
-   "hash": "f912af449fd7ba7f"
+   "hash": "c32a5fb00eb15537"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@74",
-   "hash": "02a409fe580c5d7e"
+   "hash": "4540b9dd216d219b"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@75",
-   "hash": "809ea67449e6e305"
+   "hash": "2518fa6e8c936713"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@99",
-   "hash": "3d6c7bc7bef5ff94"
+   "hash": "be815c12458a6be7"
   },
   {
    "id": "max:townLevel:6:ExploreJungle@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:6:RuinsZ6@0",
-   "hash": "205d73855eb3ab69"
+   "hash": "8e328ee24a6506a0"
   },
   {
    "id": "max:townLevel:6:RuinsZ6@1",
-   "hash": "5deed825855e28e5"
+   "hash": "6796a0b2a0f26b2c"
   },
   {
    "id": "max:skillLevel::Restoration@999",
-   "hash": "a8fe3f76b6b4eda8"
+   "hash": "81d69a551669f68e"
   },
   {
    "id": "max:skillLevel::Restoration@1000",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:7:Excursion@4",
-   "hash": "3f6fc91930422602"
+   "hash": "e93aa218b2040e03"
   },
   {
    "id": "max:townLevel:7:Excursion@5",
-   "hash": "cc4b6b9c0c2241b5"
+   "hash": "9e391bb0209f0348"
   },
   {
    "id": "max:townLevel:7:Excursion@9",
-   "hash": "cc4b6b9c0c2241b5"
+   "hash": "9e391bb0209f0348"
   },
   {
    "id": "max:townLevel:7:Excursion@10",
-   "hash": "81a1d8b9073c957a"
+   "hash": "073fea37b439bb9d"
   },
   {
    "id": "max:townLevel:7:Excursion@19",
-   "hash": "81a1d8b9073c957a"
+   "hash": "073fea37b439bb9d"
   },
   {
    "id": "max:townLevel:7:Excursion@20",
-   "hash": "ebdefcd1a79c2841"
+   "hash": "fd2af387dc3a09aa"
   },
   {
    "id": "max:townLevel:7:Excursion@24",
-   "hash": "ebdefcd1a79c2841"
+   "hash": "fd2af387dc3a09aa"
   },
   {
    "id": "max:townLevel:7:Excursion@25",
-   "hash": "79cd072425e93be2"
+   "hash": "239d50e743059794"
   },
   {
    "id": "max:skillLevel::Thievery@0",
-   "hash": "77dda9a0435aba7a"
+   "hash": "c44ecf58a9765183"
   },
   {
    "id": "max:skillLevel::Thievery@1",
-   "hash": "6aa3c5f9199f7f18"
+   "hash": "b71a4c092a475dde"
   },
   {
    "id": "max:townLevel:7:PickPockets@24",
-   "hash": "beab7c7ca9b70267"
+   "hash": "5d67d97ae61bb9cb"
   },
   {
    "id": "max:townLevel:7:PickPockets@25",
-   "hash": "0fdee05a9834313f"
+   "hash": "d83c106c4891b3f1"
   },
   {
    "id": "max:townLevel:7:PickPockets@99",
-   "hash": "67781c71fd9b2f38"
+   "hash": "9462c49abf49f6ec"
   },
   {
    "id": "max:townLevel:7:PickPockets@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:7:RobWarehouse@49",
-   "hash": "ae764e3ab02d5b7f"
+   "hash": "83564677bb7c0fb4"
   },
   {
    "id": "max:townLevel:7:RobWarehouse@50",
-   "hash": "eafd3e35a89196eb"
+   "hash": "2ef56eed5b21fef6"
   },
   {
    "id": "max:townLevel:7:RobWarehouse@99",
-   "hash": "24bcba67390b4ee4"
+   "hash": "f6684d4483dc94a3"
   },
   {
    "id": "max:townLevel:7:RobWarehouse@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:7:InsuranceFraud@74",
-   "hash": "fdaa8ddc194f7ca6"
+   "hash": "1d8fafc95a6e7c78"
   },
   {
    "id": "max:townLevel:7:InsuranceFraud@75",
-   "hash": "0fc893f331f1ee7e"
+   "hash": "74d47bd0d2b29e4a"
   },
   {
    "id": "max:townLevel:7:InsuranceFraud@99",
-   "hash": "0fc893f331f1ee7e"
+   "hash": "74d47bd0d2b29e4a"
   },
   {
    "id": "max:townLevel:7:InsuranceFraud@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:buffLevel::Imbuement3@6",
-   "hash": "007700391ef1a2a1"
+   "hash": "3b365dc949dc0e73"
   },
   {
    "id": "max:buffLevel::Imbuement3@7",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:storyMax::storyMax@11",
-   "hash": "c91864c9ea175c2a"
+   "hash": "4d6edfb5f4c1dc6a"
   },
   {
    "id": "max:storyMax::storyMax@12",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:buffLevel::Imbuement2@499",
-   "hash": "8f8d76a2867d89b4"
+   "hash": "fd2400a8cea0a97a"
   },
   {
    "id": "max:buffLevel::Imbuement2@500",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "max:townLevel:8:BuildTower@99",
-   "hash": "719ba07338d8e3ba"
+   "hash": "e15cd1cb1344e961"
   },
   {
    "id": "max:townLevel:8:BuildTower@100",
-   "hash": "e6b4dfe5258011a1"
+   "hash": "b537ea6e0ee61b54"
   },
   {
    "id": "zero:prestige:completedAnyPrestige=on",
@@ -2538,307 +2538,459 @@
   },
   {
    "id": "talents:0",
-   "hash": "f017e17760d9755f"
+   "hash": "ef781c620a848678"
   },
   {
    "id": "talents:99",
-   "hash": "f017e17760d9755f"
+   "hash": "ef781c620a848678"
   },
   {
    "id": "talents:100",
-   "hash": "d7b2427aefee2aae"
+   "hash": "52590bb663c95449"
   },
   {
    "id": "talents:150",
-   "hash": "d7b2427aefee2aae"
+   "hash": "52590bb663c95449"
   },
   {
    "id": "talents:999",
-   "hash": "d7b2427aefee2aae"
+   "hash": "52590bb663c95449"
   },
   {
    "id": "talents:1000",
-   "hash": "a6fab20c8d396217"
+   "hash": "62969595b1ed9f7c"
   },
   {
    "id": "talents:5000",
-   "hash": "a6fab20c8d396217"
+   "hash": "62969595b1ed9f7c"
   },
   {
    "id": "talents:9999",
-   "hash": "a6fab20c8d396217"
+   "hash": "62969595b1ed9f7c"
   },
   {
    "id": "talents:10000",
-   "hash": "066986724e7c5df4"
+   "hash": "5805fc30c457b17e"
   },
   {
    "id": "talents:99999",
-   "hash": "066986724e7c5df4"
+   "hash": "5805fc30c457b17e"
   },
   {
    "id": "talents:100000",
-   "hash": "6b74342eb58d83b3"
+   "hash": "e6bcb99a45b66312"
   },
   {
    "id": "talents:500000",
-   "hash": "6b74342eb58d83b3"
+   "hash": "e6bcb99a45b66312"
+  },
+  {
+   "id": "zero:guild=none",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "max:guild=none",
+   "hash": "b537ea6e0ee61b54"
+  },
+  {
+   "id": "zero:guild=Adventure",
+   "hash": "c746e1756a0fd275"
+  },
+  {
+   "id": "max:guild=Adventure",
+   "hash": "d4ec5a28e19009e8"
+  },
+  {
+   "id": "zero:guild=Crafting",
+   "hash": "c35d9006fb777911"
+  },
+  {
+   "id": "max:guild=Crafting",
+   "hash": "1ef3d6eaf8ff9dd9"
+  },
+  {
+   "id": "zero:guild=Explorer",
+   "hash": "1299459bae62f068"
+  },
+  {
+   "id": "max:guild=Explorer",
+   "hash": "f327b28d8a839c45"
+  },
+  {
+   "id": "zero:guild=Thieves",
+   "hash": "1c702dcfd8f98516"
+  },
+  {
+   "id": "max:guild=Thieves",
+   "hash": "5f1eba3d6f21ef51"
+  },
+  {
+   "id": "zero:guild=Assassin",
+   "hash": "c746e1756a0fd275"
+  },
+  {
+   "id": "max:guild=Assassin",
+   "hash": "d4ec5a28e19009e8"
+  },
+  {
+   "id": "effectiveTime:0",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "effectiveTime:59",
+   "hash": "bffa9a377a753ed0"
+  },
+  {
+   "id": "effectiveTime:60",
+   "hash": "6f385dcdc25b7a68"
+  },
+  {
+   "id": "effectiveTime:499",
+   "hash": "6dd95b6f677cc3be"
+  },
+  {
+   "id": "effectiveTime:500",
+   "hash": "f22088a7d81ec61e"
+  },
+  {
+   "id": "effectiveTime:501",
+   "hash": "f22088a7d81ec61e"
+  },
+  {
+   "id": "storyVar:maxZombiesRaised@9",
+   "hash": "ee3f69783becf66a"
+  },
+  {
+   "id": "storyVar:maxZombiesRaised@10",
+   "hash": "96fa5481bb4985b2"
+  },
+  {
+   "id": "storyVar:maxZombiesRaised@24",
+   "hash": "96fa5481bb4985b2"
+  },
+  {
+   "id": "storyVar:maxZombiesRaised@25",
+   "hash": "f7e0e2ac2a429d70"
+  },
+  {
+   "id": "guildSegments:1",
+   "hash": "fdc266283691a7ac"
+  },
+  {
+   "id": "guildSegments:3",
+   "hash": "73be4fb7cd269aec"
+  },
+  {
+   "id": "guildSegments:29",
+   "hash": "244f8d77ea395a06"
+  },
+  {
+   "id": "guildSegments:30",
+   "hash": "66f7251b3e7e7a0e"
+  },
+  {
+   "id": "guildSegments:42",
+   "hash": "033017f9b6868335"
+  },
+  {
+   "id": "guildSegments:57",
+   "hash": "13a39f070e2c2665"
+  },
+  {
+   "id": "max:guild=Crafting@seg30+houses20",
+   "hash": "59e793b65eaade3c"
+  },
+  {
+   "id": "fullSurveys:1",
+   "hash": "8a534c2e837ae9d3"
+  },
+  {
+   "id": "fullSurveys:3",
+   "hash": "a3abf5a40a9aebf0"
+  },
+  {
+   "id": "fullSurveys:4",
+   "hash": "befd8093bdbc5fad"
+  },
+  {
+   "id": "fullSurveys:8",
+   "hash": "68ee7ef99dc3b722"
+  },
+  {
+   "id": "fullSurveys:9",
+   "hash": "48cbd5dafae8954a"
+  },
+  {
+   "id": "assassinations:3",
+   "hash": "2c658e6fa78395d4"
+  },
+  {
+   "id": "assassinations:4",
+   "hash": "6287897d986b8815"
+  },
+  {
+   "id": "assassinations:7",
+   "hash": "f862cc66c9aee449"
+  },
+  {
+   "id": "assassinations:8",
+   "hash": "d6af6e26e5f696c2"
   },
   {
    "id": "random:0",
-   "hash": "53b0861112bf7add"
+   "hash": "43f92896d350c2ae"
   },
   {
    "id": "random:1",
-   "hash": "fdd7d8c927fe0dad"
+   "hash": "81cedd9714dae5d2"
   },
   {
    "id": "random:2",
-   "hash": "edcb879542cbdc65"
+   "hash": "0d730db625d1a539"
   },
   {
    "id": "random:3",
-   "hash": "a961de302f058fc5"
+   "hash": "e98148078862e239"
   },
   {
    "id": "random:4",
-   "hash": "c8b0324140dbf469"
+   "hash": "65ab1f18151927de"
   },
   {
    "id": "random:5",
-   "hash": "3fbdcd799adea448"
+   "hash": "71e0f513830e3403"
   },
   {
    "id": "random:6",
-   "hash": "e8c5d95a3c08b88d"
+   "hash": "0970e5a27a51745b"
   },
   {
    "id": "random:7",
-   "hash": "1f6d5f4ac431fe8b"
+   "hash": "a23c24082712e226"
   },
   {
    "id": "random:8",
-   "hash": "23f58fc18d794485"
+   "hash": "39feca3216e17ba9"
   },
   {
    "id": "random:9",
-   "hash": "01f35529a811f5ba"
+   "hash": "15a513ff6eced8b9"
   },
   {
    "id": "random:10",
-   "hash": "21480260be4752e2"
+   "hash": "6908143e8cebc099"
   },
   {
    "id": "random:11",
-   "hash": "a9b159e432976dca"
+   "hash": "c07e35c8c332bfed"
   },
   {
    "id": "random:12",
-   "hash": "e7d9b831eeb1340f"
+   "hash": "df26d076bce4ba61"
   },
   {
    "id": "random:13",
-   "hash": "d7f17a76169edc73"
+   "hash": "f9e2bacaea918d89"
   },
   {
    "id": "random:14",
-   "hash": "48c670326bc437f9"
+   "hash": "1dc384d1867b3cbf"
   },
   {
    "id": "random:15",
-   "hash": "191b7ad518b3fb2f"
+   "hash": "eb144ad8e45df761"
   },
   {
    "id": "random:16",
-   "hash": "d6ac66c252a8d3b1"
+   "hash": "1b76193a11a01aeb"
   },
   {
    "id": "random:17",
-   "hash": "f40428d0b61a71d3"
+   "hash": "b1d86bb3c4529f13"
   },
   {
    "id": "random:18",
-   "hash": "d03fd4ae2e8308ad"
+   "hash": "f4841b8aae4e4098"
   },
   {
    "id": "random:19",
-   "hash": "9cb61cf84696d76b"
+   "hash": "3dbdbfdc66aef521"
   },
   {
    "id": "random:20",
-   "hash": "0928368f533ef3ff"
+   "hash": "6982b080ef2050fd"
   },
   {
    "id": "random:21",
-   "hash": "a13afaaa89d0bdf5"
+   "hash": "53b421b419ba8ef6"
   },
   {
    "id": "random:22",
-   "hash": "0f9a07f02870ad2c"
+   "hash": "5c2f4771efb87197"
   },
   {
    "id": "random:23",
-   "hash": "c948ae9b98577605"
+   "hash": "429fce3bb097a8b0"
   },
   {
    "id": "random:24",
-   "hash": "62f138ed74f31018"
+   "hash": "24629d48e8851c6b"
   },
   {
    "id": "random:25",
-   "hash": "cb1f655f660c3d1f"
+   "hash": "8e5e89be6aa22035"
   },
   {
    "id": "random:26",
-   "hash": "77a00aac0de20c3e"
+   "hash": "cd502af49520a748"
   },
   {
    "id": "random:27",
-   "hash": "17e1deec01e0785d"
+   "hash": "92df289e9c5e579f"
   },
   {
    "id": "random:28",
-   "hash": "dd3ba56d6f22982f"
+   "hash": "73d5a4dfed674da8"
   },
   {
    "id": "random:29",
-   "hash": "90f16fac8751bb10"
+   "hash": "8b51da4cf4492d54"
   },
   {
    "id": "random:30",
-   "hash": "6d801f79fb2f3c5c"
+   "hash": "bda91b0fce1c1f5e"
   },
   {
    "id": "random:31",
-   "hash": "e23e513ffcf4a55d"
+   "hash": "99483230a07d73c3"
   },
   {
    "id": "random:32",
-   "hash": "8e32c450495f7a54"
+   "hash": "f39c1aca38794fea"
   },
   {
    "id": "random:33",
-   "hash": "92079c2b74f35706"
+   "hash": "4aef85c8302ebda9"
   },
   {
    "id": "random:34",
-   "hash": "a601e8c4ab7ca473"
+   "hash": "9519c6fe42506eb0"
   },
   {
    "id": "random:35",
-   "hash": "54c6972461c6430f"
+   "hash": "3bedf5dfbd52afd7"
   },
   {
    "id": "random:36",
-   "hash": "a5876c292a1584ed"
+   "hash": "52548a69128b0fbe"
   },
   {
    "id": "random:37",
-   "hash": "c8b246db111bd459"
+   "hash": "958ffb8852dd81bf"
   },
   {
    "id": "random:38",
-   "hash": "0e6ca21dbda13cc4"
+   "hash": "93e710b8ebd17a80"
   },
   {
    "id": "random:39",
-   "hash": "5e3016164d5dfb29"
+   "hash": "5fa6bcb834fc118c"
   },
   {
    "id": "random:40",
-   "hash": "f814838a4f29c0a8"
+   "hash": "00659faa165a44d6"
   },
   {
    "id": "random:41",
-   "hash": "104ae714c4241ce0"
+   "hash": "6ba230681b965867"
   },
   {
    "id": "random:42",
-   "hash": "186132b06edd13b2"
+   "hash": "eac20601b2a786c1"
   },
   {
    "id": "random:43",
-   "hash": "425c13f9a1a2c3c1"
+   "hash": "8965be01d11d237b"
   },
   {
    "id": "random:44",
-   "hash": "b39bc127ab62b8cd"
+   "hash": "5d98e147d2da8353"
   },
   {
    "id": "random:45",
-   "hash": "10c9bb662f52471f"
+   "hash": "163a906fece7912c"
   },
   {
    "id": "random:46",
-   "hash": "f53c446f10b345ce"
+   "hash": "63aff847b7e3a954"
   },
   {
    "id": "random:47",
-   "hash": "2d4d3020d283a478"
+   "hash": "feeb8def99392389"
   },
   {
    "id": "random:48",
-   "hash": "63a38325b0b813d4"
+   "hash": "ddb32fa928dc114a"
   },
   {
    "id": "random:49",
-   "hash": "36d8d6b44db5ae07"
+   "hash": "125a132f04254357"
   },
   {
    "id": "random:50",
-   "hash": "75efac6a9b67e44e"
+   "hash": "47f55ea8f1e7203b"
   },
   {
    "id": "random:51",
-   "hash": "69092477f3a08af2"
+   "hash": "7ede836795633de4"
   },
   {
    "id": "random:52",
-   "hash": "49b7bcec8e3a6170"
+   "hash": "e07facfae4af4e83"
   },
   {
    "id": "random:53",
-   "hash": "a2895c895c7f33b7"
+   "hash": "2c6308509fd9272b"
   },
   {
    "id": "random:54",
-   "hash": "509044cc09f49b95"
+   "hash": "e51ada8c5106daf4"
   },
   {
    "id": "random:55",
-   "hash": "b4b327a184cc05d8"
+   "hash": "9ea8644fd505123d"
   },
   {
    "id": "random:56",
-   "hash": "cebc47ae14151665"
+   "hash": "6c282deb3b1fdf6e"
   },
   {
    "id": "random:57",
-   "hash": "d98f903d788c8299"
+   "hash": "89b40f2ceebf8874"
   },
   {
    "id": "random:58",
-   "hash": "ceb46dba84367a7a"
+   "hash": "99799e563e03cf5c"
   },
   {
    "id": "random:59",
-   "hash": "275ee96623180701"
+   "hash": "bb2dd63220c5bfc4"
   },
   {
    "id": "random:60",
-   "hash": "a8747f71d5595705"
+   "hash": "ad2d03f31f99961d"
   },
   {
    "id": "random:61",
-   "hash": "a7e5772da054b836"
+   "hash": "0acd82bd2df9ecc6"
   },
   {
    "id": "random:62",
-   "hash": "841265977e11aa6a"
+   "hash": "7a4f4a81467d3562"
   },
   {
    "id": "random:63",
-   "hash": "3f1dd3c0bf958af0"
+   "hash": "f305edec6ee499ce"
   },
   {
    "id": "fixture:mid",

@@ -5,9 +5,14 @@ class Schema {
     /** @readonly */ static XMLNS_IL = "http://dmchurch.github.io/omsi-loops/schema/1.0";
 
     // This object exposes functions to the XML schema's <function> element.
+    // The *Bonus entries are fork wrappers: <function> must return a number.
     /** @readonly */ static get jsFunctions() {
         return this.#jsFunctions ??= {
             getExploreProgress,
+            fullyExploredZones,
+            totalAssassinations,
+            getWizCollegeRankBonus: () => getWizCollegeRank().bonus,
+            getCraftGuildRankBonus: () => getCraftGuildRank().bonus,
         };
     }
     static #jsFunctions;

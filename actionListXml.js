@@ -40,19 +40,29 @@ const ActionListXml = (() => {
 
     const BASE_VALUE_TAGS = new Set(["skillLevel", "skillExp", "buffLevel", "talentLevel", "primaryValue",
         "progressLevel", "goodItems", "discoveredItems", "checkedItems", "value", "function",
-        "resourceValue", "townValue", "globalValue", "stonesUsed"]);
+        "resourceValue", "townValue", "globalValue", "stonesUsed", "storyVar"]);
     const CONDITIONAL_TAGS = new Set(["if", "ifCurrentValue", "ifResource", "ifHasResource",
         "ifStoryFlag", "ifProgress", "ifGoodItems", "ifDiscoveredItems", "ifCheckedItems",
-        "ifPrestige", "ifTownUnlocked", "anyOf", "never"]);
-    // whitelisted <function name="..."/> targets (mirrors schema.js / the rng)
+        "ifPrestige", "ifTownUnlocked", "anyOf", "never", "ifGuild", "ifGlobalFlag"]);
+    // whitelisted <function name="..."/> targets (mirrors schema.js / the rng);
+    // the *Bonus wrappers exist because <function> must return a number
     const FUNCTIONS = {
         getExploreProgress: () => getExploreProgress(),
+        fullyExploredZones: () => fullyExploredZones(),
+        totalAssassinations: () => totalAssassinations(),
+        getWizCollegeRankBonus: () => getWizCollegeRank().bonus,
+        getCraftGuildRankBonus: () => getCraftGuildRank().bonus,
     };
     // whitelisted <globalValue name="..."/> targets
     const GLOBALS = {
         trainingLimits: () => trainingLimits,
         goldInvested: () => goldInvested,
         storyMax: () => storyMax,
+        effectiveTime: () => effectiveTime,
+    };
+    // whitelisted <ifGlobalFlag name="..."/> targets (boolean loop-temp globals)
+    const GLOBAL_FLAGS = {
+        portalUsed: () => portalUsed,
     };
 
     /** @param {string} xmlText */
@@ -139,6 +149,13 @@ const ActionListXml = (() => {
                 return !!prestigeValues.completedAnyPrestige !== inverted;
             case "ifTownUnlocked":   // fork schema extension: townsUnlocked membership
                 return townsUnlocked.includes(num(node.attrs.townNum, "ifTownUnlocked")) !== inverted;
+            case "ifGuild":   // fork schema extension: guild membership (guild="" = no guild)
+                return (guild === node.attrs.guild) !== inverted;
+            case "ifGlobalFlag": {   // fork schema extension: whitelisted boolean global
+                const f = GLOBAL_FLAGS[node.attrs.name];
+                if (!f) throw new Error(`actionListXml: global flag ${node.attrs.name} not whitelisted`);
+                return !!f() !== inverted;
+            }
             case "anyOf": {   // fork schema extension: disjunction over child conditionals
                 for (const c of node.children) {
                     if (evalConditional(c, ctx)) return !inverted;
@@ -189,6 +206,10 @@ const ActionListXml = (() => {
                 const g = GLOBALS[node.attrs.name];
                 if (!g) throw new Error(`actionListXml: global ${node.attrs.name} not whitelisted`);
                 return g();
+            }
+            case "storyVar": {
+                if (!(node.attrs.name in storyVars)) throw new Error(`actionListXml: unknown storyVar ${node.attrs.name}`);
+                return storyVars[node.attrs.name];
             }
             case "progressLevel": return townFor(node.attrs.varName).getLevel(node.attrs.varName);
             case "goodItems": return townFor(ownVar(node, ctx))["good" + ownVar(node, ctx)];

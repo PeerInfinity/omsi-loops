@@ -26,7 +26,13 @@
 //                 resources (reputation goes negative), town ledger vars
 //                 (total ≥ checked ≥ good ≥ goodTemp), stonesUsed,
 //                 goldInvested (threshold-aware: 1e6 / 1e9 / 999999999999 are
-//                 storyReqs breakpoints), trainingLimits and townsUnlocked;
+//                 storyReqs breakpoints), trainingLimits, townsUnlocked,
+//                 guild, effectiveTime, storyVars, guild-rank segments and
+//                 the adjustPockets()-family totals;
+//   exotics     — deterministic strata for the enum/latch globals the probe
+//                 can't see: guild × profile, effectiveTime, storyVars,
+//                 guildSegments (craft/wiz rank bonuses), fullSurveys
+//                 (fullyExploredZones), assassinations (totalAssassinations);
 //   fixtures    — the ui-parity mid/deep crafted saves, round-tripped through
 //                 the real load(false, saveJson) in a fresh context each.
 //
@@ -64,6 +70,7 @@ globalThis.__fm = (() => {
     // aggregate thresholds like Open Portal's ep >= 75
     numericDims.push({ kind: "exploreProgress", v: "exploreProgress", max: 100 });
     const boolDims = [{ kind: "prestige", v: "completedAnyPrestige" }];
+    boolDims.push({ kind: "globalFlag", v: "portalUsed" });
     for (const f in storyFlags) boolDims.push({ kind: "storyFlag", v: f });
 
     const expOf = (town, v, L) =>
@@ -79,6 +86,7 @@ globalThis.__fm = (() => {
     };
     const setBool = (d, on) => {
         if (d.kind === "prestige") prestigeValues.completedAnyPrestige = on;
+        else if (d.kind === "globalFlag") { if (d.v === "portalUsed") portalUsed = on; }
         else storyFlags[d.v] = on;
     };
     const zeroAll = () => {
@@ -105,17 +113,30 @@ globalThis.__fm = (() => {
     const bootGoldInvested = goldInvested, bootTrainingLimits = trainingLimits;
     const bootTalents = Object.fromEntries(Object.entries(stats).map(([k, v]) => [k, v.talentLevelExp.level]));
     const bootSkillExp = Object.fromEntries(Object.entries(skills).map(([k, v]) => [k, v.levelExp.exp]));
+    const bootStoryVars = structuredClone(storyVars);
     const resetExtras = () => {
         for (const k in resources) delete resources[k];
         Object.assign(resources, structuredClone(bootResources));
         towns.forEach((t, i) => Object.assign(t, bootTowns[i]));
-        for (const t of towns) delete t.suppliesCost;   // created by restart(), undefined at boot
+        for (const t of towns) {
+            delete t.suppliesCost;   // created by restart(), undefined at boot
+            // adjustPockets()-family totals: created on load, undefined at boot
+            for (const k of ["totalPockets", "totalWarehouses", "totalInsurance"]) delete t[k];
+        }
+        towns.forEach((t, i) => delete t["totalAssassinZ" + i]);   // set by AssassinAction finish
         stonesUsed = structuredClone(bootStones);
         goldInvested = bootGoldInvested;
         trainingLimits = bootTrainingLimits;
         for (const k in bootTalents) stats[k].talentLevelExp.level = bootTalents[k];
         for (const k in bootSkillExp) skills[k].levelExp.exp = bootSkillExp[k];
         townsUnlocked = [0];
+        // loop-temp / persistent globals the exotic declarative reads consume
+        guild = "";
+        effectiveTime = 0;
+        escapeStarted = false;   // Escape.canStart is a latch; keep states independent
+        curCraftGuildSegment = 0;
+        curWizCollegeSegment = 0;
+        Object.assign(storyVars, bootStoryVars);
     };
 
     // ---- predicates for threshold probing ----
@@ -269,7 +290,41 @@ globalThis.__fm = (() => {
                 else delete t.suppliesCost;
             }
             townsUnlocked = Array.from({ length: 1 + Math.floor(rnd() * 9) }, (_, i) => i);
+            const gl = ["", "Adventure", "Crafting", "Explorer", "Thieves", "Assassin"];
+            guild = gl[Math.floor(rnd() * gl.length)];
+            // effectiveTime: threshold-aware (Escape's latch at 60; Mana Well dry at 500)
+            const et = [0, 1, 59, 60, 61, 250, 499, 500, 501, 1000];
+            effectiveTime = et[Math.floor(rnd() * et.length)];
+            // storyVars: Raise Zombie tests 10/25; wizard ranks step by 6 up to 48
+            const sv = [-1, 0, 5, 6, 9, 10, 11, 12, 24, 25, 42, 48];
+            for (const k of Object.keys(storyVars)) storyVars[k] = sv[Math.floor(rnd() * sv.length)];
+            // guild-rank segments (Craft goes Godlike at 42; WizCollege Chair at 57)
+            const cseg = [0, 1, 2, 3, 7, 29, 30, 41, 42, 45];
+            curCraftGuildSegment = cseg[Math.floor(rnd() * cseg.length)];
+            const wseg = [0, 1, 13, 29, 56, 57, 60];
+            curWizCollegeSegment = wseg[Math.floor(rnd() * wseg.length)];
+            // adjustPockets()-family totals (Pick Pockets family allowed());
+            // undefined-or-set, like suppliesCost
+            for (const t of towns) for (const k of ["totalPockets", "totalWarehouses", "totalInsurance"]) {
+                if (rnd() < 0.5) t[k] = Math.floor(rnd() * 300); else delete t[k];
+            }
         }
+        if (spec.guild != null) guild = spec.guild;
+        if (spec.effectiveTime != null) effectiveTime = spec.effectiveTime;
+        if (spec.storyVars) for (const [k, v] of spec.storyVars) storyVars[k] = v;
+        if (spec.guildSegments != null) {
+            curCraftGuildSegment = spec.guildSegments;
+            curWizCollegeSegment = spec.guildSegments;
+        }
+        if (spec.fullSurveys != null) {
+            for (const d of numericDims) {
+                if (d.kind === "surveyLevel" && d.town < spec.fullSurveys) set(d, 100);
+            }
+        }
+        if (spec.assassinations != null) {
+            for (let i = 0; i < spec.assassinations; i++) towns[i]["totalAssassinZ" + i] = 1;
+        }
+        if (spec.resources) Object.assign(resources, spec.resources);
     };
     const applyAndEval = (spec) => {
         applyState(spec);
@@ -448,6 +503,37 @@ function assembleStates(ctx, randomStates, probe = true) {
     // Train-family storyReqs — deterministic joint coverage, not probability
     for (const t of [0, 99, 100, 150, 999, 1000, 5000, 9999, 10000, 99999, 100000, 500000]) {
         states.push({ id: `talents:${t}`, spec: { profile: "zero", allFlags: true, talents: t } });
+    }
+    // guild membership: an enum global no numeric probe can find; both
+    // profiles, because guild gates conjoin with level floors (Build Housing)
+    for (const g of ["", "Adventure", "Crafting", "Explorer", "Thieves", "Assassin"]) {
+        for (const profile of ["zero", "max"]) {
+            states.push({ id: `${profile}:guild=${g || "none"}`, spec: { profile, guild: g } });
+        }
+    }
+    // effectiveTime thresholds (Mana Well runs dry at 500; Escape latches below 60)
+    for (const t of [0, 59, 60, 499, 500, 501]) {
+        states.push({ id: `effectiveTime:${t}`, spec: { profile: "zero", effectiveTime: t } });
+    }
+    // storyVar thresholds (Raise Zombie stories 3/4)
+    for (const L of [9, 10, 24, 25]) {
+        states.push({ id: `storyVar:maxZombiesRaised@${L}`, spec: { profile: "zero", storyVars: [["maxZombiesRaised", L]] } });
+    }
+    // guild-rank segments drive getCraftGuildRank/getWizCollegeRank bonuses
+    // (Restoration/Spatiomancy manaCost, Build Housing canStart)
+    for (const k of [1, 3, 29, 30, 42, 57]) {
+        states.push({ id: `guildSegments:${k}`, spec: { profile: "zero", guildSegments: k } });
+    }
+    // Build Housing gates houses < floor(craftBonus * spatiomancyMod): put
+    // resources.houses between the values a wrong bonus function would give
+    states.push({ id: "max:guild=Crafting@seg30+houses20", spec: { profile: "max", guild: "Crafting", guildSegments: 30, resources: { houses: 20 } } });
+    // fullyExploredZones() counts towns with SurveyZ == 100 (Explorers Guild stories 3-5)
+    for (const k of [1, 3, 4, 8, 9]) {
+        states.push({ id: `fullSurveys:${k}`, spec: { profile: "zero", fullSurveys: k } });
+    }
+    // totalAssassinations() counts zones with totalAssassinZ > 0 (Guild Assassin stories 3/5)
+    for (const k of [3, 4, 7, 8]) {
+        states.push({ id: `assassinations:${k}`, spec: { profile: "zero", assassinations: k } });
     }
     for (let k = 0; k < randomStates; k++) {
         states.push({ id: `random:${k}`, spec: { profile: "zero", random: 0x51D0 + k * 7919 } });
