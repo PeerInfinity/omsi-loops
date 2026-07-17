@@ -611,6 +611,180 @@
         <!-- finish() not yet modeled (Phase 6): Magic exp 100*(1+Alchemy/100); reputation required, not consumed -->
         <reward />
     </action>
+    <action type="multipart" name="Heal The Sick" varName="Heal" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifDiscoveredItems min="1" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="heal10PatientsInALoop" />
+            </story>
+            <story num="3">
+                <ifDiscoveredItems min="100" />
+            </story>
+            <story num="4">
+                <ifDiscoveredItems min="1000" />
+            </story>
+            <story num="5">
+                <ifStoryFlag storyFlagName="failedHeal" />
+            </story>
+            <story num="6">
+                <if min="50">
+                    <skillLevel skillName="Restoration" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">20</stat>
+            <stat statName="Int">20</stat>
+            <stat statName="Cha">20</stat>
+            <stat statName="Soul">40</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Per" />
+            <stat statName="Int" />
+            <stat statName="Cha" />
+        </loopStats>
+        <effortCost>2500</effortCost>
+        <visible>
+            <ifProgress varName="Secrets" min="20" />
+        </visible>
+        <unlocked>
+            <if min="12">
+                <skillLevel skillName="Magic" />
+            </if>
+        </unlocked>
+        <canStart>
+            <ifResource resourceName="reputation" min="1" />
+        </canStart>
+        <loopCost>
+            <fibonacci>
+                <value value="2">
+                    <addition>
+                        <loopCounter />
+                        <addition>
+                            <segment />
+                        </addition>
+                        <divisor>
+                            <segments />
+                        </divisor>
+                        <addition value="0.0000001" />
+                        <floor />
+                    </addition>
+                </value>
+            </fibonacci>
+            <multiplier value="5000" />
+        </loopCost>
+        <tickProgress>
+            <skillLevel skillName="Magic" />
+            <multiplier>
+                <skillLevel skillName="Restoration" />
+                <divisor value="50" />
+                <clampMin value="1" />
+            </multiplier>
+            <multiplier>
+                <value value="1">
+                    <addition>
+                        <totalCompletions />
+                        <divisor value="100" />
+                    </addition>
+                    <squareRoot />
+                </value>
+            </multiplier>
+        </tickProgress>
+        <!-- finish() not yet modeled (Phase 6): Magic exp 10 -->
+        <loopReward>
+            <numericResource name="reputation">3</numericResource>
+        </loopReward>
+    </action>
+    <action type="multipart" name="Fight Monsters" varName="Fight" townNum="0" segments="3">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifDiscoveredItems min="1" />
+            </story>
+            <story num="2">
+                <ifDiscoveredItems min="100" />
+            </story>
+            <story num="3">
+                <ifDiscoveredItems min="500" />
+            </story>
+            <story num="4">
+                <ifDiscoveredItems min="1000" />
+            </story>
+            <story num="5">
+                <ifDiscoveredItems min="5000" />
+            </story>
+            <story num="6">
+                <ifDiscoveredItems min="10000" />
+            </story>
+            <story num="7">
+                <ifDiscoveredItems min="20000" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Str">30</stat>
+            <stat statName="Spd">30</stat>
+            <stat statName="Con">30</stat>
+            <stat statName="Luck">10</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Spd" />
+            <stat statName="Spd" />
+            <stat statName="Spd" />
+            <stat statName="Str" />
+            <stat statName="Str" />
+            <stat statName="Str" />
+            <stat statName="Con" />
+            <stat statName="Con" />
+            <stat statName="Con" />
+        </loopStats>
+        <effortCost>2000</effortCost>
+        <visible>
+            <ifProgress varName="Secrets" min="20" />
+        </visible>
+        <unlocked>
+            <if min="10">
+                <skillLevel skillName="Combat" />
+            </if>
+        </unlocked>
+        <canStart>
+            <ifResource resourceName="reputation" min="2" />
+        </canStart>
+        <loopCost>
+            <fibonacci>
+                <loopCounter />
+                <addition>
+                    <segment />
+                </addition>
+                <subtraction>
+                    <loopCounter />
+                    <divisor value="3" />
+                </subtraction>
+                <addition value="0.0000001" />
+                <floor />
+            </fibonacci>
+            <multiplier value="10000" />
+        </loopCost>
+        <tickProgress>
+            <function name="getSelfCombat" />
+            <multiplier>
+                <value value="1">
+                    <addition>
+                        <totalCompletions />
+                        <divisor value="100" />
+                    </addition>
+                    <squareRoot />
+                </value>
+            </multiplier>
+        </tickProgress>
+        <!-- finish() not yet modeled (Phase 6): Combat exp 10 -->
+        <segmentReward>
+            <numericResource name="gold">20</numericResource>
+        </segmentReward>
+        <loopReward />
+    </action>
     <action type="normal" name="Buy Supplies" townNum="0">
         <expMult>1</expMult>
         <storyReqs>
@@ -5150,5 +5324,629 @@
         <!-- finish() not yet modeled (Phase 6): reputation += 9999999,
              completedCurrentGame(); story() unlocks global story 12 -->
         <reward />
+    </action>
+    <action type="multipart" name="AssassinZ0" townNum="0">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifDiscoveredItems min="1" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">20</stat>
+            <stat statName="Int">10</stat>
+            <stat statName="Dex">30</stat>
+            <stat statName="Luck">20</stat>
+            <stat statName="Spd">20</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Per" />
+            <stat statName="Int" />
+            <stat statName="Dex" />
+            <stat statName="Luck" />
+            <stat statName="Spd" />
+        </loopStats>
+        <allowed>1</allowed>
+        <effortCost>50000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </unlocked>
+        <canStart>
+            <if equals="0">
+                <loopCounter />
+            </if>
+        </canStart>
+        <loopCost>50000000</loopCost>
+        <tickProgress>
+            <!-- (sqrt(Practical) + Thievery + Assassin) * 0.1 * sqrt(1 + total/100)
+                 / |reputation|-or-1 / hearts-or-1 (both integer-valued, so
+                 abs+clampMin(1) and clampMin(1) match the JS ternaries) -->
+            <skillLevel skillName="Practical" />
+            <squareRoot />
+            <addition>
+                <skillLevel skillName="Thievery" />
+            </addition>
+            <addition>
+                <skillLevel skillName="Assassin" />
+            </addition>
+            <multiplier value="0.1" />
+            <multiplier>
+                <value value="1">
+                    <addition>
+                        <totalCompletions />
+                        <divisor value="100" />
+                    </addition>
+                    <squareRoot />
+                </value>
+            </multiplier>
+            <divisor>
+                <resourceValue name="reputation" />
+                <absoluteValue />
+                <clampMin value="1" />
+            </divisor>
+            <divisor>
+                <resourceValue name="heart" />
+                <clampMin value="1" />
+            </divisor>
+        </tickProgress>
+        <!-- finish() not yet modeled (Phase 6): reputation penalty
+             min((townNum+1)*-250 + Assassin level, 0); loopsFinished also
+             records the kill in the hearts list -->
+        <loopReward>
+            <numericResource name="heart">1</numericResource>
+        </loopReward>
+    </action>
+    <action type="multipart" name="AssassinZ1" townNum="1">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifDiscoveredItems min="1" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">20</stat>
+            <stat statName="Int">10</stat>
+            <stat statName="Dex">30</stat>
+            <stat statName="Luck">20</stat>
+            <stat statName="Spd">20</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Per" />
+            <stat statName="Int" />
+            <stat statName="Dex" />
+            <stat statName="Luck" />
+            <stat statName="Spd" />
+        </loopStats>
+        <allowed>1</allowed>
+        <effortCost>50000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </unlocked>
+        <canStart>
+            <if equals="0">
+                <loopCounter />
+            </if>
+        </canStart>
+        <loopCost>50000000</loopCost>
+        <tickProgress>
+            <!-- (sqrt(Practical) + Thievery + Assassin) * 0.1 * sqrt(1 + total/100)
+                 / |reputation|-or-1 / hearts-or-1 (both integer-valued, so
+                 abs+clampMin(1) and clampMin(1) match the JS ternaries) -->
+            <skillLevel skillName="Practical" />
+            <squareRoot />
+            <addition>
+                <skillLevel skillName="Thievery" />
+            </addition>
+            <addition>
+                <skillLevel skillName="Assassin" />
+            </addition>
+            <multiplier value="0.1" />
+            <multiplier>
+                <value value="1">
+                    <addition>
+                        <totalCompletions />
+                        <divisor value="100" />
+                    </addition>
+                    <squareRoot />
+                </value>
+            </multiplier>
+            <divisor>
+                <resourceValue name="reputation" />
+                <absoluteValue />
+                <clampMin value="1" />
+            </divisor>
+            <divisor>
+                <resourceValue name="heart" />
+                <clampMin value="1" />
+            </divisor>
+        </tickProgress>
+        <!-- finish() not yet modeled (Phase 6): reputation penalty
+             min((townNum+1)*-250 + Assassin level, 0); loopsFinished also
+             records the kill in the hearts list -->
+        <loopReward>
+            <numericResource name="heart">1</numericResource>
+        </loopReward>
+    </action>
+    <action type="multipart" name="AssassinZ2" townNum="2">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifDiscoveredItems min="1" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">20</stat>
+            <stat statName="Int">10</stat>
+            <stat statName="Dex">30</stat>
+            <stat statName="Luck">20</stat>
+            <stat statName="Spd">20</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Per" />
+            <stat statName="Int" />
+            <stat statName="Dex" />
+            <stat statName="Luck" />
+            <stat statName="Spd" />
+        </loopStats>
+        <allowed>1</allowed>
+        <effortCost>50000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </unlocked>
+        <canStart>
+            <if equals="0">
+                <loopCounter />
+            </if>
+        </canStart>
+        <loopCost>50000000</loopCost>
+        <tickProgress>
+            <!-- (sqrt(Practical) + Thievery + Assassin) * 0.1 * sqrt(1 + total/100)
+                 / |reputation|-or-1 / hearts-or-1 (both integer-valued, so
+                 abs+clampMin(1) and clampMin(1) match the JS ternaries) -->
+            <skillLevel skillName="Practical" />
+            <squareRoot />
+            <addition>
+                <skillLevel skillName="Thievery" />
+            </addition>
+            <addition>
+                <skillLevel skillName="Assassin" />
+            </addition>
+            <multiplier value="0.1" />
+            <multiplier>
+                <value value="1">
+                    <addition>
+                        <totalCompletions />
+                        <divisor value="100" />
+                    </addition>
+                    <squareRoot />
+                </value>
+            </multiplier>
+            <divisor>
+                <resourceValue name="reputation" />
+                <absoluteValue />
+                <clampMin value="1" />
+            </divisor>
+            <divisor>
+                <resourceValue name="heart" />
+                <clampMin value="1" />
+            </divisor>
+        </tickProgress>
+        <!-- finish() not yet modeled (Phase 6): reputation penalty
+             min((townNum+1)*-250 + Assassin level, 0); loopsFinished also
+             records the kill in the hearts list -->
+        <loopReward>
+            <numericResource name="heart">1</numericResource>
+        </loopReward>
+    </action>
+    <action type="multipart" name="AssassinZ3" townNum="3">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifDiscoveredItems min="1" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">20</stat>
+            <stat statName="Int">10</stat>
+            <stat statName="Dex">30</stat>
+            <stat statName="Luck">20</stat>
+            <stat statName="Spd">20</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Per" />
+            <stat statName="Int" />
+            <stat statName="Dex" />
+            <stat statName="Luck" />
+            <stat statName="Spd" />
+        </loopStats>
+        <allowed>1</allowed>
+        <effortCost>50000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </unlocked>
+        <canStart>
+            <if equals="0">
+                <loopCounter />
+            </if>
+        </canStart>
+        <loopCost>50000000</loopCost>
+        <tickProgress>
+            <!-- (sqrt(Practical) + Thievery + Assassin) * 0.1 * sqrt(1 + total/100)
+                 / |reputation|-or-1 / hearts-or-1 (both integer-valued, so
+                 abs+clampMin(1) and clampMin(1) match the JS ternaries) -->
+            <skillLevel skillName="Practical" />
+            <squareRoot />
+            <addition>
+                <skillLevel skillName="Thievery" />
+            </addition>
+            <addition>
+                <skillLevel skillName="Assassin" />
+            </addition>
+            <multiplier value="0.1" />
+            <multiplier>
+                <value value="1">
+                    <addition>
+                        <totalCompletions />
+                        <divisor value="100" />
+                    </addition>
+                    <squareRoot />
+                </value>
+            </multiplier>
+            <divisor>
+                <resourceValue name="reputation" />
+                <absoluteValue />
+                <clampMin value="1" />
+            </divisor>
+            <divisor>
+                <resourceValue name="heart" />
+                <clampMin value="1" />
+            </divisor>
+        </tickProgress>
+        <!-- finish() not yet modeled (Phase 6): reputation penalty
+             min((townNum+1)*-250 + Assassin level, 0); loopsFinished also
+             records the kill in the hearts list -->
+        <loopReward>
+            <numericResource name="heart">1</numericResource>
+        </loopReward>
+    </action>
+    <action type="multipart" name="AssassinZ4" townNum="4">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifDiscoveredItems min="1" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">20</stat>
+            <stat statName="Int">10</stat>
+            <stat statName="Dex">30</stat>
+            <stat statName="Luck">20</stat>
+            <stat statName="Spd">20</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Per" />
+            <stat statName="Int" />
+            <stat statName="Dex" />
+            <stat statName="Luck" />
+            <stat statName="Spd" />
+        </loopStats>
+        <allowed>1</allowed>
+        <effortCost>50000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </unlocked>
+        <canStart>
+            <if equals="0">
+                <loopCounter />
+            </if>
+        </canStart>
+        <loopCost>50000000</loopCost>
+        <tickProgress>
+            <!-- (sqrt(Practical) + Thievery + Assassin) * 0.1 * sqrt(1 + total/100)
+                 / |reputation|-or-1 / hearts-or-1 (both integer-valued, so
+                 abs+clampMin(1) and clampMin(1) match the JS ternaries) -->
+            <skillLevel skillName="Practical" />
+            <squareRoot />
+            <addition>
+                <skillLevel skillName="Thievery" />
+            </addition>
+            <addition>
+                <skillLevel skillName="Assassin" />
+            </addition>
+            <multiplier value="0.1" />
+            <multiplier>
+                <value value="1">
+                    <addition>
+                        <totalCompletions />
+                        <divisor value="100" />
+                    </addition>
+                    <squareRoot />
+                </value>
+            </multiplier>
+            <divisor>
+                <resourceValue name="reputation" />
+                <absoluteValue />
+                <clampMin value="1" />
+            </divisor>
+            <divisor>
+                <resourceValue name="heart" />
+                <clampMin value="1" />
+            </divisor>
+        </tickProgress>
+        <!-- finish() not yet modeled (Phase 6): reputation penalty
+             min((townNum+1)*-250 + Assassin level, 0); loopsFinished also
+             records the kill in the hearts list -->
+        <loopReward>
+            <numericResource name="heart">1</numericResource>
+        </loopReward>
+    </action>
+    <action type="multipart" name="AssassinZ5" townNum="5">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifDiscoveredItems min="1" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">20</stat>
+            <stat statName="Int">10</stat>
+            <stat statName="Dex">30</stat>
+            <stat statName="Luck">20</stat>
+            <stat statName="Spd">20</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Per" />
+            <stat statName="Int" />
+            <stat statName="Dex" />
+            <stat statName="Luck" />
+            <stat statName="Spd" />
+        </loopStats>
+        <allowed>1</allowed>
+        <effortCost>50000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </unlocked>
+        <canStart>
+            <if equals="0">
+                <loopCounter />
+            </if>
+        </canStart>
+        <loopCost>50000000</loopCost>
+        <tickProgress>
+            <!-- (sqrt(Practical) + Thievery + Assassin) * 0.1 * sqrt(1 + total/100)
+                 / |reputation|-or-1 / hearts-or-1 (both integer-valued, so
+                 abs+clampMin(1) and clampMin(1) match the JS ternaries) -->
+            <skillLevel skillName="Practical" />
+            <squareRoot />
+            <addition>
+                <skillLevel skillName="Thievery" />
+            </addition>
+            <addition>
+                <skillLevel skillName="Assassin" />
+            </addition>
+            <multiplier value="0.1" />
+            <multiplier>
+                <value value="1">
+                    <addition>
+                        <totalCompletions />
+                        <divisor value="100" />
+                    </addition>
+                    <squareRoot />
+                </value>
+            </multiplier>
+            <divisor>
+                <resourceValue name="reputation" />
+                <absoluteValue />
+                <clampMin value="1" />
+            </divisor>
+            <divisor>
+                <resourceValue name="heart" />
+                <clampMin value="1" />
+            </divisor>
+        </tickProgress>
+        <!-- finish() not yet modeled (Phase 6): reputation penalty
+             min((townNum+1)*-250 + Assassin level, 0); loopsFinished also
+             records the kill in the hearts list -->
+        <loopReward>
+            <numericResource name="heart">1</numericResource>
+        </loopReward>
+    </action>
+    <action type="multipart" name="AssassinZ6" townNum="6">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifDiscoveredItems min="1" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">20</stat>
+            <stat statName="Int">10</stat>
+            <stat statName="Dex">30</stat>
+            <stat statName="Luck">20</stat>
+            <stat statName="Spd">20</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Per" />
+            <stat statName="Int" />
+            <stat statName="Dex" />
+            <stat statName="Luck" />
+            <stat statName="Spd" />
+        </loopStats>
+        <allowed>1</allowed>
+        <effortCost>50000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </unlocked>
+        <canStart>
+            <if equals="0">
+                <loopCounter />
+            </if>
+        </canStart>
+        <loopCost>50000000</loopCost>
+        <tickProgress>
+            <!-- (sqrt(Practical) + Thievery + Assassin) * 0.1 * sqrt(1 + total/100)
+                 / |reputation|-or-1 / hearts-or-1 (both integer-valued, so
+                 abs+clampMin(1) and clampMin(1) match the JS ternaries) -->
+            <skillLevel skillName="Practical" />
+            <squareRoot />
+            <addition>
+                <skillLevel skillName="Thievery" />
+            </addition>
+            <addition>
+                <skillLevel skillName="Assassin" />
+            </addition>
+            <multiplier value="0.1" />
+            <multiplier>
+                <value value="1">
+                    <addition>
+                        <totalCompletions />
+                        <divisor value="100" />
+                    </addition>
+                    <squareRoot />
+                </value>
+            </multiplier>
+            <divisor>
+                <resourceValue name="reputation" />
+                <absoluteValue />
+                <clampMin value="1" />
+            </divisor>
+            <divisor>
+                <resourceValue name="heart" />
+                <clampMin value="1" />
+            </divisor>
+        </tickProgress>
+        <!-- finish() not yet modeled (Phase 6): reputation penalty
+             min((townNum+1)*-250 + Assassin level, 0); loopsFinished also
+             records the kill in the hearts list -->
+        <loopReward>
+            <numericResource name="heart">1</numericResource>
+        </loopReward>
+    </action>
+    <action type="multipart" name="AssassinZ7" townNum="7">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifDiscoveredItems min="1" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">20</stat>
+            <stat statName="Int">10</stat>
+            <stat statName="Dex">30</stat>
+            <stat statName="Luck">20</stat>
+            <stat statName="Spd">20</stat>
+        </stats>
+        <loopStats>
+            <stat statName="Per" />
+            <stat statName="Int" />
+            <stat statName="Dex" />
+            <stat statName="Luck" />
+            <stat statName="Spd" />
+        </loopStats>
+        <allowed>1</allowed>
+        <effortCost>50000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <skillLevel skillName="Assassin" />
+            </if>
+        </unlocked>
+        <canStart>
+            <if equals="0">
+                <loopCounter />
+            </if>
+        </canStart>
+        <loopCost>50000000</loopCost>
+        <tickProgress>
+            <!-- (sqrt(Practical) + Thievery + Assassin) * 0.1 * sqrt(1 + total/100)
+                 / |reputation|-or-1 / hearts-or-1 (both integer-valued, so
+                 abs+clampMin(1) and clampMin(1) match the JS ternaries) -->
+            <skillLevel skillName="Practical" />
+            <squareRoot />
+            <addition>
+                <skillLevel skillName="Thievery" />
+            </addition>
+            <addition>
+                <skillLevel skillName="Assassin" />
+            </addition>
+            <multiplier value="0.1" />
+            <multiplier>
+                <value value="1">
+                    <addition>
+                        <totalCompletions />
+                        <divisor value="100" />
+                    </addition>
+                    <squareRoot />
+                </value>
+            </multiplier>
+            <divisor>
+                <resourceValue name="reputation" />
+                <absoluteValue />
+                <clampMin value="1" />
+            </divisor>
+            <divisor>
+                <resourceValue name="heart" />
+                <clampMin value="1" />
+            </divisor>
+        </tickProgress>
+        <!-- finish() not yet modeled (Phase 6): reputation penalty
+             min((townNum+1)*-250 + Assassin level, 0); loopsFinished also
+             records the kill in the hearts list -->
+        <loopReward>
+            <numericResource name="heart">1</numericResource>
+        </loopReward>
     </action>
 </actions>

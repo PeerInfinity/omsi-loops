@@ -13,6 +13,9 @@ class Schema {
             totalAssassinations,
             getWizCollegeRankBonus: () => getWizCollegeRank().bonus,
             getCraftGuildRankBonus: () => getCraftGuildRank().bonus,
+            getSelfCombat,
+            getTeamCombat,
+            minTalent: () => Math.min(...statList.map(s => getTalent(s))),
         };
     }
     static #jsFunctions;

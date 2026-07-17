@@ -187,12 +187,56 @@ const TARGETED_CANARIES = [
             pv.children.find(c => c.tag === "setValue").attrs.value = "3";
         },
     },
+    {
+        label: "multipart segment/loopCounter plumbing (Fight Monsters loopCost, lc/3 -> lc/4)",
+        expect: { name: "Fight Monsters", col: "loopCost[" },
+        mutate: (doc) => {
+            const lc = doc.actions["Fight Monsters"].children.find(c => c.tag === "loopCost");
+            lc.children.find(c => c.tag === "fibonacci").children
+                .find(c => c.tag === "subtraction").children.find(c => c.tag === "divisor").attrs.value = "4";
+        },
+    },
+    {
+        label: "multipart fibonacci base (Heal The Sick loopCost, 2 -> 3)",
+        expect: { name: "Heal The Sick", col: "loopCost[" },
+        mutate: (doc) => {
+            const lc = doc.actions["Heal The Sick"].children.find(c => c.tag === "loopCost");
+            lc.children.find(c => c.tag === "fibonacci").children.find(c => c.tag === "value").attrs.value = "3";
+        },
+    },
+    {
+        label: "multipart totalCompletions (Heal The Sick tickProgress, /100 -> /101)",
+        expect: { name: "Heal The Sick", col: "tick[" },
+        mutate: (doc) => {
+            const tp = doc.actions["Heal The Sick"].children.find(c => c.tag === "tickProgress");
+            tp.children.filter(c => c.tag === "multiplier")[1].children[0].children
+                .find(c => c.tag === "addition").children.find(c => c.tag === "divisor").attrs.value = "101";
+        },
+    },
+    {
+        label: "multipart canStart(loopCounter) (AssassinZ0, equals 0 -> 1)",
+        expect: { name: "AssassinZ0", col: "canStartAt[" },
+        mutate: (doc) => {
+            const cs = doc.actions["AssassinZ0"].children.find(c => c.tag === "canStart");
+            cs.children.find(c => c.tag === "if").attrs.equals = "1";
+        },
+    },
+    {
+        label: "multipart abs/clampMin penalty (AssassinZ3 tickProgress, rep clamp 1 -> 2)",
+        expect: { name: "AssassinZ3", col: "tick[" },
+        mutate: (doc) => {
+            const tp = doc.actions["AssassinZ3"].children.find(c => c.tag === "tickProgress");
+            tp.children.filter(c => c.tag === "divisor")[0].children
+                .find(c => c.tag === "clampMin").attrs.value = "2";
+        },
+    },
 ];
 
 for (const { label, expect, mutate } of TARGETED_CANARIES) {
     test(`canary: ${label} diverges`, () => {
         const d = buildXmlDifferential({ maxMismatches: 5, mutate });
-        assert.ok(d.mismatches.some(m => m.name === expect.name && m.col === expect.col),
+        // sweep columns carry an index ("loopCost[3]"): expect.col matches as a prefix
+        assert.ok(d.mismatches.some(m => m.name === expect.name && m.col.startsWith(expect.col)),
             `mutation produced no ${expect.col} divergence for ${expect.name} — `
             + `the corpus cannot see through this construct (got: ${JSON.stringify(d.mismatches.slice(0, 3))})`);
     });

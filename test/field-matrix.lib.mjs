@@ -500,10 +500,10 @@ globalThis.__fmDiff = (() => {
         for (const name in compiled) {
             const a = jsByName.get(name);
             if (!a) continue;
-            for (const f of ["varName", "townNum", "type", "expMult"]) {
+            for (const f of ["varName", "townNum", "type", "expMult", "segments"]) {
                 if (a[f] !== compiled[name][f]) out.push({ name, col: f, js: a[f], xml: compiled[name][f] });
             }
-            for (const f of ["stats", "affectedBy"]) {
+            for (const f of ["stats", "affectedBy", "loopStats"]) {
                 if (sortedJson(a[f]) !== sortedJson(compiled[name][f])) {
                     out.push({ name, col: f, js: sortedJson(a[f]), xml: sortedJson(compiled[name][f]) });
                 }

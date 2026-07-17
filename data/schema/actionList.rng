@@ -175,6 +175,17 @@
                 </attribute>
                 <ref name="booleanCondition" />
             </element>
+            <element name="ifSoulstoneSac">
+                <a:documentation>True when the total soulstone pool covers the amount given by
+                    the child evaluation (checkSoulstoneSac).</a:documentation>
+                <il:label>If soulstones cover</il:label>
+                <optional>
+                    <attribute name="inverted">
+                        <value>inverted</value>
+                    </attribute>
+                </optional>
+                <ref name="numericEvaluation" />
+            </element>
         </choice>
     </define>
     <define name="required-statName">
@@ -436,9 +447,103 @@
                     <value>totalAssassinations</value>
                     <value>getWizCollegeRankBonus</value>
                     <value>getCraftGuildRankBonus</value>
+                    <value>getSelfCombat</value>
+                    <value>getTeamCombat</value>
+                    <value>minTalent</value>
                 </choice>
             </attribute>
         </element>
+    </define>
+    <define name="baseValue" combine="choice">
+        <choice>
+            <element name="segment">
+                <a:documentation>Multipart context: the segment index the evaluation was asked about
+                    (only defined inside loopCost).</a:documentation>
+                <il:label>Segment</il:label>
+                <empty />
+            </element>
+            <element name="loopCounter">
+                <a:documentation>Multipart context: the loop counter argument, defaulting to the
+                    town's counter for this action.</a:documentation>
+                <il:label>Loop counter</il:label>
+                <empty />
+            </element>
+            <element name="totalCompletions">
+                <a:documentation>Multipart context: the total-completions argument, defaulting to
+                    the town's total for this action.</a:documentation>
+                <il:label>Total completions</il:label>
+                <empty />
+            </element>
+            <element name="segments">
+                <a:documentation>The action's segment count.</a:documentation>
+                <il:label>Segment count</il:label>
+                <empty />
+            </element>
+            <element name="power">
+                <a:documentation>base raised to the child evaluation (Math.pow).</a:documentation>
+                <il:label>Power</il:label>
+                <attribute name="base">
+                    <data type="decimal" />
+                </attribute>
+                <ref name="numericEvaluation" />
+            </element>
+            <element name="fibonacci">
+                <a:documentation>fibonacci(n) of the child evaluation.</a:documentation>
+                <il:label>Fibonacci</il:label>
+                <ref name="numericEvaluation" />
+            </element>
+            <element name="dungeonCompleted">
+                <a:documentation>Completions of the dungeon floor given by the child evaluation.</a:documentation>
+                <il:label>Dungeon floor completions</il:label>
+                <attribute name="dungeonNum">
+                    <data type="integer" />
+                </attribute>
+                <ref name="numericEvaluation" />
+            </element>
+            <element name="dungeonFloors">
+                <a:documentation>Floor count of a dungeon.</a:documentation>
+                <il:label>Dungeon floors</il:label>
+                <attribute name="dungeonNum">
+                    <data type="integer" />
+                </attribute>
+            </element>
+            <element name="trialCompleted">
+                <a:documentation>Completions of the trial floor given by the child evaluation.</a:documentation>
+                <il:label>Trial floor completions</il:label>
+                <attribute name="trialNum">
+                    <data type="integer" />
+                </attribute>
+                <ref name="numericEvaluation" />
+            </element>
+            <element name="trialFloors">
+                <a:documentation>Floor count of a trial.</a:documentation>
+                <il:label>Trial floors</il:label>
+                <attribute name="trialNum">
+                    <data type="integer" />
+                </attribute>
+            </element>
+            <element name="buffCap">
+                <a:documentation>The configured cap of a buff (getBuffCap).</a:documentation>
+                <il:label>Buff cap</il:label>
+                <ref name="required-buffName" />
+            </element>
+            <element name="guildSegment">
+                <a:documentation>A whitelisted cur*Segment rank counter.</a:documentation>
+                <il:label>Guild segment counter</il:label>
+                <!-- Names here must also be whitelisted in actionListXml.js -->
+                <attribute name="name">
+                    <choice>
+                        <value>advGuild</value>
+                        <value>craftGuild</value>
+                        <value>thievesGuild</value>
+                        <value>wizCollege</value>
+                        <value>frostGiants</value>
+                        <value>jungleMonsters</value>
+                        <value>gods</value>
+                    </choice>
+                </attribute>
+            </element>
+        </choice>
     </define>
     <define name="numericAdjustment" combine="choice">
         <choice>
@@ -492,6 +597,16 @@
             <element name="round">
                 <ref name="conditionalEvaluation"/>
             </element>
+            <element name="squareRoot">
+                <ref name="conditionalEvaluation"/>
+            </element>
+            <element name="absoluteValue">
+                <ref name="conditionalEvaluation"/>
+            </element>
+            <element name="precision3">
+                <a:documentation>Round to 3 significant digits (helpers.js precision3).</a:documentation>
+                <ref name="conditionalEvaluation"/>
+            </element>
             <element name="additiveBonus">
                 <oneOrMore>
                     <ref name="numericAdjustment"></ref>
@@ -506,9 +621,72 @@
             </attribute>
             <interleave>
                 <ref name="actionDefinition" />
-                <element name="progress">
-                    <ref name="numericEvaluation" />
+                <optional>
+                    <!-- optional: some finish() progress amounts (guild-rank
+                         scaled) are not yet expressible and stay Phase-6
+                         comments -->
+                    <element name="progress">
+                        <ref name="numericEvaluation" />
+                    </element>
+                </optional>
+            </interleave>
+        </element>
+    </define>
+    <define name="anyAction" combine="choice">
+        <element name="action">
+            <attribute name="type">
+                <value>multipart</value>
+            </attribute>
+            <optional>
+                <!-- segment count when it differs from the loopStats length
+                     (Fight Monsters: 9 loopStats over 3 segments) -->
+                <attribute name="segments">
+                    <data type="positiveInteger" />
+                </attribute>
+            </optional>
+            <interleave>
+                <ref name="actionDefinition" />
+                <element name="loopStats">
+                    <oneOrMore>
+                        <element name="stat">
+                            <ref name="required-statName" />
+                        </element>
+                    </oneOrMore>
                 </element>
+                <element name="loopCost">
+                    <a:documentation>Mana required for a segment: evaluated with the segment and
+                        loopCounter context values.</a:documentation>
+                    <choice>
+                        <ref name="nativeMarker" />
+                        <ref name="numericEvaluation" />
+                    </choice>
+                </element>
+                <element name="tickProgress">
+                    <a:documentation>Progress per tick: evaluated with the loopCounter and
+                        totalCompletions context values.</a:documentation>
+                    <choice>
+                        <ref name="nativeMarker" />
+                        <ref name="numericEvaluation" />
+                    </choice>
+                </element>
+                <optional>
+                    <element name="segmentReward">
+                        <a:documentation>segmentFinished() effects, as reward data (Phase-6
+                            consumption, like reward).</a:documentation>
+                        <zeroOrMore>
+                            <ref name="resourceStack" />
+                        </zeroOrMore>
+                    </element>
+                </optional>
+                <optional>
+                    <element name="loopReward">
+                        <a:documentation>loopsFinished() effects, as reward data (Phase-6
+                            consumption, like reward).</a:documentation>
+                        <zeroOrMore>
+                            <ref name="resourceStack" />
+                        </zeroOrMore>
+                    </element>
+                </optional>
             </interleave>
         </element>
     </define>

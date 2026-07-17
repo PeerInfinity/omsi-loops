@@ -40,10 +40,12 @@ const ActionListXml = (() => {
 
     const BASE_VALUE_TAGS = new Set(["skillLevel", "skillExp", "buffLevel", "talentLevel", "primaryValue",
         "progressLevel", "goodItems", "discoveredItems", "checkedItems", "value", "function",
-        "resourceValue", "townValue", "globalValue", "stonesUsed", "storyVar"]);
+        "resourceValue", "townValue", "globalValue", "stonesUsed", "storyVar",
+        "segment", "loopCounter", "totalCompletions", "segments", "power", "fibonacci",
+        "dungeonCompleted", "dungeonFloors", "trialCompleted", "trialFloors", "buffCap", "guildSegment"]);
     const CONDITIONAL_TAGS = new Set(["if", "ifCurrentValue", "ifResource", "ifHasResource",
         "ifStoryFlag", "ifProgress", "ifGoodItems", "ifDiscoveredItems", "ifCheckedItems",
-        "ifPrestige", "ifTownUnlocked", "anyOf", "never", "ifGuild", "ifGlobalFlag"]);
+        "ifPrestige", "ifTownUnlocked", "anyOf", "never", "ifGuild", "ifGlobalFlag", "ifSoulstoneSac"]);
     // whitelisted <function name="..."/> targets (mirrors schema.js / the rng);
     // the *Bonus wrappers exist because <function> must return a number
     const FUNCTIONS = {
@@ -52,6 +54,20 @@ const ActionListXml = (() => {
         totalAssassinations: () => totalAssassinations(),
         getWizCollegeRankBonus: () => getWizCollegeRank().bonus,
         getCraftGuildRankBonus: () => getCraftGuildRank().bonus,
+        getSelfCombat: () => getSelfCombat(),
+        getTeamCombat: () => getTeamCombat(),
+        // fork wrapper: Imbue Body gates every talent >= a threshold
+        minTalent: () => Math.min(...statList.map(s => getTalent(s))),
+    };
+    // whitelisted <guildSegment name="..."/> -> cur*Segment loop-temp globals
+    const GUILD_SEGMENTS = {
+        advGuild: () => curAdvGuildSegment,
+        craftGuild: () => curCraftGuildSegment,
+        thievesGuild: () => curThievesGuildSegment,
+        wizCollege: () => curWizCollegeSegment,
+        frostGiants: () => curFightFrostGiantsSegment,
+        jungleMonsters: () => curFightJungleMonstersSegment,
+        gods: () => curGodsSegment,
     };
     // whitelisted <globalValue name="..."/> targets
     const GLOBALS = {
@@ -156,6 +172,10 @@ const ActionListXml = (() => {
                 if (!f) throw new Error(`actionListXml: global flag ${node.attrs.name} not whitelisted`);
                 return !!f() !== inverted;
             }
+            case "ifSoulstoneSac": {   // fork schema extension: checkSoulstoneSac(amount)
+                const amount = evalNumeric(node, ctx);
+                return (amount !== null && checkSoulstoneSac(amount)) !== inverted;
+            }
             case "anyOf": {   // fork schema extension: disjunction over child conditionals
                 for (const c of node.children) {
                     if (evalConditional(c, ctx)) return !inverted;
@@ -210,6 +230,42 @@ const ActionListXml = (() => {
             case "storyVar": {
                 if (!(node.attrs.name in storyVars)) throw new Error(`actionListXml: unknown storyVar ${node.attrs.name}`);
                 return storyVars[node.attrs.name];
+            }
+            // ---- multipart context values (fork schema extensions) ----
+            case "segment": {
+                if (ctx.mp?.segment === undefined) throw new Error("actionListXml: <segment/> outside loopCost");
+                return ctx.mp.segment;
+            }
+            case "loopCounter":
+                return ctx.mp?.loopCounter
+                    ?? towns[ctx.action.townNum][ctx.action.varName + "LoopCounter"];
+            case "totalCompletions":
+                return ctx.mp?.totalCompletions
+                    ?? towns[ctx.action.townNum]["total" + ctx.action.varName];
+            case "segments":
+                return ctx.action.segments;
+            case "power":   // base^exponent; the exponent is the child evaluation
+                return Math.pow(num(node.attrs.base, "power"), evalNumeric(node, ctx));
+            case "fibonacci":
+                return fibonacci(evalNumeric(node, ctx));
+            case "dungeonCompleted": {   // completions of the floor given by the child evaluation
+                const d = dungeons[num(node.attrs.dungeonNum, "dungeonCompleted")];
+                return d[evalNumeric(node, ctx)].completed;
+            }
+            case "dungeonFloors":
+                return dungeons[num(node.attrs.dungeonNum, "dungeonFloors")].length;
+            case "trialCompleted": {
+                const t = trials[num(node.attrs.trialNum, "trialCompleted")];
+                return t[evalNumeric(node, ctx)].completed;
+            }
+            case "trialFloors":
+                return trialFloors[num(node.attrs.trialNum, "trialFloors")];
+            case "buffCap":
+                return getBuffCap(node.attrs.buffName);
+            case "guildSegment": {
+                const g = GUILD_SEGMENTS[node.attrs.name];
+                if (!g) throw new Error(`actionListXml: unknown guildSegment ${node.attrs.name}`);
+                return g();
             }
             case "progressLevel": return townFor(node.attrs.varName).getLevel(node.attrs.varName);
             case "goodItems": return townFor(ownVar(node, ctx))["good" + ownVar(node, ctx)];
@@ -278,6 +334,9 @@ const ActionListXml = (() => {
             case "ceil": return guardsPass(node.children) ? Math.ceil(value) : value;
             case "floor": return guardsPass(node.children) ? Math.floor(value) : value;
             case "round": return guardsPass(node.children) ? Math.round(value) : value;
+            case "squareRoot": return guardsPass(node.children) ? Math.sqrt(value) : value;
+            case "absoluteValue": return guardsPass(node.children) ? Math.abs(value) : value;
+            case "precision3": return guardsPass(node.children) ? precision3(value) : value;
             case "setValue": {
                 const v = evalNumeric(node, { ...ctx, current: value });
                 return v === null ? value : v;
@@ -349,6 +408,14 @@ const ActionListXml = (() => {
         const varName = def.attrs.varName ?? name.replace(/ /gu, "");
         const townNum = def.attrs.townNum !== undefined ? num(def.attrs.townNum, "townNum") : 0;
         const ctx = { doc, action: { name, varName, townNum } };
+        // multipart: segments defaults to the loopStats count (Fight Monsters
+        // overrides with segments="3" against its 9 loopStats, as upstream does)
+        const loopStatsNode = child(def, "loopStats");
+        const loopStats = loopStatsNode?.children.map(c => c.attrs.statName);
+        if (loopStats) {
+            ctx.action.segments = def.attrs.segments !== undefined
+                ? num(def.attrs.segments, "segments") : loopStats.length;
+        }
         const need = (tag) => {
             const c = child(def, tag);
             if (!c) throw new Error(`actionListXml: ${name} lacks required <${tag}>`);
@@ -397,7 +464,7 @@ const ActionListXml = (() => {
 
         // canStart: the explicit <canStart> conditions AND the affordability
         // implied by <cost> numeric resources (JS canStart bodies are the
-        // affordability check)
+        // affordability check). Multipart canStart takes a loopCounter arg.
         const canStart = child(def, "canStart");
         const cost = child(def, "cost");
         if (native(canStart, "canStart")) {
@@ -408,17 +475,37 @@ const ActionListXml = (() => {
             const costChecks = (cost?.attrs.implied === "none" ? [] : cost?.children ?? [])
                 .filter(c => c.tag === "numericResource" || c.tag === "booleanResource")
                 .map(c => ({ kind: c.tag, resource: c.attrs.name, node: c }));
-            fields.canStart = () => {
+            fields.canStart = (loopCounter) => {
+                const c = loopStats ? { ...ctx, mp: { loopCounter } } : ctx;
                 for (const { kind, resource, node } of costChecks) {
                     if (kind === "booleanResource") {
                         if (!resources[resource]) return false;
                         continue;
                     }
-                    const needAmount = evalNumeric(node, ctx);
+                    const needAmount = evalNumeric(node, c);
                     if (needAmount === null || !(resources[resource] >= needAmount)) return false;
                 }
-                return canStart ? evalConditionList(canStart.children, ctx) : true;
+                return canStart ? evalConditionList(canStart.children, c) : true;
             };
+        }
+
+        // multipart-specific fields: loopCost(segment, loopCounter) and
+        // tickProgress(offset, loopCounter, totalCompletions) are pure
+        // parameterized evaluations; <segmentReward>/<loopReward> are
+        // Phase-6 data (parsed, unconsumed), like <reward>
+        if (loopStats) {
+            fields.loopStats = loopStats;
+            fields.segments = ctx.action.segments;
+            const loopCost = child(def, "loopCost");
+            if (loopCost && !native(loopCost, "loopCost")) {
+                fields.loopCost = (segment, loopCounter) =>
+                    evalNumeric(loopCost, { ...ctx, mp: { segment, loopCounter } });
+            }
+            const tickProgress = child(def, "tickProgress");
+            if (tickProgress && !native(tickProgress, "tickProgress")) {
+                fields.tickProgress = (_offset, loopCounter, totalCompletions) =>
+                    evalNumeric(tickProgress, { ...ctx, mp: { loopCounter, totalCompletions } });
+            }
         }
 
         const storyReqs = child(def, "storyReqs");
