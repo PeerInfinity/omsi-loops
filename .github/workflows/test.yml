@@ -5,7 +5,7 @@ name: Tests
 
 on:
   push:
-    branches: ["substrate", "automation", "automation-*"]
+    branches: ["substrate", "automation", "automation-*", "xml-migration"]
   pull_request:
   workflow_dispatch:
 
