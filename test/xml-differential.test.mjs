@@ -163,6 +163,30 @@ const TARGETED_CANARIES = [
                 .children.find(c => c.tag === "function").attrs.name = "getWizCollegeRankBonus";
         },
     },
+    {
+        label: "function fullyExploredZones (Explorers Guild story 4, 4 -> 5)",
+        expect: { name: "Explorers Guild", col: "storyReqs(4)" },
+        mutate: (doc) => {
+            const sr = doc.actions["Explorers Guild"].children.find(c => c.tag === "storyReqs");
+            sr.children.find(s => s.attrs.num === "4").children.find(c => c.tag === "if").attrs.min = "5";
+        },
+    },
+    {
+        label: "function totalAssassinations (Guild Assassin story 3, 4 -> 5)",
+        expect: { name: "Guild Assassin", col: "storyReqs(3)" },
+        mutate: (doc) => {
+            const sr = doc.actions["Guild Assassin"].children.find(c => c.tag === "storyReqs");
+            sr.children.find(s => s.attrs.num === "3").children.find(c => c.tag === "if").attrs.min = "5";
+        },
+    },
+    {
+        label: "setValue guild-pricing arm (Excursion, member price 2 -> 3)",
+        expect: { name: "Excursion", col: "goldCost" },
+        mutate: (doc) => {
+            const pv = doc.actions["Excursion"].children.find(c => c.tag === "primaryValue");
+            pv.children.find(c => c.tag === "setValue").attrs.value = "3";
+        },
+    },
 ];
 
 for (const { label, expect, mutate } of TARGETED_CANARIES) {

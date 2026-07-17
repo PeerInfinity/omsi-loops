@@ -4287,6 +4287,197 @@
             <booleanResource name="stone" />
         </reward>
     </action>
+    <action type="progress" name="Explore Jungle" varName="ExploreJungle" townNum="6">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifProgress min="1" />
+            </story>
+            <story num="2">
+                <ifProgress min="10" />
+            </story>
+            <story num="3">
+                <ifProgress min="20" />
+            </story>
+            <story num="4">
+                <ifProgress min="40" />
+            </story>
+            <story num="5">
+                <ifProgress min="50" />
+            </story>
+            <story num="6">
+                <ifProgress min="60" />
+            </story>
+            <story num="7">
+                <ifProgress min="80" />
+            </story>
+            <story num="8">
+                <ifProgress min="100" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">20</stat>
+            <stat statName="Con">20</stat>
+            <stat statName="Cha">20</stat>
+            <stat statName="Spd">30</stat>
+            <stat statName="Luck">10</stat>
+        </stats>
+        <affectedBy>
+            <action name="Fight Jungle Monsters" />
+        </affectedBy>
+        <effortCost>25000</effortCost>
+        <visible/>
+        <unlocked/>
+        <!-- finish() not yet modeled (Phase 6): progress 20 * Fight Jungle
+             Monsters rank bonus, herbs += 1 -->
+        <reward />
+    </action>
+    <action type="normal" name="Prepare Buffet" townNum="6">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="buffetHeld" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="buffetFor1" />
+            </story>
+            <story num="3">
+                <ifStoryFlag storyFlagName="buffetFor6" />
+            </story>
+            <story num="4">
+                <if min="10">
+                    <skillLevel skillName="Gluttony" />
+                </if>
+            </story>
+            <story num="5">
+                <if min="100">
+                    <skillLevel skillName="Gluttony" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Con">30</stat>
+            <stat statName="Per">10</stat>
+            <stat statName="Int">60</stat>
+        </stats>
+        <effortCost>30000</effortCost>
+        <visible>
+            <ifProgress varName="ExploreJungle" min="15" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="ExploreJungle" min="20" />
+        </unlocked>
+        <cost>
+            <numericResource name="herbs">10</numericResource>
+            <numericResource name="blood">1</numericResource>
+        </cost>
+        <!-- finish() not yet modeled (Phase 6): Alchemy exp 25, Gluttony exp
+             RescueLoopCounter * 5 -->
+        <reward />
+    </action>
+    <action type="normal" name="Totem" townNum="6">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <if min="1">
+                    <skillLevel skillName="Wunderkind" />
+                </if>
+            </story>
+            <story num="2">
+                <if min="5">
+                    <skillLevel skillName="Wunderkind" />
+                </if>
+            </story>
+            <story num="3">
+                <if min="60">
+                    <skillLevel skillName="Wunderkind" />
+                </if>
+            </story>
+            <story num="4">
+                <if min="360">
+                    <skillLevel skillName="Wunderkind" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Con">30</stat>
+            <stat statName="Per">20</stat>
+            <stat statName="Soul">50</stat>
+        </stats>
+        <effortCost>30000</effortCost>
+        <visible>
+            <ifProgress varName="ExploreJungle" min="25" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="ExploreJungle" min="50" />
+        </unlocked>
+        <cost>
+            <booleanResource name="loopingPotion" />
+        </cost>
+        <!-- finish() not yet modeled (Phase 6): Wunderkind exp 100 -->
+        <reward />
+    </action>
+    <action type="normal" name="Escape" townNum="6">
+        <expMult>2</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifTownUnlocked townNum="7" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Dex">20</stat>
+            <stat statName="Spd">80</stat>
+        </stats>
+        <allowed>1</allowed>
+        <effortCost>50000</effortCost>
+        <visible>
+            <ifProgress varName="ExploreJungle" min="75" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="ExploreJungle" min="100" />
+        </unlocked>
+        <!-- native: a side-effecting latch (escapeStarted ||= effectiveTime < 60);
+             once started it stays startable even past the one-minute mark -->
+        <canStart native="native" />
+        <!-- finish() not yet modeled (Phase 6): unlockTown(7); story() unlocks global story 10 -->
+        <reward />
+    </action>
+    <action type="normal" name="Open Portal" townNum="6">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="portalOpened" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Int">20</stat>
+            <stat statName="Luck">10</stat>
+            <stat statName="Soul">70</stat>
+        </stats>
+        <allowed>1</allowed>
+        <effortCost>50000</effortCost>
+        <visible>
+            <if minExclusive="50">
+                <function name="getExploreProgress" />
+            </if>
+        </visible>
+        <unlocked>
+            <if min="75">
+                <function name="getExploreProgress" />
+            </if>
+            <if min="1000">
+                <skillLevel skillName="Restoration" />
+            </if>
+        </unlocked>
+        <canStart>
+            <if min="1000">
+                <skillLevel skillName="Restoration" />
+            </if>
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): portalUsed = true, Restoration
+             exp 2500, unlockTown(1) -->
+        <reward />
+    </action>
     <action type="progress" name="RuinsZ6" townNum="6">
         <expMult>1</expMult>
         <storyReqs>
@@ -4376,5 +4567,588 @@
         <reward>
             <booleanResource name="stone" />
         </reward>
+    </action>
+    <action type="normal" name="Invest" townNum="7">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="investedOne" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="investedTwo" />
+            </story>
+            <story num="3">
+                <if min="1000000">
+                    <globalValue name="goldInvested" />
+                </if>
+            </story>
+            <story num="4">
+                <if min="1000000000">
+                    <globalValue name="goldInvested" />
+                </if>
+            </story>
+            <story num="5">
+                <if equals="999999999999">
+                    <globalValue name="goldInvested" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Con">40</stat>
+            <stat statName="Per">30</stat>
+            <stat statName="Spd">30</stat>
+        </stats>
+        <allowed>1</allowed>
+        <effortCost>50000</effortCost>
+        <visible/>
+        <unlocked/>
+        <canStart>
+            <ifResource resourceName="gold" minExclusive="0" />
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): Mercantilism exp 100; all gold
+             moves into goldInvested (capped at 999999999999) -->
+        <reward />
+    </action>
+    <action type="normal" name="Collect Interest" townNum="7">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="interestCollected" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="collected1KInterest" />
+            </story>
+            <story num="3">
+                <ifStoryFlag storyFlagName="collected1MInterest" />
+            </story>
+            <story num="4">
+                <ifStoryFlag storyFlagName="collectedMaxInterest" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Con">40</stat>
+            <stat statName="Per">30</stat>
+            <stat statName="Spd">30</stat>
+        </stats>
+        <allowed>1</allowed>
+        <effortCost>1</effortCost>
+        <visible/>
+        <unlocked/>
+        <canStart/>
+        <!-- finish() not yet modeled (Phase 6): Mercantilism exp 50; gold +=
+             floor(goldInvested * 0.001) -->
+        <reward />
+    </action>
+    <action type="normal" name="Seminar" townNum="7">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="seminarAttended" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="leadership10" />
+            </story>
+            <story num="3">
+                <ifStoryFlag storyFlagName="leadership100" />
+            </story>
+            <story num="4">
+                <ifStoryFlag storyFlagName="leadership1k" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Cha">80</stat>
+            <stat statName="Luck">10</stat>
+            <stat statName="Soul">10</stat>
+        </stats>
+        <primaryValue value="1000" />
+        <effortCost>20000</effortCost>
+        <!-- the JS reads getLevel("Survey"), the town's own SurveyZ7 -->
+        <visible>
+            <ifProgress varName="SurveyZ7" min="100" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="SurveyZ7" min="100" />
+        </unlocked>
+        <cost>
+            <numericResource name="gold">1000</numericResource>
+        </cost>
+        <!-- finish() not yet modeled (Phase 6): Leadership exp 200 -->
+        <reward />
+    </action>
+    <action type="normal" name="Purchase Key" townNum="7">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="keyBought" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Cha">80</stat>
+            <stat statName="Luck">10</stat>
+            <stat statName="Soul">10</stat>
+        </stats>
+        <allowed>1</allowed>
+        <primaryValue value="1000000" />
+        <effortCost>20000</effortCost>
+        <visible/>
+        <unlocked/>
+        <cost>
+            <numericResource name="gold">1000000</numericResource>
+        </cost>
+        <canStart>
+            <ifHasResource resourceName="key" inverted="inverted" />
+        </canStart>
+        <reward>
+            <booleanResource name="key" />
+        </reward>
+    </action>
+    <action type="normal" name="Leave City" townNum="7">
+        <expMult>2</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifTownUnlocked townNum="8" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Con">40</stat>
+            <stat statName="Per">30</stat>
+            <stat statName="Spd">30</stat>
+        </stats>
+        <allowed>1</allowed>
+        <effortCost>100000</effortCost>
+        <visible/>
+        <unlocked/>
+        <cost>
+            <booleanResource name="key" />
+        </cost>
+        <!-- finish() not yet modeled (Phase 6): unlockTown(8); story() unlocks global story 11 -->
+        <reward />
+    </action>
+    <action type="progress" name="Excursion" townNum="7">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifProgress min="1" />
+            </story>
+            <story num="2">
+                <ifProgress min="10" />
+            </story>
+            <story num="3">
+                <ifProgress min="25" />
+            </story>
+            <story num="4">
+                <ifProgress min="40" />
+            </story>
+            <story num="5">
+                <ifProgress min="60" />
+            </story>
+            <story num="6">
+                <ifProgress min="80" />
+            </story>
+            <story num="7">
+                <ifProgress min="100" />
+            </story>
+            <story num="8">
+                <ifStoryFlag storyFlagName="excursionAsGuildmember" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">20</stat>
+            <stat statName="Con">20</stat>
+            <stat statName="Cha">20</stat>
+            <stat statName="Spd">30</stat>
+            <stat statName="Luck">10</stat>
+        </stats>
+        <affectedBy>
+            <action name="Buy Glasses" />
+        </affectedBy>
+        <!-- per-tick price: 2 for Thieves/Explorer guild members, else 10 -->
+        <primaryValue value="10">
+            <setValue value="2">
+                <anyOf>
+                    <ifGuild guild="Thieves" />
+                    <ifGuild guild="Explorer" />
+                </anyOf>
+            </setValue>
+        </primaryValue>
+        <effortCost>25000</effortCost>
+        <visible/>
+        <unlocked/>
+        <canStart>
+            <!-- gold >= primaryValue; the gold is deducted by finish(), not a cost() -->
+            <if min="0">
+                <resourceValue name="gold" />
+                <subtraction>
+                    <primaryValue />
+                </subtraction>
+            </if>
+        </canStart>
+        <!-- finish() also deducts primaryValue gold (Phase 6) -->
+        <progress value="50">
+            <multiplier value="2">
+                <ifResource resourceName="glasses" />
+            </multiplier>
+        </progress>
+    </action>
+    <action type="normal" name="Explorers Guild" townNum="7">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifStoryFlag storyFlagName="explorerGuildTestTaken" />
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="mapTurnedIn" />
+            </story>
+            <story num="3">
+                <if min="1">
+                    <function name="fullyExploredZones" />
+                </if>
+            </story>
+            <story num="4">
+                <if min="4">
+                    <function name="fullyExploredZones" />
+                </if>
+            </story>
+            <story num="5">
+                <!-- towns.length: all 9 zones fully surveyed -->
+                <if min="9">
+                    <function name="fullyExploredZones" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">30</stat>
+            <stat statName="Cha">30</stat>
+            <stat statName="Int">20</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <allowed>1</allowed>
+        <effortCost>65000</effortCost>
+        <visible>
+            <ifProgress varName="Excursion" min="5" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="Excursion" min="10" />
+        </unlocked>
+        <canStart>
+            <ifGuild guild="" />
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): joins the Explorer guild, grants
+             30 maps if none held, exchanges any completed map -->
+        <reward />
+    </action>
+    <action type="progress" name="Pick Pockets" townNum="7">
+        <expMult>1.5</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifProgress min="1" />
+            </story>
+            <story num="2">
+                <ifProgress min="10" />
+            </story>
+            <story num="3">
+                <ifProgress min="20" />
+            </story>
+            <story num="4">
+                <ifProgress min="40" />
+            </story>
+            <story num="5">
+                <ifProgress min="60" />
+            </story>
+            <story num="6">
+                <ifProgress min="80" />
+            </story>
+            <story num="7">
+                <ifProgress min="100" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Dex">40</stat>
+            <stat statName="Spd">40</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <affectedBy>
+            <action name="Thieves Guild" />
+        </affectedBy>
+        <allowed>
+            <townValue name="totalPockets" />
+        </allowed>
+        <primaryValue value="2">
+            <skillBonus name="Thievery" />
+            <floor />
+        </primaryValue>
+        <effortCost>20000</effortCost>
+        <visible>
+            <if minExclusive="0">
+                <skillLevel skillName="Thievery" />
+            </if>
+        </visible>
+        <unlocked>
+            <if minExclusive="0">
+                <skillLevel skillName="Thievery" />
+            </if>
+        </unlocked>
+        <canStart>
+            <ifGuild guild="Thieves" />
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): progress 30 * Thieves Guild rank
+             bonus, Thievery exp, gold += floor(primaryValue * rank bonus) -->
+        <reward />
+    </action>
+    <action type="progress" name="Rob Warehouse" townNum="7">
+        <expMult>2</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifProgress min="1" />
+            </story>
+            <story num="2">
+                <ifProgress min="10" />
+            </story>
+            <story num="3">
+                <ifProgress min="20" />
+            </story>
+            <story num="4">
+                <ifProgress min="40" />
+            </story>
+            <story num="5">
+                <ifProgress min="60" />
+            </story>
+            <story num="6">
+                <ifProgress min="80" />
+            </story>
+            <story num="7">
+                <ifProgress min="100" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Dex">40</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Int">20</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <affectedBy>
+            <action name="Thieves Guild" />
+        </affectedBy>
+        <allowed>
+            <townValue name="totalWarehouses" />
+        </allowed>
+        <primaryValue value="20">
+            <skillBonus name="Thievery" />
+            <floor />
+        </primaryValue>
+        <effortCost>50000</effortCost>
+        <visible>
+            <ifProgress varName="PickPockets" min="25" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="PickPockets" min="100" />
+        </unlocked>
+        <canStart>
+            <ifGuild guild="Thieves" />
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): progress 20 * Thieves Guild rank
+             bonus, Thievery exp, gold += floor(primaryValue * rank bonus) -->
+        <reward />
+    </action>
+    <action type="progress" name="Insurance Fraud" townNum="7">
+        <expMult>2.5</expMult>
+        <storyReqs>
+            <story num="1">
+                <ifProgress min="1" />
+            </story>
+            <story num="2">
+                <ifProgress min="10" />
+            </story>
+            <story num="3">
+                <ifProgress min="20" />
+            </story>
+            <story num="4">
+                <ifProgress min="40" />
+            </story>
+            <story num="5">
+                <ifProgress min="60" />
+            </story>
+            <story num="6">
+                <ifProgress min="75" />
+            </story>
+            <story num="7">
+                <ifProgress min="100" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Dex">20</stat>
+            <stat statName="Spd">20</stat>
+            <stat statName="Int">30</stat>
+            <stat statName="Luck">30</stat>
+        </stats>
+        <affectedBy>
+            <action name="Thieves Guild" />
+        </affectedBy>
+        <allowed>
+            <townValue name="totalInsurance" />
+        </allowed>
+        <primaryValue value="200">
+            <skillBonus name="Thievery" />
+            <floor />
+        </primaryValue>
+        <effortCost>100000</effortCost>
+        <visible>
+            <ifProgress varName="RobWarehouse" min="50" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="RobWarehouse" min="100" />
+        </unlocked>
+        <canStart>
+            <ifGuild guild="Thieves" />
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): progress 10 * Thieves Guild rank
+             bonus, Thievery exp, gold += floor(primaryValue * rank bonus) -->
+        <reward />
+    </action>
+    <action type="normal" name="Guild Assassin" townNum="7">
+        <expMult>1</expMult>
+        <storyReqs>
+            <story num="1">
+                <if minExclusive="0">
+                    <skillLevel skillName="Assassin" />
+                </if>
+            </story>
+            <story num="2">
+                <ifStoryFlag storyFlagName="assassinHeartDelivered" />
+            </story>
+            <story num="3">
+                <if min="4">
+                    <function name="totalAssassinations" />
+                </if>
+            </story>
+            <story num="4">
+                <ifStoryFlag storyFlagName="assassin4HeartsDelivered" />
+            </story>
+            <story num="5">
+                <if min="8">
+                    <function name="totalAssassinations" />
+                </if>
+            </story>
+            <story num="6">
+                <ifStoryFlag storyFlagName="assassin8HeartsDelivered" />
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Per">10</stat>
+            <stat statName="Cha">30</stat>
+            <stat statName="Dex">40</stat>
+            <stat statName="Luck">20</stat>
+        </stats>
+        <allowed>1</allowed>
+        <effortCost>100000</effortCost>
+        <visible>
+            <ifProgress varName="InsuranceFraud" min="75" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="InsuranceFraud" min="100" />
+        </unlocked>
+        <canStart>
+            <ifGuild guild="" />
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): joins the Assassin guild; Assassin
+             exp 100 * hearts^2 (or 100 the first time), hearts reset -->
+        <reward />
+    </action>
+    <action type="progress" name="Build Tower" townNum="8">
+        <expMult>1</expMult>
+        <storyReqs>
+            <!-- the JS thresholds are on buildingProg = expBuildTower / 505 -->
+            <story num="1">
+                <if min="1">
+                    <townValue name="expBuildTower" />
+                    <divisor value="505" />
+                </if>
+            </story>
+            <story num="2">
+                <if min="10">
+                    <townValue name="expBuildTower" />
+                    <divisor value="505" />
+                </if>
+            </story>
+            <story num="3">
+                <if min="100">
+                    <townValue name="expBuildTower" />
+                    <divisor value="505" />
+                </if>
+            </story>
+            <story num="4">
+                <if min="250">
+                    <townValue name="expBuildTower" />
+                    <divisor value="505" />
+                </if>
+            </story>
+            <story num="5">
+                <if min="500">
+                    <townValue name="expBuildTower" />
+                    <divisor value="505" />
+                </if>
+            </story>
+            <story num="6">
+                <if min="750">
+                    <townValue name="expBuildTower" />
+                    <divisor value="505" />
+                </if>
+            </story>
+            <story num="7">
+                <if min="999">
+                    <townValue name="expBuildTower" />
+                    <divisor value="505" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Dex">10</stat>
+            <stat statName="Str">30</stat>
+            <stat statName="Con">30</stat>
+            <stat statName="Per">20</stat>
+            <stat statName="Spd">10</stat>
+        </stats>
+        <affectedBy>
+            <action name="Temporal Stone" />
+        </affectedBy>
+        <effortCost>250000</effortCost>
+        <visible/>
+        <unlocked/>
+        <canStart>
+            <!-- the stone is consumed by finish(), not a cost() -->
+            <ifHasResource resourceName="stone" />
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): progress 505, stone consumed,
+             stonesUsed[stoneLoc]++ (all pinned at 250 once the tower completes) -->
+        <reward />
+    </action>
+    <action type="normal" name="Restore Time" townNum="8">
+        <expMult>0</expMult>
+        <storyReqs>
+            <story num="1">
+                <if min="12">
+                    <globalValue name="storyMax" />
+                </if>
+            </story>
+        </storyReqs>
+        <stats>
+            <stat statName="Luck">50</stat>
+            <stat statName="Soul">50</stat>
+        </stats>
+        <allowed>1</allowed>
+        <effortCost>7777777</effortCost>
+        <visible>
+            <ifProgress varName="BuildTower" min="100" />
+        </visible>
+        <unlocked>
+            <ifProgress varName="BuildTower" min="100" />
+        </unlocked>
+        <canStart>
+            <!-- the 8 power are required, not consumed here -->
+            <ifResource resourceName="power" min="8" />
+        </canStart>
+        <!-- finish() not yet modeled (Phase 6): reputation += 9999999,
+             completedCurrentGame(); story() unlocks global story 12 -->
+        <reward />
     </action>
 </actions>
