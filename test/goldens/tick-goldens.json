@@ -1,0 +1,50 @@
+{
+ "seed": 424242,
+ "fixtures": {
+  "early": {
+   "steps": 60,
+   "loops": 20,
+   "totalMana": 5000,
+   "rng": 0,
+   "probe": 4000,
+   "finalHash": "39114b4e78bac29f",
+   "seqHash": "eadf2012b2474c00"
+  },
+  "dungeon": {
+   "steps": 120,
+   "loops": 11,
+   "totalMana": 71670,
+   "rng": 136,
+   "probe": 65,
+   "finalHash": "d0e1a635a53912a3",
+   "seqHash": "eab6ae204db851c4"
+  },
+  "trial": {
+   "steps": 120,
+   "loops": 11,
+   "totalMana": 3196800,
+   "rng": 0,
+   "probe": 70,
+   "finalHash": "269a05e03512efb8",
+   "seqHash": "75943bac4b326cf2"
+  },
+  "mine": {
+   "steps": 120,
+   "loops": 4,
+   "totalMana": 406583,
+   "rng": 25,
+   "probe": 25,
+   "finalHash": "bde2e057ce8deb95",
+   "seqHash": "d1122d7032b06c06"
+  },
+  "survey": {
+   "steps": 40,
+   "loops": 2,
+   "totalMana": 177788,
+   "rng": 8,
+   "probe": 5066,
+   "finalHash": "680ca6571703dde2",
+   "seqHash": "0e252b3cf779d276"
+  }
+ }
+}
