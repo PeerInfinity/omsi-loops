@@ -17,6 +17,9 @@ let screenSize;
 // Entry fields:
 //   category      - a `requests` table key
 //   target        - the request target: a literal, or a function of the payload
+//   action        - an Action key, resolved to the `Action.X` singleton; use this
+//                   rather than `target` wherever the queue's identity dedupe
+//                   depends on getting the same object every time
 //   onLevelChange - only fire when the payload's oldLevel !== newLevel
 //   sweep         - instead of one request, run a view-side fan-out
 
@@ -24,6 +27,7 @@ let screenSize;
  * @typedef {object} StateSubscription
  * @property {string} [category]
  * @property {any} [target]
+ * @property {string} [action]
  * @property {boolean} [onLevelChange]
  * @property {(view: View, key: any) => void} [sweep]
  */
@@ -57,6 +61,16 @@ const STATE_SUBSCRIPTIONS = {
     "skill:Spatiomancy": [
         {category: "adjustManaCost", target: "Mana Geyser", onLevelChange: true},
         {category: "adjustManaCost", target: "Mana Well", onLevelChange: true},
+        // A Spatiomancy level changes town capacities, so every checkable
+        // action's counts are stale. Same fan-out finishProgress does on a
+        // level change; it moves here from Spatiomancy's finish().
+        {onLevelChange: true, sweep: (view) => {
+            for (const action of totalActionList) {
+                if (towns[action.townNum].varNames.indexOf(action.varName) !== -1) {
+                    view.requestUpdate("updateRegular", {name: action.varName, index: action.townNum});
+                }
+            }
+        }},
     ],
     "skill:Mercantilism": [
         {category: "adjustGoldCosts", target: null},
@@ -68,10 +82,27 @@ const STATE_SUBSCRIPTIONS = {
     "skill:Commune": [
         {category: "adjustGoldCost", target: "DarkRitual"},
     ],
+    // Mage Lessons' exp gain scales off Alchemy; Magic rides along because a
+    // Learn Alchemy finish grants both (see the design's mapping rule).
+    "skill:Alchemy": [
+        {category: "adjustExpGain", action: "MageLessons"},
+    ],
+    "skill:Magic": [
+        {category: "adjustExpGain", action: "MageLessons"},
+    ],
+    "skill:Crafting": [
+        {category: "adjustExpGain", action: "Apprentice"},
+        {category: "adjustExpGain", action: "Mason"},
+        {category: "adjustExpGain", action: "Architect"},
+    ],
+    "skill:Thievery": [
+        {category: "adjustExpGain", action: "ThievesGuild"},
+    ],
 
     // -- buffs (stats.js addBuffAmt) --------------------------------------------
     "buff:Ritual": [
         {category: "adjustGoldCost", target: "DarkRitual"},
+        {category: "adjustExpGain", action: "DarkMagic"},
     ],
     "buff:Imbuement": [
         {category: "adjustGoldCost", target: "ImbueMind"},
@@ -189,7 +220,9 @@ class View {
                 continue;
             }
             this.requestUpdate(entry.category,
-                typeof entry.target === "function" ? entry.target(key) : entry.target);
+                entry.action !== undefined ? Action[entry.action]
+                : typeof entry.target === "function" ? entry.target(key)
+                : entry.target);
         }
     }
 

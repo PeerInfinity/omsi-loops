@@ -19,13 +19,10 @@ import { makeViewContext, actionListSourceWithoutComments } from "./view-subscri
 // is met and the test keeps it that way forever. Slice 1 migrated the three cost
 // categories; slices 2 and 3 take the rest.
 const REMAINING_CATEGORIES = new Set([
-    "adjustExpGain",
-    "updateBuff",
     "updateSoulstones",
     "updateActionTooltips",
     "updateResource",
     "updateTrialInfo",
-    "updateRegular",
     "updateProgressAction",
     "updateStat",
 ]);
@@ -115,6 +112,26 @@ test("every subscription target resolves", () => {
     assert.deepEqual(failures, []);
 });
 
+test("every subscription action key resolves to an Action singleton", () => {
+    const ctx = makeViewContext();
+    const failures = JSON.parse(ctx.ev(`JSON.stringify(
+        Object.entries(STATE_SUBSCRIPTIONS).flatMap(([key, entries]) =>
+            entries.flatMap((e, i) => e.action === undefined ? []
+                : (Action[e.action] && Action[e.action].varName)
+                    ? [] : [key + "[" + i + "]: no Action." + e.action])))`));
+    assert.deepEqual(failures, []);
+});
+
+test("adjustExpGain targets keep object identity so the queue can dedupe", () => {
+    const ctx = makeViewContext();
+    ctx.clearRequests();
+    ctx.emit("skill", { name: "Thievery", oldLevel: 1, newLevel: 2 });
+    ctx.emit("skill", { name: "Thievery", oldLevel: 2, newLevel: 3 });
+    assert.equal(ctx.ev("testView.requests.adjustExpGain.length"), 1,
+        "the same Action singleton must collapse to one request");
+    assert.equal(ctx.ev("testView.requests.adjustExpGain[0] === Action.ThievesGuild"), true);
+});
+
 test("subscription keys are well-formed kind:name pairs", () => {
     const ctx = makeViewContext();
     const keys = JSON.parse(ctx.ev("JSON.stringify(Object.keys(STATE_SUBSCRIPTIONS))"));
@@ -155,7 +172,10 @@ test("onLevelChange entries fire only on an actual level change", () => {
 
     ctx.clearRequests();
     ctx.emit("skill", { name: "Spatiomancy", oldLevel: 3, newLevel: 4 });
-    assert.deepEqual(ctx.pendingRequests(), { adjustManaCost: ["Mana Geyser", "Mana Well"] });
+    const pending = ctx.pendingRequests();
+    assert.deepEqual(pending.adjustManaCost, ["Mana Geyser", "Mana Well"]);
+    assert.deepEqual(Object.keys(pending).sort(), ["adjustManaCost", "updateRegular"],
+        "a level change fires the cost displays and the checkable-count sweep");
 });
 
 test("progress emission drives the subscribed mana costs", () => {
@@ -178,8 +198,20 @@ test("unknown kinds and unsubscribed keys are silently ignored", () => {
     const ctx = makeViewContext();
     ctx.clearRequests();
     ctx.emit("noSuchKind", { name: "whatever" });
-    ctx.emit("skill", { name: "Thievery", oldLevel: 1, newLevel: 2 });
+    ctx.emit("skill", { name: "Wunderkind", oldLevel: 1, newLevel: 2 });
     assert.deepEqual(ctx.pendingRequests(), {});
+});
+
+test("a Spatiomancy level-up sweeps every checkable action's counts", () => {
+    const ctx = makeViewContext();
+    ctx.clearRequests();
+    ctx.emit("skill", { name: "Spatiomancy", oldLevel: 3, newLevel: 4 });
+    const regulars = ctx.requests().updateRegular;
+    assert.ok(regulars.length > 0, "expected a non-empty updateRegular sweep");
+    // Same predicate the sweep replaced in Spatiomancy's finish().
+    const expected = Number(ctx.ev(`totalActionList.filter(a =>
+        towns[a.townNum].varNames.indexOf(a.varName) !== -1).length`));
+    assert.equal(regulars.length, expected);
 });
 
 test("buff emission drives the subscribed gold costs", () => {

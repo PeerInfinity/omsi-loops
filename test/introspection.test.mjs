@@ -76,7 +76,15 @@ test("teachesSkill and the view-column predicates match the committed golden", (
         // sites verbatim and stay valid while actionList.js is JS source
         assert.deepEqual(a.unlockSkillRefs, g.unlockSkillRefs, `"${a.name}" unlocked() skill refs changed`);
         assert.equal(a.finishGrantsSkillExp, g.finishGrantsSkillExp, `"${a.name}" finish() handleSkillExp grep changed`);
-        assert.equal(a.finishGrantsBuff, g.finishGrantsBuff, `"${a.name}" finish() updateBuff grep changed`);
+        // The finish()/updateBuff grep is RETIRED (view-subscribe refactor,
+        // 2026-07-18). It is dead for exactly the reason Phase 1 predicted for
+        // the XML cutover: buff displays now refresh from addBuffAmt's own
+        // notification, so finish() bodies no longer name updateBuff and the
+        // grep answers false for actions that do grant buffs. The `grantsBuff`
+        // metadata that replaced it at the real view site is still checked
+        // against this same golden by the test above — that assertion, not this
+        // one, is the live guard. The golden's frozen column is deliberately
+        // left in place as the historical record of what the grep answered.
         assert.deepEqual(a.skills, g.skills, `"${a.name}".skills keys changed`);
     }
 });

@@ -2316,7 +2316,6 @@ Action.LearnAlchemy = new Action("Learn Alchemy", {
     },
     finish() {
         handleSkillExp(this.skills);
-        view.requestUpdate("adjustExpGain", Action.MageLessons);
     },
 });
 
@@ -2724,8 +2723,6 @@ Action.DarkRitual = new MultipartAction("Dark Ritual", {
         return Math.ceil(50 * (getBuffLevel("Ritual") + 1) * getSkillBonus("Commune"));
     },
     finish() {
-        view.requestUpdate("updateBuff", "Ritual");
-        view.requestUpdate("adjustExpGain", Action.DarkMagic);
         if (towns[1].DarkRitualLoopCounter >= 0) setStoryFlag("darkRitualThirdSegmentReached");
     },
 });
@@ -3520,7 +3517,6 @@ Action.Apprentice = new Action("Apprentice", {
     finish() {
         towns[2].finishProgress(this.varName, 30 * getCraftGuildRank().bonus);
         handleSkillExp(this.skills);
-        view.requestUpdate("adjustExpGain", Action.Apprentice);
     },
 });
 
@@ -3573,7 +3569,6 @@ Action.Mason = new Action("Mason", {
     finish() {
         towns[2].finishProgress(this.varName, 20 * getCraftGuildRank().bonus);
         handleSkillExp(this.skills);
-        view.requestUpdate("adjustExpGain", Action.Mason);
     },
 });
 
@@ -3626,7 +3621,6 @@ Action.Architect = new Action("Architect", {
     finish() {
         towns[2].finishProgress(this.varName, 10 * getCraftGuildRank().bonus);
         handleSkillExp(this.skills);
-        view.requestUpdate("adjustExpGain", Action.Architect);
     },
 });
 
@@ -3772,7 +3766,6 @@ Action.HeroesTrial = new TrialAction("Heroes Trial", 0, {
     },
     finish() {
         handleSkillExp(this.skills);
-        view.requestUpdate("updateBuff", "Heroism");
     },
 });
 
@@ -4425,7 +4418,6 @@ Action.ImbueMind = new MultipartAction("Imbue Mind", {
         return 20 * (getBuffLevel("Imbuement") + 1);
     },
     finish() {
-        view.requestUpdate("updateBuff", "Imbuement");
         if (options.autoMaxTraining) capAllTraining();
         if (towns[3].ImbueMindLoopCounter >= 0) setStoryFlag("imbueMindThirdSegmentReached");
     },
@@ -4502,9 +4494,7 @@ Action.ImbueBody = new MultipartAction("Imbue Body", {
     goldCost() {
         return getBuffLevel("Imbuement2") + 1;
     },
-    finish() {
-        view.requestUpdate("updateBuff", "Imbuement2");
-    },
+    finish() {},
 });
 
 Action.FaceJudgement = new Action("Face Judgement", {
@@ -5284,11 +5274,6 @@ Action.Spatiomancy = new Action("Spatiomancy", {
         handleSkillExp(this.skills);
         if (getSkillLevel("Spatiomancy") !== oldSpatioSkill) {
             adjustAll();
-            for (const action of totalActionList) {
-                if (towns[action.townNum].varNames.indexOf(action.varName) !== -1) {
-                    view.requestUpdate("updateRegular", {name: action.varName, index: action.townNum});
-                }
-            }
         }
     },
 });
@@ -5678,7 +5663,6 @@ Action.GreatFeast = new MultipartAction("Great Feast", {
     },
     finish() {
         setStoryFlag("feastAttempted")
-        view.requestUpdate("updateBuff", "Feast");
     },
 });
 
@@ -5998,7 +5982,6 @@ Action.TheSpire = new DungeonAction("The Spire", 2, {
     },
     finish() {
         handleSkillExp(this.skills);
-        view.requestUpdate("updateBuff", "Aspirant");
         setStoryFlag("spireAttempted")
         if (resources.pylons >= 10) setStoryFlag("spire10Pylons");
         if (resources.pylons >= 25) setStoryFlag("spire20Pylons");
@@ -6896,7 +6879,6 @@ Action.PickPockets = new Action("Pick Pockets", {
     finish() {
         towns[7].finishProgress(this.varName, 30 * getThievesGuildRank().bonus);
         handleSkillExp(this.skills);
-        view.requestUpdate("adjustExpGain", Action.ThievesGuild);
         const goldGain = Math.floor(this.goldCost() * getThievesGuildRank().bonus);
         addResource("gold", goldGain);
         return goldGain;
@@ -6951,7 +6933,6 @@ Action.RobWarehouse = new Action("Rob Warehouse", {
     finish() {
         towns[7].finishProgress(this.varName, 20 * getThievesGuildRank().bonus);
         handleSkillExp(this.skills);
-        view.requestUpdate("adjustExpGain", Action.ThievesGuild);
         const goldGain = Math.floor(this.goldCost() * getThievesGuildRank().bonus);
         addResource("gold", goldGain);
         return goldGain;
@@ -7006,7 +6987,6 @@ Action.InsuranceFraud = new Action("Insurance Fraud", {
     finish() {
         towns[7].finishProgress(this.varName, 10 * getThievesGuildRank().bonus);
         handleSkillExp(this.skills);
-        view.requestUpdate("adjustExpGain", Action.ThievesGuild);
         const goldGain = Math.floor(this.goldCost() * getThievesGuildRank().bonus);
         addResource("gold", goldGain);
         return goldGain;
@@ -7432,7 +7412,6 @@ Action.ImbueSoul = new MultipartAction("Imbue Soul", {
     },
     finish() {
         setStoryFlag("soulInfusionAttempted")
-        view.requestUpdate("updateBuff", "Imbuement3");
         capAllTraining();
         adjustTrainingExpMult();
     },
