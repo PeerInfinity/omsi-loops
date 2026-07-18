@@ -2,6 +2,121 @@
 
 let screenSize;
 
+//====================================================================================================
+// View-subscribe table
+//====================================================================================================
+// The view half of the seam declared in helpers.js. Sim files call
+// stateChanged(kind, key); this table says which render requests that implies.
+// Everything here feeds the existing `requests` queue, so batching, dedupe and
+// drain order are unchanged.
+//
+// Keys are "kind:name", where name comes from a string key or from the payload's
+// `name`/`varName` field; "kind:*" is the fallback for payload-only or keyless
+// kinds. An exact key wins over the wildcard (it does not add to it).
+//
+// Entry fields:
+//   category      - a `requests` table key
+//   target        - the request target: a literal, or a function of the payload
+//   onLevelChange - only fire when the payload's oldLevel !== newLevel
+//   sweep         - instead of one request, run a view-side fan-out
+
+/**
+ * @typedef {object} StateSubscription
+ * @property {string} [category]
+ * @property {any} [target]
+ * @property {boolean} [onLevelChange]
+ * @property {(view: View, key: any) => void} [sweep]
+ */
+
+/** @type {Record<string, StateSubscription[]>} */
+const STATE_SUBSCRIPTIONS = {
+    // -- town progress levels (town.js finishProgress) --------------------------
+    "progress:Shortcut": [
+        {category: "adjustManaCost", target: "Continue On"},
+    ],
+    "progress:Hermit": [
+        {category: "adjustManaCost", target: "Learn Alchemy"},
+        {category: "adjustManaCost", target: "Gather Herbs"},
+        {category: "adjustManaCost", target: "Practical Magic"},
+    ],
+    "progress:Witch": [
+        {category: "adjustManaCost", target: "Dark Magic"},
+        {category: "adjustManaCost", target: "Dark Ritual"},
+    ],
+    "progress:Runes": [
+        {category: "adjustManaCost", target: "Chronomancy"},
+        {category: "adjustManaCost", target: "Pyromancy"},
+    ],
+
+    // -- skills (stats.js addSkillExp) ------------------------------------------
+    "skill:Practical": [
+        {category: "adjustManaCost", target: "Wild Mana"},
+        {category: "adjustManaCost", target: "Smash Pots"},
+        {category: "adjustGoldCosts", target: null},
+    ],
+    "skill:Spatiomancy": [
+        {category: "adjustManaCost", target: "Mana Geyser", onLevelChange: true},
+        {category: "adjustManaCost", target: "Mana Well", onLevelChange: true},
+    ],
+    "skill:Mercantilism": [
+        {category: "adjustGoldCosts", target: null},
+    ],
+    "skill:Dark": [
+        {category: "adjustGoldCost", target: "Pots"},
+        {category: "adjustGoldCost", target: "WildMana"},
+    ],
+    "skill:Commune": [
+        {category: "adjustGoldCost", target: "DarkRitual"},
+    ],
+
+    // -- buffs (stats.js addBuffAmt) --------------------------------------------
+    "buff:Ritual": [
+        {category: "adjustGoldCost", target: "DarkRitual"},
+    ],
+    "buff:Imbuement": [
+        {category: "adjustGoldCost", target: "ImbueMind"},
+    ],
+    "buff:Imbuement2": [
+        {category: "adjustGoldCost", target: "ImbueBody"},
+    ],
+    "buff:Feast": [
+        {category: "adjustGoldCost", target: "GreatFeast"},
+    ],
+
+    // -- guild membership / segments (actionList.js) ----------------------------
+    "guild:*": [
+        {category: "adjustGoldCost", target: "Excursion"},
+    ],
+    "guildSegment:WizCollege": [
+        {category: "adjustManaCost", target: "Restoration"},
+        {category: "adjustManaCost", target: "Spatiomancy"},
+    ],
+};
+
+/**
+ * Resolve the subscription list for a state change: exact "kind:name" if the key
+ * names something, else the "kind:*" fallback.
+ * @returns {StateSubscription[] | null}
+ */
+function lookupStateSubscriptions(kind, key) {
+    const name = key == null ? null
+               : typeof key === "string" ? key
+               : (key.name ?? key.varName ?? null);
+    const exact = name === null ? undefined : STATE_SUBSCRIPTIONS[`${kind}:${name}`];
+    return exact ?? STATE_SUBSCRIPTIONS[`${kind}:*`] ?? null;
+}
+
+/** @type {Map<string, Action> | null} */
+let goldCostActionsByVarName = null;
+
+/** Look up a gold-cost action by its varName, for drain-time cost pulls. */
+function getActionWithGoldCost(varName) {
+    if (goldCostActionsByVarName === null) {
+        goldCostActionsByVarName = new Map(actionsWithGoldCost.map(a => [a.varName, a]));
+    }
+    return goldCostActionsByVarName.get(varName);
+}
+
 class View {
     initalize() {
         this.createTravelMenu();
@@ -55,6 +170,27 @@ class View {
     constructor() {
         this.mouseoverHandler = this.mouseoverHandler.bind(this);
         this.modifierkeychangeHandler = this.modifierkeychangeHandler.bind(this);
+        // Claim the view-subscribe seam (helpers.js). Only the real view does this;
+        // the workers and headless harnesses leave the sink null.
+        stateChangedSink = (kind, key) => this.handleStateChanged(kind, key);
+    }
+
+    /**
+     * View-subscribe sink: turn one semantic state change into render requests.
+     * @param {string} kind @param {any} key
+     */
+    handleStateChanged(kind, key) {
+        const entries = lookupStateSubscriptions(kind, key);
+        if (!entries) return;
+        for (const entry of entries) {
+            if (entry.onLevelChange && key?.oldLevel === key?.newLevel) continue;
+            if (entry.sweep) {
+                entry.sweep(this, key);
+                continue;
+            }
+            this.requestUpdate(entry.category,
+                typeof entry.target === "function" ? entry.target(key) : entry.target);
+        }
     }
 
     /** @param {UIEvent} event */
@@ -1411,9 +1547,18 @@ class View {
 
     goldCosts = {};
 
+    /**
+     * Accepts either a precomputed `{varName, cost}` payload or a bare varName
+     * string, in which case the cost is pulled at drain time (the same pattern
+     * adjustGoldCosts() already uses, and it keeps the request queue's dedupe
+     * working — object payloads defeat it).
+     * @param {string | {varName: string, cost: number}} updateInfo
+     */
     adjustGoldCost(updateInfo) {
-        const varName = updateInfo.varName;
-        const amount = updateInfo.cost;
+        const isVarName = typeof updateInfo === "string";
+        const varName = isVarName ? updateInfo : updateInfo.varName;
+        const amount = isVarName ? getActionWithGoldCost(varName)?.goldCost() : updateInfo.cost;
+        if (amount === undefined) return;
         const element = document.getElementById(`goldCost${varName}`);
         if (this.goldCosts[varName] !== amount && element) {
             element.textContent = formatNumber(amount);

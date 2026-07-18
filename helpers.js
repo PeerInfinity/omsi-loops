@@ -5,6 +5,31 @@
 Math.log2 = Math.log2 || function(x) { return Math.log(x) * Math.LOG2E; };
 Math.log10 = Math.log10 || function(x) { return Math.log(x) * Math.LOG10E; };
 
+//====================================================================================================
+// View-subscribe seam
+//====================================================================================================
+// Sim files declare semantic state changes here ("skill X leveled", "soulstones
+// changed"); the view owns the mapping from those facts onto its render-request
+// queue (STATE_SUBSCRIPTIONS in views/main.view.js). This keeps view category
+// names out of the sim — notably out of actionList.js, so XML-generated reward
+// bodies can call the mutation funnels and get their display updates for free.
+//
+// Only the real View registers a sink, and views/main.view.js is never loaded by
+// predictor-worker, planner-worker, or the Node harnesses. A null sink is a
+// no-op by construction, so every view-less context is untouched.
+
+/** @type {((kind: string, key: any) => void) | null} */
+let stateChangedSink = null;
+
+/**
+ * Declare that a piece of game state changed.
+ * @param {string} kind semantic category, e.g. "skill", "buff", "progress"
+ * @param {any} [key] a name string, or a small payload object (see STATE_SUBSCRIPTIONS)
+ */
+function stateChanged(kind, key = null) {
+    if (stateChangedSink) stateChangedSink(kind, key);
+}
+
 function round1(num) {
     return Math.floor(num * 10) / 10;
 }

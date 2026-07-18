@@ -66,12 +66,22 @@ export function makeContext(seed = 12345, extraFiles = []) {
             .runInContext(sandbox);
     }
 
-    new vm.Script(`
-        // Story-function shims (defined in views/main.view.js in the browser).
+    // The story functions live in views/main.view.js, not in the sim files, so
+    // they are normally shimmed. A caller that loads the real view file gets the
+    // real ones — and must NOT get the shims too: main.view.js declares
+    // `const unlockStory`, which a shimmed `var unlockStory` would collide with
+    // (SyntaxError, not a silent override).
+    const hasRealView = extraFiles.some(f => f.endsWith("main.view.js"));
+    const storyShims = hasRealView ? "" : `
         function setStoryFlag(name) { storyFlags[name] = true; }
         var unlockStory = setStoryFlag;
         function increaseStoryVarTo(name, value) { if (storyVars[name] < value) storyVars[name] = value; }
         function unlockGlobalStory(num) { if (num > storyMax) storyMax = num; }
+    `;
+
+    new vm.Script(`
+        // Story-function shims (defined in views/main.view.js in the browser).
+        ${storyShims}
 
         function __setQueue(entries) {
             actions.clearActions();

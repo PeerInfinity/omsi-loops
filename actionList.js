@@ -2187,7 +2187,6 @@ Action.OldShortcut = new Action("Old Shortcut", {
     },
     finish() {
         towns[1].finishProgress(this.varName, 100);
-        view.requestUpdate("adjustManaCost", "Continue On");
     },
 });
 
@@ -2232,9 +2231,6 @@ Action.TalkToHermit = new Action("Talk To Hermit", {
     },
     finish() {
         towns[1].finishProgress(this.varName, 50 * (1 + towns[1].getLevel("Shortcut") / 100));
-        view.requestUpdate("adjustManaCost", "Learn Alchemy");
-        view.requestUpdate("adjustManaCost", "Gather Herbs");
-        view.requestUpdate("adjustManaCost", "Practical Magic");
     },
 });
 
@@ -2273,9 +2269,6 @@ Action.PracticalMagic = new Action("Practical Magic", {
     },
     finish() {
         handleSkillExp(this.skills);
-        view.requestUpdate("adjustManaCost", "Wild Mana");
-        view.requestUpdate("adjustManaCost", "Smash Pots");
-        view.requestUpdate("adjustGoldCosts", null);
     },
 });
 
@@ -2620,8 +2613,6 @@ Action.TalkToWitch = new Action("Talk To Witch", {
     },
     finish() {
         towns[1].finishProgress(this.varName, 100);
-        view.requestUpdate("adjustManaCost", "Dark Magic");
-        view.requestUpdate("adjustManaCost", "Dark Ritual");
     },
 });
 
@@ -2670,8 +2661,6 @@ Action.DarkMagic = new Action("Dark Magic", {
     },
     finish() {
         handleSkillExp(this.skills);
-        view.requestUpdate("adjustGoldCost", {varName: "Pots", cost: Action.SmashPots.goldCost()});
-        view.requestUpdate("adjustGoldCost", {varName: "WildMana", cost: Action.WildMana.goldCost()});
     },
 });
 
@@ -2720,7 +2709,6 @@ Action.DarkRitual = new MultipartAction("Dark Ritual", {
         const spent = sacrificeSoulstones(this.goldCost());
         addBuffAmt("Ritual", 1, this, "soulstone", spent);
         view.requestUpdate("updateSoulstones", null);
-        view.requestUpdate("adjustGoldCost", {varName: "DarkRitual", cost: this.goldCost()});
     },
     getPartName() {
         return "Perform Dark Ritual";
@@ -4004,8 +3992,6 @@ Action.DecipherRunes = new Action("Decipher Runes", {
     },
     finish() {
         towns[3].finishProgress(this.varName, 100 * (resources.glasses ? 2 : 1));
-        view.requestUpdate("adjustManaCost", "Chronomancy");
-        view.requestUpdate("adjustManaCost", "Pyromancy");
     },
 });
 
@@ -4424,7 +4410,6 @@ Action.ImbueMind = new MultipartAction("Imbue Mind", {
         trainingLimits++;
         addBuffAmt("Imbuement", 1, this, "soulstone", spent);
         view.requestUpdate("updateSoulstones", null);
-        view.requestUpdate("adjustGoldCost", {varName: "ImbueMind", cost: this.goldCost()});
     },
     getPartName() {
         return "Imbue Mind";
@@ -4504,7 +4489,6 @@ Action.ImbueBody = new MultipartAction("Imbue Body", {
         }
         view.updateStats();
         addBuffAmt("Imbuement2", 1, this, "talent", spent);
-        view.requestUpdate("adjustGoldCost", {varName: "ImbueBody", cost: this.goldCost()});
     },
     getPartName() {
         return "Imbue Body";
@@ -4997,8 +4981,6 @@ Action.Mercantilism = new Action("Mercantilism", {
     },
     finish() {
         handleSkillExp(this.skills);
-        //Needed for Mercantilism levelup
-        view.requestUpdate("adjustGoldCosts");
     },
 });
 
@@ -5165,8 +5147,7 @@ Action.WizardCollege = new MultipartAction("Wizard College", {
     },
     segmentFinished() {
         curWizCollegeSegment++;
-        view.requestUpdate("adjustManaCost", "Restoration");
-        view.requestUpdate("adjustManaCost", "Spatiomancy");
+        stateChanged("guildSegment", {name: "WizCollege"});
         increaseStoryVarTo("maxWizardGuildSegmentCleared", curWizCollegeSegment);
     },
     getPartName() {
@@ -5302,8 +5283,6 @@ Action.Spatiomancy = new Action("Spatiomancy", {
         const oldSpatioSkill = getSkillLevel("Spatiomancy");
         handleSkillExp(this.skills);
         if (getSkillLevel("Spatiomancy") !== oldSpatioSkill) {
-            view.requestUpdate("adjustManaCost", "Mana Geyser");
-            view.requestUpdate("adjustManaCost", "Mana Well");
             adjustAll();
             for (const action of totalActionList) {
                 if (towns[action.townNum].varNames.indexOf(action.varName) !== -1) {
@@ -5684,7 +5663,6 @@ Action.GreatFeast = new MultipartAction("Great Feast", {
         const spent = sacrificeSoulstones(this.goldCost());
         addBuffAmt("Feast", 1, this, "soulstone", spent);
         view.requestUpdate("updateSoulstones", null);
-        view.requestUpdate("adjustGoldCost", {varName: "GreatFeast", cost: this.goldCost()});
     },
     getPartName() {
         return "Host Great Feast";
@@ -5956,7 +5934,6 @@ Action.DarkSacrifice = new Action("Dark Sacrifice", {
     },
     finish() {
         handleSkillExp(this.skills);
-        view.requestUpdate("adjustGoldCost", {varName: "DarkRitual", cost: Action.DarkRitual.goldCost()});
     },
 });
 
@@ -6654,7 +6631,7 @@ Action.ExplorersGuild = new Action("Explorers Guild", {
             setStoryFlag("mapTurnedIn");
         }
         guild = "Explorer";
-        view.requestUpdate("adjustGoldCost", {varName: "Excursion", cost: Action.Excursion.goldCost()});
+        stateChanged("guild");
     }
 });
 function fullyExploredZones() {
@@ -6839,7 +6816,7 @@ Action.ThievesGuild = new MultipartAction("Thieves Guild", {
     },
     finish() {
         guild = "Thieves";
-        view.requestUpdate("adjustGoldCost", {varName: "Excursion", cost: Action.Excursion.goldCost()});
+        stateChanged("guild");
         handleSkillExp(this.skills);
         setStoryFlag("thiefGuildTestsTaken");
         if (curThievesGuildSegment >= 3) setStoryFlag("thiefGuildRankEReached");
@@ -7136,8 +7113,6 @@ Action.Invest = new Action("Invest", {
     },
     finish() {
         handleSkillExp(this.skills);
-        //Needed for Mercantilism levelup
-        view.requestUpdate("adjustGoldCosts");
 
         //Looks like something (maybe very high accelerations?) can give you a gold value of NaN.  If so, don't corrupt
         //the save file
@@ -7192,8 +7167,6 @@ Action.CollectInterest = new Action("Collect Interest", {
     },
     finish() {
         handleSkillExp(this.skills);
-        //Needed for Mercantilism levelup
-        view.requestUpdate("adjustGoldCosts");
 
         let interestGold = Math.floor(goldInvested * .001);
         addResource("gold", interestGold);

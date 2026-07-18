@@ -537,6 +537,7 @@ function addSkillExp(name, amount) {
         actionLog.addSkillLevel(actions.currentAction, name, newLevel, oldLevel);
     }
     view.requestUpdate("updateSkill", name);
+    stateChanged("skill", {name, oldLevel, newLevel});
 }
 
 /** @param {Partial<Record<SkillName, number | (() => number)>>} list  */
@@ -573,6 +574,7 @@ function addBuffAmt(name, amount, action, spendType, statsSpent) {
         actionLog.addBuff(action, name, buffs[name].amt, oldBuffLevel, spendType, statsSpent);
     }
     view.requestUpdate("updateBuff",name);
+    stateChanged("buff", {name});
 }
 
 const talentMultiplierCache = {

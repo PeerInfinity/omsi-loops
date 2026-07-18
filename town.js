@@ -105,6 +105,7 @@ class Town {
             }
         }
         view.requestUpdate("updateProgressAction", {name: varName, town: towns[curTown]});
+        stateChanged("progress", {townIndex: this.index, varName, oldLevel: prevLevel, newLevel: level});
     };
 
     getPrcToNext(varName) {
