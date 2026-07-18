@@ -545,7 +545,7 @@ class TrialAction extends MultipartAction {
         //console.log("Finished floor: " + finishedFloor + " Current Floor: " + this.currentFloor());
         trials[this.trialNum][finishedFloor].completed++;
         if (finishedFloor > trials[this.trialNum].highestFloor || trials[this.trialNum].highestFloor === undefined) trials[this.trialNum].highestFloor = finishedFloor;
-        view.requestUpdate("updateTrialInfo", {trialNum: this.trialNum, curFloor: this.currentFloor(loopCounter)});
+        stateChanged("trial", {trialNum: this.trialNum, curFloor: this.currentFloor(loopCounter)});
         this.floorReward();
     }
 }
@@ -669,7 +669,6 @@ function SurveyAction(townNum) {
                 addResource("map", -1);
                 addResource("completedMap", 1);
                 towns[this.townNum].finishProgress(this.varName, getExploreSkill());
-                view.requestUpdate("updateActionTooltips", null);
             } else if (options.pauseOnComplete) {
                 pauseGame(true, "Survey complete! (Game paused)");
             }
@@ -1707,7 +1706,7 @@ DungeonAction.prototype.finishDungeon = function finishDungeon(floorNum) {
         const countToAdd = Math.floor(Math.pow(10, dungeonNum) * getSkillBonus("Divine"));
         stats[statToAdd].soulstone = (stats[statToAdd].soulstone ?? 0) + countToAdd;
         floor.ssChance *= 0.98;
-        view.requestUpdate("updateSoulstones",null);
+        stateChanged("soulstones");
         actionLog.addSoulstones(this, statToAdd, countToAdd);
         return true;
     }
@@ -1801,7 +1800,7 @@ Action.Haggle = new Action("Haggle", {
         if (towns[0].suppliesCost < 0) {
             towns[0].suppliesCost = 0;
         }
-        view.requestUpdate("updateResource", "supplies");
+        stateChanged("resource", {name: "supplies"});
     },
     story(completed) {
         if (completed >= 15) setStoryFlag("haggle15TimesInALoop");
@@ -2707,7 +2706,6 @@ Action.DarkRitual = new MultipartAction("Dark Ritual", {
     loopsFinished() {
         const spent = sacrificeSoulstones(this.goldCost());
         addBuffAmt("Ritual", 1, this, "soulstone", spent);
-        view.requestUpdate("updateSoulstones", null);
     },
     getPartName() {
         return "Perform Dark Ritual";
@@ -2759,6 +2757,7 @@ function sacrificeSoulstonesBySegments(amount, segments = 9, stonesSpent = {}, s
         }
         if (segments > 0) segments--; // 1 less segment remains, unless we hit the edge case above in the second-to-last stat
     }
+    stateChanged("soulstones");
     return stonesSpent;
 }
 
@@ -2787,6 +2786,7 @@ function sacrificeSoulstonesProportional(amount, power = 1, stonesSpent = {}, so
             if (amount === 0) break;
         }
     }
+    stateChanged("soulstones");
     return stonesSpent;
 }
 
@@ -2821,6 +2821,7 @@ function sacrificeSoulstonesToEquality(amount, allowedDifference = 0, stonesSpen
         // all stats already close enough to equality, just sacrifice equal numbers from each stat
         sacrificeSoulstonesProportional(amount, 0, stonesSpent, sortedStats);
     }
+    stateChanged("soulstones");
     return stonesSpent;
 }
 
@@ -4203,7 +4204,7 @@ Action.MineSoulstones = new Action("Mine Soulstones", {
             const countToAdd = Math.floor(getSkillBonus("Divine"));
             stats[statToAdd].soulstone += countToAdd;
             actionLog.addSoulstones(this, statToAdd, countToAdd);
-            view.requestUpdate("updateSoulstones", null);
+            stateChanged("soulstones");
         });
     },
 });
@@ -4402,7 +4403,6 @@ Action.ImbueMind = new MultipartAction("Imbue Mind", {
         const spent = sacrificeSoulstones(this.goldCost());
         trainingLimits++;
         addBuffAmt("Imbuement", 1, this, "soulstone", spent);
-        view.requestUpdate("updateSoulstones", null);
     },
     getPartName() {
         return "Imbue Mind";
@@ -4479,7 +4479,7 @@ Action.ImbueBody = new MultipartAction("Imbue Body", {
             stats[stat].talentLevelExp.setLevel(targetTalentLevel);
             spent[stat] = currentTalentLevel - targetTalentLevel;
         }
-        view.updateStats();
+        stateChanged("talentsReset");
         addBuffAmt("Imbuement2", 1, this, "talent", spent);
     },
     getPartName() {
@@ -5647,7 +5647,6 @@ Action.GreatFeast = new MultipartAction("Great Feast", {
     loopsFinished() {
         const spent = sacrificeSoulstones(this.goldCost());
         addBuffAmt("Feast", 1, this, "soulstone", spent);
-        view.requestUpdate("updateSoulstones", null);
     },
     getPartName() {
         return "Host Great Feast";
@@ -5698,7 +5697,7 @@ Action.FallFromGrace = new Action("Fall From Grace", {
     },
     finish() {
         if (resources.reputation >= 0) resources.reputation = -1;
-        view.requestUpdate("updateResource", 'reputation');
+        stateChanged("resource", {name: "reputation"});
         setStoryFlag("fellFromGrace");
         unlockTown(5);
     },
@@ -6554,19 +6553,19 @@ function adjustPockets() {
     let town = towns[7];
     let base = Math.round(town.getLevel("Excursion") * adjustContentFromPrestige());
     town.totalPockets = Math.floor(base * getSkillMod("Spatiomancy", 1100, 1300, .5) + base * getSurveyBonus(town));
-    view.requestUpdate("updateActionTooltips", null);
+    stateChanged("townTotals", {name: "pockets"});
 }
 function adjustWarehouses() {
     let town = towns[7];
     let base = Math.round(town.getLevel("Excursion") / 2.5 * adjustContentFromPrestige());
     town.totalWarehouses = Math.floor(base * getSkillMod("Spatiomancy", 1200, 1400, .5) + base * getSurveyBonus(town));
-    view.requestUpdate("updateActionTooltips", null);
+    stateChanged("townTotals", {name: "warehouses"});
 }
 function adjustInsurance() {
     let town = towns[7];
     let base = Math.round(town.getLevel("Excursion") / 10 * adjustContentFromPrestige());
     town.totalInsurance = Math.floor(base * getSkillMod("Spatiomancy", 1300, 1500, .5) + base * getSurveyBonus(town));
-    view.requestUpdate("updateActionTooltips", null);
+    stateChanged("townTotals", {name: "insurance"});
 }
 
 Action.ExplorersGuild = new Action("Explorers Guild", {
@@ -6721,6 +6720,8 @@ function exchangeMap() {
     while (resources.completedMap > 0 && unfinishedSurveyZones.length > 0) {
         let rand = options.rngMode === "cycle" ? cyclePick(unfinishedSurveyZones, "zone") : unfinishedSurveyZones[Math.floor(Math.random() * unfinishedSurveyZones.length)];
         let name = "expSurveyZ"+rand;
+        const surveyVar = "SurveyZ"+rand;
+        const oldLevel = towns[rand].getLevel(surveyVar);
         towns[rand][name] += getExploreSkill() * 2;
         if (towns[rand][name] >= 505000) {
             towns[rand][name] = 505000;
@@ -6728,7 +6729,8 @@ function exchangeMap() {
                 if ( unfinishedSurveyZones[i] === rand)
                     unfinishedSurveyZones.splice(i, 1);
         }
-        view.requestUpdate("updateProgressAction", {name: "SurveyZ"+rand, town: towns[rand]});
+        stateChanged("progress", {townIndex: rand, varName: surveyVar,
+                                  oldLevel, newLevel: towns[rand].getLevel(surveyVar)});
         addResource("completedMap", -1);
     }
 }
@@ -7106,7 +7108,7 @@ Action.Invest = new Action("Invest", {
         }
         if (storyFlags.investedOne) setStoryFlag("investedTwo");
         setStoryFlag("investedOne");
-        view.requestUpdate("updateActionTooltips", null);
+        stateChanged("goldInvested");
     },
 });
 
@@ -7391,15 +7393,12 @@ Action.ImbueSoul = new MultipartAction("Imbue Soul", {
         for (const stat of statList) {
             stats[stat].talentLevelExp.setLevel(0);
             stats[stat].soulstone = 0;
-            view.requestUpdate("updateStat", stat);
         }
         buffs["Imbuement"].amt = 0;
         buffs["Imbuement2"].amt = 0;
         trainingLimits = 10;
         addBuffAmt("Imbuement3", 1, this, "imbuement3");
-        view.updateBuffs();
-        view.updateStats();
-        view.requestUpdate("updateSoulstones", null);
+        stateChanged("imbueSoulReset");
     },
     getPartName() {
         return "Imbue Soul";
@@ -7423,8 +7422,8 @@ function adjustTrainingExpMult() {
         const actionProto = getActionPrototype(actionName);
         // @ts-ignore shh we're pretending it's frozen
         actionProto.expMult = 4 + getBuffLevel("Imbuement3");
-        view.adjustExpMult(actionName);
     }
+    stateChanged("trainingExpMult");
 }
 
 Action.BuildTower = new Action("Build Tower", {

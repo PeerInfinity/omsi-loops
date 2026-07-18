@@ -122,7 +122,68 @@ const STATE_SUBSCRIPTIONS = {
         {category: "adjustManaCost", target: "Restoration"},
         {category: "adjustManaCost", target: "Spatiomancy"},
     ],
+
+    // -- soulstones (the sacrificeSoulstones family + the gain sites) -----------
+    "soulstones:*": [
+        {category: "updateSoulstones", target: null},
+    ],
+
+    // -- resources written directly rather than through addResource ------------
+    "resource:supplies": [
+        {category: "updateResource", target: "supplies"},
+    ],
+    "resource:reputation": [
+        {category: "updateResource", target: "reputation"},
+    ],
+
+    // -- trial floors; the payload passes straight through to the renderer -----
+    "trial:*": [
+        {category: "updateTrialInfo", target: (key) => key},
+    ],
+
+    // -- the two inputs to the action-tooltip block ----------------------------
+    // Keyed even though today's consumer re-renders globally: the keys are the
+    // extension seam for the post-Phase-6 lootable UI (design §3.6).
+    "townTotals:*": [
+        {category: "updateActionTooltips", target: null},
+    ],
+    "goldInvested:*": [
+        {category: "updateActionTooltips", target: null},
+    ],
+
+    // -- prestige-adjacent resets ----------------------------------------------
+    "talentsReset:*": [
+        {category: "updateStats", target: null},
+    ],
+    "imbueSoulReset:*": [
+        {sweep: (view) => {
+            for (const stat of statList) view.requestUpdate("updateStat", stat);
+        }},
+        {category: "updateBuffs", target: null},
+        {category: "updateStats", target: null},
+        {category: "updateSoulstones", target: null},
+    ],
+
+    // Stays synchronous, as the direct view.adjustExpMult() call it replaces
+    // was: there is no adjustExpMult request category to queue into.
+    "trainingExpMult:*": [
+        {sweep: (view) => {
+            for (const actionName of trainingActions) view.adjustExpMult(actionName);
+        }},
+    ],
 };
+
+// Every Survey progress var drives the same two updates. Generated rather than
+// written out nine times; exchangeMap() emits these directly (it writes survey
+// exp without going through finishProgress), and the Survey actions get them
+// via the funnel.
+for (let z = 0; z <= 8; z++) {
+    STATE_SUBSCRIPTIONS[`progress:SurveyZ${z}`] = [
+        {category: "updateActionTooltips", target: null},
+        {category: "updateProgressAction",
+         target: (key) => ({name: key.varName, town: towns[key.townIndex]})},
+    ];
+}
 
 /**
  * Resolve the subscription list for a state change: exact "kind:name" if the key
@@ -329,6 +390,7 @@ class View {
         updateSkill: [],
         updateSkills: [],
         updateBuff: [],
+        updateBuffs: [],
         updateTrialInfo: [],
         updateTrials: [],
         updateRegular: [],

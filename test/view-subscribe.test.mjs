@@ -15,18 +15,13 @@ import { makeViewContext, actionListSourceWithoutComments } from "./view-subscri
 // 1. actionList.js contains zero view category names
 //====================================================================================================
 
-// Shrinks to nothing as the arc lands; when this is empty the success criterion
-// is met and the test keeps it that way forever. Slice 1 migrated the three cost
-// categories; slices 2 and 3 take the rest.
-const REMAINING_CATEGORIES = new Set([
-    "updateSoulstones",
-    "updateActionTooltips",
-    "updateResource",
-    "updateTrialInfo",
-    "updateProgressAction",
-    "updateStat",
-]);
-const REMAINING_DIRECT_CALLS = new Set(["updateStats", "updateBuffs", "adjustExpMult"]);
+// EMPTY, and it stays empty. actionList.js declares semantic facts via
+// stateChanged() and names no view categories at all — that is the arc's
+// success criterion, and this test is what keeps it true. If you are here
+// because a new site failed the check: emit a stateChanged kind and add a
+// STATE_SUBSCRIPTIONS entry, don't reach for view.requestUpdate.
+const REMAINING_CATEGORIES = new Set([]);
+const REMAINING_DIRECT_CALLS = new Set([]);
 
 test("actionList.js names no view request categories", () => {
     const src = actionListSourceWithoutComments();
@@ -237,6 +232,64 @@ test("the request queue dedupes subscription-driven targets", () => {
         "string targets must collapse, unlike the object payloads they replaced");
 });
 
+test("tail kinds drive their subscribed updates", () => {
+    const ctx = makeViewContext();
+    const cases = [
+        ["soulstones", null, { updateSoulstones: [null] }],
+        ["resource", { name: "supplies" }, { updateResource: ["supplies"] }],
+        ["resource", { name: "reputation" }, { updateResource: ["reputation"] }],
+        ["townTotals", { name: "pockets" }, { updateActionTooltips: [null] }],
+        ["townTotals", { name: "insurance" }, { updateActionTooltips: [null] }],
+        ["goldInvested", null, { updateActionTooltips: [null] }],
+        ["talentsReset", null, { updateStats: [null] }],
+    ];
+    for (const [kind, key, expected] of cases) {
+        ctx.clearRequests();
+        ctx.emit(kind, key);
+        assert.deepEqual(ctx.pendingRequests(), expected, `${kind}:${key?.name ?? "*"}`);
+    }
+});
+
+test("trial emission passes its payload through to updateTrialInfo", () => {
+    const ctx = makeViewContext();
+    ctx.clearRequests();
+    ctx.emit("trial", { trialNum: 0, curFloor: 7 });
+    assert.deepEqual(ctx.pendingRequests(), { updateTrialInfo: [{ trialNum: 0, curFloor: 7 }] });
+});
+
+test("imbueSoulReset fans out to every stat plus the three whole-panel renders", () => {
+    const ctx = makeViewContext();
+    ctx.clearRequests();
+    ctx.emit("imbueSoulReset");
+    const pending = ctx.pendingRequests();
+    assert.deepEqual(pending.updateStat, JSON.parse(ctx.ev("JSON.stringify(statList)")));
+    assert.deepEqual(pending.updateBuffs, [null]);
+    assert.deepEqual(pending.updateStats, [null]);
+    assert.deepEqual(pending.updateSoulstones, [null]);
+});
+
+test("survey progress drives the tooltips and the progress bar", () => {
+    const ctx = makeViewContext();
+    ctx.clearRequests();
+    ctx.emit("progress", { townIndex: 3, varName: "SurveyZ3", oldLevel: 1, newLevel: 2 });
+    const pending = ctx.pendingRequests();
+    assert.deepEqual(pending.updateActionTooltips, [null]);
+    assert.equal(pending.updateProgressAction.length, 1);
+    assert.equal(ctx.ev(`testView.requests.updateProgressAction[0].name`), "SurveyZ3");
+    assert.equal(ctx.ev(`testView.requests.updateProgressAction[0].town === towns[3]`), true);
+});
+
+test("trainingExpMult stays synchronous, as the direct call it replaced was", () => {
+    const ctx = makeViewContext();
+    ctx.clearRequests();
+    // No adjustExpMult request category exists; the sweep renders immediately.
+    ctx.ev("var __expMultCalls = []; testView.adjustExpMult = (n) => __expMultCalls.push(n)");
+    ctx.emit("trainingExpMult");
+    assert.deepEqual(ctx.pendingRequests(), {}, "must not queue anything");
+    assert.deepEqual(JSON.parse(ctx.ev("JSON.stringify(__expMultCalls)")),
+        JSON.parse(ctx.ev("JSON.stringify(trainingActions)")));
+});
+
 test("a full drain of subscription-driven requests runs without throwing", () => {
     const ctx = makeViewContext();
     ctx.clearRequests();
@@ -256,9 +309,35 @@ test("a full drain of subscription-driven requests runs without throwing", () =>
         ["progress", { townIndex: 1, varName: "Hermit", oldLevel: 1, newLevel: 2 }],
         ["progress", { townIndex: 1, varName: "Witch", oldLevel: 1, newLevel: 2 }],
         ["progress", { townIndex: 3, varName: "Runes", oldLevel: 1, newLevel: 2 }],
+        ["progress", { townIndex: 3, varName: "SurveyZ3", oldLevel: 1, newLevel: 2 }],
+        ["soulstones", null],
+        ["resource", { name: "supplies" }],
+        ["resource", { name: "reputation" }],
+        // curFloor 0 only: `trials` is populated by load(), not by boot, so a
+        // higher floor would index into an empty array in this fixture.
+        ["trial", { trialNum: 0, curFloor: 0 }],
+        ["townTotals", { name: "pockets" }],
+        ["goldInvested", null],
+        ["talentsReset", null],
+        ["imbueSoulReset", null],
+        ["trainingExpMult", null],
     ]) ctx.emit(kind, key);
 
     assert.ok(Object.keys(ctx.pendingRequests()).length > 0, "expected a non-empty queue to drain");
     ctx.ev("testView.handleUpdateRequests()");
     assert.deepEqual(ctx.pendingRequests(), {}, "drain must clear every category");
+});
+
+test("every subscription key is reachable by some emission shape", () => {
+    // Guards against a table entry that can never fire because its key can't be
+    // produced — e.g. a "kind:Name" that the emitter only ever sends keyless.
+    const ctx = makeViewContext();
+    const keys = JSON.parse(ctx.ev("JSON.stringify(Object.keys(STATE_SUBSCRIPTIONS))"));
+    for (const key of keys) {
+        const [kind, name] = key.split(":");
+        ctx.clearRequests();
+        ctx.emit(kind, name === "*" ? null : { name, varName: name, oldLevel: 0, newLevel: 1 });
+        assert.ok(Object.keys(ctx.pendingRequests()).length > 0 || key === "trainingExpMult:*",
+            `"${key}" produced no requests for its own key shape`);
+    }
 });

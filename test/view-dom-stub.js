@@ -75,6 +75,8 @@ const __stubElement = () => new Proxy(new HTMLInputElement(), {
     set() { return true; },
 });
 
+globalThis.getComputedStyle = () => ({ getPropertyValue: () => "", setProperty() {} });
+
 document.getElementById = () => __stubElement();
 document.createElement = () => __stubElement();
 document.createTextNode = () => __stubElement();
