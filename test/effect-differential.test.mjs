@@ -106,6 +106,23 @@ const CANARIES = [
         with: ``,
     },
     {
+        // the marker that executes the action's own <progress> data field
+        name: "grantProgress marker",
+        find: `<grantProgress />`,
+        with: `<progressExp>1</progressExp>`,
+        all: 19,
+    },
+    {
+        name: "progressExp (cross-variable)",
+        find: `<progressExp varName="Met">3200</progressExp>`,
+        with: `<progressExp varName="Met">3201</progressExp>`,
+    },
+    {
+        name: "progressExp target varName",
+        find: `<progressExp varName="Met">3200</progressExp>`,
+        with: `<progressExp varName="Secrets">3200</progressExp>`,
+    },
+    {
         name: `cost deduction="none"`,
         find: `<cost deduction="none">`,
         with: `<cost>`,
@@ -114,13 +131,29 @@ const CANARIES = [
 
 test("vocabulary canaries: a targeted mutation of each element flips the differential", () => {
     const base = fs.readFileSync(XML, "utf8");
+    const baseline = slotManifest(buildEffectDifferential({ onlyStates: ["boot"] }).plan).counts;
     const survivors = [];
+    const disabled = [];
     for (const c of CANARIES) {
         const n = base.split(c.find).length - 1;
         assert.equal(n, c.all ?? 1, `canary "${c.name}": anchor must appear ${c.all ?? 1}×, found ${n}`);
         const mutated = c.all ? base.split(c.find).join(c.with) : base.replace(c.find, c.with);
         const r = buildEffectDifferential({ xmlText: mutated, maxMismatches: 3 });
+        // A mutation that stops a slot COMPILING is not a valid canary: the slot
+        // falls back to JS and matches JS trivially, so a green differential
+        // proves nothing about the element. (Emptying a <reward> does exactly
+        // this — it cost one canary before the check existed.)
+        // Only a DECREASE is suspect. Some canaries deliberately ENABLE a slot
+        // (dropping deduction="none" compiles Map's cost); that adds behavior
+        // JS lacks, which the differential reports as js-slot-absent.
+        const counts = slotManifest(r.plan).counts;
+        const dropped = Object.keys(baseline).filter(k => (counts[k] ?? 0) < baseline[k]);
+        if (dropped.length) {
+            disabled.push(`${c.name}: ${JSON.stringify(baseline)} -> ${JSON.stringify(counts)}`);
+            continue;
+        }
         if (r.mismatches.length === 0) survivors.push(c.name);
     }
+    assert.deepEqual(disabled, [], "canaries that DISABLED compilation instead of changing behavior");
     assert.deepEqual(survivors, [], "canaries the differential failed to catch");
 });

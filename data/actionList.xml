@@ -45,6 +45,9 @@
                 <ifResource resourceName="glasses" />
             </multiplier>
         </progress>
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="limited" name="Smash Pots" varName="Pots">
         <expMult value="1"/>
@@ -299,6 +302,9 @@
             <ifProgress varName="Wander" min="22" />
         </unlocked>
         <progress value="200" />
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="normal" name="Train Strength" townNum="0">
         <expMult>4</expMult>
@@ -432,6 +438,9 @@
             <ifProgress varName="Met" min="25" />
         </unlocked>
         <progress value="500" />
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="limited" name="Long Quest" varName="LQuests" townNum="0">
         <expMult>1</expMult>
@@ -508,8 +517,10 @@
         <cost>
             <numericResource name="reputation">2</numericResource>
         </cost>
-        <!-- finish() not yet modeled (Phase 6): Met progress +3200; story() sets partyThrown / partyThrown2@10 -->
-        <reward />
+        <!-- story() not yet modeled (Phase 6): sets partyThrown / partyThrown2@10 -->
+        <reward>
+            <progressExp varName="Met">3200</progressExp>
+        </reward>
     </action>
     <action type="normal" name="Warrior Lessons" townNum="0">
         <expMult>1.5</expMult>
@@ -560,8 +571,9 @@
         <canStart>
             <ifResource resourceName="reputation" min="2" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): Combat exp 100; reputation is required, not consumed -->
-        <reward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="normal" name="Mage Lessons" townNum="0">
         <expMult>1.5</expMult>
@@ -617,8 +629,9 @@
         <canStart>
             <ifResource resourceName="reputation" min="2" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): Magic exp 100*(1+Alchemy/100); reputation required, not consumed -->
-        <reward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="multipart" name="Small Dungeon" varName="SDungeon" townNum="0">
         <expMult>1</expMult>
@@ -727,6 +740,9 @@
         <!-- loopsFinished rolls the floor's soulstone chance (an RNG site) and
              unlocks global stories 1/2 (Phase 6) -->
         <loopReward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="multipart" name="Heal The Sick" varName="Heal" townNum="0">
         <expMult>1</expMult>
@@ -810,10 +826,12 @@
                 </value>
             </multiplier>
         </tickProgress>
-        <!-- finish() not yet modeled (Phase 6): Magic exp 10 -->
         <loopReward>
             <numericResource name="reputation">3</numericResource>
         </loopReward>
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="multipart" name="Fight Monsters" varName="Fight" townNum="0" segments="3">
         <expMult>1</expMult>
@@ -896,11 +914,13 @@
                 </value>
             </multiplier>
         </tickProgress>
-        <!-- finish() not yet modeled (Phase 6): Combat exp 10 -->
         <segmentReward>
             <numericResource name="gold">20</numericResource>
         </segmentReward>
         <loopReward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="normal" name="Buy Supplies" townNum="0">
         <expMult>1</expMult>
@@ -1397,6 +1417,9 @@
                 <ifResource resourceName="glasses" />
             </multiplier>
         </progress>
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="limited" name="Wild Mana" townNum="1">
         <expMult>1</expMult>
@@ -1594,8 +1617,9 @@
         <unlocked>
             <ifProgress varName="Forest" min="70" />
         </unlocked>
-        <!-- finish() not yet modeled (Phase 6): sets satByWaterfall -->
-        <reward />
+        <reward>
+            <setStoryFlag name="satByWaterfall" />
+        </reward>
     </action>
     <action type="progress" name="Old Shortcut" varName="Shortcut" townNum="1">
         <expMult>1</expMult>
@@ -1634,6 +1658,9 @@
             <ifProgress varName="Forest" min="20" />
         </unlocked>
         <progress value="100" />
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="progress" name="Talk To Hermit" varName="Hermit" townNum="1">
         <expMult>1</expMult>
@@ -1681,6 +1708,9 @@
                 </addition>
             </multiplier>
         </progress>
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="normal" name="Practical Magic" townNum="1">
         <expMult>1.5</expMult>
@@ -1724,8 +1754,9 @@
                 <skillLevel skillName="Magic" />
             </if>
         </unlocked>
-        <!-- finish() not yet modeled (Phase 6): Practical exp 100 -->
-        <reward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="normal" name="Learn Alchemy" townNum="1">
         <expMult>1.5</expMult>
@@ -1777,8 +1808,9 @@
         <cost>
             <numericResource name="herbs">10</numericResource>
         </cost>
-        <!-- finish() not yet modeled (Phase 6): Magic 50 + Alchemy 50 exp -->
-        <reward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="normal" name="Brew Potions" townNum="1">
         <expMult>1.5</expMult>
@@ -1818,8 +1850,12 @@
         <canStart>
             <ifResource resourceName="reputation" min="5" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): +1 potion, Magic/Alchemy exp, story flags -->
-        <reward />
+        <reward>
+            <numericResource name="potions">1</numericResource>
+            <skillExp />
+            <setStoryFlag name="potionBrewed" />
+            <setStoryFlag name="brewed50PotionsInALoop"><ifResource resourceName="potions" min="50" /></setStoryFlag>
+        </reward>
     </action>
     <action type="normal" name="Train Dexterity" townNum="1">
         <expMult>4</expMult>
@@ -1866,8 +1902,9 @@
         <unlocked>
             <ifProgress varName="Forest" min="60" />
         </unlocked>
-        <!-- finish() not yet modeled (Phase 6): sets dexterityTrained -->
-        <reward />
+        <reward>
+            <setStoryFlag name="dexterityTrained" />
+        </reward>
     </action>
     <action type="normal" name="Train Speed" townNum="1">
         <expMult>4</expMult>
@@ -1914,8 +1951,9 @@
         <unlocked>
             <ifProgress varName="Forest" min="80" />
         </unlocked>
-        <!-- finish() not yet modeled (Phase 6): sets speedTrained -->
-        <reward />
+        <reward>
+            <setStoryFlag name="speedTrained" />
+        </reward>
     </action>
     <action type="progress" name="Follow Flowers" varName="Flowers" townNum="1">
         <expMult>1</expMult>
@@ -1962,6 +2000,9 @@
                 <ifResource resourceName="glasses" />
             </multiplier>
         </progress>
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="normal" name="Bird Watching" townNum="1">
         <expMult>4</expMult>
@@ -2014,8 +2055,9 @@
         <canStart>
             <ifHasResource resourceName="glasses" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): sets birdsWatched -->
-        <reward />
+        <reward>
+            <setStoryFlag name="birdsWatched" />
+        </reward>
     </action>
     <action type="progress" name="Clear Thicket" varName="Thicket" townNum="1">
         <expMult>1</expMult>
@@ -2057,6 +2099,9 @@
             <ifProgress varName="Flowers" min="20" />
         </unlocked>
         <progress value="100" />
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="progress" name="Talk To Witch" varName="Witch" townNum="1">
         <expMult>1</expMult>
@@ -2102,6 +2147,9 @@
             </if>
         </unlocked>
         <progress value="100" />
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="normal" name="Dark Magic" townNum="1">
         <expMult>1.5</expMult>
@@ -2156,8 +2204,9 @@
         <canStart>
             <ifResource resourceName="reputation" max="0" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): Dark exp scaled by Ritual buff -->
-        <reward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="multipart" name="Dark Ritual" varName="DarkRitual" townNum="1">
         <expMult>10</expMult>
@@ -2263,6 +2312,10 @@
         <!-- loopsFinished sacrifices primaryValue soulstones and grants +1
              Ritual (Phase 6) -->
         <loopReward />
+        <reward>
+            <!-- the guard is >= 0, i.e. always true once a segment has run -->
+            <setStoryFlag name="darkRitualThirdSegmentReached"><if min="0"><loopCounter source="town" /></if></setStoryFlag>
+        </reward>
     </action>
     <action type="normal" name="Continue On" townNum="1">
         <expMult>2</expMult>
@@ -2431,6 +2484,9 @@
                 <ifResource resourceName="glasses" />
             </multiplier>
         </progress>
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="limited" name="Gamble" townNum="2">
         <expMult>2</expMult>
@@ -2538,6 +2594,9 @@
             <ifResource resourceName="reputation" min="-3" />
         </canStart>
         <progress value="100" />
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="normal" name="Buy Mana Z3" townNum="2">
         <expMult>1</expMult>
@@ -2683,8 +2742,9 @@
             <!-- glasses are required, not consumed -->
             <ifHasResource resourceName="glasses" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): story() sets booksRead -->
-        <reward />
+        <reward>
+            <setStoryFlag name="booksRead" />
+        </reward>
     </action>
     <action type="normal" name="Buy Pickaxe" townNum="2">
         <expMult>1</expMult>
@@ -3327,6 +3387,11 @@
         </tickProgress>
         <!-- loopsFinished rolls the floor's soulstone chance (an RNG site) (Phase 6) -->
         <loopReward />
+        <reward>
+            <skillExp />
+            <setStoryFlag name="largeDungeonAttempted" />
+            <setStoryFlag name="clearLDungeon"><if min="63"><loopCounter source="town" /></if></setStoryFlag>
+        </reward>
     </action>
     <action type="multipart" name="Heroes Trial" varName="HTrial" townNum="2">
         <expMult>0.2</expMult>
@@ -3428,6 +3493,9 @@
         <!-- loopsFinished records the floor and pays the floor reward
              (Heroism buff) (Phase 6) -->
         <loopReward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="progress" name="RuinsZ3" townNum="3">
         <expMult>1</expMult>
@@ -3565,6 +3633,9 @@
                 <ifResource resourceName="pickaxe" />
             </multiplier>
         </progress>
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="limited" name="Mana Geyser" varName="Geysers" townNum="3">
         <expMult>1</expMult>
@@ -3654,12 +3725,14 @@
         <unlocked>
             <ifProgress varName="Mountain" min="20" />
         </unlocked>
-        <!-- finish() also notifies Chronomancy/Pyromancy manaCost displays (Phase 6) -->
         <progress value="100">
             <multiplier value="2">
                 <ifResource resourceName="glasses" />
             </multiplier>
         </progress>
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="normal" name="Chronomancy" townNum="3">
         <expMult>2</expMult>
@@ -3711,8 +3784,9 @@
                 <skillLevel skillName="Magic" />
             </if>
         </unlocked>
-        <!-- finish() not yet modeled (Phase 6): Chronomancy exp 100 -->
-        <reward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="normal" name="Looping Potion" townNum="3">
         <expMult>2</expMult>
@@ -3740,8 +3814,8 @@
         <cost>
             <numericResource name="herbs">400</numericResource>
         </cost>
-        <!-- finish() not yet modeled (Phase 6): Alchemy exp 100; story() sets
-             loopingPotionMade and unlocks global story 9 -->
+        <!-- story() not yet modeled (Phase 6): sets loopingPotionMade and unlocks
+             global story 9 -->
         <reward>
             <booleanResource name="loopingPotion" />
             <skillExp />
@@ -3802,8 +3876,9 @@
                 <skillLevel skillName="Magic" />
             </if>
         </unlocked>
-        <!-- finish() not yet modeled (Phase 6): Pyromancy exp 100 -->
-        <reward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="progress" name="Explore Cavern" varName="Cavern" townNum="3">
         <expMult>1</expMult>
@@ -3848,6 +3923,9 @@
             <ifProgress varName="Mountain" min="40" />
         </unlocked>
         <progress value="100" />
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="limited" name="Mine Soulstones" townNum="3">
         <expMult>1</expMult>
@@ -3941,6 +4019,9 @@
             <ifProgress varName="Cavern" min="80" />
         </unlocked>
         <progress value="100" />
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="limited" name="Take Artifacts" varName="Artifacts" townNum="3">
         <expMult>1</expMult>
@@ -4342,6 +4423,9 @@
                 <ifResource resourceName="glasses" />
             </multiplier>
         </progress>
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="progress" name="Canvass" varName="Canvassed" townNum="4">
         <expMult>1</expMult>
@@ -4377,6 +4461,9 @@
             <ifProgress varName="Tour" min="10" />
         </unlocked>
         <progress value="50" />
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="normal" name="Donate" townNum="4">
         <expMult>1</expMult>
@@ -4400,8 +4487,11 @@
             <!-- the 20 gold are deducted by finish(), not a cost() -->
             <ifResource resourceName="gold" min="20" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): gold -= 20, reputation += 1 -->
-        <reward />
+        <reward>
+            <numericResource name="gold">-20</numericResource>
+            <numericResource name="reputation">1</numericResource>
+            <setStoryFlag name="donatedToCharity" />
+        </reward>
     </action>
     <action type="limited" name="Accept Donations" varName="Donations" townNum="4">
         <expMult>1</expMult>
@@ -4583,8 +4673,9 @@
         <cost>
             <numericResource name="reputation">1</numericResource>
         </cost>
-        <!-- finish() not yet modeled (Phase 6): Mercantilism exp 100 -->
-        <reward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="normal" name="Charm School" townNum="4">
         <expMult>4</expMult>
@@ -4631,8 +4722,9 @@
         <unlocked>
             <ifProgress varName="Tour" min="30" />
         </unlocked>
-        <!-- finish() not yet modeled (Phase 6): sets charmSchoolVisited -->
-        <reward />
+        <reward>
+            <setStoryFlag name="charmSchoolVisited" />
+        </reward>
     </action>
     <action type="normal" name="Oracle" townNum="4">
         <expMult>4</expMult>
@@ -4679,8 +4771,9 @@
         <unlocked>
             <ifProgress varName="Tour" min="40" />
         </unlocked>
-        <!-- finish() not yet modeled (Phase 6): sets oracleVisited -->
-        <reward />
+        <reward>
+            <setStoryFlag name="oracleVisited" />
+        </reward>
     </action>
     <action type="normal" name="Enchant Armor" townNum="4">
         <expMult>1</expMult>
@@ -4711,7 +4804,6 @@
             <numericResource name="favors">1</numericResource>
             <numericResource name="armor">1</numericResource>
         </cost>
-        <!-- finish() not yet modeled (Phase 6): Crafting exp 50, enchantments += 1 -->
         <reward>
             <skillExp />
             <numericResource name="enchantments">1</numericResource>
@@ -4767,8 +4859,9 @@
             <!-- college attendance is required, not consumed -->
             <ifHasResource resourceName="wizardCollege" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): Restoration exp 100 -->
-        <reward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="normal" name="Spatiomancy" townNum="4">
         <expMult>1</expMult>
@@ -4868,6 +4961,9 @@
             <ifProgress varName="Tour" min="80" />
         </unlocked>
         <progress value="100" />
+        <reward>
+            <grantProgress />
+        </reward>
     </action>
     <action type="normal" name="Build Housing" townNum="4">
         <expMult>1</expMult>
@@ -4914,7 +5010,6 @@
                 </subtraction>
             </if>
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): Crafting exp 100 -->
         <reward>
             <numericResource name="houses">1</numericResource>
             <skillExp />
@@ -4960,8 +5055,16 @@
         <canStart>
             <ifResource resourceName="houses" minExclusive="0" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): gold += floor(houses * Mercantilism level / 10) -->
-        <reward />
+        <reward>
+            <numericResource name="gold">
+                <resourceValue name="houses" />
+                <multiplier><skillLevel skillName="Mercantilism" /></multiplier>
+                <divisor value="10" />
+                <floor />
+            </numericResource>
+            <setStoryFlag name="collectedTaxes" />
+            <setStoryFlag name="collected50Taxes"><ifResource resourceName="houses" min="50" /></setStoryFlag>
+        </reward>
     </action>
     <action type="normal" name="Pegasus" townNum="4">
         <expMult>1</expMult>
@@ -5131,6 +5234,9 @@
             <numericResource name="gold">5</numericResource>
             <setStoryFlag name="tidiedUp" />
         </loopReward>
+        <reward>
+            <setStoryFlag name="tidiedUp" />
+        </reward>
     </action>
     <action type="multipart" name="Wizard College" varName="wizCollege" townNum="4">
         <expMult>1</expMult>
@@ -5392,6 +5498,9 @@
         </segmentReward>
         <!-- loopsFinished grants Combat exp 1500 (Phase 6) -->
         <loopReward />
+        <reward>
+            <setStoryFlag name="giantGuildTestTaken" />
+        </reward>
     </action>
     <action type="multipart" name="Great Feast" townNum="4">
         <expMult>5</expMult>
@@ -5459,6 +5568,9 @@
         </tickProgress>
         <!-- loopsFinished sacrifices the soulstones and grants +1 Feast (Phase 6) -->
         <loopReward />
+        <reward>
+            <setStoryFlag name="feastAttempted" />
+        </reward>
     </action>
     <action type="progress" name="Meander" townNum="5">
         <expMult>1</expMult>
@@ -5507,6 +5619,10 @@
         <progress>
             <buffLevel buffName="Imbuement" />
         </progress>
+        <reward>
+            <setStoryFlag name="meanderIM100"><if min="100"><buffLevel buffName="Imbuement" /></if></setStoryFlag>
+            <grantProgress />
+        </reward>
     </action>
     <action type="limited" name="Destroy Pylons" varName="Pylons" townNum="5">
         <expMult>1</expMult>
@@ -5583,8 +5699,6 @@
         <cost>
             <numericResource name="blood">1</numericResource>
         </cost>
-        <!-- finish() not yet modeled (Phase 6): Dark exp 100, zombie += 1,
-             maxZombiesRaised raised to the zombie count -->
         <reward>
             <setStoryFlag name="attemptedRaiseZombie" />
             <skillExp />
@@ -5627,8 +5741,9 @@
         <cost>
             <numericResource name="blood">1</numericResource>
         </cost>
-        <!-- finish() not yet modeled (Phase 6): Commune exp 100 -->
-        <reward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="normal" name="Purchase Supplies" townNum="5">
         <expMult>1</expMult>
@@ -5868,6 +5983,12 @@
         <!-- loopsFinished rolls the soulstone chance (RNG), grants Aspirant on
              new floors and sets clearedSpire at the top (Phase 6) -->
         <loopReward />
+        <reward>
+            <skillExp />
+            <setStoryFlag name="spireAttempted" />
+            <setStoryFlag name="spire10Pylons"><ifResource resourceName="pylons" min="10" /></setStoryFlag>
+            <setStoryFlag name="spire20Pylons"><ifResource resourceName="pylons" min="25" /></setStoryFlag>
+        </reward>
     </action>
     <action type="multipart" name="Dead Trial" varName="DeadTrial" townNum="5">
         <expMult>0.25</expMult>
@@ -6176,8 +6297,9 @@
         <cost>
             <booleanResource name="loopingPotion" />
         </cost>
-        <!-- finish() not yet modeled (Phase 6): Wunderkind exp 100 -->
-        <reward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="normal" name="Escape" townNum="6">
         <expMult>2</expMult>
@@ -6456,6 +6578,9 @@
         </segmentReward>
         <!-- loopsFinished grants Combat exp 2000 (Phase 6) -->
         <loopReward />
+        <reward>
+            <setStoryFlag name="monsterGuildTestTaken" />
+        </reward>
     </action>
     <action type="multipart" name="Rescue Survivors" varName="Rescue" townNum="6">
         <expMult>1</expMult>
@@ -6525,11 +6650,14 @@
             </multiplier>
         </tickProgress>
         <!-- loopsFinished also sets rescued6/rescued20Survivors off the loop
-             counter, and finish() grants Restoration exp 25 (Phase 6) -->
+             counter (Phase 6) -->
         <loopReward>
             <numericResource name="reputation">4</numericResource>
             <setStoryFlag name="survivorRescued" />
         </loopReward>
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="multipart" name="Thieves Guild" townNum="7">
         <expMult>2</expMult>
@@ -6835,8 +6963,13 @@
         <cost>
             <numericResource name="gold">1000</numericResource>
         </cost>
-        <!-- finish() not yet modeled (Phase 6): Leadership exp 200 -->
-        <reward />
+        <reward>
+            <skillExp />
+            <setStoryFlag name="leadership10"><if min="10"><skillLevel skillName="Leadership" /></if></setStoryFlag>
+            <setStoryFlag name="leadership100"><if min="100"><skillLevel skillName="Leadership" /></if></setStoryFlag>
+            <setStoryFlag name="leadership1k"><if min="1000"><skillLevel skillName="Leadership" /></if></setStoryFlag>
+            <setStoryFlag name="seminarAttended" />
+        </reward>
     </action>
     <action type="normal" name="Purchase Key" townNum="7">
         <expMult>1</expMult>
@@ -7416,6 +7549,9 @@
         </tickProgress>
         <!-- floorReward grants power at milestones and Combat exp (Phase 6) -->
         <loopReward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="multipart" name="Challenge Gods" varName="GFight" townNum="8">
         <expMult>0.5</expMult>
@@ -7558,6 +7694,9 @@
         <!-- segmentFinished increments curGodsSegment and sets the fightGods
              story flags (talent-gated in round 7) (Phase 6) -->
         <loopReward />
+        <reward>
+            <skillExp />
+        </reward>
     </action>
     <action type="progress" name="Build Tower" townNum="8">
         <expMult>1</expMult>

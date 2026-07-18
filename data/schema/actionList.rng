@@ -642,11 +642,21 @@
             <interleave>
                 <ref name="actionDefinition" />
                 <optional>
-                    <!-- optional: some finish() progress amounts (guild-rank
-                         scaled) are not yet expressible and stay Phase-6
-                         comments -->
+                    <!-- the town progress this action's finish() grants
+                         (finishProgress). Optional: a few amounts are still
+                         Phase-6 comments. -->
                     <element name="progress">
                         <ref name="numericEvaluation" />
+                    </element>
+                </optional>
+                <optional>
+                    <!-- the rest of finish(): progress actions commonly also
+                         grant skill exp, gold and story flags -->
+                    <element name="reward">
+                        <choice>
+                            <ref name="nativeMarker" />
+                            <ref name="rewardBody" />
+                        </choice>
                     </element>
                 </optional>
             </interleave>
@@ -689,6 +699,17 @@
                         <ref name="numericEvaluation" />
                     </choice>
                 </element>
+                <optional>
+                    <element name="reward">
+                        <a:documentation>finish() effects — a multipart action's finish runs once
+                            per completed action, alongside its per-segment and per-loop
+                            rewards.</a:documentation>
+                        <choice>
+                            <ref name="nativeMarker" />
+                            <ref name="rewardBody" />
+                        </choice>
+                    </element>
+                </optional>
                 <optional>
                     <element name="segmentReward">
                         <a:documentation>segmentFinished() effects, as reward data (Phase-6
@@ -763,6 +784,17 @@
         <element name="setStoryFlag">
             <attribute name="name" />
             <ref name="conditionalEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="progressExp">
+            <a:documentation>Grant town progress exp to a named progress variable
+                (finishProgress). The action's own progress goes in &lt;progress&gt;; this form is
+                for the cross-variable writes (Throw Party feeds Met) and for progress actions
+                whose grant sits in the middle of a longer finish body.</a:documentation>
+            <il:label>Grant progress exp</il:label>
+            <ref name="optional-varName" />
+            <ref name="numericEvaluation" />
         </element>
     </define>
     <define name="resourceStack" combine="choice">

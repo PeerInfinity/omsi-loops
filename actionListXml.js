@@ -457,7 +457,7 @@ const ActionListXml = (() => {
     };
 
     const EFFECT_TAGS = new Set(["numericResource", "booleanResource", "setStoryFlag",
-        "storyVarMin", "skillExp", "effect"]);
+        "storyVarMin", "skillExp", "progressExp", "grantProgress", "effect"]);
 
     /**
      * Execute one effect element.
@@ -488,6 +488,24 @@ const ActionListXml = (() => {
                 const v = evalNumeric(node, ctx);
                 if (v === null) return;
                 increaseStoryVarTo(node.attrs.name, v);
+                return;
+            }
+            case "grantProgress": {
+                // execute the action's own <progress> data field here
+                if (!ctx.progress) throw new Error(`actionListXml: <grantProgress/> without <progress>`);
+                const amount = evalNumeric(ctx.progress, ctx);
+                if (amount === null) return;
+                towns[ctx.action.townNum].finishProgress(ctx.action.varName, amount);
+                return;
+            }
+            case "progressExp": {
+                // finishProgress against a named progress var — the action's OWN
+                // progress normally rides <progress>, but Throw Party feeds Met
+                // and the thieves jobs grant mid-body
+                const amount = evalNumeric(node, ctx);
+                if (amount === null) return;
+                const v = node.attrs.varName ?? ctx.action.varName;
+                townFor(v).finishProgress(v, amount);
                 return;
             }
             case "skillExp":
@@ -643,24 +661,29 @@ const ActionListXml = (() => {
         // body stays (the Phase-4 per-action increment, here per (action,
         // slot)). `this` inside a compiled body is the live Action, so
         // <skillExp/> reads the authoritative JS skills table.
-        const bindCtx = function () { return { ...ctx, self: this }; };
+        const bindCtx = function () { return { ...ctx, self: this, progress }; };
 
         // finish(): <reward>. The action `type` selects the wrapper, mirroring
         // how the JS bodies are structured — limited actions wrap their grants
         // in finishRegular(varName, oneInEvery, rewardFn). <before>/<after>
         // hold the effects that sit OUTSIDE that callback (Accept Donations
         // flags before it; Mana Well checks its ledger after it).
+        // <progress> stays a DATA field; a <grantProgress/> marker inside the
+        // reward body is what executes it (opt-in, because 13 actions carry
+        // <progress> alongside a longer finish body that isn't modeled yet).
+        const progress = child(def, "progress");
         const reward = child(def, "reward");
         if (reward && !native(reward, "finish") && reward.children.length) {
-            const before = effectsOf(child(reward, "before")?.children ?? []);
-            const after = effectsOf(child(reward, "after")?.children ?? []);
-            const inner = effectsOf(reward.children);
+            const before = effectsOf(reward && child(reward, "before")?.children || []);
+            const after = effectsOf(reward && child(reward, "after")?.children || []);
+            const inner = effectsOf(reward?.children ?? []);
             // finishRegular accumulates lootFrom{var} += rewardFn(); several JS
             // bodies deliberately return nothing (lootFrom goes NaN — preserved,
             // not "fixed") and Gamble returns its unmodified base, so the ledger
             // amount is always EXPLICIT rather than inferred from the stacks.
-            const ledger = child(reward, "ledger");
+            const ledger = reward && child(reward, "ledger");
             const run = (nodes, c) => { for (const n of nodes) execEffect(n, c, 1); };
+
             if (def.attrs.type === "limited") {
                 const ratio = num(need("oneInEvery").text.trim(), `${name} oneInEvery`);
                 fields.finish = function () {
