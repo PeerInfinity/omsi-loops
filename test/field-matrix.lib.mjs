@@ -50,7 +50,7 @@ export const FIELD_COLUMNS = ["manaCost", "goldCost", "visible", "unlocked", "ca
 
 const XML_FILES = ["xmlLite.js", "actionListXml.js"];
 
-const FM_INSTALL = `
+export const FM_INSTALL_SRC = `
 globalThis.__fm = (() => {
     // dungeons/trials are populated by load(), not loadDefaults() — mirror
     // load()'s fresh-init branch so multipart fields evaluate instead of
@@ -408,6 +408,18 @@ globalThis.__fm = (() => {
         if (spec.assassinations != null) {
             for (let i = 0; i < spec.assassinations; i++) towns[i]["totalAssassinZ" + i] = 1;
         }
+        if (spec.pools != null) {
+            // explicit limited-pool ledgers: total/checked/good/goodTemp drive
+            // which finishRegular branch a reward callback reaches
+            for (const t of towns) for (const v of t.allVarNames) {
+                if (typeof t["total" + v] !== "number" && typeof t["good" + v] !== "number") continue;
+                t["total" + v] = spec.pools.total;
+                t["checked" + v] = spec.pools.checked;
+                t["good" + v] = spec.pools.good;
+                t["goodTemp" + v] = spec.pools.goodTemp;
+                t["lootFrom" + v] = 0;
+            }
+        }
         if (spec.resources) Object.assign(resources, spec.resources);
     };
     const applyAndEval = (spec) => {
@@ -553,7 +565,7 @@ function makeFixtureContext(recipe, extraFiles = []) {
     crafter.ev(recipe);
     const blob = crafter.ev("JSON.stringify(doSave())");
     const fixCtx = makeContext(12345, extraFiles);
-    fixCtx.ev(FM_INSTALL);
+    fixCtx.ev(FM_INSTALL_SRC);
     // DOM touches on the load() path: closeTutorial(), buff<name>Cap /
     // pausePlay / etc. element writes. In a real browser every UI element
     // exists during load(); mirror that with a permissive element stub, then
@@ -665,7 +677,7 @@ function assembleStates(ctx, randomStates, probe = true) {
 
 export function buildFieldMatrix({ randomStates = 64, perturb = null, only = null } = {}) {
     const ctx = makeContext(12345);
-    ctx.ev(FM_INSTALL);
+    ctx.ev(FM_INSTALL_SRC);
     const info = JSON.parse(ctx.ev("JSON.stringify({ n: __fm.nNumeric, b: __fm.nBool, p: __fm.nPreds })"));
 
     const { states, probeEvals } = assembleStates(ctx, randomStates);
@@ -788,10 +800,10 @@ function compareRows(rowsJs, rowsWired, stateId, out) {
  */
 export function buildWiredDifferential({ randomStates = 64, maxMismatches = 200 } = {}) {
     const jsCtx = makeContext(12345);
-    jsCtx.ev(FM_INSTALL);
+    jsCtx.ev(FM_INSTALL_SRC);
     const wiredCtx = makeContext(12345, WIRED_FILES);
     wiredCtx.ev(WIRED_PREP);
-    wiredCtx.ev(FM_INSTALL);
+    wiredCtx.ev(FM_INSTALL_SRC);
     const wiredCounts = JSON.parse(wiredCtx.ev("JSON.stringify(__wiredCounts)"));
 
     const { states } = assembleStates(jsCtx, randomStates);
@@ -846,7 +858,7 @@ export function buildXmlDifferential({ randomStates = 64, xmlText = null, mutate
     };
 
     const ctx = makeContext(12345, XML_FILES);
-    ctx.ev(FM_INSTALL);
+    ctx.ev(FM_INSTALL_SRC);
     install(ctx);
     const names = JSON.parse(ctx.ev("JSON.stringify(__fmDiff.names)"));
     const statics = JSON.parse(ctx.ev("JSON.stringify(__fmDiff.statics())"));

@@ -16,7 +16,11 @@
 //   3. live-override canary — a mutated XML value must change what the LIVE
 //      Action object answers (the override actually took; not vacuous);
 //   4. revert — toggling off restores the exact JS closures (function
-//      identity), for every overridden field of every action.
+//      identity), for every overridden field of every action, INCLUDING the
+//      Phase-6 effect slots;
+//   5. live reward canary — a mutated <reward> amount must change what the
+//      LIVE Action's finish() actually grants (Phase 6's analogue of stratum 3:
+//      an override that compiles but never executes would pass 1-4).
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -77,7 +81,10 @@ test("revert restores the exact JS closures (function identity, all actions)", (
     const ctx = makeContext(12345, WIRED_FILES);
     const res = JSON.parse(ctx.ev(`JSON.stringify((() => {
         const FIELDS = ["manaCost", "goldCost", "visible", "unlocked", "canStart", "allowed",
-            "storyReqs", "loopCost", "tickProgress"];
+            "storyReqs", "loopCost", "tickProgress",
+            // Phase-6 effect slots: function-valued too, so the same
+            // override/revert machinery carries them
+            ...ActionListXml.SLOTS];
         const before = totalActionList.map(a => FIELDS.map(f => a[f]));
         const r = ActionListXml.applyOverrides();
         let overridden = 0;
@@ -98,4 +105,43 @@ test("revert restores the exact JS closures (function identity, all actions)", (
     assert.ok(res.overridden > 300, `implausibly few overridden field closures (${res.overridden})`);
     assert.equal(res.mismatched, 0, "revert left a non-original closure behind");
     assert.equal(res.mismatched2, 0, "second apply/revert cycle left a non-original closure behind");
+});
+
+test("canary: a mutated <reward> changes what the LIVE finish() grants", () => {
+    const xml = fs.readFileSync(path.join(ROOT, "data", "actionList.xml"), "utf8");
+    // Smash Pots' reward is the mana stack; +1 mana per pot must show up in
+    // the mana the live action actually adds
+    const mutated = xml.replace(`<reward>
+            <numericResource name="mana">
+                <primaryValue />
+            </numericResource>
+            <ledger><primaryValue /></ledger>
+        </reward>`, `<reward>
+            <numericResource name="mana">
+                <primaryValue />
+                <addition value="1" />
+            </numericResource>
+            <ledger><primaryValue /></ledger>
+        </reward>`);
+    assert.notEqual(mutated, xml, "mutation target not found in data/actionList.xml");
+    const run = (xmlText) => {
+        const ctx = makeContext(12345, XML_FILES);
+        ctx.sandbox.__rewardXml = xmlText;
+        return JSON.parse(ctx.ev(`JSON.stringify((() => {
+            towns[0].totalPots = 500; towns[0].checkedPots = 0;
+            towns[0].goodPots = 0; towns[0].goodTempPots = 0; towns[0].lootFromPots = 0;
+            if (__rewardXml) {
+                const r = ActionListXml.applyOverrides(__rewardXml);
+                if (r.applied !== r.total) throw new Error("fell back to JS");
+            }
+            const before = timeNeeded;
+            for (let i = 0; i < 50; i++) Action.SmashPots.finish();
+            return { mana: timeNeeded - before, loot: towns[0].lootFromPots, good: towns[0].goodPots };
+        })())`));
+    };
+    const js = run(null), on = run(null), mut = run(mutated);
+    assert.deepEqual(on, js, "the unmutated XML path must grant exactly what JS grants");
+    assert.ok(js.good > 0, "the fixture did not actually complete any rewards");
+    assert.notEqual(mut.mana, js.mana,
+        "a +1 mana reward in the XML produced no change on the LIVE finish() — the reward override is dead");
 });

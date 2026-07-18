@@ -18,7 +18,10 @@
 //   - Migration is incremental: an action absent from the XML simply keeps
 //     its JS definition. Every commit stays shippable.
 //   - finish()/story() side-effect vocabulary (<reward>/<cost>/<progress>)
-//     is Phase 6; until then compiled actions keep the JS finish().
+//     is Phase 6: effect slots compile per (action, slot) from the XML when
+//     the data is there, and keep their JS bodies when it is not. The effect
+//     differential (test/effect-differential.test.mjs) is the oracle gate:
+//     JS body and compiled body must leave IDENTICAL state.
 //
 // Evaluation model (mirrors §1.1 of the migration plan):
 //   numericEvaluation = base value (attribute, text, or a baseValue element)
@@ -38,6 +41,9 @@
 const ActionListXml = (() => {
     /** @typedef {import("./xmlLite.js").XmlNode} XmlNode */
 
+    // the six effect slots Phase 6 compiles (§10-Q6); each is compiled from
+    // its own XML element, per action, or left to JS
+    const SLOTS = ["finish", "loopsFinished", "segmentFinished", "floorReward", "cost", "story"];
     const BASE_VALUE_TAGS = new Set(["skillLevel", "skillExp", "buffLevel", "talentLevel", "primaryValue",
         "progressLevel", "goodItems", "discoveredItems", "checkedItems", "value", "function",
         "resourceValue", "townValue", "globalValue", "stonesUsed", "storyVar",
@@ -45,7 +51,15 @@ const ActionListXml = (() => {
         "dungeonCompleted", "dungeonFloors", "trialCompleted", "trialFloors", "buffCap", "guildSegment"]);
     const CONDITIONAL_TAGS = new Set(["if", "ifCurrentValue", "ifResource", "ifHasResource",
         "ifStoryFlag", "ifProgress", "ifGoodItems", "ifDiscoveredItems", "ifCheckedItems",
-        "ifPrestige", "ifTownUnlocked", "anyOf", "never", "ifGuild", "ifGlobalFlag", "ifSoulstoneSac"]);
+        "ifPrestige", "ifTownUnlocked", "anyOf", "never", "ifGuild", "ifGlobalFlag", "ifSoulstoneSac",
+        "ifGuildRankName"]);
+    // whitelisted <ifGuildRankName which="..."/> targets. These return the
+    // DECORATED rank name ("A+, Mult x1.4"), which is what the JS bodies
+    // compare against — quirk included, since JS is the oracle.
+    const GUILD_RANK_NAMES = {
+        craftGuild: () => getCraftGuildRank().name,
+        wizCollege: () => getWizCollegeRank().name,
+    };
     // whitelisted <function name="..."/> targets (mirrors schema.js / the rng);
     // the *Bonus wrappers exist because <function> must return a number
     const FUNCTIONS = {
@@ -176,6 +190,11 @@ const ActionListXml = (() => {
             case "ifSoulstoneSac": {   // fork schema extension: checkSoulstoneSac(amount)
                 const amount = evalNumeric(node, ctx);
                 return (amount !== null && checkSoulstoneSac(amount)) !== inverted;
+            }
+            case "ifGuildRankName": {   // fork schema extension: guild-rank name match
+                const f = GUILD_RANK_NAMES[node.attrs.which];
+                if (!f) throw new Error(`actionListXml: guild rank ${node.attrs.which} not whitelisted`);
+                return (f() === node.attrs.name) !== inverted;
             }
             case "anyOf": {   // fork schema extension: disjunction over child conditionals
                 for (const c of node.children) {
@@ -400,6 +419,100 @@ const ActionListXml = (() => {
         return applyRuleList(rules, value, { ...ctx, current: value });
     }
 
+    // ---- effect execution (Phase 6) --------------------------------------
+    //
+    // Effect elements execute in DOCUMENT ORDER. Guards are the existing
+    // conditional semantics: a voided evaluation (null) makes the enclosing
+    // effect a no-op — which is how
+    //   <setStoryFlag name="craft10Armor"><ifResource resourceName="armor"
+    //     min="10"/></setStoryFlag>
+    // expresses `if (resources.armor >= 10) setStoryFlag(...)`.
+    //
+    // Every resource and mana grant in the executor funnels through the ONE
+    // dispatcher below. That is the P2 §2d award-indirection seam: the
+    // post-Phase-6 carrier consults an award schedule here to route a grant
+    // local | foreign | dummy. Phase 6 lands the seam with zero state and
+    // zero behavior change — no schedule ⇒ the dispatcher IS today's direct
+    // call, which is what keeps the option byte-inert.
+
+    /**
+     * The single grant site.
+     * @param {object} action  the live Action (grant attribution)
+     * @param {string} name    resource name; "mana" is the loop-budget pseudo-resource
+     * @param {number|boolean} amount
+     * @returns {number|boolean} the amount granted (finishRegular's ledger value)
+     */
+    function grantResource(action, name, amount) {
+        if (name === "mana") addMana(/** @type {number} */(amount));
+        else addResource(name, amount);
+        return amount;
+    }
+
+    // whitelisted <effect name="..."/> primitives: composite / RNG-bearing /
+    // shared machinery, each wrapping the SAME helper the JS body calls (RNG
+    // parity by construction — the XML vocabulary has no draw verbs).
+    const EFFECTS = {
+        // HaulAction.finish latches which town's ruins the stone came from
+        setStoneLoc: (ctx) => { stoneLoc = ctx.action.townNum; },
+    };
+
+    const EFFECT_TAGS = new Set(["numericResource", "booleanResource", "setStoryFlag",
+        "storyVarMin", "skillExp", "effect"]);
+
+    /**
+     * Execute one effect element.
+     * @param {XmlNode} node
+     * @param {object} ctx  evaluation context; ctx.self is the live Action
+     * @param {1|-1} sign  +1 grants (<reward>), -1 deducts (<cost>): numeric
+     *   amounts are negated and boolean resources cleared instead of set
+     */
+    function execEffect(node, ctx, sign) {
+        switch (node.tag) {
+            case "numericResource": {
+                const amount = evalNumeric(node, ctx);
+                if (amount === null) return;   // guard voided
+                grantResource(ctx.self, node.attrs.name, sign < 0 ? -amount : amount);
+                return;
+            }
+            case "booleanResource": {
+                if (!evalConditionList(node.children, ctx)) return;
+                grantResource(ctx.self, node.attrs.name, sign > 0);
+                return;
+            }
+            case "setStoryFlag": {
+                if (!evalConditionList(node.children, ctx)) return;
+                setStoryFlag(node.attrs.name);
+                return;
+            }
+            case "storyVarMin": {
+                const v = evalNumeric(node, ctx);
+                if (v === null) return;
+                increaseStoryVarTo(node.attrs.name, v);
+                return;
+            }
+            case "skillExp":
+                // amounts come from the action's own skills table, which stays
+                // runtime-authoritative (main.view.js pulls action.skills[s]())
+                handleSkillExp(ctx.self.skills);
+                return;
+            case "effect": {
+                const fn = EFFECTS[node.attrs.name];
+                if (!fn) throw new Error(`actionListXml: effect ${node.attrs.name} not whitelisted`);
+                fn(ctx);
+                return;
+            }
+            default:
+                throw new Error(`actionListXml: unknown effect <${node.tag}>`);
+        }
+    }
+
+    /** effect children of a slot element, minus the structural wrappers */
+    const effectsOf = (nodes) => nodes.filter(n => {
+        if (EFFECT_TAGS.has(n.tag)) return true;
+        if (n.tag === "before" || n.tag === "after" || n.tag === "ledger" || n.tag === "deduction") return false;
+        throw new Error(`actionListXml: unknown effect <${n.tag}>`);
+    });
+
     // ---- compilation -----------------------------------------------------
 
     /**
@@ -525,7 +638,67 @@ const ActionListXml = (() => {
             };
         }
 
+        // ---- effect slots (Phase 6) --------------------------------------
+        // A slot compiles when its XML element carries data; otherwise the JS
+        // body stays (the Phase-4 per-action increment, here per (action,
+        // slot)). `this` inside a compiled body is the live Action, so
+        // <skillExp/> reads the authoritative JS skills table.
+        const bindCtx = function () { return { ...ctx, self: this }; };
+
+        // finish(): <reward>. The action `type` selects the wrapper, mirroring
+        // how the JS bodies are structured — limited actions wrap their grants
+        // in finishRegular(varName, oneInEvery, rewardFn). <before>/<after>
+        // hold the effects that sit OUTSIDE that callback (Accept Donations
+        // flags before it; Mana Well checks its ledger after it).
+        const reward = child(def, "reward");
+        if (reward && !native(reward, "finish") && reward.children.length) {
+            const before = effectsOf(child(reward, "before")?.children ?? []);
+            const after = effectsOf(child(reward, "after")?.children ?? []);
+            const inner = effectsOf(reward.children);
+            // finishRegular accumulates lootFrom{var} += rewardFn(); several JS
+            // bodies deliberately return nothing (lootFrom goes NaN — preserved,
+            // not "fixed") and Gamble returns its unmodified base, so the ledger
+            // amount is always EXPLICIT rather than inferred from the stacks.
+            const ledger = child(reward, "ledger");
+            const run = (nodes, c) => { for (const n of nodes) execEffect(n, c, 1); };
+            if (def.attrs.type === "limited") {
+                const ratio = num(need("oneInEvery").text.trim(), `${name} oneInEvery`);
+                fields.finish = function () {
+                    const c = bindCtx.call(this);
+                    run(before, c);
+                    towns[townNum].finishRegular(varName, ratio, () => {
+                        run(inner, c);
+                        return ledger ? evalNumeric(ledger, c) ?? undefined : undefined;
+                    });
+                    run(after, c);
+                };
+            } else {
+                fields.finish = function () {
+                    const c = bindCtx.call(this);
+                    run(before, c); run(inner, c); run(after, c);
+                };
+            }
+        }
+
+        // cost(): the <cost> deduction leg (the canStart affordability leg is
+        // compiled above). deduction="none" = the element gates canStart only
+        // and the deduction lives in finish() (Map buys its own map). An
+        // explicit <deduction> replaces the stacks for the deduction leg alone
+        // (Gather Team's cost() runs AFTER finish, so it reads the already
+        // incremented teamMembers and must not re-add the +1 canStart needs).
+        if (cost && !native(cost, "cost") && cost.attrs.deduction !== "none") {
+            const ded = child(cost, "deduction");
+            const nodes = effectsOf(ded ? ded.children : cost.children);
+            if (nodes.length) {
+                fields.cost = function () {
+                    const c = bindCtx.call(this);
+                    for (const n of nodes) execEffect(n, c, -1);
+                };
+            }
+        }
+
         fields.__nativeFields = nativeFields;
+        fields.__compiledSlots = SLOTS.filter(s => typeof fields[s] === "function");
         return fields;
     }
 
@@ -620,5 +793,5 @@ const ActionListXml = (() => {
         overrideBackup = null;
     }
 
-    return { parseDocument, compileAction, compileAll, applyOverrides, revertOverrides };
+    return { SLOTS, parseDocument, compileAction, compileAll, applyOverrides, revertOverrides };
 })();

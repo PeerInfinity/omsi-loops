@@ -164,6 +164,20 @@
                 </attribute>
                 <ref name="booleanCondition" />
             </element>
+            <element name="ifGuildRankName">
+                <a:documentation>Test a guild's current rank name. Note that the rank name the
+                    game computes is DECORATED ("A+, Mult x1.4"), so a bare rank name never
+                    matches — the JS bodies compare the same way, and JS is the oracle.</a:documentation>
+                <il:label>If guild rank name</il:label>
+                <attribute name="which">
+                    <choice>
+                        <value>craftGuild</value>
+                        <value>wizCollege</value>
+                    </choice>
+                </attribute>
+                <attribute name="name" />
+                <ref name="booleanCondition" />
+            </element>
             <element name="ifGlobalFlag">
                 <a:documentation>Test a whitelisted boolean loop-temp global.</a:documentation>
                 <il:label>If global flag</il:label>
@@ -710,9 +724,10 @@
                     <data type="positiveInteger"></data>
                 </element>
                 <element name="reward">
-                    <zeroOrMore>
-                        <ref name="resourceStack" />
-                    </zeroOrMore>
+                    <choice>
+                        <ref name="nativeMarker" />
+                        <ref name="rewardBody" />
+                    </choice>
                 </element>
             </interleave>
         </element>
@@ -725,9 +740,10 @@
             <interleave>
                 <ref name="actionDefinition" />
                 <element name="reward">
-                    <zeroOrMore>
-                        <ref name="resourceStack" />
-                    </zeroOrMore>
+                    <choice>
+                        <ref name="nativeMarker" />
+                        <ref name="rewardBody" />
+                    </choice>
                 </element>
             </interleave>
         </element>
@@ -748,6 +764,63 @@
             <attribute name="name" />
             <ref name="conditionalEvaluation" />
         </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="storyVarMin">
+            <a:documentation>Raise a story variable to at least this value (increaseStoryVarTo).</a:documentation>
+            <il:label>Raise story var to</il:label>
+            <attribute name="name" />
+            <ref name="numericEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="skillExp">
+            <a:documentation>Grant this action's skill exp table (handleSkillExp). The amounts
+                live on the action's own skills table, which stays runtime-authoritative.</a:documentation>
+            <il:label>Grant skill exp</il:label>
+            <empty />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="effect">
+            <a:documentation>Invoke a whitelisted named effect primitive: composite, RNG-bearing
+                or shared reward machinery whose implementation wraps the same JS helper the
+                hand-written body calls. The XML vocabulary carries no draw/roll verbs.</a:documentation>
+            <il:label>Effect</il:label>
+            <attribute name="name" />
+            <empty />
+        </element>
+    </define>
+    <define name="rewardBody">
+        <a:documentation>A reward body: effects in document order, plus the optional structural
+            wrappers. For limited actions the bare effects run INSIDE the finishRegular reward
+            callback; &lt;before&gt;/&lt;after&gt; hold the effects that sit outside it, and
+            &lt;ledger&gt; is the amount finishRegular records in lootFrom{varName} (absent =
+            the JS body returns nothing, so the ledger goes NaN — preserved, not fixed).</a:documentation>
+        <interleave>
+            <zeroOrMore>
+                <ref name="resourceStack" />
+            </zeroOrMore>
+            <optional>
+                <element name="before">
+                    <zeroOrMore>
+                        <ref name="resourceStack" />
+                    </zeroOrMore>
+                </element>
+            </optional>
+            <optional>
+                <element name="after">
+                    <zeroOrMore>
+                        <ref name="resourceStack" />
+                    </zeroOrMore>
+                </element>
+            </optional>
+            <optional>
+                <element name="ledger">
+                    <ref name="numericEvaluation" />
+                </element>
+            </optional>
+        </interleave>
     </define>
     <define name="nativeMarker">
         <a:documentation>This field keeps its hand-written JS implementation (the two-layer
@@ -825,9 +898,29 @@
                             <value>none</value>
                         </attribute>
                     </optional>
-                    <zeroOrMore>
-                        <ref name="resourceStack" />
-                    </zeroOrMore>
+                    <optional>
+                        <!-- deduction="none": the element gates canStart only and the
+                             deduction happens inside finish() (Map buys its own map) -->
+                        <attribute name="deduction">
+                            <value>none</value>
+                        </attribute>
+                    </optional>
+                    <interleave>
+                        <zeroOrMore>
+                            <ref name="resourceStack" />
+                        </zeroOrMore>
+                        <optional>
+                            <element name="deduction">
+                                <a:documentation>Overrides the stacks for the DEDUCTION leg only.
+                                    cost() runs after finish(), so an action whose finish changes
+                                    the resource its cost is computed from (Gather Team) needs a
+                                    separate expression from the canStart affordability one.</a:documentation>
+                                <zeroOrMore>
+                                    <ref name="resourceStack" />
+                                </zeroOrMore>
+                            </element>
+                        </optional>
+                    </interleave>
                 </element>
             </optional>
             <optional>

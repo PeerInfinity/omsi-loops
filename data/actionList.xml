@@ -83,6 +83,7 @@
             <numericResource name="mana">
                 <primaryValue />
             </numericResource>
+            <ledger><primaryValue /></ledger>
         </reward>
     </action>
     <action type="limited" name="Pick Locks" varName="Locks">
@@ -133,6 +134,7 @@
             <numericResource name="gold">
                 <primaryValue />
             </numericResource>
+            <ledger><primaryValue /></ledger>
         </reward>
     </action>
     <action type="normal" name="Buy Glasses">
@@ -196,12 +198,17 @@
                 <function name="getExploreProgress" />
             </if>
         </unlocked>
-        <cost>
+        <cost deduction="none">
             <numericResource name="gold">
                 <primaryValue />
             </numericResource>
         </cost>
         <reward>
+            <!-- Map pays for itself inside finish(), before the grant -->
+            <numericResource name="gold">
+                <primaryValue />
+                <multiplier value="-1" />
+            </numericResource>
             <numericResource name="map">1</numericResource>
         </reward>
     </action>
@@ -389,6 +396,7 @@
             <numericResource name="gold">
                 <primaryValue />
             </numericResource>
+            <ledger><primaryValue /></ledger>
         </reward>
     </action>
     <action type="progress" name="Investigate" varName="Secrets" townNum="0">
@@ -473,6 +481,7 @@
             <numericResource name="gold">
                 <primaryValue />
             </numericResource>
+            <ledger><primaryValue /></ledger>
         </reward>
     </action>
     <action type="normal" name="Throw Party" townNum="0">
@@ -1435,6 +1444,7 @@
             <numericResource name="mana">
                 <primaryValue />
             </numericResource>
+            <ledger><primaryValue /></ledger>
         </reward>
     </action>
     <action type="limited" name="Gather Herbs" varName="Herbs" townNum="1">
@@ -1491,6 +1501,7 @@
         <oneInEvery>10</oneInEvery>
         <reward>
             <numericResource name="herbs">1</numericResource>
+            <ledger>1</ledger>
         </reward>
     </action>
     <action type="limited" name="Hunt" townNum="1">
@@ -1535,6 +1546,7 @@
         <oneInEvery>10</oneInEvery>
         <reward>
             <numericResource name="hide">1</numericResource>
+            <ledger>1</ledger>
         </reward>
     </action>
     <action type="normal" name="Sit By Waterfall" townNum="1">
@@ -2364,6 +2376,9 @@
         <oneInEvery>1000</oneInEvery>
         <!-- good/goodTemp ledgers are derived by adjustRocks(), not the standard discovery formula -->
         <reward>
+            <before>
+                <effect name="setStoneLoc" />
+            </before>
             <booleanResource name="stone" />
         </reward>
     </action>
@@ -2473,6 +2488,7 @@
                 <skillBonus name="Thievery" />
                 <floor />
             </numericResource>
+            <ledger>60</ledger>
         </reward>
     </action>
     <action type="progress" name="Get Drunk" varName="Drunk" townNum="2">
@@ -2610,6 +2626,9 @@
         </cost>
         <reward>
             <numericResource name="armor">1</numericResource>
+            <setStoryFlag name="armorCrafted" />
+            <setStoryFlag name="craft10Armor"><ifResource resourceName="armor" min="10" /></setStoryFlag>
+            <setStoryFlag name="craft20Armor"><ifResource resourceName="armor" min="25" /></setStoryFlag>
         </reward>
     </action>
     <action type="normal" name="Read Books" townNum="2">
@@ -2692,6 +2711,7 @@
         </cost>
         <reward>
             <booleanResource name="pickaxe" />
+            <setStoryFlag name="pickaxeBought" />
         </reward>
     </action>
     <action type="normal" name="Underworld" townNum="2">
@@ -2786,18 +2806,26 @@
         </unlocked>
         <cost>
             <!-- JS deducts teamMembers*100 AFTER finish() adds the new member, so
-                 gate and deduction are both (teamMembers+1)*100 of the pre-finish count -->
+            gate and deduction are both (teamMembers+1)*100 of the pre-finish count -->
             <numericResource name="gold">
                 <resourceValue name="teamMembers" />
                 <addition value="1" />
                 <multiplier value="100" />
             </numericResource>
+            <deduction>
+                <numericResource name="gold">
+                    <resourceValue name="teamMembers" />
+                    <multiplier value="100" />
+                </numericResource>
+            </deduction>
         </cost>
         <canStart>
             <ifGuild guild="Adventure" />
         </canStart>
         <reward>
             <numericResource name="teamMembers">1</numericResource>
+            <setStoryFlag name="teammateGathered" />
+            <setStoryFlag name="fullParty"><ifResource resourceName="teamMembers" min="5" /></setStoryFlag>
         </reward>
     </action>
     <action type="progress" name="Apprentice" townNum="2">
@@ -3488,6 +3516,9 @@
         <oneInEvery>1000</oneInEvery>
         <!-- good/goodTemp ledgers are derived by adjustRocks(), not the standard discovery formula -->
         <reward>
+            <before>
+                <effect name="setStoneLoc" />
+            </before>
             <booleanResource name="stone" />
         </reward>
     </action>
@@ -3578,6 +3609,7 @@
         <oneInEvery>100</oneInEvery>
         <reward>
             <numericResource name="mana">5000</numericResource>
+            <ledger>5000</ledger>
         </reward>
     </action>
     <action type="progress" name="Decipher Runes" varName="Runes" townNum="3">
@@ -3712,6 +3744,7 @@
              loopingPotionMade and unlocks global story 9 -->
         <reward>
             <booleanResource name="loopingPotion" />
+            <skillExp />
         </reward>
     </action>
     <action type="normal" name="Pyromancy" townNum="3">
@@ -4415,7 +4448,11 @@
         </totalDiscovered>
         <oneInEvery>5</oneInEvery>
         <reward>
+            <before>
+                <setStoryFlag name="receivedDonation" />
+            </before>
             <numericResource name="gold">20</numericResource>
+            <ledger>20</ledger>
         </reward>
     </action>
     <action type="normal" name="Buy Mana Z5" townNum="4">
@@ -4468,6 +4505,7 @@
             <numericResource name="artifacts">1</numericResource>
         </cost>
         <reward>
+            <setStoryFlag name="artifactSold" />
             <numericResource name="gold">50</numericResource>
         </reward>
     </action>
@@ -4500,7 +4538,10 @@
             <numericResource name="artifacts">1</numericResource>
         </cost>
         <reward>
+            <setStoryFlag name="artifactDonated" />
             <numericResource name="favors">1</numericResource>
+            <setStoryFlag name="donated20Artifacts"><ifResource resourceName="favors" min="20" /></setStoryFlag>
+            <setStoryFlag name="donated40Artifacts"><ifResource resourceName="favors" min="50" /></setStoryFlag>
         </reward>
     </action>
     <action type="normal" name="Mercantilism" townNum="4">
@@ -4672,7 +4713,11 @@
         </cost>
         <!-- finish() not yet modeled (Phase 6): Crafting exp 50, enchantments += 1 -->
         <reward>
+            <skillExp />
             <numericResource name="enchantments">1</numericResource>
+            <setStoryFlag name="armorEnchanted" />
+            <setStoryFlag name="enchanted10Armor"><ifResource resourceName="enchantments" min="10" /></setStoryFlag>
+            <setStoryFlag name="enchanted20Armor"><ifResource resourceName="enchantments" min="25" /></setStoryFlag>
         </reward>
     </action>
     <action type="normal" name="Restoration" townNum="4">
@@ -4872,6 +4917,14 @@
         <!-- finish() not yet modeled (Phase 6): Crafting exp 100 -->
         <reward>
             <numericResource name="houses">1</numericResource>
+            <skillExp />
+            <setStoryFlag name="houseBuilt" />
+            <setStoryFlag name="housesBuiltGodlike">
+                <ifResource resourceName="houses" min="10" />
+                <!-- upstream compares against the decorated rank name, so this never fires -->
+                <ifGuildRankName which="craftGuild" name="Godlike" />
+            </setStoryFlag>
+            <setStoryFlag name="built50Houses"><ifResource resourceName="houses" min="50" /></setStoryFlag>
         </reward>
     </action>
     <action type="normal" name="Collect Taxes" townNum="4">
@@ -4940,6 +4993,8 @@
         </cost>
         <reward>
             <booleanResource name="pegasus" />
+            <setStoryFlag name="acquiredPegasus" />
+            <setStoryFlag name="acquiredPegasusWithTeam"><ifResource resourceName="teamMembers" min="5" /></setStoryFlag>
         </reward>
     </action>
     <action type="normal" name="Seek Blessing" townNum="4">
@@ -5491,6 +5546,7 @@
         <oneInEvery>100</oneInEvery>
         <reward>
             <numericResource name="pylons">1</numericResource>
+            <ledger>1</ledger>
         </reward>
     </action>
     <action type="normal" name="Raise Zombie" townNum="5">
@@ -5530,7 +5586,10 @@
         <!-- finish() not yet modeled (Phase 6): Dark exp 100, zombie += 1,
              maxZombiesRaised raised to the zombie count -->
         <reward>
+            <setStoryFlag name="attemptedRaiseZombie" />
+            <skillExp />
             <numericResource name="zombie">1</numericResource>
+            <storyVarMin name="maxZombiesRaised"><resourceValue name="zombie" /></storyVarMin>
         </reward>
     </action>
     <action type="normal" name="Dark Sacrifice" townNum="5">
@@ -5598,6 +5657,7 @@
             <ifHasResource resourceName="supplies" inverted="inverted" />
         </canStart>
         <reward>
+            <setStoryFlag name="suppliesPurchased" />
             <booleanResource name="supplies" />
         </reward>
     </action>
@@ -5652,6 +5712,17 @@
             <numericResource name="mana">
                 <primaryValue />
             </numericResource>
+            <setStoryFlag name="drewDryWell">
+                <if equals="0"><primaryValue /></if>
+            </setStoryFlag>
+            <setStoryFlag name="wellDrawn">
+                <if minExclusive="0"><primaryValue /></if>
+            </setStoryFlag>
+            <ledger><primaryValue /></ledger>
+            <after>
+                <setStoryFlag name="drew10Wells"><ifGoodItems min="10" /></setStoryFlag>
+                <setStoryFlag name="drew15Wells"><ifGoodItems min="15" /></setStoryFlag>
+            </after>
         </reward>
     </action>
     <action type="normal" name="Journey Forth" townNum="5">
@@ -5972,6 +6043,9 @@
         <oneInEvery>1000</oneInEvery>
         <!-- good/goodTemp ledgers are derived by adjustRocks(), not the standard discovery formula -->
         <reward>
+            <before>
+                <effect name="setStoneLoc" />
+            </before>
             <booleanResource name="stone" />
         </reward>
     </action>
@@ -6253,6 +6327,9 @@
         <oneInEvery>1000</oneInEvery>
         <!-- good/goodTemp ledgers are derived by adjustRocks(), not the standard discovery formula -->
         <reward>
+            <before>
+                <effect name="setStoneLoc" />
+            </before>
             <booleanResource name="stone" />
         </reward>
     </action>
@@ -6786,6 +6863,7 @@
         </canStart>
         <reward>
             <booleanResource name="key" />
+            <setStoryFlag name="keyBought" />
         </reward>
     </action>
     <action type="normal" name="Leave City" townNum="7">
