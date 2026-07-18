@@ -48,7 +48,8 @@ const ActionListXml = (() => {
         "progressLevel", "goodItems", "discoveredItems", "checkedItems", "value", "function",
         "resourceValue", "townValue", "globalValue", "stonesUsed", "storyVar",
         "segment", "loopCounter", "totalCompletions", "segments", "power", "fibonacci",
-        "dungeonCompleted", "dungeonFloors", "trialCompleted", "trialFloors", "buffCap", "guildSegment"]);
+        "dungeonCompleted", "dungeonFloors", "trialCompleted", "trialFloors", "buffCap", "guildSegment",
+        "currentFloor"]);
     const CONDITIONAL_TAGS = new Set(["if", "ifCurrentValue", "ifResource", "ifHasResource",
         "ifStoryFlag", "ifProgress", "ifGoodItems", "ifDiscoveredItems", "ifCheckedItems",
         "ifPrestige", "ifTownUnlocked", "anyOf", "never", "ifGuild", "ifGlobalFlag", "ifSoulstoneSac",
@@ -68,6 +69,9 @@ const ActionListXml = (() => {
         totalAssassinations: () => totalAssassinations(),
         getWizCollegeRankBonus: () => getWizCollegeRank().bonus,
         getCraftGuildRankBonus: () => getCraftGuildRank().bonus,
+        getThievesGuildRankBonus: () => getThievesGuildRank().bonus,
+        getFrostGiantsRankBonus: () => getFrostGiantsRank().bonus,
+        getFightJungleMonstersRankBonus: () => getFightJungleMonstersRank().bonus,
         getSelfCombat: () => getSelfCombat(),
         getTeamCombat: () => getTeamCombat(),
         getZombieStrength: () => getZombieStrength(),
@@ -256,12 +260,17 @@ const ActionListXml = (() => {
                 if (ctx.mp?.segment === undefined) throw new Error("actionListXml: <segment/> outside loopCost");
                 return ctx.mp.segment;
             }
-            case "loopCounter":
+            case "loopCounter": {
                 // source="town" always reads the town's counter (trial
-                // canStart bodies ignore their loopCounter argument)
-                if (node.attrs.source === "town") return towns[ctx.action.townNum][ctx.action.varName + "LoopCounter"];
+                // canStart bodies ignore their loopCounter argument);
+                // varName reads ANOTHER action's counter (Prepare Buffet
+                // scales off how many survivors were rescued this loop)
+                const lcVar = node.attrs.varName ?? ctx.action.varName;
+                if (node.attrs.varName !== undefined) return townFor(lcVar)[lcVar + "LoopCounter"];
+                if (node.attrs.source === "town") return towns[ctx.action.townNum][lcVar + "LoopCounter"];
                 return ctx.mp?.loopCounter
-                    ?? towns[ctx.action.townNum][ctx.action.varName + "LoopCounter"];
+                    ?? towns[ctx.action.townNum][lcVar + "LoopCounter"];
+            }
             case "totalCompletions":
                 return ctx.mp?.totalCompletions
                     ?? towns[ctx.action.townNum]["total" + ctx.action.varName];
@@ -285,6 +294,11 @@ const ActionListXml = (() => {
                 return trialFloors[num(node.attrs.trialNum, "trialFloors")];
             case "buffCap":
                 return getBuffCap(node.attrs.buffName);
+            case "currentFloor":
+                // trial/dungeon floor derived from the town loop counter; the
+                // method lives on the live action, so this is effect-context only
+                if (!ctx.self?.currentFloor) throw new Error("actionListXml: <currentFloor/> outside a trial effect body");
+                return ctx.self.currentFloor();
             case "guildSegment": {
                 const g = GUILD_SEGMENTS[node.attrs.name];
                 if (!g) throw new Error(`actionListXml: unknown guildSegment ${node.attrs.name}`);
@@ -454,10 +468,17 @@ const ActionListXml = (() => {
     const EFFECTS = {
         // HaulAction.finish latches which town's ruins the stone came from
         setStoneLoc: (ctx) => { stoneLoc = ctx.action.townNum; },
+        // Spatiomancy resizes every limited pool game-wide when its LEVEL
+        // moves, so the grant and the re-adjust are one composite
+        spatiomancyFinish: (ctx) => {
+            const before = getSkillLevel("Spatiomancy");
+            handleSkillExp(ctx.self.skills);
+            if (getSkillLevel("Spatiomancy") !== before) adjustAll();
+        },
     };
 
     const EFFECT_TAGS = new Set(["numericResource", "booleanResource", "setStoryFlag",
-        "storyVarMin", "skillExp", "progressExp", "grantProgress", "effect"]);
+        "storyVarMin", "skillExp", "setSkill", "progressExp", "grantProgress", "effect"]);
 
     /**
      * Execute one effect element.
@@ -506,6 +527,15 @@ const ActionListXml = (() => {
                 if (amount === null) return;
                 const v = node.attrs.varName ?? ctx.action.varName;
                 townFor(v).finishProgress(v, amount);
+                return;
+            }
+            case "setSkill": {
+                // Seek Blessing and Prepare Buffet WRITE their skills table
+                // before granting it (the amount scales with a guild rank /
+                // loop counter). The JS bodies mutate this.skills the same way.
+                const v = evalNumeric(node, ctx);
+                if (v === null) return;
+                ctx.self.skills[node.attrs.name] = v;
                 return;
             }
             case "skillExp":

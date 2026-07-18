@@ -2936,6 +2936,10 @@
                 <function name="getCraftGuildRankBonus" />
             </multiplier>
         </progress>
+        <reward>
+            <grantProgress />
+            <skillExp />
+        </reward>
     </action>
     <action type="progress" name="Mason" townNum="2">
         <expMult>2</expMult>
@@ -2986,6 +2990,10 @@
                 <function name="getCraftGuildRankBonus" />
             </multiplier>
         </progress>
+        <reward>
+            <grantProgress />
+            <skillExp />
+        </reward>
     </action>
     <action type="progress" name="Architect" townNum="2">
         <expMult>2.5</expMult>
@@ -3036,6 +3044,10 @@
                 <function name="getCraftGuildRankBonus" />
             </multiplier>
         </progress>
+        <reward>
+            <grantProgress />
+            <skillExp />
+        </reward>
     </action>
     <action type="multipart" name="Adventure Guild" varName="AdvGuild" townNum="2">
         <expMult>1</expMult>
@@ -4921,9 +4933,9 @@
             <!-- college attendance is required, not consumed -->
             <ifHasResource resourceName="wizardCollege" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): Spatiomancy exp 100; on levelup,
-             re-adjusts every town's discoverable totals -->
-        <reward />
+        <reward>
+            <effect name="spatiomancyFinish" />
+        </reward>
     </action>
     <action type="progress" name="Seek Citizenship" varName="Citizen" townNum="4">
         <expMult>1</expMult>
@@ -5137,8 +5149,17 @@
             <!-- the pegasus is required, not consumed -->
             <ifHasResource resourceName="pegasus" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): Divine exp 50 * Frost Giants rank bonus -->
-        <reward />
+        <reward>
+            <setStoryFlag name="blessingSought" />
+            <setStoryFlag name="greatBlessingSought">
+                <if min="10"><function name="getFrostGiantsRankBonus" /></if>
+            </setStoryFlag>
+            <setSkill name="Divine" value="50">
+                <multiplier><function name="getFrostGiantsRankBonus" /></multiplier>
+                <floor />
+            </setSkill>
+            <skillExp />
+        </reward>
     </action>
     <action type="normal" name="Fall From Grace" townNum="4">
         <expMult>2</expMult>
@@ -6076,6 +6097,11 @@
         </tickProgress>
         <!-- loopsFinished records the floor; floorReward grants a zombie (Phase 6) -->
         <loopReward />
+        <reward>
+            <setStoryFlag name="deadTrial1Done"><if min="1"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="deadTrial10Done"><if min="10"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="deadTrial25Done"><if min="25"><currentFloor /></if></setStoryFlag>
+        </reward>
     </action>
     <action type="progress" name="RuinsZ5" townNum="5">
         <expMult>1</expMult>
@@ -6211,9 +6237,13 @@
         <effortCost>25000</effortCost>
         <visible/>
         <unlocked/>
-        <!-- finish() not yet modeled (Phase 6): progress 20 * Fight Jungle
-             Monsters rank bonus, herbs += 1 -->
-        <reward />
+        <progress value="20">
+            <multiplier><function name="getFightJungleMonstersRankBonus" /></multiplier>
+        </progress>
+        <reward>
+            <grantProgress />
+            <numericResource name="herbs">1</numericResource>
+        </reward>
     </action>
     <action type="normal" name="Prepare Buffet" townNum="6">
         <expMult>1</expMult>
@@ -6254,9 +6284,17 @@
             <numericResource name="herbs">10</numericResource>
             <numericResource name="blood">1</numericResource>
         </cost>
-        <!-- finish() not yet modeled (Phase 6): Alchemy exp 25, Gluttony exp
-             RescueLoopCounter * 5 -->
-        <reward />
+        <reward>
+            <setSkill name="Gluttony">
+                <loopCounter varName="Rescue" />
+                <multiplier value="5" />
+                <floor />
+            </setSkill>
+            <skillExp />
+            <setStoryFlag name="buffetHeld" />
+            <setStoryFlag name="buffetFor1"><if min="1"><loopCounter varName="Rescue" /></if></setStoryFlag>
+            <setStoryFlag name="buffetFor6"><if min="6"><loopCounter varName="Rescue" /></if></setStoryFlag>
+        </reward>
     </action>
     <action type="normal" name="Totem" townNum="6">
         <expMult>1</expMult>
@@ -6858,6 +6896,14 @@
         </multiplier>
         </tickProgress>
         <loopReward />
+        <reward>
+            <setStoryFlag name="trailSecretFaced" />
+            <setStoryFlag name="trailSecret1Done"><if min="1"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="trailSecret10Done"><if min="10"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="trailSecret100Done"><if min="100"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="trailSecret500Done"><if min="500"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="trailSecretAllDone"><if equals="1000"><currentFloor /></if></setStoryFlag>
+        </reward>
     </action>
     <action type="normal" name="Invest" townNum="7">
         <expMult>1</expMult>
@@ -7188,9 +7234,18 @@
         <canStart>
             <ifGuild guild="Thieves" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): progress 30 * Thieves Guild rank
-             bonus, Thievery exp, gold += floor(primaryValue * rank bonus) -->
-        <reward />
+        <progress value="30">
+            <multiplier><function name="getThievesGuildRankBonus" /></multiplier>
+        </progress>
+        <reward>
+            <grantProgress />
+            <skillExp />
+            <numericResource name="gold">
+                <primaryValue />
+                <multiplier><function name="getThievesGuildRankBonus" /></multiplier>
+                <floor />
+            </numericResource>
+        </reward>
     </action>
     <action type="progress" name="Rob Warehouse" townNum="7">
         <expMult>2</expMult>
@@ -7243,9 +7298,18 @@
         <canStart>
             <ifGuild guild="Thieves" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): progress 20 * Thieves Guild rank
-             bonus, Thievery exp, gold += floor(primaryValue * rank bonus) -->
-        <reward />
+        <progress value="20">
+            <multiplier><function name="getThievesGuildRankBonus" /></multiplier>
+        </progress>
+        <reward>
+            <grantProgress />
+            <skillExp />
+            <numericResource name="gold">
+                <primaryValue />
+                <multiplier><function name="getThievesGuildRankBonus" /></multiplier>
+                <floor />
+            </numericResource>
+        </reward>
     </action>
     <action type="progress" name="Insurance Fraud" townNum="7">
         <expMult>2.5</expMult>
@@ -7298,9 +7362,18 @@
         <canStart>
             <ifGuild guild="Thieves" />
         </canStart>
-        <!-- finish() not yet modeled (Phase 6): progress 10 * Thieves Guild rank
-             bonus, Thievery exp, gold += floor(primaryValue * rank bonus) -->
-        <reward />
+        <progress value="10">
+            <multiplier><function name="getThievesGuildRankBonus" /></multiplier>
+        </progress>
+        <reward>
+            <grantProgress />
+            <skillExp />
+            <numericResource name="gold">
+                <primaryValue />
+                <multiplier><function name="getThievesGuildRankBonus" /></multiplier>
+                <floor />
+            </numericResource>
+        </reward>
     </action>
     <action type="normal" name="Guild Assassin" townNum="7">
         <expMult>1</expMult>

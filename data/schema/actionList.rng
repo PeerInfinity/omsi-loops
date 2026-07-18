@@ -487,6 +487,11 @@
                         <value>town</value>
                     </attribute>
                 </optional>
+                <optional>
+                    <!-- another action's town counter (Prepare Buffet scales off
+                         how many survivors were rescued this loop) -->
+                    <attribute name="varName" />
+                </optional>
             </element>
             <element name="totalCompletions">
                 <a:documentation>Multipart context: the total-completions argument, defaulting to
@@ -541,6 +546,12 @@
                 <attribute name="trialNum">
                     <data type="integer" />
                 </attribute>
+            </element>
+            <element name="currentFloor">
+                <a:documentation>The trial/dungeon floor this action is currently on, derived
+                    from its town loop counter. Valid inside effect bodies only.</a:documentation>
+                <il:label>Current floor</il:label>
+                <empty />
             </element>
             <element name="buffCap">
                 <a:documentation>The configured cap of a buff (getBuffCap).</a:documentation>
@@ -803,6 +814,27 @@
             <il:label>Raise story var to</il:label>
             <attribute name="name" />
             <ref name="numericEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="setSkill">
+            <a:documentation>Write one entry of this action's skills table before granting it.
+                For the two actions whose skill amount is dynamic (Seek Blessing scales Divine
+                with the Frost Giants rank; Prepare Buffet scales Gluttony with the Rescue loop
+                counter) — the JS bodies mutate this.skills the same way.</a:documentation>
+            <il:label>Set skill amount</il:label>
+            <attribute name="name" />
+            <ref name="numericEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="grantProgress">
+            <a:documentation>Execute this action's own &lt;progress&gt; evaluation here
+                (finishProgress). A marker rather than an amount, so &lt;progress&gt; stays the
+                single source of truth — and so consumption is opt-in, since several actions
+                carry &lt;progress&gt; alongside a finish body that is not modelled yet.</a:documentation>
+            <il:label>Grant own progress</il:label>
+            <empty />
         </element>
     </define>
     <define name="resourceStack" combine="choice">

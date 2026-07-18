@@ -37,6 +37,8 @@
     ],
     "finish": [
       "Accept Donations",
+      "Apprentice",
+      "Architect",
       "Bird Watching",
       "Brew Potions",
       "Build Housing",
@@ -55,6 +57,7 @@
       "Dark Magic",
       "Dark Ritual",
       "Dark Sacrifice",
+      "Dead Trial",
       "Decipher Runes",
       "Destroy Pylons",
       "Donate",
@@ -62,6 +65,7 @@
       "Explore Cavern",
       "Explore City",
       "Explore Forest",
+      "Explore Jungle",
       "Fight Frost Giants",
       "Fight Jungle Monsters",
       "Fight Monsters",
@@ -81,6 +85,7 @@
       "Heal The Sick",
       "Heroes Trial",
       "Hunt",
+      "Insurance Fraud",
       "Investigate",
       "Large Dungeon",
       "Learn Alchemy",
@@ -90,6 +95,7 @@
       "Mana Geyser",
       "Mana Well",
       "Map",
+      "Mason",
       "Meander",
       "Meet People",
       "Mercantilism",
@@ -97,7 +103,9 @@
       "Oracle",
       "Pegasus",
       "Pick Locks",
+      "Pick Pockets",
       "Practical Magic",
+      "Prepare Buffet",
       "Purchase Key",
       "Purchase Supplies",
       "Pyromancy",
@@ -105,6 +113,9 @@
       "Read Books",
       "Rescue Survivors",
       "Restoration",
+      "Rob Warehouse",
+      "Secret Trial",
+      "Seek Blessing",
       "Seek Citizenship",
       "Sell Artifact",
       "Seminar",
@@ -112,6 +123,7 @@
       "Sit By Waterfall",
       "Small Dungeon",
       "Smash Pots",
+      "Spatiomancy",
       "Take Artifacts",
       "Talk To Hermit",
       "Talk To Witch",
@@ -128,7 +140,7 @@
   },
   "counts": {
     "cost": 33,
-    "finish": 88
+    "finish": 100
   },
   "native": {}
 }

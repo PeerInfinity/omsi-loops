@@ -176,6 +176,15 @@ export function effectStates() {
             },
         });
     }
+    // multipart loop counters: trial/dungeon floor = floor(loopCounter/segments),
+    // so without these every currentFloor() reads 0 and no floor threshold can
+    // be told from any other (it cost the currentFloor canary).
+    // floor = loopCounter / segments, and segments differ per action (3..12),
+    // so a threshold like "floor >= 10" is only distinguishable from ">= 11"
+    // when SOME action sits at exactly floor 10 — hence the 10*s ladder.
+    for (const k of [1, 3, 9, 27, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 300, 3000]) {
+        states.push({ id: `loopCounters:${k}`, spec: { profile: "zero", loopCounters: k, resources: stocked } });
+    }
     for (let k = 0; k < 24; k++) {
         states.push({ id: `random:${k}`, spec: { profile: "zero", random: 0x51D0 + k * 7919 } });
     }
@@ -198,8 +207,13 @@ function ladderResources(L) {
  * @param {string} [opts.xmlText]  overrides the carrier (canary hook)
  * @param {number} [opts.maxMismatches]
  * @param {string[]} [opts.onlyStates]
+ * @param {string[]} [opts.onlyActions]  restrict the (action, slot) worklist.
+ *   A vocabulary canary asserts "mutating element E changes behavior", and E
+ *   lives in known actions — evaluating only those proves exactly the same
+ *   thing at a fraction of the cost, which matters because the canary suite
+ *   would otherwise sweep the whole corpus once PER canary.
  */
-export function buildEffectDifferential({ xmlText = null, maxMismatches = 100, onlyStates = null } = {}) {
+export function buildEffectDifferential({ xmlText = null, maxMismatches = 100, onlyStates = null, onlyActions = null } = {}) {
     const jsCtx = makeContext(777001);
     jsCtx.ev(FM_INSTALL_SRC);
     jsCtx.ev(ED_INSTALL);
@@ -216,6 +230,7 @@ export function buildEffectDifferential({ xmlText = null, maxMismatches = 100, o
     const plan = JSON.parse(wiredCtx.ev("JSON.stringify(__slotPlan)"));
 
     const states = onlyStates ? effectStates().filter(s => onlyStates.includes(s.id)) : effectStates();
+    const pairs = onlyActions ? plan.pairs.filter(([n]) => onlyActions.includes(n)) : plan.pairs;
     const mismatches = [];
     /** @type {Record<string, boolean>} */
     const mutated = {};
@@ -224,7 +239,7 @@ export function buildEffectDifferential({ xmlText = null, maxMismatches = 100, o
     for (const s of states) {
         if (mismatches.length >= maxMismatches) break;
         const apply = `__fm.applyState(${JSON.stringify(s.spec)}); __effReset();`;
-        for (const [name, slot] of plan.pairs) {
+        for (const [name, slot] of pairs) {
             const key = `${name}.${slot}`;
             mutated[key] ??= false;
             // identical starting state in both arms, identical RNG state
