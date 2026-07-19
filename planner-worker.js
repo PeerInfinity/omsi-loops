@@ -89,6 +89,19 @@ options.pauseOnComplete = false;
 // unless a driver flips it before boot completes; inert by default
 if (options.useActionListXml) ActionListXml.applyOverrides();
 
+// fork: P2 transport (cross-game P2-A) — install the world data that rides
+// every request BEFORE any sim work. Stateless per request: a null/absent
+// worldConfig clears a previously installed one, so a mid-session schedule
+// install or clear self-heals without recreating the worker (same contract as
+// lootFirst and setOptions). installWorldConfig mirrors the managed-mode
+// option flip; against a clean context a null config is a true no-op.
+function installWorldConfig(cfg) {
+    if (typeof ActionListXml === "undefined") return;
+    if (!ActionListXml.installWorldConfig(cfg ?? null)) {
+        console.warn("planner-worker: worldConfig rejected; sim runs the vanilla world");
+    }
+}
+
 const sess = new IdlePlanner.Session();
 let P = IdlePlanner.newPlanningState();
 
@@ -137,6 +150,7 @@ onmessage = async (e) => {
             // game). Restore -> install the queue -> restart to a clean loop
             // start -> optimise.
             try {
+                installWorldConfig(data.worldConfig);
                 IdlePlanner._internals.plRestoreSave(
                     typeof data.save === "string" ? data.save : JSON.stringify(data.save));
                 const queue = data.queue ?? [];
@@ -170,6 +184,7 @@ onmessage = async (e) => {
                     if (data.params.expGainMultiplier !== undefined) options.expGainMultiplier = data.params.expGainMultiplier;
                 }
                 lootFirstStates = data.lootFirst ?? null;
+                installWorldConfig(data.worldConfig);
                 if (data.actualQueue) P.lastCommitted = data.actualQueue;
                 IdlePlanner._internals.plRestoreSave(
                     typeof data.save === "string" ? data.save : JSON.stringify(data.save));

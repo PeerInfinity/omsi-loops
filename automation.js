@@ -181,6 +181,18 @@ function collectLootFirstStates() {
     return states;
 }
 
+// fork: P2 transport (cross-game P2-A). The award schedule and the
+// session-only lootable priority prefs are world data the worker's engine copy
+// cannot see, exactly like the lootFirst checkboxes above — so they ride EVERY
+// request the same way. Without this the worker sims vanilla yields for pools
+// that actually award foreign items, and the planner scores a world that does
+// not exist. null (the standalone/unscheduled case) makes the worker clear any
+// previously installed config, which is what keeps mid-session install/clear
+// self-healing. Guarded: actionListXml.js is a fork addition.
+function worldConfigForWorker() {
+    return typeof ActionListXml !== "undefined" ? ActionListXml.buildWorldConfig() : null;
+}
+
 // Parse the stored priority list (a JSON string option) into goal specs.
 // Malformed input degrades to an empty list — targeted mode then just falls
 // through to the heuristic scorer (ruling 1's full fallback), never a crash.
@@ -209,6 +221,8 @@ function requestPlan(reason, { pipeline = false } = {}) {
         // null = worker keeps its native loot-first model (matches the
         // checkboxes we just set); otherwise the worker honors these states
         lootFirst: options.plannerControlLootFirst ? null : collectLootFirstStates(),
+        // world data the worker's engine copy cannot see (see above)
+        worldConfig: worldConfigForWorker(),
         params: {
             weights: currentWeights(),
             screenK: options.plannerScreenK,
@@ -419,7 +433,8 @@ function requestOptimize(reason) {
     ensureWorker();
     awaitingOptimize = true;
     optimizeInputQueue = queue;   // remember the "before" queue for the proposal tables
-    worker.postMessage({ type: "optimize", reqId: ++reqId, save: doSave(), queue });
+    worker.postMessage({ type: "optimize", reqId: ++reqId, save: doSave(), queue,
+        worldConfig: worldConfigForWorker() });
     setStatus(`optimising Buy Mana (${reason})…`);
 }
 

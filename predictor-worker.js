@@ -87,6 +87,17 @@ function handleMessage(data) {
             // context (apply/revert is idempotent)
             if (data.options.useActionListXml) ActionListXml.applyOverrides();
             else ActionListXml.revertOverrides();
+            // fork: P2 transport (cross-game P2-A) — install the world data
+            // (award schedule + lootable priority prefs) so this context sims
+            // the world that actually exists. Stateless per message: a null
+            // worldConfig clears a previously installed one. Runs AFTER the
+            // option mirror on purpose: installing a schedule flips
+            // useActionListXml ON itself (the carrier lives inside the compiled
+            // reward path), and that flip must be the last word — the mirror
+            // would otherwise revert the very path the schedule needs.
+            if (!ActionListXml.installWorldConfig(data.worldConfig ?? null)) {
+                console.warn("predictor-worker: worldConfig rejected; sim runs the vanilla world");
+            }
             // console.debug("set options");
             break;
         case "verifyDefaultIds":

@@ -1,5 +1,17 @@
 // prestige predictor from https://github.com/GustavJakobsson/IdleLoops-Predictor
 
+// fork: P2 transport (cross-game P2-A). The predictor worker runs its own
+// engine copy, so a scheduled world reaches it only if we send it. It rides
+// setOptions — already (re)sent per background run, and its apply/revert of
+// useActionListXml is the same idempotent shape — so the two stay in step.
+// Without this the predictor forecasts vanilla pot mana that will actually
+// arrive as foreign items: the user-visible wrongness this fixes.
+// Guarded: actionListXml.js is a fork addition, and this file also loads in
+// contexts that predate it.
+function worldConfigForPredictor() {
+  return typeof ActionListXml !== "undefined" ? ActionListXml.buildWorldConfig() : null;
+}
+
 /** @namespace `*/
 const Koviko = {
   /**
@@ -401,7 +413,7 @@ const Koviko = {
       if (!this.#worker && options.predictorBackgroundThread && !this.#workerDisabled) {
         this.#worker = new Worker("predictor-worker.js", {name: "predictor"});
         this.#worker.onmessage = this.handleWorkerMessage.bind(this);
-        this.#worker.postMessage({type: "setOptions", options});
+        this.#worker.postMessage({type: "setOptions", options, worldConfig: worldConfigForPredictor()});
         this.#worker.postMessage({type: "verifyDefaultIds", idRefs: Data.exportDefaultIds()});
       }
       return this.#worker;
@@ -1731,7 +1743,7 @@ const Koviko = {
       Data.recordSnapshot("predictor-worker");
       this.backgroundSnapshot = Data.getSnapshot(-1);
       const snapshotHeritage = this.backgroundSnapshot.getHeritage().map(s => s.id);
-      this.worker.postMessage({type: "setOptions", options});
+      this.worker.postMessage({type: "setOptions", options, worldConfig: worldConfigForPredictor()});
       this.worker.postMessage({
         type: "startUpdate",
         runData,
