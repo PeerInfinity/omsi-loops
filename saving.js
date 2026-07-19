@@ -1495,6 +1495,13 @@ function doLoad(toLoad) {
                     town[`good${varName}`] = toLoad[`good${varName}`];
                 if (toLoad[`good${varName}`] !== undefined)
                     town[`goodTemp${varName}`] = toLoad[`good${varName}`];
+                // fork: P2 lootable discovery census — assign-or-DELETE: a
+                // stale census from a previously loaded save must not
+                // survive a load that lacks one (old saves = empty census)
+                if (toLoad[`lootCensus${varName}`] !== undefined)
+                    town[`lootCensus${varName}`] = toLoad[`lootCensus${varName}`];
+                else
+                    delete town[`lootCensus${varName}`];
             }
         }
     }
@@ -1622,6 +1629,11 @@ function doSave() {
                 toSave[`goodTemp${varName}`] = town[`good${varName}`];
                 if (document.getElementById(`searchToggler${varName}`)) {
                     toSave[`searchToggler${varName}`] = inputElement(`searchToggler${varName}`).checked;
+                }
+                // fork: P2 lootable discovery census — persists beside the
+                // ledger vars; absent (unscheduled worlds) writes nothing
+                if (town[`lootCensus${varName}`] !== undefined) {
+                    toSave[`lootCensus${varName}`] = town[`lootCensus${varName}`];
                 }
             }
         }

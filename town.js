@@ -120,6 +120,12 @@ class Town {
 
     // finishes actions that have checkable aspects
     finishRegular(varName, rewardRatio, rewardFunc) {
+        // fork: P2 lootable contents schedule (world data, managed mode) —
+        // the scheduled walk lives beside the XML interpreter; with no
+        // schedule this body runs unchanged (byte-inert).
+        if (typeof ActionListXml !== "undefined" && ActionListXml.handlesLoot(varName)) {
+            return ActionListXml.lootFinishRegular(this, varName, rewardRatio, rewardFunc);
+        }
         // error state, negative numbers.
         if (this[`total${varName}`] - this[`checked${varName}`] < 0) {
             this[`checked${varName}`] = this[`total${varName}`];

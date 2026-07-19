@@ -534,6 +534,7 @@ const ActionListXml = (() => {
      */
     function setAwardSchedule(schedule) {
         awardCounters = { __proto__: null };
+        lootStates = { __proto__: null };
         if (schedule == null) { awardSchedule = null; return true; }
         const reject = (why) => {
             console.warn(`actionListXml: award schedule rejected: ${why}`);
@@ -557,6 +558,17 @@ const ActionListXml = (() => {
                 }
             }
         }
+        const lootables = schedule.lootables;
+        if (lootables !== undefined) {
+            if (typeof lootables !== "object" || lootables === null) return reject("lootables is not an object");
+            for (const varName in lootables) {
+                const contents = lootables[varName]?.contents;
+                if (!Array.isArray(contents)) return reject(`lootables.${varName}.contents is not an array`);
+                for (const e of contents) {
+                    if (!validAwardEntry(e)) return reject(`lootables.${varName}: bad entry ${JSON.stringify(e)}`);
+                }
+            }
+        }
         awardSchedule = schedule;
         return true;
     }
@@ -564,6 +576,9 @@ const ActionListXml = (() => {
     /** Per-loop carrier state restarts with the loop (driver restart()). */
     function onLoopRestart() {
         awardCounters = { __proto__: null };
+        // the walk state rebuilds lazily from (contents, good) — restart
+        // already reset every goodTemp, so the burn count is zero
+        lootStates = { __proto__: null };
     }
 
     /** Managed-mode outbound hook for foreign entries (bridge-registered). */
@@ -572,13 +587,13 @@ const ActionListXml = (() => {
     }
 
     /** @returns {number} the amount granted LOCALLY (0 for dummy/foreign) */
-    function applyAwardEntry(action, resource, index, entry) {
+    function applyAwardEntry(varName, resource, index, entry) {
         if (entry.dummy === true) return 0;
         if (entry.substrate !== undefined) {
             if (foreignAwardHook !== null) {
                 try {
                     foreignAwardHook({
-                        varName: action.varName, resource, index,
+                        varName, resource, index,
                         substrate: entry.substrate, type: entry.type,
                         count: entry.count ?? 1,
                     });
@@ -610,13 +625,226 @@ const ActionListXml = (() => {
                 const idx = awardCounters[key] = (awardCounters[key] ?? 0) + 1;
                 const entry = entries[idx - 1];
                 if (entry !== undefined && entry !== null) {
-                    return applyAwardEntry(action, name, idx - 1, entry);
+                    return applyAwardEntry(action.varName, name, idx - 1, entry);
                 }
             }
         }
         if (name === "mana") addMana(/** @type {number} */(amount));
         else addResource(name, amount);
         return amount;
+    }
+
+    // ---- P2 lootable contents (cross-game §9b-pre) -------------------------
+    //
+    // Limited actions harvest a per-town pool of "good" instances (pots
+    // with mana). A lootable contents schedule — schedule.lootables[varName]
+    // .contents — maps the k-th GOOD instance (k = the persistent good
+    // index, 0-based in discovery order; NOT the per-loop checked index) to
+    // a content: null = the vanilla loot, or the carrier's entry vocabulary
+    // (local {name, count} / foreign {substrate, type, count} / {dummy}).
+    // Indices past the array end are vanilla.
+    //
+    // Discovery stays vanilla-order (contents are unknown until checked —
+    // this also keeps the U-plan's discovery axis untouched): the discovery
+    // branch reveals contents[k] at the moment the k-th good is minted and
+    // harvests it immediately, exactly like vanilla. RE-HARVESTING known
+    // goods (the goodTemp walk) is where the player's per-category priority
+    // applies: each harvest picks the first category, in priority order,
+    // with instances remaining this loop and not disabled, consuming that
+    // category's instances in ascending k. Per-loop walk state rebuilds on
+    // every restart from (contents, good) — replay-stable, zero RNG.
+    //
+    // Discovery memory: a persistent per-action category census
+    // (town[`lootCensus${varName}`] = { category -> count }) is minted
+    // lazily at first scheduled discovery and kept beside the ledger vars
+    // (saving.js persists it; restore is assign-or-DELETE, absent in old
+    // saves = empty). It is reconciled against (contents, good) whenever
+    // the walk state rebuilds, so an old save entering a scheduled world
+    // starts with the correct discovered set.
+    //
+    // lootFrom semantics: only VANILLA harvests feed the lootFrom ledger —
+    // a re-routed/foreign/dummy instance contributes 0 (the tooltip counts
+    // what the pool itself yielded).
+    //
+    // Town.finishRegular delegates here when a schedule names its varName;
+    // with no schedule the vanilla body runs untouched (byte-inert).
+
+    /** @type {Record<string, {byCat: Record<string, {ks: number[], cursor: number}>}>} per-loop walk state by varName */
+    let lootStates = { __proto__: null };
+    /** @type {Record<string, {order: string[], disabled: Set<string>}>} session-only UI prefs by varName */
+    let lootPrefs = { __proto__: null };
+
+    function lootCategoryOf(entry) {
+        if (entry === null || entry === undefined) return "vanilla";
+        if (entry.dummy === true) return "dummy";
+        if (entry.substrate !== undefined) return `foreign:${entry.substrate}/${entry.type}`;
+        return `local:${entry.name}`;
+    }
+
+    /** @returns {boolean} true when a contents schedule names this varName */
+    function handlesLoot(varName) {
+        return awardSchedule?.lootables?.[varName] != null;
+    }
+
+    /** Category priority: user prefs first, then default order (vanilla
+     *  first, dummy last, others by first appearance in the pool). */
+    function lootOrder(varName, byCat) {
+        const cats = Object.keys(byCat);
+        cats.sort((a, b) => {
+            const rank = (c) => c === "vanilla" ? 0 : c === "dummy" ? 2 : 1;
+            if (rank(a) !== rank(b)) return rank(a) - rank(b);
+            return (byCat[a].ks[0] ?? 0) - (byCat[b].ks[0] ?? 0);
+        });
+        const pref = lootPrefs[varName];
+        if (!pref) return cats;
+        const inPref = pref.order.filter((c) => c in byCat);
+        return [...inPref, ...cats.filter((c) => !inPref.includes(c))];
+    }
+
+    function lootDisabled(varName) {
+        return lootPrefs[varName]?.disabled ?? new Set();
+    }
+
+    /**
+     * Rebuild one action's per-loop walk state from world data + the
+     * persistent town ledgers, reconciling the census. Called on loop
+     * restart and on schedule install; a mid-loop install additionally
+     * burns the goods already harvested this loop (good - goodTemp) in
+     * priority order — a one-loop approximation that the next restart
+     * squares exactly.
+     */
+    function buildLootState(varName) {
+        const contents = awardSchedule.lootables[varName].contents;
+        const town = townFor(varName);
+        const good = town[`good${varName}`] ?? 0;
+        /** @type {Record<string, {ks: number[], cursor: number}>} */
+        const byCat = { __proto__: null };
+        for (let k = 0; k < good; k++) {
+            const cat = lootCategoryOf(contents[k] ?? null);
+            (byCat[cat] ??= { ks: [], cursor: 0 }).ks.push(k);
+        }
+        const censusKey = `lootCensus${varName}`;
+        const census = town[censusKey];
+        const censusTotal = census
+            ? Object.values(census).reduce((a, b) => a + b, 0) : 0;
+        if (censusTotal !== good) {
+            const rebuilt = {};
+            for (const cat in byCat) rebuilt[cat] = byCat[cat].ks.length;
+            town[censusKey] = rebuilt;
+        }
+        const st = { byCat };
+        let burn = good - (town[`goodTemp${varName}`] ?? good);
+        while (burn-- > 0) {
+            const cat = pickLootCategory(st, varName, /* anyCategory */ true);
+            if (cat === null) break;
+            byCat[cat].cursor++;
+        }
+        return st;
+    }
+
+    function lootState(varName) {
+        return lootStates[varName] ?? (lootStates[varName] = buildLootState(varName));
+    }
+
+    /** Instances remaining this loop across ENABLED categories. */
+    function lootEnabledRemaining(varName) {
+        const st = lootState(varName);
+        const disabled = lootDisabled(varName);
+        let n = 0;
+        for (const cat in st.byCat) {
+            if (disabled.has(cat)) continue;
+            n += st.byCat[cat].ks.length - st.byCat[cat].cursor;
+        }
+        return n;
+    }
+
+    /** @returns {string|null} the category the next re-harvest consumes */
+    function pickLootCategory(st, varName, anyCategory = false) {
+        const disabled = anyCategory ? new Set() : lootDisabled(varName);
+        for (const cat of lootOrder(varName, st.byCat)) {
+            if (disabled.has(cat)) continue;
+            const b = st.byCat[cat];
+            if (b.cursor < b.ks.length) return cat;
+        }
+        return null;
+    }
+
+    /** @returns {number} the harvested instance's lootFrom contribution */
+    function executeLootEntry(varName, k, entry, rewardFunc) {
+        if (entry === null || entry === undefined) return rewardFunc();
+        applyAwardEntry(varName, "loot", k, entry);
+        return 0;
+    }
+
+    /**
+     * The scheduled finishRegular walk — mirrors Town.finishRegular
+     * (town.js) with the contents schedule applied; the vanilla body stays
+     * authoritative for the no-schedule path. Keep the two in sync.
+     */
+    function lootFinishRegular(town, varName, rewardRatio, rewardFunc) {
+        // error state, negative numbers (verbatim vanilla fixup)
+        if (town[`total${varName}`] - town[`checked${varName}`] < 0) {
+            town[`checked${varName}`] = town[`total${varName}`];
+            town[`good${varName}`] = Math.floor(town[`total${varName}`] / rewardRatio);
+            town[`goodTemp${varName}`] = town[`good${varName}`];
+            console.log("Error state fixed");
+        }
+
+        const contents = awardSchedule.lootables[varName].contents;
+        const st = lootState(varName);
+        const searchToggler = inputElement(`searchToggler${varName}`, false, false);
+        const unchecked = town[`total${varName}`] - town[`checked${varName}`];
+        const effective = lootEnabledRemaining(varName);
+
+        if (unchecked > 0 && ((searchToggler && !searchToggler.checked) || effective <= 0)) {
+            town[`checked${varName}`]++;
+            if (town[`checked${varName}`] % rewardRatio === 0) {
+                // the k-th good is minted, revealed and harvested in one act
+                const k = town[`good${varName}`];
+                const entry = contents[k] ?? null;
+                town[`lootFrom${varName}`] += executeLootEntry(varName, k, entry, rewardFunc);
+                town[`good${varName}`]++;
+                const census = town[`lootCensus${varName}`] ?? (town[`lootCensus${varName}`] = {});
+                const cat = lootCategoryOf(entry);
+                census[cat] = (census[cat] ?? 0) + 1;
+                // freshly minted goods do not join this loop's walk (vanilla
+                // goodTemp is not incremented mid-loop either)
+            }
+        } else if (effective > 0) {
+            const cat = pickLootCategory(st, varName);
+            const bucket = st.byCat[cat];
+            const k = bucket.ks[bucket.cursor++];
+            town[`goodTemp${varName}`]--;
+            const entry = contents[k] ?? null;
+            town[`lootFrom${varName}`] += executeLootEntry(varName, k, entry, rewardFunc);
+        }
+        view.requestUpdate("updateRegular", { name: varName, index: town.index });
+    }
+
+    /** Session-only per-category priority + disable set (the §9b-pre UI). */
+    function setLootPriority(varName, order, disabled) {
+        lootPrefs[varName] = {
+            order: Array.isArray(order) ? order.slice() : [],
+            disabled: new Set(disabled ?? []),
+        };
+    }
+
+    /**
+     * UI readout for one lootable: discovered categories in current
+     * priority order with census counts and this-loop remaining.
+     */
+    function getLootView(varName) {
+        if (!handlesLoot(varName)) return null;
+        const town = townFor(varName);
+        const st = lootState(varName);
+        const disabled = lootDisabled(varName);
+        const census = town[`lootCensus${varName}`] ?? {};
+        return lootOrder(varName, st.byCat).map((cat) => ({
+            category: cat,
+            discovered: census[cat] ?? st.byCat[cat].ks.length,
+            remaining: st.byCat[cat].ks.length - st.byCat[cat].cursor,
+            disabled: disabled.has(cat),
+        }));
     }
 
     // whitelisted <effect name="..."/> primitives: composite / RNG-bearing /
@@ -1243,5 +1471,6 @@ const ActionListXml = (() => {
 
     return { SLOTS, parseDocument, compileAction, compileAll, applyOverrides, revertOverrides,
         setAwardSchedule, onLoopRestart, setForeignAwardHook,
+        handlesLoot, lootFinishRegular, setLootPriority, getLootView,
         getAwardSchedule: () => awardSchedule };
 })();
