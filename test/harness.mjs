@@ -28,13 +28,38 @@ import { fileURLToPath } from "node:url";
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-// The exact importScripts list from predictor-worker.js (11 files).
+// The importScripts list from predictor-worker.js, MINUS the fork's two
+// actionListXml entries (xmlLite.js + actionListXml.js + its data file). A
+// default context therefore never loads the XML interpreter — which is exactly
+// why driver.js typeof-guards its ActionListXml calls. Callers that need it
+// pass the files in `extraFiles` (see WIRED_FILES in field-matrix.lib.mjs), or
+// pass a `worldConfig` and let makeContext load them.
 export const SIM_FILES = ["data.js", "localization.js", "helpers.js", "actionList.js",
     "driver.js", "stats.js", "actions.js", "town.js", "prestige.js", "saving.js", "predictor.js"];
 
+// The files the XML interpreter (and therefore the P2 carrier) needs, in load
+// order — the fork's addition to the importScripts list above.
+export const XML_SIM_FILES = ["xmlLite.js", "actionListXml.js", "data/actionListXml.data.js"];
+
 const noopProxy = () => new Proxy({}, { get: (t, p) => (p in t ? t[p] : () => {}) });
 
-export function makeContext(seed = 12345, extraFiles = []) {
+/**
+ * @param {number} [seed]
+ * @param {string[]} [extraFiles]  files loaded after SIM_FILES, in order
+ * @param {object} [opts]
+ * @param {object|null} [opts.worldConfig]  cross-game P2 transport payload
+ *   ({awardSchedule, lootPrefs}). When given, the XML interpreter files are
+ *   loaded (if not already in extraFiles) and the config is installed through
+ *   the SAME ActionListXml.installWorldConfig the planner/predictor workers
+ *   use — so a headless sim runs the world the live game would. null/absent
+ *   leaves the context byte-identical to before this parameter existed.
+ */
+export function makeContext(seed = 12345, extraFiles = [], { worldConfig = null } = {}) {
+    // load the interpreter only when a world actually needs it: an unconditional
+    // load would change the default context's behavior (see SIM_FILES above)
+    if (worldConfig) {
+        extraFiles = [...XML_SIM_FILES.filter(f => !extraFiles.includes(f)), ...extraFiles];
+    }
     const sandbox = {
         console: { log() {}, warn() {}, error() {}, debug() {}, info() {} },
         $: Object.assign(() => ({ length: 0, find: () => ({ text: () => "" }), each() {} }), { get() {}, param() {} }),
@@ -163,6 +188,16 @@ export function makeContext(seed = 12345, extraFiles = []) {
     ev("loadDefaults()");
     ev("stonesUsed = {1:0, 3:0, 5:0, 6:0}");
     ev("if (!townsUnlocked.length) townsUnlocked = [0]");
+
+    // Install the world AFTER loadDefaults(): installWorldConfig mirrors the
+    // managed-mode flip (options.useActionListXml + applyOverrides), and
+    // loadDefaults would otherwise reset the option back off underneath it.
+    if (worldConfig) {
+        sandbox.__worldConfig = worldConfig;
+        if (!ev("ActionListXml.installWorldConfig(__worldConfig)")) {
+            throw new Error("makeContext: worldConfig rejected (see the validator's console.warn)");
+        }
+    }
 
     return {
         sandbox, ev,
