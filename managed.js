@@ -85,6 +85,33 @@ const IdleLoopsManaged = (() => {
         /** Host-driven loop reset (the game's own restart()). */
         restartLoop() { restart(); },
 
+        // ---- P2 award carrier (world data; actionListXml.js §2d seam) -----
+        /**
+         * Install (or clear, with null) the world-data award schedule.
+         * The carrier consults it inside the XML executor's grant
+         * dispatcher, so installing a schedule turns the compiled reward
+         * path on (apply/revert is idempotent; XML ≡ JS by the effect
+         * differential, so the flip itself changes no behavior).
+         * @returns {boolean} true when installed (or cleared)
+         */
+        setAwardSchedule(schedule) {
+            if (typeof ActionListXml === "undefined") {
+                if (schedule != null) console.error("managed setAwardSchedule: actionListXml.js not loaded; schedule ignored");
+                return schedule == null;
+            }
+            const ok = ActionListXml.setAwardSchedule(schedule ?? null);
+            if (ok && schedule != null && !options.useActionListXml) {
+                options.useActionListXml = true;
+                ActionListXml.applyOverrides();
+            }
+            return ok;
+        },
+        /** Register the outbound hook foreign schedule entries call. */
+        setForeignAwardCallback(cb) {
+            if (typeof ActionListXml === "undefined") return;
+            ActionListXml.setForeignAwardHook(cb);
+        },
+
         // ---- callbacks ----------------------------------------------------
         /** Register a loop-reset callback (fired from driver restart()). */
         onRestart(cb) { restartCallbacks.push(cb); },

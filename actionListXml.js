@@ -466,10 +466,133 @@ const ActionListXml = (() => {
     //
     // Every resource and mana grant in the executor funnels through the ONE
     // dispatcher below. That is the P2 §2d award-indirection seam: the
-    // post-Phase-6 carrier consults an award schedule here to route a grant
-    // local | foreign | dummy. Phase 6 lands the seam with zero state and
-    // zero behavior change — no schedule ⇒ the dispatcher IS today's direct
+    // carrier consults a world-data award schedule here to route a grant
+    // local | foreign | dummy. No schedule ⇒ the dispatcher IS the direct
     // call, which is what keeps the option byte-inert.
+
+    // ---- P2 award carrier (cross-game §2d) --------------------------------
+    //
+    // The schedule is WORLD DATA (installed by the managed-mode host via
+    // IdleLoopsManaged.setAwardSchedule; never present in standalone play).
+    // Key: (varName, resourceName, n-th grant of that resource by that
+    // action within the current loop) — the recorded design's
+    // (actionVarName, completionIndexWithinLoop) key refined per resource
+    // name, because one completion may grant several resources (Long
+    // Quest: gold AND reputation) and an entry must target exactly one.
+    // Grant counters restart every loop (driver restart() calls
+    // onLoopRestart — the same reset moment as resetResources), so the
+    // routing is replay-stable with zero runtime RNG.
+    //
+    // Entry forms (array index = grant index within the loop; a missing or
+    // null entry keeps the vanilla grant):
+    //   null                          vanilla grant
+    //   { dummy: true }               suppressed — nothing granted anywhere
+    //   { name, count? }              local re-route ("mana" allowed; count default 1)
+    //   { substrate, type, count? }   foreign award — handed to the managed-mode
+    //       outbound hook; with no hook registered (workers, standalone play)
+    //       the grant is DROPPED locally, which is the declared semantics:
+    //       the local player deliberately receives nothing.
+    //
+    // Only POSITIVE NUMERIC grants are routable: cost deductions (sign < 0)
+    // and boolean unlock flags are outside the consumable pool by the P1
+    // sharing declaration, and the validator refuses schedules that name
+    // them.
+
+    /** @type {object|null} validated world-data schedule, or null (inert) */
+    let awardSchedule = null;
+    /** @type {Record<string, number>} per-loop grant counters, "var res" -> count */
+    let awardCounters = { __proto__: null };
+    /** @type {((info: {varName: string, resource: string, index: number, substrate: string, type: string, count: number}) => void) | null} */
+    let foreignAwardHook = null;
+
+    function validAwardEntry(e) {
+        if (e === null) return true;
+        if (typeof e !== "object") return false;
+        if (e.dummy === true) return Object.keys(e).length === 1;
+        const count = e.count ?? 1;
+        if (!Number.isInteger(count) || count <= 0) return false;
+        if (typeof e.substrate === "string") {
+            return e.substrate !== "" && e.substrate !== "omsi"
+                && typeof e.type === "string" && e.type !== "";
+        }
+        return typeof e.name === "string" && routableResource(e.name);
+    }
+
+    function routableResource(name) {
+        if (name === "mana") return true;
+        // numeric template entries only — booleans are unlock flags, not
+        // consumables (guard: saving.js may be absent in exotic contexts)
+        return typeof resourcesTemplate !== "undefined"
+            && typeof resourcesTemplate[name] === "number";
+    }
+
+    /**
+     * Install (or clear, with null) the award schedule. Whole-schedule
+     * validation: an invalid document is REJECTED and the carrier stays
+     * inert — world data must not half-apply.
+     * @returns {boolean} true when installed (or cleared)
+     */
+    function setAwardSchedule(schedule) {
+        awardCounters = { __proto__: null };
+        if (schedule == null) { awardSchedule = null; return true; }
+        const reject = (why) => {
+            console.warn(`actionListXml: award schedule rejected: ${why}`);
+            awardSchedule = null;
+            return false;
+        };
+        if (typeof schedule !== "object") return reject("not an object");
+        const awards = schedule.awards;
+        if (awards !== undefined) {
+            if (typeof awards !== "object" || awards === null) return reject("awards is not an object");
+            for (const varName in awards) {
+                const site = awards[varName];
+                if (typeof site !== "object" || site === null) return reject(`awards.${varName} is not an object`);
+                for (const res in site) {
+                    if (!routableResource(res)) return reject(`awards.${varName}.${res}: not a routable resource`);
+                    const entries = site[res];
+                    if (!Array.isArray(entries)) return reject(`awards.${varName}.${res} is not an array`);
+                    for (const e of entries) {
+                        if (!validAwardEntry(e)) return reject(`awards.${varName}.${res}: bad entry ${JSON.stringify(e)}`);
+                    }
+                }
+            }
+        }
+        awardSchedule = schedule;
+        return true;
+    }
+
+    /** Per-loop carrier state restarts with the loop (driver restart()). */
+    function onLoopRestart() {
+        awardCounters = { __proto__: null };
+    }
+
+    /** Managed-mode outbound hook for foreign entries (bridge-registered). */
+    function setForeignAwardHook(fn) {
+        foreignAwardHook = typeof fn === "function" ? fn : null;
+    }
+
+    /** @returns {number} the amount granted LOCALLY (0 for dummy/foreign) */
+    function applyAwardEntry(action, resource, index, entry) {
+        if (entry.dummy === true) return 0;
+        if (entry.substrate !== undefined) {
+            if (foreignAwardHook !== null) {
+                try {
+                    foreignAwardHook({
+                        varName: action.varName, resource, index,
+                        substrate: entry.substrate, type: entry.type,
+                        count: entry.count ?? 1,
+                    });
+                } catch (e) {
+                    console.error("actionListXml: foreign award hook threw", e);
+                }
+            }
+            return 0;
+        }
+        const count = entry.count ?? 1;
+        if (entry.name === "mana") addMana(count);
+        else addResource(entry.name, count);
+        return count;
+    }
 
     /**
      * The single grant site.
@@ -479,6 +602,18 @@ const ActionListXml = (() => {
      * @returns {number|boolean} the amount granted (finishRegular's ledger value)
      */
     function grantResource(action, name, amount) {
+        if (awardSchedule !== null && typeof amount === "number" && amount > 0) {
+            const site = awardSchedule.awards?.[action.varName];
+            const entries = site === undefined ? undefined : site[name];
+            if (entries !== undefined) {
+                const key = action.varName + " " + name;
+                const idx = awardCounters[key] = (awardCounters[key] ?? 0) + 1;
+                const entry = entries[idx - 1];
+                if (entry !== undefined && entry !== null) {
+                    return applyAwardEntry(action, name, idx - 1, entry);
+                }
+            }
+        }
         if (name === "mana") addMana(/** @type {number} */(amount));
         else addResource(name, amount);
         return amount;
@@ -1106,5 +1241,7 @@ const ActionListXml = (() => {
         overrideBackup = null;
     }
 
-    return { SLOTS, parseDocument, compileAction, compileAll, applyOverrides, revertOverrides };
+    return { SLOTS, parseDocument, compileAction, compileAll, applyOverrides, revertOverrides,
+        setAwardSchedule, onLoopRestart, setForeignAwardHook,
+        getAwardSchedule: () => awardSchedule };
 })();

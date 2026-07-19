@@ -352,6 +352,9 @@ function restart() {
     if (needsDataSnapshots()) {
         Data.updateSnapshot("restart", "base");
     }
+    // fork: P2 award carrier — per-loop grant counters restart with the loop
+    // (same reset moment as resetResources above; inert with no schedule)
+    if (typeof ActionListXml !== "undefined") ActionListXml.onLoopRestart();
     // fork: loop-reset callback for the substrate host (page-only; see above)
     if (typeof IdleLoopsManaged !== "undefined") IdleLoopsManaged._onRestart();
 }
