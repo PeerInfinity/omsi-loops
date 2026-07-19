@@ -136,9 +136,18 @@ jobs:
         # module itself removes the guesswork.
       - name: Install browsers for the resolved playwright
         run: |
-          PW_VERSION=$(node -p "require('playwright/package.json').version")
-          echo "runtime playwright: $PW_VERSION"
-          npx --yes "playwright@$PW_VERSION" install --with-deps chromium
+          # Invoke the CLI of the very module `import "playwright"` resolves
+          # to. Everything indirect has failed here, each time silently:
+          #   npx playwright install            -> ambiguous resolution
+          #   ./node_modules/.bin/playwright    -> @playwright/test 1.56's bin
+          #   npx --yes playwright@$VERSION     -> npx STILL preferred the
+          #                                        local bin over the pin
+          #                                        (logged 1.61.1, fetched v1194)
+          # Each downloaded browser build v1194 while the runtime wanted v1228,
+          # and died at launch. A resolved path cannot be second-guessed.
+          CLI=$(node -p "require('path').join(require('path').dirname(require.resolve('playwright/package.json')), 'cli.js')")
+          echo "runtime playwright: $(node -p "require('playwright/package.json').version") via $CLI"
+          node "$CLI" install --with-deps chromium
       - name: Serve the outer repo root
         run: |
           python3 -m http.server 8000 &
