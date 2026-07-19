@@ -78,6 +78,19 @@ const ActionListXml = (() => {
         // fork wrapper: Imbue Body gates every talent >= a threshold
         minTalent: () => Math.min(...statList.map(s => getTalent(s))),
     };
+    // <guildSegmentIncrement name="..."/>: the loop-temp counter bumps. The
+    // stateChanged emission belongs to the primitive, never to the XML — and
+    // it mirrors actionList.js site-for-site, which is why only wizCollege
+    // emits (upstream's other nine increments are silent).
+    const GUILD_SEGMENT_INCREMENTS = {
+        advGuild: () => { curAdvGuildSegment++; },
+        craftGuild: () => { curCraftGuildSegment++; },
+        thievesGuild: () => { curThievesGuildSegment++; },
+        wizCollege: () => { curWizCollegeSegment++; stateChanged("guildSegment", { name: "WizCollege" }); },
+        frostGiants: () => { curFightFrostGiantsSegment++; },
+        jungleMonsters: () => { curFightJungleMonstersSegment++; },
+        gods: () => { curGodsSegment++; },
+    };
     // whitelisted <guildSegment name="..."/> -> cur*Segment loop-temp globals
     const GUILD_SEGMENTS = {
         advGuild: () => curAdvGuildSegment,
@@ -468,6 +481,9 @@ const ActionListXml = (() => {
     const EFFECTS = {
         // HaulAction.finish latches which town's ruins the stone came from
         setStoneLoc: (ctx) => { stoneLoc = ctx.action.townNum; },
+        // the assassin kill list: a per-loop array of the zones hit, which
+        // Guild Assassin reads back. The heart itself is a plain resource.
+        pushHeart: (ctx) => { hearts.push(ctx.action.varName); },
         // Spatiomancy resizes every limited pool game-wide when its LEVEL
         // moves, so the grant and the re-adjust are one composite
         spatiomancyFinish: (ctx) => {
@@ -478,7 +494,8 @@ const ActionListXml = (() => {
     };
 
     const EFFECT_TAGS = new Set(["numericResource", "booleanResource", "setStoryFlag",
-        "storyVarMin", "skillExp", "setSkill", "progressExp", "grantProgress", "effect"]);
+        "storyVarMin", "skillExp", "setSkill", "progressExp", "grantProgress",
+        "guildSegmentIncrement", "noEffect", "effect"]);
 
     /**
      * Execute one effect element.
@@ -542,6 +559,18 @@ const ActionListXml = (() => {
                 // amounts come from the action's own skills table, which stays
                 // runtime-authoritative (main.view.js pulls action.skills[s]())
                 handleSkillExp(ctx.self.skills);
+                return;
+            case "guildSegmentIncrement": {
+                const inc = GUILD_SEGMENT_INCREMENTS[node.attrs.name];
+                if (!inc) throw new Error(`actionListXml: guild segment ${node.attrs.name} not whitelisted`);
+                if (!evalConditionList(node.children, ctx)) return;
+                inc();
+                return;
+            }
+            case "noEffect":
+                // this slot intentionally does nothing. An explicit marker, so
+                // "compiled as a no-op" is distinguishable from "not modelled
+                // yet" (a self-closing placeholder) in the slot manifest.
                 return;
             case "effect": {
                 const fn = EFFECTS[node.attrs.name];
@@ -731,6 +760,21 @@ const ActionListXml = (() => {
                     run(before, c); run(inner, c); run(after, c);
                 };
             }
+        }
+
+        // segmentFinished / loopsFinished / floorReward: the multipart slots.
+        // All three are called with no arguments by actions.js, so the bodies
+        // that read a loopCounter fall through to their default parameter —
+        // the town counter, i.e. <loopCounter source="town"/>.
+        for (const [tag, slot] of [["segmentReward", "segmentFinished"],
+            ["loopReward", "loopsFinished"], ["floorReward", "floorReward"]]) {
+            const el = child(def, tag);
+            if (!el || native(el, slot) || !el.children.length) continue;
+            const nodes = effectsOf(el.children);
+            fields[slot] = function () {
+                const c = bindCtx.call(this);
+                for (const n of nodes) execEffect(n, c, 1);
+            };
         }
 
         // cost(): the <cost> deduction leg (the canStart affordability leg is

@@ -31,7 +31,14 @@ test("effect differential: every compiled slot matches its JS body", () => {
 
 test("effect differential: no compiled slot is inert across the whole corpus", () => {
     // A slot that never mutates anything would agree with JS by doing nothing.
+    // <noEffect/> slots are exempt — and held to the opposite standard below.
     assert.deepEqual(full().inert, [], "compiled slots that never changed state in any corpus state");
+});
+
+test("effect differential: a declared <noEffect/> slot really does nothing", () => {
+    const r = full();
+    assert.ok(r.plan.declaredNoOp.length > 0, "no <noEffect/> slots found — the check is vacuous");
+    assert.deepEqual(r.lyingNoOp, [], "slots declared <noEffect/> that mutated state anyway");
 });
 
 test("slot manifest matches the frozen golden", () => {
@@ -172,6 +179,45 @@ const CANARIES = [
         actions: ["Spatiomancy"],
         find: `<effect name="spatiomancyFinish" />`,
         with: `<skillExp />`,
+    },
+    {
+        name: "guildSegmentIncrement",
+        actions: ["Adventure Guild"],
+        find: `<guildSegmentIncrement name="advGuild" />`,
+        with: `<guildSegmentIncrement name="craftGuild" />`,
+    },
+    {
+        // upstream emits stateChanged for wizCollege only; swapping the target
+        // changes both the counter and the notification
+        name: "guildSegmentIncrement (wizCollege emission)",
+        actions: ["Wizard College"],
+        find: `<guildSegmentIncrement name="wizCollege" />`,
+        with: `<guildSegmentIncrement name="gods" />`,
+    },
+    {
+        name: "segmentReward slot",
+        actions: ["Fight Monsters"],
+        find: `<segmentReward>\n            <numericResource name="gold">20</numericResource>\n        </segmentReward>`,
+        with: `<segmentReward>\n            <numericResource name="gold">21</numericResource>\n        </segmentReward>`,
+    },
+    {
+        name: "loopReward slot",
+        actions: ["Heal The Sick"],
+        find: `<loopReward>\n            <numericResource name="reputation">3</numericResource>\n        </loopReward>`,
+        with: `<loopReward>\n            <numericResource name="reputation">4</numericResource>\n        </loopReward>`,
+    },
+    {
+        name: "floorReward slot",
+        actions: ["Dead Trial"],
+        find: `<floorReward>\n            <numericResource name="zombie">1</numericResource>\n        </floorReward>`,
+        with: `<floorReward>\n            <numericResource name="zombie">2</numericResource>\n        </floorReward>`,
+    },
+    {
+        name: "pushHeart primitive",
+        actions: ["AssassinZ0"],
+        find: `<numericResource name="heart">1</numericResource>\n            <effect name="pushHeart" />`,
+        with: `<numericResource name="heart">1</numericResource>`,
+        all: true,
     },
     {
         name: `cost deduction="none"`,

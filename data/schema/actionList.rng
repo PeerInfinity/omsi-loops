@@ -723,20 +723,34 @@
                 </optional>
                 <optional>
                     <element name="segmentReward">
-                        <a:documentation>segmentFinished() effects, as reward data (Phase-6
-                            consumption, like reward).</a:documentation>
-                        <zeroOrMore>
-                            <ref name="resourceStack" />
-                        </zeroOrMore>
+                        <a:documentation>segmentFinished() effects — run once per completed
+                            segment of a multipart action.</a:documentation>
+                        <choice>
+                            <ref name="nativeMarker" />
+                            <ref name="rewardBody" />
+                        </choice>
                     </element>
                 </optional>
                 <optional>
                     <element name="loopReward">
-                        <a:documentation>loopsFinished() effects, as reward data (Phase-6
-                            consumption, like reward).</a:documentation>
-                        <zeroOrMore>
-                            <ref name="resourceStack" />
-                        </zeroOrMore>
+                        <a:documentation>loopsFinished() effects — run once per completed part.
+                            Called with no arguments, so any loop-counter read falls through to
+                            the town counter.</a:documentation>
+                        <choice>
+                            <ref name="nativeMarker" />
+                            <ref name="rewardBody" />
+                        </choice>
+                    </element>
+                </optional>
+                <optional>
+                    <element name="floorReward">
+                        <a:documentation>floorReward() effects — a trial's per-floor rewards,
+                            dispatched by TrialAction.loopsFinished after it records the
+                            floor.</a:documentation>
+                        <choice>
+                            <ref name="nativeMarker" />
+                            <ref name="rewardBody" />
+                        </choice>
                     </element>
                 </optional>
             </interleave>
@@ -814,6 +828,30 @@
             <il:label>Raise story var to</il:label>
             <attribute name="name" />
             <ref name="numericEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="guildSegmentIncrement">
+            <a:documentation>Increment a guild's per-loop segment counter. The counters are
+                loop-temp globals reset by restart(); the view notification (where upstream sends
+                one) lives in the primitive, not here.</a:documentation>
+            <il:label>Advance guild segment</il:label>
+            <attribute name="name">
+                <choice>
+                    <value>advGuild</value><value>craftGuild</value><value>thievesGuild</value>
+                    <value>wizCollege</value><value>frostGiants</value><value>jungleMonsters</value>
+                    <value>gods</value>
+                </choice>
+            </attribute>
+            <ref name="conditionalEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="noEffect">
+            <a:documentation>This slot intentionally does nothing. An explicit marker so that
+                "compiled as a no-op" is distinguishable from "not modelled yet".</a:documentation>
+            <il:label>No effect</il:label>
+            <empty />
         </element>
     </define>
     <define name="resourceStack" combine="choice">

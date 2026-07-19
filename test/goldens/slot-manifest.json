@@ -39,6 +39,14 @@
       "Accept Donations",
       "Apprentice",
       "Architect",
+      "AssassinZ0",
+      "AssassinZ1",
+      "AssassinZ2",
+      "AssassinZ3",
+      "AssassinZ4",
+      "AssassinZ5",
+      "AssassinZ6",
+      "AssassinZ7",
       "Bird Watching",
       "Brew Potions",
       "Build Housing",
@@ -136,11 +144,53 @@
       "Wander",
       "Warrior Lessons",
       "Wild Mana"
+    ],
+    "floorReward": [
+      "Challenge Gods",
+      "Dead Trial",
+      "Gods Trial",
+      "Secret Trial"
+    ],
+    "loopsFinished": [
+      "Adventure Guild",
+      "AssassinZ0",
+      "AssassinZ1",
+      "AssassinZ2",
+      "AssassinZ3",
+      "AssassinZ4",
+      "AssassinZ5",
+      "AssassinZ6",
+      "AssassinZ7",
+      "Crafting Guild",
+      "Fight Frost Giants",
+      "Fight Jungle Monsters",
+      "Fight Monsters",
+      "Heal The Sick",
+      "Hunt Trolls",
+      "Rescue Survivors",
+      "Thieves Guild",
+      "Tidy Up",
+      "Wizard College"
+    ],
+    "segmentFinished": [
+      "Adventure Guild",
+      "Challenge Gods",
+      "Crafting Guild",
+      "Fight Frost Giants",
+      "Fight Jungle Monsters",
+      "Fight Monsters",
+      "Hunt Trolls",
+      "Thieves Guild",
+      "Tidy Up",
+      "Wizard College"
     ]
   },
   "counts": {
     "cost": 33,
-    "finish": 100
+    "finish": 108,
+    "floorReward": 4,
+    "loopsFinished": 19,
+    "segmentFinished": 10
   },
   "native": {}
 }

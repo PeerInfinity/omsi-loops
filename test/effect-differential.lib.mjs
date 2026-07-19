@@ -110,14 +110,26 @@ globalThis.__slotPlan = (() => {
     const doc = ActionListXml.parseDocument(globalThis.actionListXmlText);
     const out = [];
     const nativeBySlot = {};
+    // slots whose body is exactly <noEffect/> — declared no-ops. They are
+    // inert on purpose, so the "must mutate something" assertion is inverted
+    // for them: they must mutate NOTHING, anywhere.
+    const declaredNoOp = [];
+    const SLOT_ELEMENT = { finish: "reward", segmentFinished: "segmentReward",
+        loopsFinished: "loopReward", floorReward: "floorReward", cost: "cost", story: "storyEffects" };
     for (const name in doc.actions) {
-        const f = ActionListXml.compileAction(doc.actions[name], doc);
-        for (const s of f.__compiledSlots ?? []) out.push([name, s]);
+        const def = doc.actions[name];
+        const f = ActionListXml.compileAction(def, doc);
+        for (const s of f.__compiledSlots ?? []) {
+            out.push([name, s]);
+            const el = def.children.find(c => c.tag === SLOT_ELEMENT[s]);
+            const kids = (el?.children ?? []).filter(c => c.tag !== "before" && c.tag !== "after");
+            if (kids.length === 1 && kids[0].tag === "noEffect") declaredNoOp.push(name + "." + s);
+        }
         for (const s of f.__nativeFields ?? []) {
             if (ActionListXml.SLOTS.includes(s)) (nativeBySlot[s] ??= []).push(name);
         }
     }
-    return { pairs: out, nativeBySlot };
+    return { pairs: out, nativeBySlot, declaredNoOp };
 })();
 `;
 
@@ -269,8 +281,13 @@ export function buildEffectDifferential({ xmlText = null, maxMismatches = 100, o
         }
     }
 
-    const inert = Object.entries(mutated).filter(([, m]) => !m).map(([k]) => k).sort();
-    return { plan, states: states.length, comparisons, mismatches, inert };
+    const noOp = new Set(plan.declaredNoOp ?? []);
+    const inert = Object.entries(mutated)
+        .filter(([k, m]) => !m && !noOp.has(k)).map(([k]) => k).sort();
+    // the inverse: a slot that DECLARES itself a no-op must never mutate
+    const lyingNoOp = Object.entries(mutated)
+        .filter(([k, m]) => m && noOp.has(k)).map(([k]) => k).sort();
+    return { plan, states: states.length, comparisons, mismatches, inert, lyingNoOp };
 }
 
 /** first differing key path between two state JSON blobs, for readable failures */

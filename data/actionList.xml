@@ -917,7 +917,9 @@
         <segmentReward>
             <numericResource name="gold">20</numericResource>
         </segmentReward>
-        <loopReward />
+        <loopReward>
+            <noEffect />
+        </loopReward>
         <reward>
             <skillExp />
         </reward>
@@ -3129,49 +3131,18 @@
         </tickProgress>
         <!-- segmentFinished also increments curAdvGuildSegment (Phase 6) -->
         <segmentReward>
+            <guildSegmentIncrement name="advGuild" />
             <numericResource name="mana">200</numericResource>
         </segmentReward>
         <loopReward>
-            <setStoryFlag name="advGuildRankEReached">
-                <if min="3">
-                    <guildSegment name="advGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="advGuildRankDReached">
-                <if min="6">
-                    <guildSegment name="advGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="advGuildRankCReached">
-                <if min="9">
-                    <guildSegment name="advGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="advGuildRankBReached">
-                <if min="12">
-                    <guildSegment name="advGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="advGuildRankAReached">
-                <if min="15">
-                    <guildSegment name="advGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="advGuildRankSReached">
-                <if min="18">
-                    <guildSegment name="advGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="advGuildRankUReached">
-                <if min="30">
-                    <guildSegment name="advGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="advGuildRankGodlikeReached">
-                <if min="42">
-                    <guildSegment name="advGuild" />
-                </if>
-            </setStoryFlag>
+            <setStoryFlag name="advGuildRankEReached"><if min="3"><guildSegment name="advGuild" /></if></setStoryFlag>
+            <setStoryFlag name="advGuildRankDReached"><if min="6"><guildSegment name="advGuild" /></if></setStoryFlag>
+            <setStoryFlag name="advGuildRankCReached"><if min="9"><guildSegment name="advGuild" /></if></setStoryFlag>
+            <setStoryFlag name="advGuildRankBReached"><if min="12"><guildSegment name="advGuild" /></if></setStoryFlag>
+            <setStoryFlag name="advGuildRankAReached"><if min="15"><guildSegment name="advGuild" /></if></setStoryFlag>
+            <setStoryFlag name="advGuildRankSReached"><if min="18"><guildSegment name="advGuild" /></if></setStoryFlag>
+            <setStoryFlag name="advGuildRankUReached"><if min="30"><guildSegment name="advGuild" /></if></setStoryFlag>
+            <setStoryFlag name="advGuildRankGodlikeReached"><if min="42"><guildSegment name="advGuild" /></if></setStoryFlag>
         </loopReward>
     </action>
     <action type="multipart" name="Crafting Guild" varName="CraftGuild" townNum="2">
@@ -3255,49 +3226,19 @@
         <!-- segmentFinished also increments curCraftGuildSegment and grants
              Crafting exp 50 (Phase 6) -->
         <segmentReward>
+            <guildSegmentIncrement name="craftGuild" />
+            <skillExp />
             <numericResource name="gold">10</numericResource>
         </segmentReward>
         <loopReward>
-            <setStoryFlag name="craftGuildRankEReached">
-                <if min="3">
-                    <guildSegment name="craftGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="craftGuildRankDReached">
-                <if min="6">
-                    <guildSegment name="craftGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="craftGuildRankCReached">
-                <if min="9">
-                    <guildSegment name="craftGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="craftGuildRankBReached">
-                <if min="12">
-                    <guildSegment name="craftGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="craftGuildRankAReached">
-                <if min="15">
-                    <guildSegment name="craftGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="craftGuildRankSReached">
-                <if min="18">
-                    <guildSegment name="craftGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="craftGuildRankUReached">
-                <if min="30">
-                    <guildSegment name="craftGuild" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="craftGuildRankGodlikeReached">
-                <if min="42">
-                    <guildSegment name="craftGuild" />
-                </if>
-            </setStoryFlag>
+            <setStoryFlag name="craftGuildRankEReached"><if min="3"><guildSegment name="craftGuild" /></if></setStoryFlag>
+            <setStoryFlag name="craftGuildRankDReached"><if min="6"><guildSegment name="craftGuild" /></if></setStoryFlag>
+            <setStoryFlag name="craftGuildRankCReached"><if min="9"><guildSegment name="craftGuild" /></if></setStoryFlag>
+            <setStoryFlag name="craftGuildRankBReached"><if min="12"><guildSegment name="craftGuild" /></if></setStoryFlag>
+            <setStoryFlag name="craftGuildRankAReached"><if min="15"><guildSegment name="craftGuild" /></if></setStoryFlag>
+            <setStoryFlag name="craftGuildRankSReached"><if min="18"><guildSegment name="craftGuild" /></if></setStoryFlag>
+            <setStoryFlag name="craftGuildRankUReached"><if min="30"><guildSegment name="craftGuild" /></if></setStoryFlag>
+            <setStoryFlag name="craftGuildRankGodlikeReached"><if min="42"><guildSegment name="craftGuild" /></if></setStoryFlag>
         </loopReward>
     </action>
     <action type="multipart" name="Large Dungeon" varName="LDungeon" townNum="2">
@@ -4198,11 +4139,16 @@
                 </value>
             </multiplier>
         </tickProgress>
-        <segmentReward />
+        <segmentReward>
+            <noEffect />
+        </segmentReward>
         <!-- loopsFinished also grants Combat exp 1000 and sets the
              slay6/slay20TrollsInALoop flags off the blood count (Phase 6) -->
         <loopReward>
+            <skillExp />
             <numericResource name="blood">1</numericResource>
+            <setStoryFlag name="slay6TrollsInALoop"><ifResource resourceName="blood" min="6" /></setStoryFlag>
+            <setStoryFlag name="slay20TrollsInALoop"><ifResource resourceName="blood" min="20" /></setStoryFlag>
         </loopReward>
     </action>
     <action type="multipart" name="Imbue Mind" townNum="3">
@@ -5249,7 +5195,9 @@
                 </value>
             </multiplier>
         </tickProgress>
-        <segmentReward />
+        <segmentReward>
+            <noEffect />
+        </segmentReward>
         <loopReward>
             <numericResource name="reputation">1</numericResource>
             <numericResource name="gold">5</numericResource>
@@ -5372,8 +5320,15 @@
         </tickProgress>
         <!-- segmentFinished increments curWizCollegeSegment and raises the
              maxWizardGuildSegmentCleared story variable (Phase 6) -->
-        <segmentReward />
-        <loopReward />
+        <segmentReward>
+            <guildSegmentIncrement name="wizCollege" />
+            <storyVarMin name="maxWizardGuildSegmentCleared">
+                <guildSegment name="wizCollege" />
+            </storyVarMin>
+        </segmentReward>
+        <loopReward>
+            <noEffect />
+        </loopReward>
         <!-- finish() not yet modeled (Phase 6): wizardCollege = true,
              maxWizardGuildSegmentCleared raised to 0 -->
     </action>
@@ -5464,61 +5419,22 @@
                 </value>
             </multiplier>
         </tickProgress>
-        <!-- segmentFinished also increments curFightFrostGiantsSegment (Phase 6) -->
         <segmentReward>
-            <setStoryFlag name="giantGuildRankEReached">
-                <if min="3">
-                    <guildSegment name="frostGiants" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="giantGuildRankDReached">
-                <if min="9">
-                    <guildSegment name="frostGiants" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="giantGuildRankCReached">
-                <if min="15">
-                    <guildSegment name="frostGiants" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="giantGuildRankBReached">
-                <if min="21">
-                    <guildSegment name="frostGiants" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="giantGuildRankAReached">
-                <if min="27">
-                    <guildSegment name="frostGiants" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="giantGuildRankSReached">
-                <if min="33">
-                    <guildSegment name="frostGiants" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="giantGuildRankSSReached">
-                <if min="39">
-                    <guildSegment name="frostGiants" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="giantGuildRankSSSReached">
-                <if min="45">
-                    <guildSegment name="frostGiants" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="giantGuildRankUReached">
-                <if min="51">
-                    <guildSegment name="frostGiants" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="giantGuildRankGodlikeReached">
-                <if min="57">
-                    <guildSegment name="frostGiants" />
-                </if>
-            </setStoryFlag>
+            <guildSegmentIncrement name="frostGiants" />
+            <setStoryFlag name="giantGuildRankEReached"><if min="3"><guildSegment name="frostGiants" /></if></setStoryFlag>
+            <setStoryFlag name="giantGuildRankDReached"><if min="9"><guildSegment name="frostGiants" /></if></setStoryFlag>
+            <setStoryFlag name="giantGuildRankCReached"><if min="15"><guildSegment name="frostGiants" /></if></setStoryFlag>
+            <setStoryFlag name="giantGuildRankBReached"><if min="21"><guildSegment name="frostGiants" /></if></setStoryFlag>
+            <setStoryFlag name="giantGuildRankAReached"><if min="27"><guildSegment name="frostGiants" /></if></setStoryFlag>
+            <setStoryFlag name="giantGuildRankSReached"><if min="33"><guildSegment name="frostGiants" /></if></setStoryFlag>
+            <setStoryFlag name="giantGuildRankSSReached"><if min="39"><guildSegment name="frostGiants" /></if></setStoryFlag>
+            <setStoryFlag name="giantGuildRankSSSReached"><if min="45"><guildSegment name="frostGiants" /></if></setStoryFlag>
+            <setStoryFlag name="giantGuildRankUReached"><if min="51"><guildSegment name="frostGiants" /></if></setStoryFlag>
+            <setStoryFlag name="giantGuildRankGodlikeReached"><if min="57"><guildSegment name="frostGiants" /></if></setStoryFlag>
         </segmentReward>
-        <!-- loopsFinished grants Combat exp 1500 (Phase 6) -->
-        <loopReward />
+        <loopReward>
+            <skillExp />
+        </loopReward>
         <reward>
             <setStoryFlag name="giantGuildTestTaken" />
         </reward>
@@ -6095,13 +6011,15 @@
             </value>
         </multiplier>
         </tickProgress>
-        <!-- loopsFinished records the floor; floorReward grants a zombie (Phase 6) -->
         <loopReward />
         <reward>
             <setStoryFlag name="deadTrial1Done"><if min="1"><currentFloor /></if></setStoryFlag>
             <setStoryFlag name="deadTrial10Done"><if min="10"><currentFloor /></if></setStoryFlag>
             <setStoryFlag name="deadTrial25Done"><if min="25"><currentFloor /></if></setStoryFlag>
         </reward>
+        <floorReward>
+            <numericResource name="zombie">1</numericResource>
+        </floorReward>
     </action>
     <action type="progress" name="RuinsZ5" townNum="5">
         <expMult>1</expMult>
@@ -6563,59 +6481,24 @@
                 </value>
             </multiplier>
         </tickProgress>
-        <!-- segmentFinished also increments curFightJungleMonstersSegment; the
-             flags unlock AFTER the beast's last segment (thresholds are the
-             next beast's first segment) (Phase 6) -->
         <segmentReward>
+            <guildSegmentIncrement name="jungleMonsters" />
             <numericResource name="blood">1</numericResource>
-            <setStoryFlag name="monsterGuildRankDReached">
-                <if min="9">
-                    <guildSegment name="jungleMonsters" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="monsterGuildRankCReached">
-                <if min="15">
-                    <guildSegment name="jungleMonsters" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="monsterGuildRankBReached">
-                <if min="21">
-                    <guildSegment name="jungleMonsters" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="monsterGuildRankAReached">
-                <if min="27">
-                    <guildSegment name="jungleMonsters" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="monsterGuildRankSReached">
-                <if min="33">
-                    <guildSegment name="jungleMonsters" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="monsterGuildRankSSReached">
-                <if min="39">
-                    <guildSegment name="jungleMonsters" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="monsterGuildRankSSSReached">
-                <if min="45">
-                    <guildSegment name="jungleMonsters" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="monsterGuildRankUReached">
-                <if min="51">
-                    <guildSegment name="jungleMonsters" />
-                </if>
-            </setStoryFlag>
-            <setStoryFlag name="monsterGuildRankGodlikeReached">
-                <if min="57">
-                    <guildSegment name="jungleMonsters" />
-                </if>
-            </setStoryFlag>
+            <!-- the stories are for having SLAIN the beast, so each unlocks after
+                 that beast's last segment: the threshold is the NEXT beast's first -->
+            <setStoryFlag name="monsterGuildRankDReached"><if min="9"><guildSegment name="jungleMonsters" /></if></setStoryFlag>
+            <setStoryFlag name="monsterGuildRankCReached"><if min="15"><guildSegment name="jungleMonsters" /></if></setStoryFlag>
+            <setStoryFlag name="monsterGuildRankBReached"><if min="21"><guildSegment name="jungleMonsters" /></if></setStoryFlag>
+            <setStoryFlag name="monsterGuildRankAReached"><if min="27"><guildSegment name="jungleMonsters" /></if></setStoryFlag>
+            <setStoryFlag name="monsterGuildRankSReached"><if min="33"><guildSegment name="jungleMonsters" /></if></setStoryFlag>
+            <setStoryFlag name="monsterGuildRankSSReached"><if min="39"><guildSegment name="jungleMonsters" /></if></setStoryFlag>
+            <setStoryFlag name="monsterGuildRankSSSReached"><if min="45"><guildSegment name="jungleMonsters" /></if></setStoryFlag>
+            <setStoryFlag name="monsterGuildRankUReached"><if min="51"><guildSegment name="jungleMonsters" /></if></setStoryFlag>
+            <setStoryFlag name="monsterGuildRankGodlikeReached"><if min="57"><guildSegment name="jungleMonsters" /></if></setStoryFlag>
         </segmentReward>
-        <!-- loopsFinished grants Combat exp 2000 (Phase 6) -->
-        <loopReward />
+        <loopReward>
+            <skillExp />
+        </loopReward>
         <reward>
             <setStoryFlag name="monsterGuildTestTaken" />
         </reward>
@@ -6687,11 +6570,11 @@
                 </value>
             </multiplier>
         </tickProgress>
-        <!-- loopsFinished also sets rescued6/rescued20Survivors off the loop
-             counter (Phase 6) -->
         <loopReward>
             <numericResource name="reputation">4</numericResource>
             <setStoryFlag name="survivorRescued" />
+            <setStoryFlag name="rescued6Survivors"><if min="18"><loopCounter source="town" /></if></setStoryFlag>
+            <setStoryFlag name="rescued20Survivors"><if min="60"><loopCounter source="town" /></if></setStoryFlag>
         </loopReward>
         <reward>
             <skillExp />
@@ -6778,9 +6661,13 @@
         <!-- segmentFinished also increments curThievesGuildSegment and grants
              Thievery/Practical exp 50 each (Phase 6) -->
         <segmentReward>
+            <guildSegmentIncrement name="thievesGuild" />
+            <skillExp />
             <numericResource name="gold">10</numericResource>
         </segmentReward>
-        <loopReward />
+        <loopReward>
+            <noEffect />
+        </loopReward>
     </action>
     <action type="multipart" name="Secret Trial" varName="STrial" townNum="7">
         <expMult>0</expMult>
@@ -6904,6 +6791,9 @@
             <setStoryFlag name="trailSecret500Done"><if min="500"><currentFloor /></if></setStoryFlag>
             <setStoryFlag name="trailSecretAllDone"><if equals="1000"><currentFloor /></if></setStoryFlag>
         </reward>
+        <floorReward>
+            <noEffect />
+        </floorReward>
     </action>
     <action type="normal" name="Invest" townNum="7">
         <expMult>1</expMult>
@@ -7620,11 +7510,29 @@
             </value>
         </multiplier>
         </tickProgress>
-        <!-- floorReward grants power at milestones and Combat exp (Phase 6) -->
         <loopReward />
         <reward>
             <skillExp />
         </reward>
+        <floorReward>
+            <setStoryFlag name="trailGodsFaced" />
+            <setStoryFlag name="trailGods10Done"><if min="10"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="trailGods20Done"><if min="20"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="trailGods30Done"><if min="30"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="trailGods40Done"><if min="40"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="trailGods50Done"><if min="50"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="trailGods60Done"><if min="60"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="trailGods70Done"><if min="70"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="trailGods80Done"><if min="80"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="trailGods90Done"><if min="90"><currentFloor /></if></setStoryFlag>
+            <!-- the top floor: currentFloor - trialFloors == 0 -->
+            <setStoryFlag name="trailGodsAllDone">
+                <if equals="0"><currentFloor /><subtraction><trialFloors trialNum="1" /></subtraction></if>
+            </setStoryFlag>
+            <numericResource name="power">1
+                <if equals="0"><currentFloor /><subtraction><trialFloors trialNum="1" /></subtraction></if>
+            </numericResource>
+        </floorReward>
     </action>
     <action type="multipart" name="Challenge Gods" varName="GFight" townNum="8">
         <expMult>0.5</expMult>
@@ -7764,12 +7672,62 @@
             </value>
         </multiplier>
         </tickProgress>
-        <!-- segmentFinished increments curGodsSegment and sets the fightGods
-             story flags (talent-gated in round 7) (Phase 6) -->
         <loopReward />
         <reward>
             <skillExp />
         </reward>
+        <segmentReward>
+            <guildSegmentIncrement name="gods" />
+            <setStoryFlag name="fightGods01"><if equals="1"><guildSegment name="gods" /></if></setStoryFlag>
+            <setStoryFlag name="fightGods03"><if equals="2"><guildSegment name="gods" /></if></setStoryFlag>
+            <setStoryFlag name="fightGods05"><if equals="3"><guildSegment name="gods" /></if></setStoryFlag>
+            <setStoryFlag name="fightGods07"><if equals="4"><guildSegment name="gods" /></if></setStoryFlag>
+            <setStoryFlag name="fightGods09"><if equals="5"><guildSegment name="gods" /></if></setStoryFlag>
+            <setStoryFlag name="fightGods11"><if equals="6"><guildSegment name="gods" /></if></setStoryFlag>
+            <setStoryFlag name="fightGods13"><if equals="7"><guildSegment name="gods" /></if></setStoryFlag>
+            <setStoryFlag name="fightGods15"><if equals="8"><guildSegment name="gods" /></if></setStoryFlag>
+            <setStoryFlag name="fightGods17"><if equals="9"><guildSegment name="gods" /></if></setStoryFlag>
+            <!-- round 7: segments 55-63, each gated on its stat's talent -->
+            <setStoryFlag name="fightGods02">
+                <if equals="55"><guildSegment name="gods" /></if>
+                <if minExclusive="500000"><talentLevel statName="Dex" /></if>
+            </setStoryFlag>
+            <setStoryFlag name="fightGods04">
+                <if equals="56"><guildSegment name="gods" /></if>
+                <if minExclusive="500000"><talentLevel statName="Str" /></if>
+            </setStoryFlag>
+            <setStoryFlag name="fightGods06">
+                <if equals="57"><guildSegment name="gods" /></if>
+                <if minExclusive="500000"><talentLevel statName="Con" /></if>
+            </setStoryFlag>
+            <setStoryFlag name="fightGods08">
+                <if equals="58"><guildSegment name="gods" /></if>
+                <if minExclusive="500000"><talentLevel statName="Spd" /></if>
+            </setStoryFlag>
+            <setStoryFlag name="fightGods10">
+                <if equals="59"><guildSegment name="gods" /></if>
+                <if minExclusive="500000"><talentLevel statName="Per" /></if>
+            </setStoryFlag>
+            <setStoryFlag name="fightGods12">
+                <if equals="60"><guildSegment name="gods" /></if>
+                <if minExclusive="500000"><talentLevel statName="Cha" /></if>
+            </setStoryFlag>
+            <setStoryFlag name="fightGods14">
+                <if equals="61"><guildSegment name="gods" /></if>
+                <if minExclusive="500000"><talentLevel statName="Int" /></if>
+            </setStoryFlag>
+            <setStoryFlag name="fightGods16">
+                <if equals="62"><guildSegment name="gods" /></if>
+                <if minExclusive="500000"><talentLevel statName="Luck" /></if>
+            </setStoryFlag>
+            <setStoryFlag name="fightGods18">
+                <if equals="63"><guildSegment name="gods" /></if>
+                <if minExclusive="500000"><talentLevel statName="Soul" /></if>
+            </setStoryFlag>
+        </segmentReward>
+        <floorReward>
+            <numericResource name="power">1</numericResource>
+        </floorReward>
     </action>
     <action type="progress" name="Build Tower" townNum="8">
         <expMult>1</expMult>
@@ -7944,7 +7902,14 @@
              records the kill in the hearts list -->
         <loopReward>
             <numericResource name="heart">1</numericResource>
+            <effect name="pushHeart" />
         </loopReward>
+        <reward>
+            <numericResource name="reputation" value="-250">
+                <addition><skillLevel skillName="Assassin" /></addition>
+                <clampMax value="0" />
+            </numericResource>
+        </reward>
     </action>
     <action type="multipart" name="AssassinZ1" townNum="1">
         <expMult>1</expMult>
@@ -8022,7 +7987,14 @@
              records the kill in the hearts list -->
         <loopReward>
             <numericResource name="heart">1</numericResource>
+            <effect name="pushHeart" />
         </loopReward>
+        <reward>
+            <numericResource name="reputation" value="-500">
+                <addition><skillLevel skillName="Assassin" /></addition>
+                <clampMax value="0" />
+            </numericResource>
+        </reward>
     </action>
     <action type="multipart" name="AssassinZ2" townNum="2">
         <expMult>1</expMult>
@@ -8100,7 +8072,14 @@
              records the kill in the hearts list -->
         <loopReward>
             <numericResource name="heart">1</numericResource>
+            <effect name="pushHeart" />
         </loopReward>
+        <reward>
+            <numericResource name="reputation" value="-750">
+                <addition><skillLevel skillName="Assassin" /></addition>
+                <clampMax value="0" />
+            </numericResource>
+        </reward>
     </action>
     <action type="multipart" name="AssassinZ3" townNum="3">
         <expMult>1</expMult>
@@ -8178,7 +8157,14 @@
              records the kill in the hearts list -->
         <loopReward>
             <numericResource name="heart">1</numericResource>
+            <effect name="pushHeart" />
         </loopReward>
+        <reward>
+            <numericResource name="reputation" value="-1000">
+                <addition><skillLevel skillName="Assassin" /></addition>
+                <clampMax value="0" />
+            </numericResource>
+        </reward>
     </action>
     <action type="multipart" name="AssassinZ4" townNum="4">
         <expMult>1</expMult>
@@ -8256,7 +8242,14 @@
              records the kill in the hearts list -->
         <loopReward>
             <numericResource name="heart">1</numericResource>
+            <effect name="pushHeart" />
         </loopReward>
+        <reward>
+            <numericResource name="reputation" value="-1250">
+                <addition><skillLevel skillName="Assassin" /></addition>
+                <clampMax value="0" />
+            </numericResource>
+        </reward>
     </action>
     <action type="multipart" name="AssassinZ5" townNum="5">
         <expMult>1</expMult>
@@ -8334,7 +8327,14 @@
              records the kill in the hearts list -->
         <loopReward>
             <numericResource name="heart">1</numericResource>
+            <effect name="pushHeart" />
         </loopReward>
+        <reward>
+            <numericResource name="reputation" value="-1500">
+                <addition><skillLevel skillName="Assassin" /></addition>
+                <clampMax value="0" />
+            </numericResource>
+        </reward>
     </action>
     <action type="multipart" name="AssassinZ6" townNum="6">
         <expMult>1</expMult>
@@ -8412,7 +8412,14 @@
              records the kill in the hearts list -->
         <loopReward>
             <numericResource name="heart">1</numericResource>
+            <effect name="pushHeart" />
         </loopReward>
+        <reward>
+            <numericResource name="reputation" value="-1750">
+                <addition><skillLevel skillName="Assassin" /></addition>
+                <clampMax value="0" />
+            </numericResource>
+        </reward>
     </action>
     <action type="multipart" name="AssassinZ7" townNum="7">
         <expMult>1</expMult>
@@ -8490,6 +8497,13 @@
              records the kill in the hearts list -->
         <loopReward>
             <numericResource name="heart">1</numericResource>
+            <effect name="pushHeart" />
         </loopReward>
+        <reward>
+            <numericResource name="reputation" value="-2000">
+                <addition><skillLevel skillName="Assassin" /></addition>
+                <clampMax value="0" />
+            </numericResource>
+        </reward>
     </action>
 </actions>
