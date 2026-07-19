@@ -1,0 +1,74 @@
+# ui-parity flake sampler — a MEASUREMENT INSTRUMENT, not a gate.
+#
+# The mid/main shot has a long history of nondeterminism: reading the diff
+# image showed it is antialias coverage on the action tiles' rounded bottom
+# corners (a curve's AA blend — the coverage profile widens toward the solid
+# border row and is never contiguous, whereas a layout shift would give
+# contiguous full-width rows and move the border row itself, which is
+# pixel-identical). The hypothesis is that Chromium's tiled/threaded
+# rasterizer varies between runs; PARITY_RASTER_FLAGS=on pins it.
+#
+# A single run cannot settle that — an intermittent flake needs a SAMPLE.
+# Observed counts for one commit have ranged 0/40/76/84/124 px. This runs
+# both arms N times in parallel and reports every count, so the question is
+# answered with a distribution and a control instead of a re-roll.
+#
+# Both arms run report-only: we are collecting numbers, not failing builds.
+name: parity flake sample
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: "what this sample is for"
+        required: false
+        default: "rounded-corner AA: does PARITY_RASTER_FLAGS change the distribution?"
+
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        raster: [on, off]
+        i: [1, 2, 3, 4, 5, 6]
+    name: sample ${{ matrix.i }} (raster ${{ matrix.raster }})
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: PeerInfinity/Archipelago-CC
+          submodules: recursive
+          fetch-depth: 0
+      - name: Pin the submodule to the commit under test
+        run: |
+          cd frontend/modules/omsi-loops
+          git fetch origin "$GITHUB_SHA"
+          git checkout --detach "$GITHUB_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save playwright
+      - name: Install browsers for the resolved playwright
+        run: |
+          CLI=$(node -p "require('path').join(require('path').dirname(require.resolve('playwright/package.json')), 'cli.js')")
+          node "$CLI" install --with-deps chromium
+      - name: Serve the outer repo root
+        run: |
+          python3 -m http.server 8000 &
+          for i in $(seq 1 20); do curl -sf http://localhost:8000/ >/dev/null && break; sleep 0.5; done
+      - run: node CC/scripts/omsi-parity/run-ui-parity.mjs
+        env:
+          PARITY_RASTER_FLAGS: ${{ matrix.raster }}
+          PARITY_REPORT_ONLY: "1"
+      - name: Emit the per-shot counts as a summary line
+        if: always()
+        run: |
+          node -e '
+            const fs = require("fs");
+            const p = "CC/scripts/omsi-parity/results/ui/ui-parity-report.json";
+            if (!fs.existsSync(p)) { console.log("SAMPLE ${{ matrix.raster }} ${{ matrix.i }}: NO REPORT (harness error)"); process.exit(0); }
+            const r = JSON.parse(fs.readFileSync(p, "utf8"));
+            for (const s of r.states) for (const sh of s.screenshots) {
+              console.log(`SAMPLE ${{ matrix.raster }} ${{ matrix.i }} ${s.name}/${sh.label}: ${sh.diffPixels} px (maxDelta ${sh.maxChannelDelta})`);
+            }
+          '
