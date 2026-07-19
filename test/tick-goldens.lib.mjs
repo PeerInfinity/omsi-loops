@@ -31,7 +31,9 @@
 //                                      (the Divine-skill/prestige site)
 //   survey zone pick                   exchangeMap (~6762)        — `survey`
 // The `early` and `trial` fixtures assert rng === 0 — a pin, so a wiring
-// change that starts consuming RNG on those paths fails loudly.
+// change that starts consuming RNG on those paths fails loudly. The five
+// Phase-6 reward-family fixtures (ritual, guild, travel, imbue, invest) carry
+// the same rng === 0 pin.
 //
 // doSave() does not persist mid-loop state (timer, resources, curTown), so
 // per-loop needs (reputation gates, pickaxe, completedMap, mana budget,
@@ -136,6 +138,98 @@ export const TICK_FIXTURES = {
         probe: "towns.reduce((a, t, i) => a + t['expSurveyZ' + i], 0)",
         minProbe: 5051,
         rng: "some",
+    },
+    // ---- Phase 6 reward-family fixtures (plan §6.3, ruling Q5) ----
+    // The five above were chosen for the RNG sites + prestige + exchangeMap.
+    // These five cover the reward families Phase 6 compiled that had no
+    // tick-level golden: soulstone sacrifice + buff grant, guild segment
+    // bookkeeping, travel/cost/converter, trainingLimits, and the
+    // goldInvested global. All five are deterministic (rng === 0 pinned).
+    //
+    // getBuffCap() reads a DOM input and throws headless (stats.js), so the
+    // two buff-cap fixtures stub it — in the recipe, i.e. identically in both
+    // arms, and the compiled <buffCap> element resolves the same global.
+    // Three of the five drive an `allowed() === 1` action: getNextValidAction
+    // ABANDONS THE LOOP when getNumOnCurList exceeds allowed(), so those
+    // queues carry exactly 1 rep and the repetitions come from loops, not
+    // from reps. Progress on the guild/ritual/imbue multiparts is loop-temp
+    // (restart() zeroes towns[n][varName] and the cur*Segment globals), so
+    // every probe reads state that SURVIVES a restart: soulstones, buff
+    // amounts, trainingLimits, total* completion ledgers, goldInvested.
+    // Stat levels are cheated up so a tick() call is not chopped into 2-mana
+    // slivers by getMaxTicksForStat's next-level bound.
+    ritual: {
+        // Dark Ritual (town 1): sacrificeSoulstones + addBuffAmt("Ritual").
+        // Soulstones are injected once (persistent state); the drain across
+        // loops is the signal.
+        recipe: "for (const s in stats) stats[s].statLevelExp.setLevel(200);"
+            + " cheatSkill('Dark', 2000); townsUnlocked = [0, 1]; towns[1].expWitch = 505000;"
+            + " for (const s in stats) stats[s].soulstone = 20000;"
+            + " getBuffCap = () => 1000;",
+        queue: [["Dark Ritual", 1]],
+        eachLoop: "curTown = 1; resources.reputation = -5; timeNeeded = 2000000;",
+        steps: 300, cap: 20000,
+        probe: "buffs.Ritual.amt * 1e6 + Object.values(stats).reduce((a, s) => a + (s.soulstone ?? 0), 0)",
+        minProbe: 1e6,
+        rng: "none",
+    },
+    guild: {
+        // Crafting Guild (town 2): segmentFinished's gold + skill exp, the
+        // curCraftGuildSegment rank thresholds in loopsFinished, and the
+        // total* completion ledger. Skills are cheated high enough that a
+        // loop clears two full parts (six segments) — enough to fire the
+        // rank-E and rank-D story flags.
+        recipe: "for (const s in stats) stats[s].statLevelExp.setLevel(200);"
+            + " cheatSkill('Magic', 5000); cheatSkill('Crafting', 5000);"
+            + " townsUnlocked = [0, 1, 2]; towns[2].expDrunk = 505000;"
+            + " towns[2].totalCraftGuild = 0;", // load()-initialized; tickProgress reads it
+        queue: [["Crafting Guild", 1]],
+        eachLoop: "curTown = 2; timeNeeded = 200000;",
+        steps: 200, cap: 5000,
+        probe: "towns[2].totalCraftGuild * 1000"
+            + " + Object.keys(storyFlags).filter(k => storyFlags[k] && k.startsWith('craftGuild')).length",
+        minProbe: 1000,
+        rng: "none",
+    },
+    travel: {
+        // Town 0 converter + travel chain: Buy Supplies (gold cost() +
+        // booleanResource), Buy Mana Z1 (spend-all gold -> mana converter),
+        // Start Journey (supplies deduction + unlockTown).
+        recipe: "for (const s in stats) stats[s].statLevelExp.setLevel(200);"
+            + " cheatSkill('Combat', 50); cheatSkill('Magic', 50); cheatSkill('Mercantilism', 50);"
+            + " towns[0].expWander = 5050; towns[0].expMet = 5050;",
+        queue: [["Buy Supplies", 1], ["Buy Mana Z1", 1], ["Start Journey", 1]],
+        eachLoop: "curTown = 0; resources.gold = 500; towns[0].suppliesCost = 300; timeNeeded = 20000;",
+        steps: 100, cap: 500,
+        probe: "(townsUnlocked.includes(1) ? 1e6 : 0) + totalMerchantMana",
+        minProbe: 1e6,
+        rng: "none",
+    },
+    imbue: {
+        // Imbue Mind (town 3): sacrifice + trainingLimits++ + Imbuement buff.
+        recipe: "for (const s in stats) stats[s].statLevelExp.setLevel(200);"
+            + " cheatSkill('Magic', 500000); townsUnlocked = [0, 1, 2, 3]; towns[3].expIllusions = 505000;"
+            + " for (const s in stats) stats[s].soulstone = 20000;"
+            + " getBuffCap = () => 1000;",
+        queue: [["Imbue Mind", 1]],
+        eachLoop: "curTown = 3; timeNeeded = 20000000;",
+        steps: 300, cap: 200000,
+        probe: "trainingLimits * 1e6 + buffs.Imbuement.amt",
+        minProbe: 1e6,
+        rng: "none",
+    },
+    invest: {
+        // Town 7: Seminar (gold cost()), Collect Interest (goldInvested ->
+        // gold), Invest (the goldInvested global + its story flags).
+        recipe: "for (const s in stats) stats[s].statLevelExp.setLevel(200);"
+            + " cheatSkill('Mercantilism', 200); cheatSkill('Leadership', 200);"
+            + " townsUnlocked = [0, 1, 2, 3, 4, 5, 6, 7]; towns[7].expSurvey = 505000;",
+        queue: [["Seminar", 1], ["Collect Interest", 1], ["Invest", 1]],
+        eachLoop: "curTown = 7; resources.gold = 2000000; timeNeeded = 500000;",
+        steps: 150, cap: 20000,
+        probe: "goldInvested",
+        minProbe: 1,
+        rng: "none",
     },
 };
 

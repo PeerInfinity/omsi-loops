@@ -35,6 +35,25 @@ test("canary: a mutated XML value diverges the tick stream", () => {
         "a mutated manaCost produced an identical tick stream — the tick gate cannot see the override");
 });
 
+test("canary: a mutated XML reward diverges the tick stream", () => {
+    // The manaCost canary above only proves the tick gate watches the
+    // declarative fields. Phase 6 put the EFFECTS in the XML too, so mutate
+    // one: Crafting Guild's segmentReward gold 10 -> 11. The guild fixture
+    // clears six segments per loop, so the very first segment moves the hash.
+    const xmlPath = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "data", "actionList.xml");
+    const xml = fs.readFileSync(xmlPath, "utf8");
+    const at = xml.indexOf('<action type="multipart" name="Crafting Guild"');
+    assert.ok(at > 0, "Crafting Guild action not found");
+    const target = '<numericResource name="gold">10</numericResource>';
+    const goldAt = xml.indexOf(target, at);
+    assert.ok(goldAt > at, "Crafting Guild segmentReward gold not found");
+    const mutated = xml.slice(0, goldAt) + target.replace(">10<", ">11<") + xml.slice(goldAt + target.length);
+    const off = runTickFixture(TICK_FIXTURES.guild);
+    const on = runTickFixture(TICK_FIXTURES.guild, { wired: true, xmlText: mutated });
+    assert.notEqual(on.seqHash, off.seqHash,
+        "a mutated segment reward produced an identical tick stream — the tick gate cannot see the compiled effects");
+});
+
 for (const [name, fix] of Object.entries(TICK_FIXTURES)) {
     test(`tick golden: ${name} (JS build matches golden; option ON tick-identical)`, () => {
         const off = runTickFixture(fix);
