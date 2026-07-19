@@ -41,3 +41,102 @@ jobs:
         env:
           PLAYWRIGHT_PKG: playwright
           SMOKE_URL: http://localhost:8000/index.html
+
+  # ---------------------------------------------------------------------
+  # Heavy gates. Both live in the OUTER repo (CC/scripts/…) but test THIS
+  # fork, so they check the outer repo out for the harness and then pin the
+  # submodule to $GITHUB_SHA — the commit that triggered this run.
+  #
+  # Why not just trust `submodules: recursive`: the outer repo's gitlink is a
+  # PIN, updated by its own commits on its own cadence. Relative to any given
+  # fork push it may lag, match, or point at an unrelated commit, and which of
+  # those it is tells us nothing. A fork-triggered run must test the fork
+  # commit that triggered it, so it re-checks-out explicitly. (When the gitlink
+  # does already match, the checkout is simply a no-op.)
+  #
+  # They ran locally until 2026-07-19 — ~8 min (byte-gate) and ~4 min
+  # (ui-parity) per invocation, six and five times respectively in one
+  # session. They are also timing-sensitive, and a local box can be quietly
+  # poisoned by a stray process (it was: two orphaned regens at 96% CPU
+  # corrupted a whole session's parity runs). CI is the cleaner instrument.
+  # ---------------------------------------------------------------------
+
+  # Exact-reproduction gate: 461 loops / 5,195,188 ticks / 9d9952e68bc8373c
+  # / 0 RNG. Proves options.useActionListXml stays byte-inert.
+  byte-gate:
+    # push-only: on a pull_request $GITHUB_SHA is the merge commit,
+    # which does not exist on origin, so the pin step cannot fetch it
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: PeerInfinity/Archipelago-CC
+          submodules: recursive
+          fetch-depth: 0
+      - name: Pin the submodule to the commit under test
+        run: |
+          cd frontend/modules/omsi-loops
+          # NOT --depth=1: that marks the clone shallow, and ui-parity extracts
+          # the fork point (fe4a349, 83 commits back) to build the upstream
+          # side. A shallow submodule fails there, and it fails looking like a
+          # harness error rather than a parity result.
+          git fetch origin "$GITHUB_SHA"
+          git checkout --detach "$GITHUB_SHA"
+          git log --oneline -1
+          git cat-file -e fe4a349efb799a56ab548018caca1a1a1aea0c8f^{commit} \
+            || { echo "::error::fork point unreachable — submodule history is too shallow"; exit 1; }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node CC/scripts/omsi-stats/run-planner.mjs --worktree --pool 4
+
+  # Fork-vs-upstream UI parity. The matrix is a CONTROL, not a retry: `on`
+  # carries the raster-determinism flags, `off` does not. Running both every
+  # time keeps the rounded-corner AA flake measurable instead of something
+  # we re-roll until it passes.
+  ui-parity:
+    # push-only: on a pull_request $GITHUB_SHA is the merge commit,
+    # which does not exist on origin, so the pin step cannot fetch it
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        raster: [on, off]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: PeerInfinity/Archipelago-CC
+          submodules: recursive
+          fetch-depth: 0
+      - name: Pin the submodule to the commit under test
+        run: |
+          cd frontend/modules/omsi-loops
+          # see the byte-gate job: --depth=1 would shallow the clone and break
+          # the fork-point extraction this job depends on
+          git fetch origin "$GITHUB_SHA"
+          git checkout --detach "$GITHUB_SHA"
+          git cat-file -e fe4a349efb799a56ab548018caca1a1a1aea0c8f^{commit} \
+            || { echo "::error::fork point unreachable — submodule history is too shallow"; exit 1; }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save playwright
+      - run: npx playwright install --with-deps chromium
+      - name: Serve the outer repo root
+        run: |
+          python3 -m http.server 8000 &
+          # the outer root has no index.html; http.server answers / with a listing
+          for i in $(seq 1 20); do curl -sf http://localhost:8000/ >/dev/null && break; sleep 0.5; done
+          curl -sf http://localhost:8000/ >/dev/null
+      - run: node CC/scripts/omsi-parity/run-ui-parity.mjs
+        env:
+          PARITY_RASTER_FLAGS: ${{ matrix.raster }}
+      - name: Keep the shots and the report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-parity-${{ matrix.raster }}
+          path: CC/scripts/omsi-parity/results/ui/
+          if-no-files-found: warn
