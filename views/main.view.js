@@ -1413,11 +1413,13 @@ class View {
     updateLootDetails(varName) {
         const shuffled = ActionListXml.handlesLoot(varName) && ActionListXml.lootIsShuffled(varName);
         const container = document.getElementById(`infoContainer${varName}`);
+        let toggle = document.getElementById(`lootToggle${varName}`);
         let row = document.getElementById(`lootDetails${varName}`);
         if (!shuffled) {
-            // schedule cleared (new world): drop the row, restore the strings
-            if (row) {
-                row.remove();
+            // schedule cleared (new world): drop the controls, restore the strings
+            if (toggle) toggle.remove();
+            if (row) row.remove();
+            if (toggle || row) {
                 const action = totalActionList.find((a) => a.varName === varName);
                 const showthis = container?.querySelector(".showthis");
                 if (showthis && action) showthis.innerHTML = action.infoText();
@@ -1425,34 +1427,48 @@ class View {
             return;
         }
         if (!container) return;
-        if (!row) {
+        const open = (this.lootDetailsOpen ??= {})[varName] === true;
+        if (!toggle) {
+            // first render: swap the tooltip wording, then put the collapse
+            // arrow INSIDE the labelDone div — a span inside child 1 keeps
+            // townInfoContainer's exactly-8 element children, and collapsed
+            // state stays a single vanilla-shaped row
             const action = totalActionList.find((a) => a.varName === varName);
             const showthis = container.querySelector(".showthis");
             if (showthis && action) showthis.innerHTML = this.lootShuffledText(action);
+            const labelDiv = container.querySelector(".townLabel");
+            if (!labelDiv) return;
+            toggle = document.createElement("span");
+            toggle.id = `lootToggle${varName}`;
+            toggle.style.cssText = "cursor:pointer;";
+            toggle.setAttribute("onclick", `view.toggleLootDetails("${varName}")`);
+            labelDiv.insertBefore(toggle, labelDiv.firstChild);
+        }
+        toggle.innerHTML = open ? "&#9662;&nbsp;" : "&#9656;&nbsp;";
+        if (!open) {
+            if (row) row.remove();
+            return;
+        }
+        if (!row) {
             row = document.createElement("div");
             row.id = `lootDetails${varName}`;
             row.className = "lootDetails";
             container.appendChild(row);
         }
         const items = ActionListXml.getLootView(varName) ?? [];
-        const open = (this.lootDetailsOpen ??= {})[varName] === true;
         const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
         const label = (cat) => cat === "vanilla" ? "original"
             : cat === "dummy" ? "dummy"
             : cat.startsWith("local:") ? esc(cat.slice(6))
             : esc(cat.slice(8).replace("/", ": "));
-        let html = `<span class='lootDetailsToggle' style='cursor:pointer;font-size:0.85em;'`
-            + ` onclick='view.toggleLootDetails("${varName}")'>${open ? "&#9662;" : "&#9656;"} contents</span>`;
-        if (open) {
-            html += items.map((c, i) => `
-                <div class='lootCategoryRow' style='font-size:0.85em;margin-left:12px;'>
-                    <span style='cursor:pointer;' onclick='view.moveLootCategory("${varName}",${i},-1)'>&#9650;</span>
-                    <span style='cursor:pointer;' onclick='view.moveLootCategory("${varName}",${i},1)'>&#9660;</span>
-                    <input type='checkbox' ${c.disabled ? "" : "checked"} onchange='view.toggleLootCategory("${varName}",${i})'>
-                    ${label(c.category)} <span class='numeric'>${c.remaining}</span>/<span class='numeric'>${c.discovered}</span>
-                </div>`).join("");
-        }
-        row.innerHTML = html;
+        row.innerHTML = items.map((c, i) => `
+            <div class='lootCategoryRow' style='font-size:0.85em;margin-left:12px;'>
+                <span style='cursor:pointer;' onclick='view.moveLootCategory("${varName}",${i},-1)'>&#9650;</span>
+                <span style='cursor:pointer;' onclick='view.moveLootCategory("${varName}",${i},1)'>&#9660;</span>
+                <input type='checkbox' ${c.disabled ? "" : "checked"} onchange='view.toggleLootCategory("${varName}",${i})'>
+                ${label(c.category)} <span class='numeric'>${c.remaining}</span>/<span class='numeric'>${c.discovered}</span>
+            </div>`).join("")
+            || "<div class='lootCategoryRow' style='font-size:0.85em;margin-left:12px;'>(no contents discovered yet)</div>";
     };
 
     toggleLootDetails(varName) {
