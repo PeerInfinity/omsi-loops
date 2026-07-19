@@ -123,29 +123,40 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-save playwright
-        # NOT `npx playwright install`: the outer repo pins BOTH playwright
-        # ^1.57.0 and @playwright/test 1.56.0, so npx may resolve a different
-        # version than `import "playwright"` does — which downloads browsers
-        # for one version and launches the other ("Executable doesn't exist
-        # at .../chromium_headless_shell-1228"). The local binary is by
-        # construction the same install the script imports. (ui-smoke dodges
-        # this only because it runs in the fork, which declares no deps.)
-      - run: ./node_modules/.bin/playwright install --with-deps chromium
+        # Install browsers for the EXACT playwright the script will import.
+        # Two earlier attempts got this wrong, both silently:
+        #   `npx playwright install`            -> ambiguous resolution
+        #   `./node_modules/.bin/playwright`    -> @playwright/test 1.56.0 also
+        #                                          ships a `playwright` bin, so
+        #                                          this installed build v1194
+        #                                          while `import "playwright"`
+        #                                          (1.58) wanted v1228
+        # Both failed at launch with "Executable doesn't exist at
+        # .../chromium_headless_shell-<build>". Resolving the version from the
+        # module itself removes the guesswork.
+      - name: Install browsers for the resolved playwright
+        run: |
+          PW_VERSION=$(node -p "require('playwright/package.json').version")
+          echo "runtime playwright: $PW_VERSION"
+          npx --yes "playwright@$PW_VERSION" install --with-deps chromium
       - name: Serve the outer repo root
         run: |
           python3 -m http.server 8000 &
           # the outer root has no index.html; http.server answers / with a listing
           for i in $(seq 1 20); do curl -sf http://localhost:8000/ >/dev/null && break; sleep 0.5; done
           curl -sf http://localhost:8000/ >/dev/null
+      # The `off` leg is the CONTROL: no raster flags, so if the
+      # rounded-corner AA flake is real it is EXPECTED to differ sometimes.
+      # It reports rather than gates — but via the script's own report-only
+      # mode, NOT job-level continue-on-error. continue-on-error was tried
+      # and is actively misleading: it reports a step that DIED as a green
+      # job, so a browser that never launched looks exactly like a clean
+      # comparison. Report-only suppresses PIXEL differences only; a harness
+      # error fails both legs, loudly.
       - run: node CC/scripts/omsi-parity/run-ui-parity.mjs
-        # The `off` leg is the CONTROL — it runs without the raster flags, so
-        # if the rounded-corner AA flake is real it is EXPECTED to fail some
-        # of the time. It reports, it does not gate: a leg that is red by
-        # design would train everyone to ignore red, which is precisely the
-        # habit this job exists to break. The `on` leg gates.
-        continue-on-error: ${{ matrix.raster == 'off' }}
         env:
           PARITY_RASTER_FLAGS: ${{ matrix.raster }}
+          PARITY_REPORT_ONLY: ${{ matrix.raster == 'off' && '1' || '0' }}
       - name: Keep the shots and the report
         if: always()
         uses: actions/upload-artifact@v4
