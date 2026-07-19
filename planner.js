@@ -281,6 +281,15 @@ function plRestoreSave(json) {
     }
     currentLoop = totals.loops;
     adjustAll();
+    // fork: P2 award carrier — a restore swaps the whole world out from under
+    // the per-loop carrier state, and eval loops restore different snapshots
+    // back to back. Stale awardCounters / lootStates cursors from the previous
+    // eval would mis-index this one's grants, so invalidate exactly as a loop
+    // restart does (both structures rebuild lazily from the restored town
+    // vars; buildLootState's good-goodTemp burn re-derives the walk position).
+    // Same typeof guard as driver.js restart() — sim contexts may not load the
+    // interpreter. Inert with no schedule: it clears two empty objects.
+    if (typeof ActionListXml !== "undefined") ActionListXml.onLoopRestart();
 }
 
 // ---- unlock-threshold probing -------------------------------------------

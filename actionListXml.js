@@ -837,6 +837,77 @@ const ActionListXml = (() => {
     }
 
     /**
+     * Serialize the session-only priority prefs (Sets -> arrays) so they can
+     * ride a worker message. The inverse of the setLootPriority loop in
+     * installWorldConfig.
+     * @returns {Record<string, {order: string[], disabled: string[]}>}
+     */
+    function getLootPrefs() {
+        const out = {};
+        for (const varName in lootPrefs) {
+            out[varName] = {
+                order: lootPrefs[varName].order.slice(),
+                disabled: [...lootPrefs[varName].disabled],
+            };
+        }
+        return out;
+    }
+
+    function hasLootPrefs() {
+        for (const _ in lootPrefs) return true;
+        return false;
+    }
+
+    /**
+     * The transport payload (cross-game P2-A): everything a sim context needs
+     * to run the world that actually exists. null when no schedule is
+     * installed — prefs alone are meaningless (the walk only runs under
+     * handlesLoot), and null keeps the whole feature byte-inert.
+     * @returns {{awardSchedule: object, lootPrefs: Record<string, {order: string[], disabled: string[]}>} | null}
+     */
+    function buildWorldConfig() {
+        if (awardSchedule === null) return null;
+        return { awardSchedule, lootPrefs: getLootPrefs() };
+    }
+
+    /**
+     * Install a worldConfig into THIS context (worker or headless harness).
+     * Stateless per call — a null config clears a previously installed one,
+     * which is what makes the transport self-healing when the player installs
+     * or clears a schedule mid-session (same contract as lootFirst/setOptions).
+     *
+     * Mirrors the managed-mode flip: installing a schedule turns the compiled
+     * reward path on, because the carrier lives inside the XML executor's
+     * grant dispatcher. applyOverrides is idempotent.
+     *
+     * A null config against an already-clean context is a true no-op — it must
+     * not touch `options` or the override backup, or the feature would stop
+     * being byte-inert on the default path.
+     * @returns {boolean} true when the config installed (or cleared) cleanly
+     */
+    function installWorldConfig(cfg) {
+        if (cfg == null || cfg.awardSchedule == null) {
+            if (awardSchedule === null && !hasLootPrefs()) return true;
+            lootPrefs = { __proto__: null };
+            return setAwardSchedule(null);
+        }
+        // setAwardSchedule resets counters + walk state; prefs are replaced
+        // wholesale so a config never inherits a stale category order
+        const ok = setAwardSchedule(cfg.awardSchedule);
+        lootPrefs = { __proto__: null };
+        if (!ok) return false;
+        const prefs = cfg.lootPrefs ?? {};
+        for (const varName in prefs) {
+            setLootPriority(varName, prefs[varName]?.order, prefs[varName]?.disabled);
+        }
+        if (typeof options !== "undefined" && !options.useActionListXml) {
+            options.useActionListXml = true;
+            applyOverrides();
+        }
+        return true;
+    }
+
+    /**
      * UI readout for one lootable: discovered categories in current
      * priority order with census counts and this-loop remaining.
      */
@@ -1479,5 +1550,6 @@ const ActionListXml = (() => {
     return { SLOTS, parseDocument, compileAction, compileAll, applyOverrides, revertOverrides,
         setAwardSchedule, onLoopRestart, setForeignAwardHook,
         handlesLoot, lootIsShuffled, lootFinishRegular, setLootPriority, getLootView,
+        getLootPrefs, buildWorldConfig, installWorldConfig,
         getAwardSchedule: () => awardSchedule };
 })();
