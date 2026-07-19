@@ -93,6 +93,8 @@
       "Heal The Sick",
       "Heroes Trial",
       "Hunt",
+      "Imbue Mind",
+      "Imbue Soul",
       "Insurance Fraud",
       "Investigate",
       "Large Dungeon",
@@ -149,6 +151,7 @@
       "Challenge Gods",
       "Dead Trial",
       "Gods Trial",
+      "Heroes Trial",
       "Secret Trial"
     ],
     "loopsFinished": [
@@ -162,11 +165,16 @@
       "AssassinZ6",
       "AssassinZ7",
       "Crafting Guild",
+      "Dark Ritual",
       "Fight Frost Giants",
       "Fight Jungle Monsters",
       "Fight Monsters",
+      "Great Feast",
       "Heal The Sick",
       "Hunt Trolls",
+      "Imbue Body",
+      "Imbue Mind",
+      "Imbue Soul",
       "Rescue Survivors",
       "Thieves Guild",
       "Tidy Up",
@@ -187,9 +195,9 @@
   },
   "counts": {
     "cost": 33,
-    "finish": 108,
-    "floorReward": 4,
-    "loopsFinished": 19,
+    "finish": 110,
+    "floorReward": 5,
+    "loopsFinished": 24,
     "segmentFinished": 10
   },
   "native": {}

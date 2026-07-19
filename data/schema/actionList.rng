@@ -831,6 +831,45 @@
         </element>
     </define>
     <define name="resourceStack" combine="choice">
+        <element name="addTrainingLimit">
+            <a:documentation>Raise the training limit by one (Imbue Mind). The limit caps the
+                allowed() count of the six training actions.</a:documentation>
+            <il:label>Add training limit</il:label>
+            <ref name="conditionalEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="buff">
+            <a:documentation>Grant one level of a buff (addBuffAmt). An optional &lt;sacrifice&gt;
+                child runs first and its result is recorded as the spend ledger; without one the
+                buff is granted outright. Conditional children are guards — Heroes Trial only
+                grants Heroism when the floor reached is at least the current level.</a:documentation>
+            <il:label>Grant buff</il:label>
+            <attribute name="name" />
+            <optional>
+                <attribute name="spendType" />
+            </optional>
+            <interleave>
+                <optional>
+                    <element name="sacrifice">
+                        <a:documentation>Spend soulstones to pay for the buff; the amount is the
+                            evaluation, and the per-stat breakdown becomes the buff's ledger.</a:documentation>
+                        <il:label>Sacrifice soulstones</il:label>
+                        <attribute name="variant">
+                            <choice>
+                                <value>bySegments</value>
+                                <value>proportional</value>
+                                <value>toEquality</value>
+                            </choice>
+                        </attribute>
+                        <ref name="numericEvaluation" />
+                    </element>
+                </optional>
+                <ref name="conditionalEvaluation" />
+            </interleave>
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
         <element name="guildSegmentIncrement">
             <a:documentation>Increment a guild's per-loop segment counter. The counters are
                 loop-temp globals reset by restart(); the view notification (where upstream sends

@@ -484,6 +484,37 @@ const ActionListXml = (() => {
         // the assassin kill list: a per-loop array of the zones hit, which
         // Guild Assassin reads back. The heart itself is a plain resource.
         pushHeart: (ctx) => { hearts.push(ctx.action.varName); },
+        // Imbue Mind caps training only when the option is on
+        capTrainingIfAuto: () => { if (options.autoMaxTraining) capAllTraining(); },
+        capAllTraining: () => capAllTraining(),
+        adjustTrainingExpMult: () => adjustTrainingExpMult(),
+        // Imbue Body drains every stat's talent down toward zero and pays the
+        // drained amounts as the buff's spend ledger — one composite, because
+        // the amount spent is only known from the drain itself
+        imbueBodyEffect: (ctx) => {
+            const spent = {};
+            for (const stat of statList) {
+                const currentTalentLevel = getTalent(stat);
+                const targetTalentLevel = Math.max(currentTalentLevel - getBuffLevel("Imbuement2") - 1, 0);
+                stats[stat].talentLevelExp.setLevel(targetTalentLevel);
+                spent[stat] = currentTalentLevel - targetTalentLevel;
+            }
+            stateChanged("talentsReset");
+            addBuffAmt("Imbuement2", 1, ctx.self, "talent", spent);
+        },
+        // Imbue Soul is the prestige-shaped wipe: talents, soulstones, the two
+        // lower Imbuements and the training limit all reset together
+        imbueSoulReset: (ctx) => {
+            for (const stat of statList) {
+                stats[stat].talentLevelExp.setLevel(0);
+                stats[stat].soulstone = 0;
+            }
+            buffs["Imbuement"].amt = 0;
+            buffs["Imbuement2"].amt = 0;
+            trainingLimits = 10;
+            addBuffAmt("Imbuement3", 1, ctx.self, "imbuement3");
+            stateChanged("imbueSoulReset");
+        },
         // Spatiomancy resizes every limited pool game-wide when its LEVEL
         // moves, so the grant and the re-adjust are one composite
         spatiomancyFinish: (ctx) => {
@@ -493,9 +524,18 @@ const ActionListXml = (() => {
         },
     };
 
+    // whitelisted <sacrifice variant="..."/> targets. `sacrificeSoulstones` is
+    // an alias for the by-segments variant, which is what all three buff
+    // actions call today; the other two exist upstream and are named here so
+    // the vocabulary matches the helpers rather than the alias.
+    const SACRIFICES = {
+        bySegments: (amount) => sacrificeSoulstonesBySegments(amount),
+        proportional: (amount) => sacrificeSoulstonesProportional(amount),
+        toEquality: (amount) => sacrificeSoulstonesToEquality(amount),
+    };
     const EFFECT_TAGS = new Set(["numericResource", "booleanResource", "setStoryFlag",
         "storyVarMin", "skillExp", "setSkill", "progressExp", "grantProgress",
-        "guildSegmentIncrement", "noEffect", "effect"]);
+        "guildSegmentIncrement", "buff", "addTrainingLimit", "noEffect", "effect"]);
 
     /**
      * Execute one effect element.
@@ -559,6 +599,30 @@ const ActionListXml = (() => {
                 // amounts come from the action's own skills table, which stays
                 // runtime-authoritative (main.view.js pulls action.skills[s]())
                 handleSkillExp(ctx.self.skills);
+                return;
+            case "buff": {
+                // addBuffAmt(name, 1, action, spendType?, stonesSpent?).
+                // A <sacrifice> child runs first and its return is the spend
+                // ledger; without one the buff is granted outright (Heroism).
+                if (!evalConditionList(node.children.filter(c => c.tag !== "sacrifice"), ctx)) return;
+                const sac = child(node, "sacrifice");
+                if (sac) {
+                    const amount = evalNumeric(sac, ctx);
+                    if (amount === null) return;
+                    const fn = SACRIFICES[sac.attrs.variant];
+                    if (!fn) throw new Error(`actionListXml: sacrifice variant ${sac.attrs.variant} not whitelisted`);
+                    addBuffAmt(node.attrs.name, 1, ctx.self, node.attrs.spendType, fn(amount));
+                } else if (node.attrs.spendType !== undefined) {
+                    addBuffAmt(node.attrs.name, 1, ctx.self, node.attrs.spendType);
+                } else {
+                    addBuffAmt(node.attrs.name, 1, ctx.self);
+                }
+                return;
+            }
+            case "addTrainingLimit":
+                // Imbue Mind raises the cap on the six training actions
+                if (!evalConditionList(node.children, ctx)) return;
+                trainingLimits++;
                 return;
             case "guildSegmentIncrement": {
                 const inc = GUILD_SEGMENT_INCREMENTS[node.attrs.name];

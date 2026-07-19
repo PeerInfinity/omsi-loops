@@ -220,6 +220,42 @@ const CANARIES = [
         all: true,
     },
     {
+        name: "buff grant",
+        actions: ["Dark Ritual"],
+        find: `<buff name="Ritual" spendType="soulstone">`,
+        with: `<buff name="Feast" spendType="soulstone">`,
+    },
+    {
+        name: "sacrifice amount",
+        actions: ["Great Feast"],
+        find: `<buff name="Feast" spendType="soulstone">\n                <sacrifice variant="bySegments"><primaryValue /></sacrifice>\n            </buff>`,
+        with: `<buff name="Feast" spendType="soulstone">\n                <sacrifice variant="bySegments"><primaryValue /><addition value="1" /></sacrifice>\n            </buff>`,
+    },
+    {
+        name: "addTrainingLimit",
+        actions: ["Imbue Mind"],
+        find: `<addTrainingLimit />`,
+        with: ``,
+    },
+    {
+        name: "buff guard (Heroism floor gate)",
+        actions: ["Heroes Trial"],
+        find: `<if min="0"><currentFloor /><subtraction><buffLevel buffName="Heroism" /></subtraction></if>`,
+        with: `<if min="1"><currentFloor /><subtraction><buffLevel buffName="Heroism" /></subtraction></if>`,
+    },
+    {
+        name: "imbueBodyEffect primitive",
+        actions: ["Imbue Body"],
+        find: `<effect name="imbueBodyEffect" />`,
+        with: `<noEffect />`,
+    },
+    {
+        name: "imbueSoulReset primitive",
+        actions: ["Imbue Soul"],
+        find: `<effect name="imbueSoulReset" />`,
+        with: `<noEffect />`,
+    },
+    {
         name: `cost deduction="none"`,
         actions: ["Map"],
         find: `<cost deduction="none">`,

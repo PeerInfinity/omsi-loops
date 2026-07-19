@@ -29,6 +29,7 @@
 //     per element type and require the differential to go red.
 
 import crypto from "node:crypto";
+import vm from "node:vm";
 import { makeContext } from "./harness.mjs";
 import { WIRED_FILES, WIRED_PREP, FM_INSTALL_SRC } from "./field-matrix.lib.mjs";
 
@@ -259,11 +260,27 @@ export function buildEffectDifferential({ xmlText = null, maxMismatches = 100, o
             wiredCtx.ev(apply);
             const rng = jsCtx.getRng();
             wiredCtx.setRng(rng);
-            const j = JSON.parse(jsCtx.sandbox.__runSlot(name, slot));
+            const j = runSlot(jsCtx, name, slot);
             const jRng = jsCtx.getRng().n - rng.n;
-            const w = JSON.parse(wiredCtx.sandbox.__runSlot(name, slot));
+            const w = runSlot(wiredCtx, name, slot);
             const wRng = wiredCtx.getRng().n - rng.n;
             comparisons++;
+            if (j.unreachable || w.unreachable) {
+                // both arms agree on reachability (canStart is differential-proven);
+                // a disagreement is itself a divergence worth reporting
+                if (!!j.unreachable !== !!w.unreachable) {
+                    mismatches.push({ state: s.id, name, slot, kind: "reachability", js: !!j.unreachable, xml: !!w.unreachable });
+                }
+                continue;
+            }
+            if (j.timedOut || w.timedOut) {
+                // a body that never returns. Both arms run the same shared
+                // helper, so agreeing timeouts are equivalent, not a divergence.
+                if (!!j.timedOut !== !!w.timedOut) {
+                    mismatches.push({ state: s.id, name, slot, kind: "timeout", js: !!j.timedOut, xml: !!w.timedOut });
+                }
+                continue;
+            }
             if (j.missing || j.absent) {
                 // the XML compiles a slot the JS action does not have: the
                 // compiled body would ADD behavior, which is never correct here
@@ -288,6 +305,31 @@ export function buildEffectDifferential({ xmlText = null, maxMismatches = 100, o
     const lyingNoOp = Object.entries(mutated)
         .filter(([k, m]) => m && noOp.has(k)).map(([k]) => k).sort();
     return { plan, states: states.length, comparisons, mismatches, inert, lyingNoOp };
+}
+
+/**
+ * Invoke one slot with a wall-clock cap.
+ *
+ * sacrificeSoulstonesBySegments does not terminate when every stat has zero
+ * soulstones: `count` is Math.min(ceil(amount/segments), 0) forever, so
+ * `amount` never decreases. In play canStart's checkSoulstoneSac makes that
+ * unreachable, but this harness invokes slots unconditionally — deliberately,
+ * because gating on canStart collapses coverage (12 slots went inert when it
+ * was tried; the anti-inert assertion caught it).
+ *
+ * So the cap stays, and it is TIGHT — 100ms is still ~1000x headroom over a
+ * real body, and the non-terminating pairs would otherwise cost seconds each
+ * across the corpus (they dominate the sweep's wall clock).
+ * Both arms run the same shared helper, so agreeing timeouts are equivalence,
+ * not divergence — a DISAGREEMENT is what gets reported.
+ */
+function runSlot(ctx, name, slot) {
+    const expr = `__runSlot(${JSON.stringify(name)}, ${JSON.stringify(slot)})`;
+    try {
+        return JSON.parse(vm.runInContext(expr, ctx.sandbox, { timeout: 100 }));
+    } catch (e) {
+        return { timedOut: true, message: String(e && e.message || e) };
+    }
 }
 
 /** first differing key path between two state JSON blobs, for readable failures */

@@ -2311,9 +2311,11 @@
                 </value>
             </divisor>
         </tickProgress>
-        <!-- loopsFinished sacrifices primaryValue soulstones and grants +1
-             Ritual (Phase 6) -->
-        <loopReward />
+        <loopReward>
+            <buff name="Ritual" spendType="soulstone">
+                <sacrifice variant="bySegments"><primaryValue /></sacrifice>
+            </buff>
+        </loopReward>
         <reward>
             <!-- the guard is >= 0, i.e. always true once a segment has run -->
             <setStoryFlag name="darkRitualThirdSegmentReached"><if min="0"><loopCounter source="town" /></if></setStoryFlag>
@@ -3443,12 +3445,19 @@
             </value>
         </multiplier>
         </tickProgress>
-        <!-- loopsFinished records the floor and pays the floor reward
-             (Heroism buff) (Phase 6) -->
         <loopReward />
         <reward>
             <skillExp />
         </reward>
+        <floorReward>
+            <buff name="Heroism">
+                <if min="0"><currentFloor /><subtraction><buffLevel buffName="Heroism" /></subtraction></if>
+            </buff>
+            <setStoryFlag name="heroTrial1Done"><if min="1"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="heroTrial10Done"><if min="10"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="heroTrial25Done"><if min="25"><currentFloor /></if></setStoryFlag>
+            <setStoryFlag name="heroTrial50Done"><if min="50"><currentFloor /></if></setStoryFlag>
+        </floorReward>
     </action>
     <action type="progress" name="RuinsZ3" townNum="3">
         <expMult>1</expMult>
@@ -4230,9 +4239,18 @@
         <tickProgress>
             <skillLevel skillName="Magic" />
         </tickProgress>
-        <!-- loopsFinished sacrifices the soulstones, raises trainingLimits and
-             grants +1 Imbuement (Phase 6) -->
-        <loopReward />
+        <loopReward>
+            <!-- JS sacrifices, bumps the limit, then grants; the bump is
+                 independent of both, so it rides after the buff here -->
+            <buff name="Imbuement" spendType="soulstone">
+                <sacrifice variant="bySegments"><primaryValue /></sacrifice>
+            </buff>
+            <addTrainingLimit />
+        </loopReward>
+        <reward>
+            <effect name="capTrainingIfAuto" />
+            <setStoryFlag name="imbueMindThirdSegmentReached"><if min="0"><loopCounter source="town" /></if></setStoryFlag>
+        </reward>
     </action>
     <action type="multipart" name="Imbue Body" townNum="3">
         <expMult>5</expMult>
@@ -4325,9 +4343,9 @@
         <tickProgress>
             <skillLevel skillName="Magic" />
         </tickProgress>
-        <!-- loopsFinished spends Imbuement2+1 levels of every talent and grants
-             +1 Imbuement2 (Phase 6) -->
-        <loopReward />
+        <loopReward>
+            <effect name="imbueBodyEffect" />
+        </loopReward>
     </action>
     <action type="progress" name="Guided Tour" varName="Tour" townNum="4">
         <expMult>1</expMult>
@@ -5503,8 +5521,11 @@
         <tickProgress>
             <skillLevel skillName="Practical" />
         </tickProgress>
-        <!-- loopsFinished sacrifices the soulstones and grants +1 Feast (Phase 6) -->
-        <loopReward />
+        <loopReward>
+            <buff name="Feast" spendType="soulstone">
+                <sacrifice variant="bySegments"><primaryValue /></sacrifice>
+            </buff>
+        </loopReward>
         <reward>
             <setStoryFlag name="feastAttempted" />
         </reward>
@@ -7389,7 +7410,14 @@
         </tickProgress>
         <!-- loopsFinished zeroes all talents/soulstones and both Imbuements,
              sets trainingLimits to 10 and grants +1 Imbuement3 (Phase 6) -->
-        <loopReward />
+        <loopReward>
+            <effect name="imbueSoulReset" />
+        </loopReward>
+        <reward>
+            <setStoryFlag name="soulInfusionAttempted" />
+            <effect name="capAllTraining" />
+            <effect name="adjustTrainingExpMult" />
+        </reward>
     </action>
     <action type="multipart" name="Gods Trial" varName="GTrial" townNum="8">
         <expMult>0.2</expMult>
