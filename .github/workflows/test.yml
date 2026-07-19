@@ -123,7 +123,14 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-save playwright
-      - run: npx playwright install --with-deps chromium
+        # NOT `npx playwright install`: the outer repo pins BOTH playwright
+        # ^1.57.0 and @playwright/test 1.56.0, so npx may resolve a different
+        # version than `import "playwright"` does — which downloads browsers
+        # for one version and launches the other ("Executable doesn't exist
+        # at .../chromium_headless_shell-1228"). The local binary is by
+        # construction the same install the script imports. (ui-smoke dodges
+        # this only because it runs in the fork, which declares no deps.)
+      - run: ./node_modules/.bin/playwright install --with-deps chromium
       - name: Serve the outer repo root
         run: |
           python3 -m http.server 8000 &
@@ -131,6 +138,12 @@ jobs:
           for i in $(seq 1 20); do curl -sf http://localhost:8000/ >/dev/null && break; sleep 0.5; done
           curl -sf http://localhost:8000/ >/dev/null
       - run: node CC/scripts/omsi-parity/run-ui-parity.mjs
+        # The `off` leg is the CONTROL — it runs without the raster flags, so
+        # if the rounded-corner AA flake is real it is EXPECTED to fail some
+        # of the time. It reports, it does not gate: a leg that is red by
+        # design would train everyone to ignore red, which is precisely the
+        # habit this job exists to break. The `on` leg gates.
+        continue-on-error: ${{ matrix.raster == 'off' }}
         env:
           PARITY_RASTER_FLAGS: ${{ matrix.raster }}
       - name: Keep the shots and the report
