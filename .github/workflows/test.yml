@@ -166,6 +166,13 @@ jobs:
         env:
           PARITY_RASTER_FLAGS: ${{ matrix.raster }}
           PARITY_REPORT_ONLY: ${{ matrix.raster == 'off' && '1' || '0' }}
+          # STRICT on the gating leg only. Measured, not assumed: with the
+          # raster flags, CI came back pixel-exact on all nine shots in every
+          # one of six samples (0 nonzero / 45), so the tolerance bands buy
+          # nothing here and would let a real 1-2 px regression through. The
+          # control leg keeps the bands, since its whole job is to show the
+          # noise those bands were written for.
+          PARITY_STRICT_PIXELS: ${{ matrix.raster == 'on' && '1' || '0' }}
       - name: Keep the shots and the report
         if: always()
         uses: actions/upload-artifact@v4
