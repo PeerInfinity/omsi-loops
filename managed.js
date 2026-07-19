@@ -99,10 +99,23 @@ const IdleLoopsManaged = (() => {
                 if (schedule != null) console.error("managed setAwardSchedule: actionListXml.js not loaded; schedule ignored");
                 return schedule == null;
             }
+            const prevLootables = Object.keys(ActionListXml.getAwardSchedule()?.lootables ?? {});
             const ok = ActionListXml.setAwardSchedule(schedule ?? null);
             if (ok && schedule != null && !options.useActionListXml) {
                 options.useActionListXml = true;
                 ActionListXml.applyOverrides();
+            }
+            // Queue a row refresh for every lootable the OLD or NEW schedule
+            // names, so the §9b-pre details row appears/disappears without
+            // waiting for a harvest (the bridge drains the view queue after
+            // install).
+            if (ok && typeof view !== "undefined" && typeof towns !== "undefined") {
+                const names = new Set([...prevLootables,
+                    ...Object.keys(schedule?.lootables ?? {})]);
+                for (const varName of names) {
+                    const t = towns.find((tw) => tw.varNames?.includes(varName));
+                    if (t) view.requestUpdate("updateRegular", { name: varName, index: t.index });
+                }
             }
             return ok;
         },

@@ -686,6 +686,13 @@ const ActionListXml = (() => {
         return awardSchedule?.lootables?.[varName] != null;
     }
 
+    /** @returns {boolean} true when the schedule departs from vanilla —
+     *  the §9b-pre UI (details row + "items" wording) gates on this */
+    function lootIsShuffled(varName) {
+        const contents = awardSchedule?.lootables?.[varName]?.contents;
+        return Array.isArray(contents) && contents.some((e) => e != null);
+    }
+
     /** Category priority: user prefs first, then default order (vanilla
      *  first, dummy last, others by first appearance in the pool). */
     function lootOrder(varName, byCat) {
@@ -1471,6 +1478,6 @@ const ActionListXml = (() => {
 
     return { SLOTS, parseDocument, compileAction, compileAll, applyOverrides, revertOverrides,
         setAwardSchedule, onLoopRestart, setForeignAwardHook,
-        handlesLoot, lootFinishRegular, setLootPriority, getLootView,
+        handlesLoot, lootIsShuffled, lootFinishRegular, setLootPriority, getLootView,
         getAwardSchedule: () => awardSchedule };
 })();

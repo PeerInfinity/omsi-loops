@@ -1733,6 +1733,12 @@
             <info_text1>Pots with mana left</info_text1>
             <info_text2>Pots with mana total</info_text2>
             <info_text3>Pots to check for mana</info_text3>
+            <!-- fork: P2 shuffled-contents wording — used ONLY when a lootable
+                 contents schedule is installed and non-vanilla (dynamic label
+                 ruling: vanilla data keeps the vanilla strings above) -->
+            <info_text1_shuffled>Pots with items left</info_text1_shuffled>
+            <info_text2_shuffled>Pots with items total</info_text2_shuffled>
+            <info_text3_shuffled>Pots to check for items</info_text3_shuffled>
             <tooltip><![CDATA[
             They're just sitting there, unbroken, full of potential.<br>Pots with mana in them have
             ]]></tooltip>
@@ -1748,6 +1754,10 @@
             <info_text1>Houses with valuables left</info_text1>
             <info_text2>Houses with valuables total</info_text2>
             <info_text3>Houses to check for valuables</info_text3>
+            <!-- fork: P2 shuffled-contents wording (see smash_pots) -->
+            <info_text1_shuffled>Houses with items left</info_text1_shuffled>
+            <info_text2_shuffled>Houses with items total</info_text2_shuffled>
+            <info_text3_shuffled>Houses to check for items</info_text3_shuffled>
             <tooltip><![CDATA[
             Don't worry; they won't remember.<br>Houses with valuables in them have
             ]]></tooltip>

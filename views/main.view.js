@@ -1378,6 +1378,109 @@ class View {
         htmlElement(`unchecked${varName}`).textContent = String(town[`total${varName}`] - town[`checked${varName}`]);
         htmlElement(`goodTemp${varName}`).textContent = String(town[`goodTemp${varName}`]);
         htmlElement(`good${varName}`).textContent = String(town[`good${varName}`]);
+        // fork: P2 lootable contents (§9b-pre) — the details row tracks the
+        // walk. Inert on vanilla boots: no schedule ⇒ no DOM is ever created
+        // (ui-parity), and the interpreter may be absent entirely.
+        if (typeof ActionListXml !== "undefined") this.updateLootDetails(varName);
+    };
+
+    // ---- fork: P2 lootable contents UI (cross-game §9b-pre) --------------
+    // Rendered ONLY when a non-vanilla contents schedule names the action
+    // (managed-mode worlds): vanilla boots create no DOM here and keep the
+    // vanilla tooltip strings — that is what keeps ui-parity byte-exact.
+    // The details row is a SIBLING inside infoContainer{var}; the
+    // townInfoContainer keeps its EXACTLY-8 element children (see
+    // createTownInfo). Category priority/disable state is session-only
+    // (ActionListXml.setLootPriority), like the searchToggler default.
+
+    /** shuffled-wording tooltip: the *_shuffled lang strings, falling back
+     *  per-string to the vanilla keys (dynamic-label ruling) */
+    lootShuffledText(action) {
+        const x = getXMLName(action.name);
+        const t = (k) => {
+            const s = _txt(`actions>${x}>${k}_shuffled`);
+            return s.startsWith("[") ? _txt(`actions>${x}>${k}`) : s;
+        };
+        return `${t("info_text1")}
+                <i class='fa fa-arrow-left'></i>
+                ${t("info_text2")}
+                <i class='fa fa-arrow-left'></i>
+                ${t("info_text3")}
+                <br><span class='bold'>${`${_txt("actions>tooltip>total_found")}: `}</span><div id='total${action.varName}'></div>
+                <br><span class='bold'>${`${_txt("actions>tooltip>total_checked")}: `}</span><div id='checked${action.varName}'></div>`;
+    };
+
+    updateLootDetails(varName) {
+        const shuffled = ActionListXml.handlesLoot(varName) && ActionListXml.lootIsShuffled(varName);
+        const container = document.getElementById(`infoContainer${varName}`);
+        let row = document.getElementById(`lootDetails${varName}`);
+        if (!shuffled) {
+            // schedule cleared (new world): drop the row, restore the strings
+            if (row) {
+                row.remove();
+                const action = totalActionList.find((a) => a.varName === varName);
+                const showthis = container?.querySelector(".showthis");
+                if (showthis && action) showthis.innerHTML = action.infoText();
+            }
+            return;
+        }
+        if (!container) return;
+        if (!row) {
+            const action = totalActionList.find((a) => a.varName === varName);
+            const showthis = container.querySelector(".showthis");
+            if (showthis && action) showthis.innerHTML = this.lootShuffledText(action);
+            row = document.createElement("div");
+            row.id = `lootDetails${varName}`;
+            row.className = "lootDetails";
+            container.appendChild(row);
+        }
+        const items = ActionListXml.getLootView(varName) ?? [];
+        const open = (this.lootDetailsOpen ??= {})[varName] === true;
+        const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+        const label = (cat) => cat === "vanilla" ? "original"
+            : cat === "dummy" ? "dummy"
+            : cat.startsWith("local:") ? esc(cat.slice(6))
+            : esc(cat.slice(8).replace("/", ": "));
+        let html = `<span class='lootDetailsToggle' style='cursor:pointer;font-size:0.85em;'`
+            + ` onclick='view.toggleLootDetails("${varName}")'>${open ? "&#9662;" : "&#9656;"} contents</span>`;
+        if (open) {
+            html += items.map((c, i) => `
+                <div class='lootCategoryRow' style='font-size:0.85em;margin-left:12px;'>
+                    <span style='cursor:pointer;' onclick='view.moveLootCategory("${varName}",${i},-1)'>&#9650;</span>
+                    <span style='cursor:pointer;' onclick='view.moveLootCategory("${varName}",${i},1)'>&#9660;</span>
+                    <input type='checkbox' ${c.disabled ? "" : "checked"} onchange='view.toggleLootCategory("${varName}",${i})'>
+                    ${label(c.category)} <span class='numeric'>${c.remaining}</span>/<span class='numeric'>${c.discovered}</span>
+                </div>`).join("");
+        }
+        row.innerHTML = html;
+    };
+
+    toggleLootDetails(varName) {
+        (this.lootDetailsOpen ??= {})[varName] = !this.lootDetailsOpen[varName];
+        this.updateLootDetails(varName);
+    };
+
+    moveLootCategory(varName, idx, dir) {
+        const items = ActionListXml.getLootView(varName);
+        if (!items) return;
+        const j = idx + dir;
+        if (j < 0 || j >= items.length) return;
+        const cats = items.map((c) => c.category);
+        [cats[idx], cats[j]] = [cats[j], cats[idx]];
+        ActionListXml.setLootPriority(varName, cats,
+            items.filter((c) => c.disabled).map((c) => c.category));
+        this.updateLootDetails(varName);
+    };
+
+    toggleLootCategory(varName, idx) {
+        const items = ActionListXml.getLootView(varName);
+        if (!items) return;
+        const disabled = new Set(items.filter((c) => c.disabled).map((c) => c.category));
+        const cat = items[idx].category;
+        if (disabled.has(cat)) disabled.delete(cat);
+        else disabled.add(cat);
+        ActionListXml.setLootPriority(varName, items.map((c) => c.category), [...disabled]);
+        this.updateLootDetails(varName);
     };
 
     updateAddAmount(amount) {
