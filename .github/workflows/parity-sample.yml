@@ -16,13 +16,16 @@
 # Both arms run report-only: we are collecting numbers, not failing builds.
 name: parity flake sample
 
+# Triggered by pushing a parity-sample* branch, NOT by workflow_dispatch:
+# dispatch only registers for workflows present on the repo's default branch,
+# which here is `dmchurch` — the branch static.yml deploys GitHub Pages from.
+# Putting a sampling workflow there to make a button appear is not worth
+# touching a deploy branch for. Push `parity-sample` (or parity-sample-<what>)
+# to collect a round; each push is 6 samples per arm.
 on:
+  push:
+    branches: ["parity-sample", "parity-sample-*"]
   workflow_dispatch:
-    inputs:
-      note:
-        description: "what this sample is for"
-        required: false
-        default: "rounded-corner AA: does PARITY_RASTER_FLAGS change the distribution?"
 
 jobs:
   sample:
