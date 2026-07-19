@@ -49,7 +49,7 @@ const ActionListXml = (() => {
         "resourceValue", "townValue", "globalValue", "stonesUsed", "storyVar",
         "segment", "loopCounter", "totalCompletions", "segments", "power", "fibonacci",
         "dungeonCompleted", "dungeonFloors", "trialCompleted", "trialFloors", "buffCap", "guildSegment",
-        "currentFloor"]);
+        "currentFloor", "completed", "goodTempItems"]);
     const CONDITIONAL_TAGS = new Set(["if", "ifCurrentValue", "ifResource", "ifHasResource",
         "ifStoryFlag", "ifProgress", "ifGoodItems", "ifDiscoveredItems", "ifCheckedItems",
         "ifPrestige", "ifTownUnlocked", "anyOf", "never", "ifGuild", "ifGlobalFlag", "ifSoulstoneSac",
@@ -75,6 +75,7 @@ const ActionListXml = (() => {
         getSelfCombat: () => getSelfCombat(),
         getTeamCombat: () => getTeamCombat(),
         getZombieStrength: () => getZombieStrength(),
+        getExploreSkill: () => getExploreSkill(),
         // fork wrapper: Imbue Body gates every talent >= a threshold
         minTalent: () => Math.min(...statList.map(s => getTalent(s))),
     };
@@ -307,6 +308,14 @@ const ActionListXml = (() => {
                 return trialFloors[num(node.attrs.trialNum, "trialFloors")];
             case "buffCap":
                 return getBuffCap(node.attrs.buffName);
+            case "completed":
+                // story(completed): how many times the action finished this loop
+                if (ctx.completed === undefined) throw new Error("actionListXml: <completed/> outside a story body");
+                return ctx.completed;
+            case "goodTempItems":
+                // the per-loop remainder of a limited pool; good minus goodTemp
+                // is how many were spent THIS loop
+                return townFor(ownVar(node, ctx))["goodTemp" + ownVar(node, ctx)];
             case "currentFloor":
                 // trial/dungeon floor derived from the town loop counter; the
                 // method lives on the live action, so this is effect-context only
@@ -484,6 +493,95 @@ const ActionListXml = (() => {
         // the assassin kill list: a per-loop array of the zones hit, which
         // Guild Assassin reads back. The heart itself is a plain resource.
         pushHeart: (ctx) => { hearts.push(ctx.action.varName); },
+        // the four RNG sites stay inside these helpers; the XML invokes them
+        // whole, which is what makes RNG parity structural rather than tested
+        mineSoulstones: (ctx) => {
+            const statToAdd = options.rngMode === "cycle" ? cyclePick(statList, "mineStat")
+                : statList[Math.floor(Math.random() * statList.length)];
+            const countToAdd = Math.floor(getSkillBonus("Divine"));
+            stats[statToAdd].soulstone += countToAdd;
+            actionLog.addSoulstones(ctx.self, statToAdd, countToAdd);
+            stateChanged("soulstones");
+        },
+        exchangeMap: () => exchangeMap(),
+        // Fall From Grace pins reputation negative, but its notification fires
+        // whether or not the guard let the write through
+        fallFromGrace: () => {
+            if (resources.reputation >= 0) resources.reputation = -1;
+            stateChanged("resource", { name: "reputation" });
+        },
+        // the assassin payout scales with the square of the hearts delivered,
+        // with a flat first-kill bonus
+        assassinGuildSkill: (ctx) => {
+            let assassinExp = 0;
+            if (getSkillLevel("Assassin") === 0) assassinExp = 100;
+            if (resources.heart > 0) assassinExp = 100 * Math.pow(resources.heart, 2);
+            ctx.self.skills.Assassin = assassinExp;
+        },
+        // dungeon completion: the floor is derived from the town loop counter,
+        // and finishDungeon carries the soulstone roll + stat pick
+        dungeonFinish: (ctx) => {
+            const a = ctx.self;
+            const loopCounter = towns[a.townNum][a.varName + "LoopCounter"];
+            const curFloor = Math.floor(loopCounter / a.segments + 0.0000001 - 1);
+            return a.finishDungeon(curFloor);
+        },
+        adjustRocks: () => adjustRocks(stoneLoc),
+        // RuinsZ* re-lays its OWN town's rocks (Build Tower uses stoneLoc)
+        adjustRocksHere: (ctx) => adjustRocks(ctx.action.townNum),
+        // Survey: consume a map for survey progress, or — once the zone is
+        // fully surveyed — offer the pause instead. One composite because the
+        // two arms are exclusive and the second one is a UI action.
+        surveyFinish: (ctx) => {
+            const a = ctx.self;
+            if (towns[a.townNum].getLevel("Survey") != 100) {
+                addResource("map", -1);
+                addResource("completedMap", 1);
+                towns[a.townNum].finishProgress(a.varName, getExploreSkill());
+            } else if (options.pauseOnComplete) {
+                pauseGame(true, "Survey complete! (Game paused)");
+            }
+        },
+        // Small Dungeon reports which global story beat the run earned
+        smallDungeonFinish: (ctx) => {
+            const success = EFFECTS.dungeonFinish(ctx);
+            if (success === true && storyMax <= 1) unlockGlobalStory(1);
+            else if (success === false && storyMax <= 2) unlockGlobalStory(2);
+        },
+        // the Spire additionally banks an Aspirant level per new floor
+        spireFinish: (ctx) => {
+            const a = ctx.self;
+            const loopCounter = towns[a.townNum][a.varName + "LoopCounter"];
+            const curFloor = Math.floor(loopCounter / a.segments + 0.0000001 - 1);
+            a.finishDungeon(curFloor);
+            if (curFloor >= getBuffLevel("Aspirant")) addBuffAmt("Aspirant", 1, a);
+            if (curFloor == dungeonFloors[a.dungeonNum] - 1) setStoryFlag("clearedSpire");
+        },
+        // Build Tower: one stone consumed into the tower, and at level 100 the
+        // whole stone economy is exhausted game-wide
+        buildTowerStones: (ctx) => {
+            stonesUsed[stoneLoc]++;
+            if (towns[ctx.action.townNum].getLevel(ctx.action.varName) >= 100) {
+                stonesUsed = { 1: 250, 3: 250, 5: 250, 6: 250 };
+            }
+        },
+        // Haggle knocks 20 off the supply price, floored at zero
+        haggleSupplies: () => {
+            towns[0].suppliesCost -= 20;
+            if (towns[0].suppliesCost < 0) towns[0].suppliesCost = 0;
+            stateChanged("resource", { name: "supplies" });
+        },
+        // Invest banks the whole purse — but a NaN gold value must not be
+        // allowed to corrupt the persistent bank (upstream guard, preserved)
+        investGold: () => {
+            if (isFinite(resources.gold)) {
+                goldInvested += resources.gold;
+                if (goldInvested > 999999999999) goldInvested = 999999999999;
+                resetResource("gold");
+            }
+            stateChanged("goldInvested");
+        },
+        completedCurrentGame: () => completedCurrentGame(),
         // Imbue Mind caps training only when the option is on
         capTrainingIfAuto: () => { if (options.autoMaxTraining) capAllTraining(); },
         capAllTraining: () => capAllTraining(),
@@ -535,7 +633,9 @@ const ActionListXml = (() => {
     };
     const EFFECT_TAGS = new Set(["numericResource", "booleanResource", "setStoryFlag",
         "storyVarMin", "skillExp", "setSkill", "progressExp", "grantProgress",
-        "guildSegmentIncrement", "buff", "addTrainingLimit", "noEffect", "effect"]);
+        "guildSegmentIncrement", "buff", "addTrainingLimit", "unlockGlobalStory",
+        "unlockTown", "joinGuild", "resetResource", "setResource", "setGlobalFlag",
+        "noEffect", "effect"]);
 
     /**
      * Execute one effect element.
@@ -554,7 +654,9 @@ const ActionListXml = (() => {
             }
             case "booleanResource": {
                 if (!evalConditionList(node.children, ctx)) return;
-                grantResource(ctx.self, node.attrs.name, sign > 0);
+                // clear="clear" consumes rather than grants, independent of the
+                // slot's sign (Open Rift spends its supplies inside finish())
+                grantResource(ctx.self, node.attrs.name, node.attrs.clear === undefined && sign > 0);
                 return;
             }
             case "setStoryFlag": {
@@ -619,6 +721,44 @@ const ActionListXml = (() => {
                 }
                 return;
             }
+            case "unlockTown": {
+                if (!evalConditionList(node.children, ctx)) return;
+                unlockTown(num(node.attrs.num, "unlockTown"));
+                return;
+            }
+            case "joinGuild": {
+                // the guild is a global, not a resource, and joining one
+                // forecloses the others for the loop
+                if (!evalConditionList(node.children, ctx)) return;
+                guild = node.attrs.name;
+                if (node.attrs.notify !== undefined) stateChanged("guild");
+                return;
+            }
+            case "resetResource": {
+                if (!evalConditionList(node.children, ctx)) return;
+                resetResource(node.attrs.name);
+                return;
+            }
+            case "setResource": {
+                // a direct write, bypassing addResource (Fall From Grace pins
+                // reputation to -1 rather than adding to it)
+                if (!evalConditionList(node.children, ctx)) return;
+                resources[node.attrs.name] = num(node.attrs.value, "setResource");
+                if (node.attrs.notify !== undefined) stateChanged("resource", { name: node.attrs.name });
+                return;
+            }
+            case "setGlobalFlag": {
+                if (!evalConditionList(node.children, ctx)) return;
+                const f = node.attrs.name;
+                if (f !== "portalUsed") throw new Error(`actionListXml: global flag ${f} not writable`);
+                portalUsed = true;
+                return;
+            }
+            case "unlockGlobalStory": {
+                if (!evalConditionList(node.children, ctx)) return;
+                unlockGlobalStory(num(node.attrs.num, "unlockGlobalStory"));
+                return;
+            }
             case "addTrainingLimit":
                 // Imbue Mind raises the cap on the six training actions
                 if (!evalConditionList(node.children, ctx)) return;
@@ -639,6 +779,7 @@ const ActionListXml = (() => {
             case "effect": {
                 const fn = EFFECTS[node.attrs.name];
                 if (!fn) throw new Error(`actionListXml: effect ${node.attrs.name} not whitelisted`);
+                if (!evalConditionList(node.children, ctx)) return;
                 fn(ctx);
                 return;
             }
@@ -837,6 +978,17 @@ const ActionListXml = (() => {
             const nodes = effectsOf(el.children);
             fields[slot] = function () {
                 const c = bindCtx.call(this);
+                for (const n of nodes) execEffect(n, c, 1);
+            };
+        }
+
+        // story(completed): dispatched once per loop by actionStory, and only
+        // when completed > 0. The count is exposed as <completed/>.
+        const storyEffects = child(def, "storyEffects");
+        if (storyEffects && !native(storyEffects, "story") && storyEffects.children.length) {
+            const nodes = effectsOf(storyEffects.children);
+            fields.story = function (completed) {
+                const c = { ...bindCtx.call(this), completed };
                 for (const n of nodes) execEffect(n, c, 1);
             };
         }

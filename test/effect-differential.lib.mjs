@@ -88,6 +88,19 @@ function __effReset() {
 }
 // Run one (action, slot) and report what it did. Throws are captured verbatim
 // (the Phase-4 rule) so a body that throws on both sides still compares.
+// Which effect slots the LIVE JS actions carry. This is the denominator for
+// the end-state claim: every slot a JS action has must be compiled from XML or
+// explicitly native. Class-level methods count (AssassinAction defines finish
+// and loopsFinished for eight actions; HaulAction's factory defines finish for
+// four), which is why this reads the objects rather than grepping sources.
+function __jsSlots() {
+    const out = {};
+    for (const a of totalActionList) {
+        out[a.name] = ["finish", "loopsFinished", "segmentFinished", "floorReward", "cost", "story"]
+            .filter(s => typeof a[s] === "function");
+    }
+    return JSON.stringify(out);
+}
 function __runSlot(name, slot) {
     const a = totalActionList.find(x => x.name === name);
     if (!a) return JSON.stringify({ missing: true });
@@ -166,6 +179,15 @@ export function effectStates() {
     states.push({ id: "pools:unchecked", spec: { profile: "zero", resources: stocked, pools: { total: 5000, checked: 0, good: 0, goodTemp: 0 } } });
     states.push({ id: "pools:banked", spec: { profile: "zero", resources: stocked, pools: { total: 5000, checked: 5000, good: 400, goodTemp: 400 } } });
     states.push({ id: "pools:ratio-edge", spec: { profile: "zero", resources: stocked, pools: { total: 5000, checked: 999, good: 99, goodTemp: 0 } } });
+    // "how many did you spend THIS loop" is good minus goodTemp, and every
+    // other pool stratum sets them equal (difference 0), so the story bodies
+    // that gate on a spend of exactly N were indistinguishable — the
+    // goodTempItems canary survived until these landed. Fourth corpus gap of
+    // this shape: the differential only separates thresholds it straddles.
+    for (const spent of [19, 20, 49, 50]) {
+        states.push({ id: `pools:spent-${spent}`, spec: { profile: "zero", resources: stocked,
+            pools: { total: 5000, checked: 5000, good: 100, goodTemp: 100 - spent } } });
+    }
     states.push({ id: "pools:empty", spec: { profile: "zero", resources: stocked, pools: { total: 0, checked: 0, good: 0, goodTemp: 0 } } });
     // soulstone/talent stocks for the sacrifice and imbue families
     states.push({ id: "soulstones:rich", spec: { profile: "zero", soulstones: 1e6, resources: { ...stocked, reputation: -20 } } });
@@ -241,12 +263,15 @@ export function buildEffectDifferential({ xmlText = null, maxMismatches = 100, o
     wiredCtx.ev(ED_INSTALL);
     wiredCtx.ev(SLOT_PLAN);
     const plan = JSON.parse(wiredCtx.ev("JSON.stringify(__slotPlan)"));
+    plan.jsSlots = JSON.parse(jsCtx.sandbox.__jsSlots());
 
     const states = onlyStates ? effectStates().filter(s => onlyStates.includes(s.id)) : effectStates();
     const pairs = onlyActions ? plan.pairs.filter(([n]) => onlyActions.includes(n)) : plan.pairs;
     const mismatches = [];
     /** @type {Record<string, boolean>} */
     const mutated = {};
+    /** (action, slot) pairs confirmed to hang at the high budget in BOTH arms */
+    const knownHang = new Set();
     let comparisons = 0;
 
     for (const s of states) {
@@ -274,10 +299,18 @@ export function buildEffectDifferential({ xmlText = null, maxMismatches = 100, o
                 continue;
             }
             if (j.timedOut || w.timedOut) {
-                // a body that never returns. Both arms run the same shared
-                // helper, so agreeing timeouts are equivalent, not a divergence.
-                if (!!j.timedOut !== !!w.timedOut) {
-                    mismatches.push({ state: s.id, name, slot, kind: "timeout", js: !!j.timedOut, xml: !!w.timedOut });
+                // A wall-clock cap cannot tell "non-terminating" from "starved
+                // by a byte-gate on the other 8 cores" — that produced a false
+                // divergence on Totem.cost, whose body is a single addResource.
+                // So a timeout is never a verdict on its own: confirm it at a
+                // budget no scheduling blip can reach, and remember the pairs
+                // that genuinely hang so the slow path runs once, not per state.
+                if (knownHang.has(key)) continue;
+                const j2 = runSlot(jsCtx, name, slot, CONFIRM_MS);
+                const w2 = runSlot(wiredCtx, name, slot, CONFIRM_MS);
+                if (j2.timedOut && w2.timedOut) { knownHang.add(key); continue; }
+                if (!!j2.timedOut !== !!w2.timedOut) {
+                    mismatches.push({ state: s.id, name, slot, kind: "timeout", js: !!j2.timedOut, xml: !!w2.timedOut });
                 }
                 continue;
             }
@@ -317,16 +350,22 @@ export function buildEffectDifferential({ xmlText = null, maxMismatches = 100, o
  * because gating on canStart collapses coverage (12 slots went inert when it
  * was tried; the anti-inert assertion caught it).
  *
- * So the cap stays, and it is TIGHT — 100ms is still ~1000x headroom over a
- * real body, and the non-terminating pairs would otherwise cost seconds each
- * across the corpus (they dominate the sweep's wall clock).
+ * The fast cap is 100ms — ~1000x headroom over a real body — but a wall clock
+ * measures load as well as looping, so a cap alone produces FALSE divergences
+ * under contention (it did: Totem.cost, whose body is one addResource, "timed
+ * out" in one arm while a byte-gate saturated the machine). A timeout is
+ * therefore only ever a hypothesis: it is confirmed at CONFIRM_MS, and pairs
+ * that hang at that budget in both arms are remembered so the slow path runs
+ * once per pair rather than once per state.
  * Both arms run the same shared helper, so agreeing timeouts are equivalence,
  * not divergence — a DISAGREEMENT is what gets reported.
  */
-function runSlot(ctx, name, slot) {
+const CONFIRM_MS = 4000;
+
+function runSlot(ctx, name, slot, ms = 100) {
     const expr = `__runSlot(${JSON.stringify(name)}, ${JSON.stringify(slot)})`;
     try {
-        return JSON.parse(vm.runInContext(expr, ctx.sandbox, { timeout: 100 }));
+        return JSON.parse(vm.runInContext(expr, ctx.sandbox, { timeout: ms }));
     } catch (e) {
         return { timedOut: true, message: String(e && e.message || e) };
     }
@@ -346,6 +385,27 @@ function firstDiff(a, b) {
     return "(unlocated)";
 }
 const trunc = (s) => s && s.length > 200 ? s.slice(0, 200) + "…" : s;
+
+/**
+ * The end-state claim, checkable rather than asserted: for every action, every
+ * effect slot its JS carries is either compiled from XML or explicitly native.
+ * Returns the shortfall — empty means Phase 6 covers the whole surface.
+ */
+export function uncoveredSlots(plan) {
+    const compiled = new Set(plan.pairs.map(([n, s]) => `${n}.${s}`));
+    const native = new Set();
+    for (const [slot, names] of Object.entries(plan.nativeBySlot ?? {})) {
+        for (const n of names) native.add(`${n}.${slot}`);
+    }
+    const out = [];
+    for (const [name, slots] of Object.entries(plan.jsSlots ?? {})) {
+        for (const s of slots) {
+            const key = `${name}.${s}`;
+            if (!compiled.has(key) && !native.has(key)) out.push(key);
+        }
+    }
+    return out.sort();
+}
 
 /** the frozen per-slot manifest shape (golden) */
 export function slotManifest(plan) {

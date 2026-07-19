@@ -547,6 +547,17 @@
                     <data type="integer" />
                 </attribute>
             </element>
+            <element name="completed">
+                <a:documentation>story() only: how many times the action completed this loop.</a:documentation>
+                <il:label>Completions this loop</il:label>
+                <empty />
+            </element>
+            <element name="goodTempItems">
+                <a:documentation>The unspent remainder of a limited pool this loop; good minus
+                    goodTemp is how many were consumed.</a:documentation>
+                <il:label>Unspent good items</il:label>
+                <ref name="optional-varName" />
+            </element>
             <element name="currentFloor">
                 <a:documentation>The trial/dungeon floor this action is currently on, derived
                     from its town loop counter. Valid inside effect bodies only.</a:documentation>
@@ -803,6 +814,11 @@
     <define name="resourceStack" combine="choice">
         <element name="booleanResource">
             <attribute name="name" />
+            <optional>
+                <!-- consume rather than grant, whatever the slot's sign -->
+                <attribute name="clear"><value>clear</value></attribute>
+            </optional>
+            <ref name="conditionalEvaluation" />
         </element>
     </define>
     <define name="resourceStack" combine="choice">
@@ -828,6 +844,70 @@
             <il:label>Raise story var to</il:label>
             <attribute name="name" />
             <ref name="numericEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="unlockTown">
+            <a:documentation>Unlock a town. The single highest-value effect in the game — every
+                travel action is one of these.</a:documentation>
+            <il:label>Unlock town</il:label>
+            <attribute name="num"><data type="integer" /></attribute>
+            <ref name="conditionalEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="joinGuild">
+            <a:documentation>Join a guild. Membership is a global, not a resource, and joining
+                one forecloses the others for the rest of the loop. notify="notify" sends the
+                view update, mirroring which upstream sites send one.</a:documentation>
+            <il:label>Join guild</il:label>
+            <attribute name="name">
+                <choice>
+                    <value>Adventure</value><value>Crafting</value><value>Explorer</value>
+                    <value>Thieves</value><value>Assassin</value>
+                </choice>
+            </attribute>
+            <optional><attribute name="notify"><value>notify</value></attribute></optional>
+            <ref name="conditionalEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="resetResource">
+            <a:documentation>Zero a resource — the spend-all converters (the Buy Mana family,
+                Sell Potions, Guild Assassin's hearts).</a:documentation>
+            <il:label>Spend all</il:label>
+            <attribute name="name" />
+            <ref name="conditionalEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="setResource">
+            <a:documentation>Write a resource directly, bypassing addResource — Fall From Grace
+                pins reputation to -1 rather than adding to it.</a:documentation>
+            <il:label>Set resource</il:label>
+            <attribute name="name" />
+            <attribute name="value"><data type="decimal" /></attribute>
+            <optional><attribute name="notify"><value>notify</value></attribute></optional>
+            <ref name="conditionalEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="setGlobalFlag">
+            <a:documentation>Latch a boolean loop-temp global (portalUsed).</a:documentation>
+            <il:label>Set global flag</il:label>
+            <attribute name="name"><value>portalUsed</value></attribute>
+            <ref name="conditionalEvaluation" />
+        </element>
+    </define>
+    <define name="resourceStack" combine="choice">
+        <element name="unlockGlobalStory">
+            <a:documentation>Unlock a numbered global story beat. Completing beat N also completes
+                every beat below it.</a:documentation>
+            <il:label>Unlock global story</il:label>
+            <attribute name="num">
+                <data type="integer" />
+            </attribute>
+            <ref name="conditionalEvaluation" />
         </element>
     </define>
     <define name="resourceStack" combine="choice">
@@ -929,7 +1009,7 @@
                 hand-written body calls. The XML vocabulary carries no draw/roll verbs.</a:documentation>
             <il:label>Effect</il:label>
             <attribute name="name" />
-            <empty />
+            <ref name="conditionalEvaluation" />
         </element>
     </define>
     <define name="rewardBody">
@@ -1062,6 +1142,17 @@
                             </element>
                         </optional>
                     </interleave>
+                </element>
+            </optional>
+            <optional>
+                <element name="storyEffects">
+                    <a:documentation>story(completed) effects — dispatched once per loop, only
+                        when the action completed at least once. &lt;completed/&gt; is the
+                        count.</a:documentation>
+                    <choice>
+                        <ref name="nativeMarker" />
+                        <ref name="rewardBody" />
+                    </choice>
                 </element>
             </optional>
             <optional>

@@ -14,7 +14,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { ROOT } from "./harness.mjs";
-import { buildEffectDifferential, slotManifest } from "./effect-differential.lib.mjs";
+import { buildEffectDifferential, slotManifest, uncoveredSlots } from "./effect-differential.lib.mjs";
 
 const MANIFEST = path.join(ROOT, "test", "goldens", "slot-manifest.json");
 const XML = path.join(ROOT, "data", "actionList.xml");
@@ -46,6 +46,21 @@ test("slot manifest matches the frozen golden", () => {
     const got = slotManifest(r.plan);
     const want = JSON.parse(fs.readFileSync(MANIFEST, "utf8"));
     assert.deepEqual(got, want, "run: node test/regen-slot-manifest.mjs");
+});
+
+test("end state: every JS effect slot is compiled or explicitly native", () => {
+    // Phase 6's success criterion, as an assertion rather than a claim: no JS
+    // effect body is left behind. Class-level methods count — AssassinAction
+    // defines finish and loopsFinished for eight actions, HaulAction's factory
+    // defines finish for four — so this reads the live objects, not the source.
+    const r = buildEffectDifferential({ onlyStates: ["boot"] });
+    assert.deepEqual(uncoveredSlots(r.plan), [], "JS effect slots with no XML");
+});
+
+test("end state: no Phase-6 deferral comments remain", () => {
+    const xml = fs.readFileSync(XML, "utf8");
+    const left = xml.split("\n").filter(l => l.includes("Phase 6"));
+    assert.deepEqual(left.map(l => l.trim()), [], "unretired Phase-6 comments");
 });
 
 // ---- vocabulary canaries -------------------------------------------------
@@ -254,6 +269,84 @@ const CANARIES = [
         actions: ["Imbue Soul"],
         find: `<effect name="imbueSoulReset" />`,
         with: `<noEffect />`,
+    },
+    {
+        name: "storyEffects slot",
+        actions: ["Buy Glasses"],
+        find: `<setStoryFlag name="glassesBought" />`,
+        with: `<setStoryFlag name="pickaxeBought" />`,
+    },
+    {
+        name: "completed base value",
+        actions: ["Throw Party"],
+        find: `<setStoryFlag name="partyThrown2"><if min="10"><completed /></if></setStoryFlag>`,
+        with: `<setStoryFlag name="partyThrown2"><if min="1"><completed /></if></setStoryFlag>`,
+    },
+    {
+        name: "goodTempItems base value",
+        actions: ["Short Quest"],
+        find: `<if max="-20"><goodTempItems /><subtraction><goodItems /></subtraction></if>`,
+        with: `<if max="-19"><goodTempItems /><subtraction><goodItems /></subtraction></if>`,
+    },
+    {
+        // Start Journey and Open Portal both unlock town 1 — Open Portal
+        // travels BACKWARD to it
+        name: "unlockTown",
+        actions: ["Start Journey", "Open Portal"],
+        find: `<unlockTown num="1" />`,
+        with: `<unlockTown num="2" />`,
+        all: 2,
+    },
+    {
+        name: "unlockGlobalStory",
+        actions: ["Start Trek"],
+        find: `<unlockGlobalStory num="5" />`,
+        with: `<unlockGlobalStory num="6" />`,
+    },
+    {
+        name: "joinGuild",
+        actions: ["Adventure Guild"],
+        find: `<joinGuild name="Adventure" />`,
+        with: `<joinGuild name="Crafting" />`,
+    },
+    {
+        name: "resetResource",
+        actions: ["Buy Mana Z1"],
+        find: `<resetResource name="gold" />`,
+        with: `<noEffect />`,
+        all: true,
+    },
+    {
+        name: "booleanResource clear form",
+        actions: ["Open Rift"],
+        find: `<booleanResource name="supplies" clear="clear" />`,
+        with: `<booleanResource name="supplies" />`,
+    },
+    {
+        name: "setGlobalFlag",
+        actions: ["Open Portal"],
+        find: `<setGlobalFlag name="portalUsed" />`,
+        with: `<noEffect />`,
+    },
+    {
+        name: "surveyFinish primitive",
+        actions: ["SurveyZ0"],
+        find: `<effect name="surveyFinish" />`,
+        with: `<grantProgress />`,
+        all: true,
+    },
+    {
+        name: "dungeonFinish primitive",
+        actions: ["Large Dungeon"],
+        find: `<effect name="dungeonFinish" />`,
+        with: `<noEffect />`,
+    },
+    {
+        name: "native loopReward (trial machinery stays JS)",
+        actions: ["Dead Trial"],
+        find: `<loopReward native="native" />`,
+        with: `<loopReward><numericResource name="gold">1</numericResource></loopReward>`,
+        all: true,
     },
     {
         name: `cost deduction="none"`,
