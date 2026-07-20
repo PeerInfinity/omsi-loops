@@ -1,0 +1,7952 @@
+{
+ "version": 1,
+ "meta": {
+  "granularity": 8,
+  "v1Pool": "quantity",
+  "counts": {
+   "predicates": 314,
+   "quantities": 144
+  }
+ },
+ "rows": [
+  {
+   "id": "u:Wander",
+   "action": "Wander",
+   "name": "Wander",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Wander",
+   "action": "Wander",
+   "name": "Wander",
+   "town": 0,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Pots",
+   "action": "Pots",
+   "name": "Smash Pots",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Pots",
+   "action": "Pots",
+   "name": "Smash Pots",
+   "town": 0,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Locks",
+   "action": "Locks",
+   "name": "Pick Locks",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Wander",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Locks",
+   "action": "Locks",
+   "name": "Pick Locks",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Wander",
+     "op": "gte",
+     "level": 3
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:BuyGlasses",
+   "action": "BuyGlasses",
+   "name": "Buy Glasses",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Wander",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:BuyGlasses",
+   "action": "BuyGlasses",
+   "name": "Buy Glasses",
+   "town": 0,
+   "pred": "visible",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Wander",
+     "op": "gte",
+     "level": 3
+    },
+    {
+     "kind": "exploreProgress",
+     "op": "ltExclusive",
+     "level": 100
+    },
+    {
+     "kind": "prestige",
+     "v": "completedAnyPrestige",
+     "inverted": true
+    }
+   ],
+   "monotone": false,
+   "apEligible": false
+  },
+  {
+   "id": "u:Map",
+   "action": "Map",
+   "name": "Map",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Map",
+   "action": "Map",
+   "name": "Map",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:FoundGlasses",
+   "action": "FoundGlasses",
+   "name": "Found Glasses",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "NEVER",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:FoundGlasses",
+   "action": "FoundGlasses",
+   "name": "Found Glasses",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gte",
+     "level": 100
+    },
+    {
+     "kind": "prestige",
+     "v": "completedAnyPrestige"
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:BuyManaZ1",
+   "action": "BuyManaZ1",
+   "name": "Buy Mana Z1",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Wander",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:BuyManaZ1",
+   "action": "BuyManaZ1",
+   "name": "Buy Mana Z1",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Wander",
+     "op": "gte",
+     "level": 3
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Met",
+   "action": "Met",
+   "name": "Meet People",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Wander",
+     "op": "gte",
+     "level": 22
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Met",
+   "action": "Met",
+   "name": "Meet People",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Wander",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:TrainStrength",
+   "action": "TrainStrength",
+   "name": "Train Strength",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Met",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:TrainStrength",
+   "action": "TrainStrength",
+   "name": "Train Strength",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Met",
+     "op": "gte",
+     "level": 1
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SQuests",
+   "action": "SQuests",
+   "name": "Short Quest",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Met",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SQuests",
+   "action": "SQuests",
+   "name": "Short Quest",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Met",
+     "op": "gte",
+     "level": 1
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Secrets",
+   "action": "Secrets",
+   "name": "Investigate",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Met",
+     "op": "gte",
+     "level": 25
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Secrets",
+   "action": "Secrets",
+   "name": "Investigate",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Met",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:LQuests",
+   "action": "LQuests",
+   "name": "Long Quest",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Secrets",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:LQuests",
+   "action": "LQuests",
+   "name": "Long Quest",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Secrets",
+     "op": "gte",
+     "level": 1
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:ThrowParty",
+   "action": "ThrowParty",
+   "name": "Throw Party",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Secrets",
+     "op": "gte",
+     "level": 30
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:ThrowParty",
+   "action": "ThrowParty",
+   "name": "Throw Party",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Secrets",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:WarriorLessons",
+   "action": "WarriorLessons",
+   "name": "Warrior Lessons",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Secrets",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:WarriorLessons",
+   "action": "WarriorLessons",
+   "name": "Warrior Lessons",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Secrets",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:MageLessons",
+   "action": "MageLessons",
+   "name": "Mage Lessons",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Secrets",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:MageLessons",
+   "action": "MageLessons",
+   "name": "Mage Lessons",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Secrets",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SDungeon",
+   "action": "SDungeon",
+   "name": "Small Dungeon",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillSum",
+     "vs": [
+      "Combat",
+      "Magic"
+     ],
+     "op": "gte",
+     "level": 35
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SDungeon",
+   "action": "SDungeon",
+   "name": "Small Dungeon",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillSum",
+     "vs": [
+      "Combat",
+      "Magic"
+     ],
+     "op": "gte",
+     "level": 15
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Heal",
+   "action": "Heal",
+   "name": "Heal The Sick",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Magic",
+     "op": "gte",
+     "level": 12
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Heal",
+   "action": "Heal",
+   "name": "Heal The Sick",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Secrets",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Fight",
+   "action": "Fight",
+   "name": "Fight Monsters",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Combat",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Fight",
+   "action": "Fight",
+   "name": "Fight Monsters",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 0,
+     "v": "Secrets",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:BuySupplies",
+   "action": "BuySupplies",
+   "name": "Buy Supplies",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillSum",
+     "vs": [
+      "Combat",
+      "Magic"
+     ],
+     "op": "gte",
+     "level": 35
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:BuySupplies",
+   "action": "BuySupplies",
+   "name": "Buy Supplies",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillSum",
+     "vs": [
+      "Combat",
+      "Magic"
+     ],
+     "op": "gte",
+     "level": 15
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Haggle",
+   "action": "Haggle",
+   "name": "Haggle",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillSum",
+     "vs": [
+      "Combat",
+      "Magic"
+     ],
+     "op": "gte",
+     "level": 35
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Haggle",
+   "action": "Haggle",
+   "name": "Haggle",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillSum",
+     "vs": [
+      "Combat",
+      "Magic"
+     ],
+     "op": "gte",
+     "level": 15
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:StartJourney",
+   "action": "StartJourney",
+   "name": "Start Journey",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillSum",
+     "vs": [
+      "Combat",
+      "Magic"
+     ],
+     "op": "gte",
+     "level": 35
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:StartJourney",
+   "action": "StartJourney",
+   "name": "Start Journey",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillSum",
+     "vs": [
+      "Combat",
+      "Magic"
+     ],
+     "op": "gte",
+     "level": 15
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:HitchRide",
+   "action": "HitchRide",
+   "name": "Hitch Ride",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gte",
+     "level": 25
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:HitchRide",
+   "action": "HitchRide",
+   "name": "Hitch Ride",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 1
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:OpenRift",
+   "action": "OpenRift",
+   "name": "Open Rift",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Dark",
+     "op": "gte",
+     "level": 300
+    },
+    {
+     "kind": "skillLevel",
+     "v": "Spatiomancy",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:OpenRift",
+   "action": "OpenRift",
+   "name": "Open Rift",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "Meander",
+     "op": "gte",
+     "level": 1
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SurveyZ0",
+   "action": "SurveyZ0",
+   "name": "SurveyZ0",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SurveyZ0",
+   "action": "SurveyZ0",
+   "name": "SurveyZ0",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SurveyZ1",
+   "action": "SurveyZ1",
+   "name": "SurveyZ1",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SurveyZ1",
+   "action": "SurveyZ1",
+   "name": "SurveyZ1",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SurveyZ2",
+   "action": "SurveyZ2",
+   "name": "SurveyZ2",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SurveyZ2",
+   "action": "SurveyZ2",
+   "name": "SurveyZ2",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SurveyZ3",
+   "action": "SurveyZ3",
+   "name": "SurveyZ3",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SurveyZ3",
+   "action": "SurveyZ3",
+   "name": "SurveyZ3",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SurveyZ4",
+   "action": "SurveyZ4",
+   "name": "SurveyZ4",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SurveyZ4",
+   "action": "SurveyZ4",
+   "name": "SurveyZ4",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SurveyZ5",
+   "action": "SurveyZ5",
+   "name": "SurveyZ5",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SurveyZ5",
+   "action": "SurveyZ5",
+   "name": "SurveyZ5",
+   "town": 5,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SurveyZ6",
+   "action": "SurveyZ6",
+   "name": "SurveyZ6",
+   "town": 6,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SurveyZ6",
+   "action": "SurveyZ6",
+   "name": "SurveyZ6",
+   "town": 6,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SurveyZ7",
+   "action": "SurveyZ7",
+   "name": "SurveyZ7",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SurveyZ7",
+   "action": "SurveyZ7",
+   "name": "SurveyZ7",
+   "town": 7,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SurveyZ8",
+   "action": "SurveyZ8",
+   "name": "SurveyZ8",
+   "town": 8,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SurveyZ8",
+   "action": "SurveyZ8",
+   "name": "SurveyZ8",
+   "town": 8,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Forest",
+   "action": "Forest",
+   "name": "Explore Forest",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Forest",
+   "action": "Forest",
+   "name": "Explore Forest",
+   "town": 1,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:WildMana",
+   "action": "WildMana",
+   "name": "Wild Mana",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 2
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:WildMana",
+   "action": "WildMana",
+   "name": "Wild Mana",
+   "town": 1,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Herbs",
+   "action": "Herbs",
+   "name": "Gather Herbs",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Herbs",
+   "action": "Herbs",
+   "name": "Gather Herbs",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 2
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Hunt",
+   "action": "Hunt",
+   "name": "Hunt",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 40
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Hunt",
+   "action": "Hunt",
+   "name": "Hunt",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SitByWaterfall",
+   "action": "SitByWaterfall",
+   "name": "Sit By Waterfall",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 70
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SitByWaterfall",
+   "action": "SitByWaterfall",
+   "name": "Sit By Waterfall",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Shortcut",
+   "action": "Shortcut",
+   "name": "Old Shortcut",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Shortcut",
+   "action": "Shortcut",
+   "name": "Old Shortcut",
+   "town": 1,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Hermit",
+   "action": "Hermit",
+   "name": "Talk To Hermit",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Shortcut",
+     "op": "gte",
+     "level": 20
+    },
+    {
+     "kind": "skillLevel",
+     "v": "Magic",
+     "op": "gte",
+     "level": 40
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Hermit",
+   "action": "Hermit",
+   "name": "Talk To Hermit",
+   "town": 1,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:PracticalMagic",
+   "action": "PracticalMagic",
+   "name": "Practical Magic",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Hermit",
+     "op": "gte",
+     "level": 20
+    },
+    {
+     "kind": "skillLevel",
+     "v": "Magic",
+     "op": "gte",
+     "level": 50
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:PracticalMagic",
+   "action": "PracticalMagic",
+   "name": "Practical Magic",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Hermit",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:LearnAlchemy",
+   "action": "LearnAlchemy",
+   "name": "Learn Alchemy",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Hermit",
+     "op": "gte",
+     "level": 40
+    },
+    {
+     "kind": "skillLevel",
+     "v": "Magic",
+     "op": "gte",
+     "level": 60
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:LearnAlchemy",
+   "action": "LearnAlchemy",
+   "name": "Learn Alchemy",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Hermit",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:BrewPotions",
+   "action": "BrewPotions",
+   "name": "Brew Potions",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Alchemy",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:BrewPotions",
+   "action": "BrewPotions",
+   "name": "Brew Potions",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Alchemy",
+     "op": "gte",
+     "level": 1
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:TrainDexterity",
+   "action": "TrainDexterity",
+   "name": "Train Dexterity",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 60
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:TrainDexterity",
+   "action": "TrainDexterity",
+   "name": "Train Dexterity",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:TrainSpeed",
+   "action": "TrainSpeed",
+   "name": "Train Speed",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 80
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:TrainSpeed",
+   "action": "TrainSpeed",
+   "name": "Train Speed",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Flowers",
+   "action": "Flowers",
+   "name": "Follow Flowers",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 50
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Flowers",
+   "action": "Flowers",
+   "name": "Follow Flowers",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Forest",
+     "op": "gte",
+     "level": 30
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:BirdWatching",
+   "action": "BirdWatching",
+   "name": "Bird Watching",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Flowers",
+     "op": "gte",
+     "level": 80
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:BirdWatching",
+   "action": "BirdWatching",
+   "name": "Bird Watching",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Flowers",
+     "op": "gte",
+     "level": 30
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Thicket",
+   "action": "Thicket",
+   "name": "Clear Thicket",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Flowers",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Thicket",
+   "action": "Thicket",
+   "name": "Clear Thicket",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Flowers",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Witch",
+   "action": "Witch",
+   "name": "Talk To Witch",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Thicket",
+     "op": "gte",
+     "level": 60
+    },
+    {
+     "kind": "skillLevel",
+     "v": "Magic",
+     "op": "gte",
+     "level": 80
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Witch",
+   "action": "Witch",
+   "name": "Talk To Witch",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Thicket",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:DarkMagic",
+   "action": "DarkMagic",
+   "name": "Dark Magic",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Witch",
+     "op": "gte",
+     "level": 20
+    },
+    {
+     "kind": "skillLevel",
+     "v": "Magic",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:DarkMagic",
+   "action": "DarkMagic",
+   "name": "Dark Magic",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Witch",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:DarkRitual",
+   "action": "DarkRitual",
+   "name": "Dark Ritual",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Witch",
+     "op": "gte",
+     "level": 50
+    },
+    {
+     "kind": "skillLevel",
+     "v": "Dark",
+     "op": "gte",
+     "level": 50
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:DarkRitual",
+   "action": "DarkRitual",
+   "name": "Dark Ritual",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "Witch",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:ContinueOn",
+   "action": "ContinueOn",
+   "name": "Continue On",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:ContinueOn",
+   "action": "ContinueOn",
+   "name": "Continue On",
+   "town": 1,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:RuinsZ1",
+   "action": "RuinsZ1",
+   "name": "RuinsZ1",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 1,
+     "v": "SurveyZ1",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:RuinsZ1",
+   "action": "RuinsZ1",
+   "name": "RuinsZ1",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 1,
+     "v": "SurveyZ1",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:StonesZ1",
+   "action": "StonesZ1",
+   "name": "HaulZ1",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "RuinsZ1",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:StonesZ1",
+   "action": "StonesZ1",
+   "name": "HaulZ1",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 1,
+     "v": "RuinsZ1",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:City",
+   "action": "City",
+   "name": "Explore City",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:City",
+   "action": "City",
+   "name": "Explore City",
+   "town": 2,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Gamble",
+   "action": "Gamble",
+   "name": "Gamble",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "City",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Gamble",
+   "action": "Gamble",
+   "name": "Gamble",
+   "town": 2,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Drunk",
+   "action": "Drunk",
+   "name": "Get Drunk",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "City",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Drunk",
+   "action": "Drunk",
+   "name": "Get Drunk",
+   "town": 2,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:BuyManaZ3",
+   "action": "BuyManaZ3",
+   "name": "Buy Mana Z3",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:BuyManaZ3",
+   "action": "BuyManaZ3",
+   "name": "Buy Mana Z3",
+   "town": 2,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SellPotions",
+   "action": "SellPotions",
+   "name": "Sell Potions",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SellPotions",
+   "action": "SellPotions",
+   "name": "Sell Potions",
+   "town": 2,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:CraftArmor",
+   "action": "CraftArmor",
+   "name": "Craft Armor",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 30
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:CraftArmor",
+   "action": "CraftArmor",
+   "name": "Craft Armor",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 15
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:ReadBooks",
+   "action": "ReadBooks",
+   "name": "Read Books",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "City",
+     "op": "gte",
+     "level": 50
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:ReadBooks",
+   "action": "ReadBooks",
+   "name": "Read Books",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "City",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:BuyPickaxe",
+   "action": "BuyPickaxe",
+   "name": "Buy Pickaxe",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "City",
+     "op": "gte",
+     "level": 90
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:BuyPickaxe",
+   "action": "BuyPickaxe",
+   "name": "Buy Pickaxe",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "City",
+     "op": "gte",
+     "level": 60
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Underworld",
+   "action": "Underworld",
+   "name": "Underworld",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gte",
+     "level": 50
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Underworld",
+   "action": "Underworld",
+   "name": "Underworld",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 25
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:StartTrek",
+   "action": "StartTrek",
+   "name": "Start Trek",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "City",
+     "op": "gte",
+     "level": 60
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:StartTrek",
+   "action": "StartTrek",
+   "name": "Start Trek",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "City",
+     "op": "gte",
+     "level": 30
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:GatherTeam",
+   "action": "GatherTeam",
+   "name": "Gather Team",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:GatherTeam",
+   "action": "GatherTeam",
+   "name": "Gather Team",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Apprentice",
+   "action": "Apprentice",
+   "name": "Apprentice",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 40
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Apprentice",
+   "action": "Apprentice",
+   "name": "Apprentice",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Mason",
+   "action": "Mason",
+   "name": "Mason",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 60
+    },
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Apprentice",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Mason",
+   "action": "Mason",
+   "name": "Mason",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 40
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Architect",
+   "action": "Architect",
+   "name": "Architect",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 80
+    },
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Mason",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Architect",
+   "action": "Architect",
+   "name": "Architect",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 60
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:AdvGuild",
+   "action": "AdvGuild",
+   "name": "Adventure Guild",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:AdvGuild",
+   "action": "AdvGuild",
+   "name": "Adventure Guild",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:CraftGuild",
+   "action": "CraftGuild",
+   "name": "Crafting Guild",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 30
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:CraftGuild",
+   "action": "CraftGuild",
+   "name": "Crafting Guild",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:LDungeon",
+   "action": "LDungeon",
+   "name": "Large Dungeon",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:LDungeon",
+   "action": "LDungeon",
+   "name": "Large Dungeon",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 2,
+     "v": "Drunk",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:HTrial",
+   "action": "HTrial",
+   "name": "Heroes Trial",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 2,
+     "v": "SurveyZ2",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:HTrial",
+   "action": "HTrial",
+   "name": "Heroes Trial",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 2,
+     "v": "SurveyZ2",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:RuinsZ3",
+   "action": "RuinsZ3",
+   "name": "RuinsZ3",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 3,
+     "v": "SurveyZ3",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:RuinsZ3",
+   "action": "RuinsZ3",
+   "name": "RuinsZ3",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 3,
+     "v": "SurveyZ3",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:StonesZ3",
+   "action": "StonesZ3",
+   "name": "HaulZ3",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "RuinsZ3",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:StonesZ3",
+   "action": "StonesZ3",
+   "name": "HaulZ3",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "RuinsZ3",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Mountain",
+   "action": "Mountain",
+   "name": "Climb Mountain",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Mountain",
+   "action": "Mountain",
+   "name": "Climb Mountain",
+   "town": 3,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Geysers",
+   "action": "Geysers",
+   "name": "Mana Geyser",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Mountain",
+     "op": "gte",
+     "level": 2
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Geysers",
+   "action": "Geysers",
+   "name": "Mana Geyser",
+   "town": 3,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Runes",
+   "action": "Runes",
+   "name": "Decipher Runes",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Mountain",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Runes",
+   "action": "Runes",
+   "name": "Decipher Runes",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Mountain",
+     "op": "gte",
+     "level": 2
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Chronomancy",
+   "action": "Chronomancy",
+   "name": "Chronomancy",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Runes",
+     "op": "gte",
+     "level": 30
+    },
+    {
+     "kind": "skillLevel",
+     "v": "Magic",
+     "op": "gte",
+     "level": 150
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Chronomancy",
+   "action": "Chronomancy",
+   "name": "Chronomancy",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Runes",
+     "op": "gte",
+     "level": 8
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:LoopingPotion",
+   "action": "LoopingPotion",
+   "name": "Looping Potion",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Alchemy",
+     "op": "gte",
+     "level": 200
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:LoopingPotion",
+   "action": "LoopingPotion",
+   "name": "Looping Potion",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Spatiomancy",
+     "op": "gte",
+     "level": 1
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Pyromancy",
+   "action": "Pyromancy",
+   "name": "Pyromancy",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Runes",
+     "op": "gte",
+     "level": 60
+    },
+    {
+     "kind": "skillLevel",
+     "v": "Magic",
+     "op": "gte",
+     "level": 200
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Pyromancy",
+   "action": "Pyromancy",
+   "name": "Pyromancy",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Runes",
+     "op": "gte",
+     "level": 16
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Cavern",
+   "action": "Cavern",
+   "name": "Explore Cavern",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Mountain",
+     "op": "gte",
+     "level": 40
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Cavern",
+   "action": "Cavern",
+   "name": "Explore Cavern",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Mountain",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:MineSoulstones",
+   "action": "MineSoulstones",
+   "name": "Mine Soulstones",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Cavern",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:MineSoulstones",
+   "action": "MineSoulstones",
+   "name": "Mine Soulstones",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Cavern",
+     "op": "gte",
+     "level": 2
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Illusions",
+   "action": "Illusions",
+   "name": "Check Walls",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Cavern",
+     "op": "gte",
+     "level": 80
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Illusions",
+   "action": "Illusions",
+   "name": "Check Walls",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Cavern",
+     "op": "gte",
+     "level": 40
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Artifacts",
+   "action": "Artifacts",
+   "name": "Take Artifacts",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Illusions",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Artifacts",
+   "action": "Artifacts",
+   "name": "Take Artifacts",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Illusions",
+     "op": "gte",
+     "level": 1
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:FaceJudgement",
+   "action": "FaceJudgement",
+   "name": "Face Judgement",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Mountain",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:FaceJudgement",
+   "action": "FaceJudgement",
+   "name": "Face Judgement",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Mountain",
+     "op": "gte",
+     "level": 40
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Guru",
+   "action": "Guru",
+   "name": "Guru",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Guru",
+   "action": "Guru",
+   "name": "Guru",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 75
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:HuntTrolls",
+   "action": "HuntTrolls",
+   "name": "Hunt Trolls",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Cavern",
+     "op": "gte",
+     "level": 50
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:HuntTrolls",
+   "action": "HuntTrolls",
+   "name": "Hunt Trolls",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Cavern",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:ImbueMind",
+   "action": "ImbueMind",
+   "name": "Imbue Mind",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Illusions",
+     "op": "gte",
+     "level": 70
+    },
+    {
+     "kind": "skillLevel",
+     "v": "Magic",
+     "op": "gte",
+     "level": 300
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:ImbueMind",
+   "action": "ImbueMind",
+   "name": "Imbue Mind",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 3,
+     "v": "Illusions",
+     "op": "gte",
+     "level": 50
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:ImbueBody",
+   "action": "ImbueBody",
+   "name": "Imbue Body",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "buffLevel",
+     "v": "Imbuement",
+     "op": "gte",
+     "level": 1
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:ImbueBody",
+   "action": "ImbueBody",
+   "name": "Imbue Body",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "buffLevel",
+     "v": "Imbuement",
+     "op": "gte",
+     "level": 1
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Tour",
+   "action": "Tour",
+   "name": "Guided Tour",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Tour",
+   "action": "Tour",
+   "name": "Guided Tour",
+   "town": 4,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Canvassed",
+   "action": "Canvassed",
+   "name": "Canvass",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Canvassed",
+   "action": "Canvassed",
+   "name": "Canvass",
+   "town": 4,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Donate",
+   "action": "Donate",
+   "name": "Donate",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Canvassed",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Donate",
+   "action": "Donate",
+   "name": "Donate",
+   "town": 4,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Donations",
+   "action": "Donations",
+   "name": "Accept Donations",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Canvassed",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Donations",
+   "action": "Donations",
+   "name": "Accept Donations",
+   "town": 4,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:BuyManaZ5",
+   "action": "BuyManaZ5",
+   "name": "Buy Mana Z5",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:BuyManaZ5",
+   "action": "BuyManaZ5",
+   "name": "Buy Mana Z5",
+   "town": 4,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SellArtifact",
+   "action": "SellArtifact",
+   "name": "Sell Artifact",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SellArtifact",
+   "action": "SellArtifact",
+   "name": "Sell Artifact",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:GiftArtifact",
+   "action": "GiftArtifact",
+   "name": "Gift Artifact",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:GiftArtifact",
+   "action": "GiftArtifact",
+   "name": "Gift Artifact",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Mercantilism",
+   "action": "Mercantilism",
+   "name": "Mercantilism",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 30
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Mercantilism",
+   "action": "Mercantilism",
+   "name": "Mercantilism",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:CharmSchool",
+   "action": "CharmSchool",
+   "name": "Charm School",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 30
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:CharmSchool",
+   "action": "CharmSchool",
+   "name": "Charm School",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Oracle",
+   "action": "Oracle",
+   "name": "Oracle",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 40
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Oracle",
+   "action": "Oracle",
+   "name": "Oracle",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 30
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:EnchantArmor",
+   "action": "EnchantArmor",
+   "name": "Enchant Armor",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 40
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:EnchantArmor",
+   "action": "EnchantArmor",
+   "name": "Enchant Armor",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 30
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Restoration",
+   "action": "Restoration",
+   "name": "Restoration",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 60
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Restoration",
+   "action": "Restoration",
+   "name": "Restoration",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 40
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Spatiomancy",
+   "action": "Spatiomancy",
+   "name": "Spatiomancy",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 60
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Spatiomancy",
+   "action": "Spatiomancy",
+   "name": "Spatiomancy",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 40
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Citizen",
+   "action": "Citizen",
+   "name": "Seek Citizenship",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 80
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Citizen",
+   "action": "Citizen",
+   "name": "Seek Citizenship",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 60
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:BuildHousing",
+   "action": "BuildHousing",
+   "name": "Build Housing",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Citizen",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:BuildHousing",
+   "action": "BuildHousing",
+   "name": "Build Housing",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Citizen",
+     "op": "gte",
+     "level": 80
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:CollectTaxes",
+   "action": "CollectTaxes",
+   "name": "Collect Taxes",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Citizen",
+     "op": "gte",
+     "level": 100
+    },
+    {
+     "kind": "skillLevel",
+     "v": "Mercantilism",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:CollectTaxes",
+   "action": "CollectTaxes",
+   "name": "Collect Taxes",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Citizen",
+     "op": "gte",
+     "level": 60
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Pegasus",
+   "action": "Pegasus",
+   "name": "Pegasus",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 90
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Pegasus",
+   "action": "Pegasus",
+   "name": "Pegasus",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 70
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:SeekBlessing",
+   "action": "SeekBlessing",
+   "name": "Seek Blessing",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Citizen",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:SeekBlessing",
+   "action": "SeekBlessing",
+   "name": "Seek Blessing",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Citizen",
+     "op": "gte",
+     "level": 80
+    },
+    {
+     "kind": "storyFlag",
+     "v": "acquiredPegasus"
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:FallFromGrace",
+   "action": "FallFromGrace",
+   "name": "Fall From Grace",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Pyromancy",
+     "op": "gte",
+     "level": 200
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:FallFromGrace",
+   "action": "FallFromGrace",
+   "name": "Fall From Grace",
+   "town": 4,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Tidy",
+   "action": "Tidy",
+   "name": "Tidy Up",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Canvassed",
+     "op": "gte",
+     "level": 30
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Tidy",
+   "action": "Tidy",
+   "name": "Tidy Up",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Canvassed",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:wizCollege",
+   "action": "wizCollege",
+   "name": "Wizard College",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 60
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:wizCollege",
+   "action": "wizCollege",
+   "name": "Wizard College",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 40
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:FightFrostGiants",
+   "action": "FightFrostGiants",
+   "name": "Fight Frost Giants",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Citizen",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:FightFrostGiants",
+   "action": "FightFrostGiants",
+   "name": "Fight Frost Giants",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Citizen",
+     "op": "gte",
+     "level": 80
+    },
+    {
+     "kind": "storyFlag",
+     "v": "acquiredPegasus"
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:GreatFeast",
+   "action": "GreatFeast",
+   "name": "Great Feast",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:GreatFeast",
+   "action": "GreatFeast",
+   "name": "Great Feast",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 4,
+     "v": "Tour",
+     "op": "gte",
+     "level": 80
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Meander",
+   "action": "Meander",
+   "name": "Meander",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Meander",
+   "action": "Meander",
+   "name": "Meander",
+   "town": 5,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Pylons",
+   "action": "Pylons",
+   "name": "Destroy Pylons",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "Meander",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Pylons",
+   "action": "Pylons",
+   "name": "Destroy Pylons",
+   "town": 5,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "Meander",
+     "op": "gte",
+     "level": 1
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:RaiseZombie",
+   "action": "RaiseZombie",
+   "name": "Raise Zombie",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Dark",
+     "op": "gte",
+     "level": 1000
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:RaiseZombie",
+   "action": "RaiseZombie",
+   "name": "Raise Zombie",
+   "town": 5,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "Meander",
+     "op": "gte",
+     "level": 15
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:DarkSacrifice",
+   "action": "DarkSacrifice",
+   "name": "Dark Sacrifice",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "buffLevel",
+     "v": "Ritual",
+     "op": "gte",
+     "level": 60
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:DarkSacrifice",
+   "action": "DarkSacrifice",
+   "name": "Dark Sacrifice",
+   "town": 5,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "Meander",
+     "op": "gte",
+     "level": 25
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:PurchaseSupplies",
+   "action": "PurchaseSupplies",
+   "name": "Purchase Supplies",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "Meander",
+     "op": "gte",
+     "level": 75
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:PurchaseSupplies",
+   "action": "PurchaseSupplies",
+   "name": "Purchase Supplies",
+   "town": 5,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "Meander",
+     "op": "gte",
+     "level": 50
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Wells",
+   "action": "Wells",
+   "name": "Mana Well",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "Meander",
+     "op": "gte",
+     "level": 2
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Wells",
+   "action": "Wells",
+   "name": "Mana Well",
+   "town": 5,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:JourneyForth",
+   "action": "JourneyForth",
+   "name": "Journey Forth",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "Meander",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:JourneyForth",
+   "action": "JourneyForth",
+   "name": "Journey Forth",
+   "town": 5,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "Meander",
+     "op": "gte",
+     "level": 75
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:TheSpire",
+   "action": "TheSpire",
+   "name": "The Spire",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillSum",
+     "vs": [
+      "Combat",
+      "Magic"
+     ],
+     "op": "gte",
+     "level": 35
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:TheSpire",
+   "action": "TheSpire",
+   "name": "The Spire",
+   "town": 5,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "Meander",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:DeadTrial",
+   "action": "DeadTrial",
+   "name": "Dead Trial",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 5,
+     "v": "SurveyZ5",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:DeadTrial",
+   "action": "DeadTrial",
+   "name": "Dead Trial",
+   "town": 5,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 5,
+     "v": "SurveyZ5",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:RuinsZ5",
+   "action": "RuinsZ5",
+   "name": "RuinsZ5",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 5,
+     "v": "SurveyZ5",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:RuinsZ5",
+   "action": "RuinsZ5",
+   "name": "RuinsZ5",
+   "town": 5,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 5,
+     "v": "SurveyZ5",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:StonesZ5",
+   "action": "StonesZ5",
+   "name": "HaulZ5",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "RuinsZ5",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:StonesZ5",
+   "action": "StonesZ5",
+   "name": "HaulZ5",
+   "town": 5,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 5,
+     "v": "RuinsZ5",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:ExploreJungle",
+   "action": "ExploreJungle",
+   "name": "Explore Jungle",
+   "town": 6,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:ExploreJungle",
+   "action": "ExploreJungle",
+   "name": "Explore Jungle",
+   "town": 6,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:PrepareBuffet",
+   "action": "PrepareBuffet",
+   "name": "Prepare Buffet",
+   "town": 6,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 6,
+     "v": "ExploreJungle",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:PrepareBuffet",
+   "action": "PrepareBuffet",
+   "name": "Prepare Buffet",
+   "town": 6,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 6,
+     "v": "ExploreJungle",
+     "op": "gte",
+     "level": 15
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Totem",
+   "action": "Totem",
+   "name": "Totem",
+   "town": 6,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 6,
+     "v": "ExploreJungle",
+     "op": "gte",
+     "level": 50
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Totem",
+   "action": "Totem",
+   "name": "Totem",
+   "town": 6,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 6,
+     "v": "ExploreJungle",
+     "op": "gte",
+     "level": 25
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Escape",
+   "action": "Escape",
+   "name": "Escape",
+   "town": 6,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 6,
+     "v": "ExploreJungle",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Escape",
+   "action": "Escape",
+   "name": "Escape",
+   "town": 6,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 6,
+     "v": "ExploreJungle",
+     "op": "gte",
+     "level": 75
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:OpenPortal",
+   "action": "OpenPortal",
+   "name": "Open Portal",
+   "town": 6,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gte",
+     "level": 75
+    },
+    {
+     "kind": "skillLevel",
+     "v": "Restoration",
+     "op": "gte",
+     "level": 1000
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:OpenPortal",
+   "action": "OpenPortal",
+   "name": "Open Portal",
+   "town": 6,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "exploreProgress",
+     "op": "gt",
+     "level": 50
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:RuinsZ6",
+   "action": "RuinsZ6",
+   "name": "RuinsZ6",
+   "town": 6,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 6,
+     "v": "SurveyZ6",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:RuinsZ6",
+   "action": "RuinsZ6",
+   "name": "RuinsZ6",
+   "town": 6,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 6,
+     "v": "SurveyZ6",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:StonesZ6",
+   "action": "StonesZ6",
+   "name": "HaulZ6",
+   "town": 6,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 6,
+     "v": "RuinsZ6",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:StonesZ6",
+   "action": "StonesZ6",
+   "name": "HaulZ6",
+   "town": 6,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 6,
+     "v": "RuinsZ6",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:FightJungleMonsters",
+   "action": "FightJungleMonsters",
+   "name": "Fight Jungle Monsters",
+   "town": 6,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:FightJungleMonsters",
+   "action": "FightJungleMonsters",
+   "name": "Fight Jungle Monsters",
+   "town": 6,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Rescue",
+   "action": "Rescue",
+   "name": "Rescue Survivors",
+   "town": 6,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 6,
+     "v": "ExploreJungle",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Rescue",
+   "action": "Rescue",
+   "name": "Rescue Survivors",
+   "town": 6,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 6,
+     "v": "ExploreJungle",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:ThievesGuild",
+   "action": "ThievesGuild",
+   "name": "Thieves Guild",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 7,
+     "v": "Excursion",
+     "op": "gte",
+     "level": 25
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:ThievesGuild",
+   "action": "ThievesGuild",
+   "name": "Thieves Guild",
+   "town": 7,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 7,
+     "v": "Excursion",
+     "op": "gte",
+     "level": 20
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:STrial",
+   "action": "STrial",
+   "name": "Secret Trial",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "storyMax",
+     "op": "gte",
+     "level": 12
+    },
+    {
+     "kind": "buffLevel",
+     "v": "Imbuement3",
+     "op": "gte",
+     "level": 7
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:STrial",
+   "action": "STrial",
+   "name": "Secret Trial",
+   "town": 7,
+   "pred": "visible",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "storyMax",
+     "op": "gte",
+     "level": 12
+    },
+    {
+     "kind": "buffLevel",
+     "v": "Imbuement3",
+     "op": "gte",
+     "level": 7
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Invest",
+   "action": "Invest",
+   "name": "Invest",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Invest",
+   "action": "Invest",
+   "name": "Invest",
+   "town": 7,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:CollectInterest",
+   "action": "CollectInterest",
+   "name": "Collect Interest",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:CollectInterest",
+   "action": "CollectInterest",
+   "name": "Collect Interest",
+   "town": 7,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Seminar",
+   "action": "Seminar",
+   "name": "Seminar",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 7,
+     "v": "SurveyZ7",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Seminar",
+   "action": "Seminar",
+   "name": "Seminar",
+   "town": 7,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "surveyLevel",
+     "town": 7,
+     "v": "SurveyZ7",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:PurchaseKey",
+   "action": "PurchaseKey",
+   "name": "Purchase Key",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:PurchaseKey",
+   "action": "PurchaseKey",
+   "name": "Purchase Key",
+   "town": 7,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:LeaveCity",
+   "action": "LeaveCity",
+   "name": "Leave City",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:LeaveCity",
+   "action": "LeaveCity",
+   "name": "Leave City",
+   "town": 7,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:Excursion",
+   "action": "Excursion",
+   "name": "Excursion",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:Excursion",
+   "action": "Excursion",
+   "name": "Excursion",
+   "town": 7,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:ExplorersGuild",
+   "action": "ExplorersGuild",
+   "name": "Explorers Guild",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 7,
+     "v": "Excursion",
+     "op": "gte",
+     "level": 10
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:ExplorersGuild",
+   "action": "ExplorersGuild",
+   "name": "Explorers Guild",
+   "town": 7,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 7,
+     "v": "Excursion",
+     "op": "gte",
+     "level": 5
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:PickPockets",
+   "action": "PickPockets",
+   "name": "Pick Pockets",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Thievery",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:PickPockets",
+   "action": "PickPockets",
+   "name": "Pick Pockets",
+   "town": 7,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Thievery",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:RobWarehouse",
+   "action": "RobWarehouse",
+   "name": "Rob Warehouse",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 7,
+     "v": "PickPockets",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:RobWarehouse",
+   "action": "RobWarehouse",
+   "name": "Rob Warehouse",
+   "town": 7,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 7,
+     "v": "PickPockets",
+     "op": "gte",
+     "level": 25
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:InsuranceFraud",
+   "action": "InsuranceFraud",
+   "name": "Insurance Fraud",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 7,
+     "v": "RobWarehouse",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:InsuranceFraud",
+   "action": "InsuranceFraud",
+   "name": "Insurance Fraud",
+   "town": 7,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 7,
+     "v": "RobWarehouse",
+     "op": "gte",
+     "level": 50
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:GuildAssassin",
+   "action": "GuildAssassin",
+   "name": "Guild Assassin",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 7,
+     "v": "InsuranceFraud",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:GuildAssassin",
+   "action": "GuildAssassin",
+   "name": "Guild Assassin",
+   "town": 7,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 7,
+     "v": "InsuranceFraud",
+     "op": "gte",
+     "level": 75
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:ImbueSoul",
+   "action": "ImbueSoul",
+   "name": "Imbue Soul",
+   "town": 8,
+   "pred": "unlocked",
+   "mode": "AND",
+   "requires": [
+    {
+     "kind": "buffLevel",
+     "v": "Imbuement",
+     "op": "gt",
+     "level": 499
+    },
+    {
+     "kind": "buffLevel",
+     "v": "Imbuement2",
+     "op": "gt",
+     "level": 499
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:ImbueSoul",
+   "action": "ImbueSoul",
+   "name": "Imbue Soul",
+   "town": 8,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:GTrial",
+   "action": "GTrial",
+   "name": "Gods Trial",
+   "town": 8,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 8,
+     "v": "BuildTower",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:GTrial",
+   "action": "GTrial",
+   "name": "Gods Trial",
+   "town": 8,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 8,
+     "v": "BuildTower",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:GFight",
+   "action": "GFight",
+   "name": "Challenge Gods",
+   "town": 8,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 8,
+     "v": "BuildTower",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:GFight",
+   "action": "GFight",
+   "name": "Challenge Gods",
+   "town": 8,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 8,
+     "v": "BuildTower",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:BuildTower",
+   "action": "BuildTower",
+   "name": "Build Tower",
+   "town": 8,
+   "pred": "unlocked",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:BuildTower",
+   "action": "BuildTower",
+   "name": "Build Tower",
+   "town": 8,
+   "pred": "visible",
+   "mode": "ALWAYS",
+   "requires": [],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:RestoreTime",
+   "action": "RestoreTime",
+   "name": "Restore Time",
+   "town": 8,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 8,
+     "v": "BuildTower",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:RestoreTime",
+   "action": "RestoreTime",
+   "name": "Restore Time",
+   "town": 8,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "townLevel",
+     "town": 8,
+     "v": "BuildTower",
+     "op": "gte",
+     "level": 100
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:AssassinZ0",
+   "action": "AssassinZ0",
+   "name": "AssassinZ0",
+   "town": 0,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:AssassinZ0",
+   "action": "AssassinZ0",
+   "name": "AssassinZ0",
+   "town": 0,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:AssassinZ1",
+   "action": "AssassinZ1",
+   "name": "AssassinZ1",
+   "town": 1,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:AssassinZ1",
+   "action": "AssassinZ1",
+   "name": "AssassinZ1",
+   "town": 1,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:AssassinZ2",
+   "action": "AssassinZ2",
+   "name": "AssassinZ2",
+   "town": 2,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:AssassinZ2",
+   "action": "AssassinZ2",
+   "name": "AssassinZ2",
+   "town": 2,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:AssassinZ3",
+   "action": "AssassinZ3",
+   "name": "AssassinZ3",
+   "town": 3,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:AssassinZ3",
+   "action": "AssassinZ3",
+   "name": "AssassinZ3",
+   "town": 3,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:AssassinZ4",
+   "action": "AssassinZ4",
+   "name": "AssassinZ4",
+   "town": 4,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:AssassinZ4",
+   "action": "AssassinZ4",
+   "name": "AssassinZ4",
+   "town": 4,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:AssassinZ5",
+   "action": "AssassinZ5",
+   "name": "AssassinZ5",
+   "town": 5,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:AssassinZ5",
+   "action": "AssassinZ5",
+   "name": "AssassinZ5",
+   "town": 5,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:AssassinZ6",
+   "action": "AssassinZ6",
+   "name": "AssassinZ6",
+   "town": 6,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:AssassinZ6",
+   "action": "AssassinZ6",
+   "name": "AssassinZ6",
+   "town": 6,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  },
+  {
+   "id": "u:AssassinZ7",
+   "action": "AssassinZ7",
+   "name": "AssassinZ7",
+   "town": 7,
+   "pred": "unlocked",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": true
+  },
+  {
+   "id": "v:AssassinZ7",
+   "action": "AssassinZ7",
+   "name": "AssassinZ7",
+   "town": 7,
+   "pred": "visible",
+   "mode": "OR",
+   "requires": [
+    {
+     "kind": "skillLevel",
+     "v": "Assassin",
+     "op": "gt",
+     "level": 0
+    }
+   ],
+   "monotone": true,
+   "apEligible": false
+  }
+ ],
+ "quantities": [
+  {
+   "id": "q:0:Pots:0",
+   "town": 0,
+   "var": "Pots",
+   "step": 0,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 5
+   },
+   "grant": {
+    "items": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:1",
+   "town": 0,
+   "var": "Pots",
+   "step": 1,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 76
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:2",
+   "town": 0,
+   "var": "Pots",
+   "step": 2,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 146
+   },
+   "grant": {
+    "items": 70
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:3",
+   "town": 0,
+   "var": "Pots",
+   "step": 3,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 217
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:4",
+   "town": 0,
+   "var": "Pots",
+   "step": 4,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 288
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:5",
+   "town": 0,
+   "var": "Pots",
+   "step": 5,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 359
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:6",
+   "town": 0,
+   "var": "Pots",
+   "step": 6,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 429
+   },
+   "grant": {
+    "items": 70
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:7",
+   "town": 0,
+   "var": "Pots",
+   "step": 7,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 500
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Locks:0",
+   "town": 0,
+   "var": "Locks",
+   "step": 0,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 1
+   },
+   "grant": {
+    "items": 1
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Locks:1",
+   "town": 0,
+   "var": "Locks",
+   "step": 1,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 15
+   },
+   "grant": {
+    "items": 14
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Locks:2",
+   "town": 0,
+   "var": "Locks",
+   "step": 2,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 29
+   },
+   "grant": {
+    "items": 14
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Locks:3",
+   "town": 0,
+   "var": "Locks",
+   "step": 3,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 43
+   },
+   "grant": {
+    "items": 14
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Locks:4",
+   "town": 0,
+   "var": "Locks",
+   "step": 4,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 58
+   },
+   "grant": {
+    "items": 15
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Locks:5",
+   "town": 0,
+   "var": "Locks",
+   "step": 5,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 72
+   },
+   "grant": {
+    "items": 14
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Locks:6",
+   "town": 0,
+   "var": "Locks",
+   "step": 6,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 86
+   },
+   "grant": {
+    "items": 14
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Locks:7",
+   "town": 0,
+   "var": "Locks",
+   "step": 7,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 100
+   },
+   "grant": {
+    "items": 14
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:0",
+   "town": 0,
+   "var": "SQuests",
+   "step": 0,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 1
+   },
+   "grant": {
+    "items": 1
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:1",
+   "town": 0,
+   "var": "SQuests",
+   "step": 1,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 15
+   },
+   "grant": {
+    "items": 14
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:2",
+   "town": 0,
+   "var": "SQuests",
+   "step": 2,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 29
+   },
+   "grant": {
+    "items": 14
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:3",
+   "town": 0,
+   "var": "SQuests",
+   "step": 3,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 43
+   },
+   "grant": {
+    "items": 14
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:4",
+   "town": 0,
+   "var": "SQuests",
+   "step": 4,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 58
+   },
+   "grant": {
+    "items": 15
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:5",
+   "town": 0,
+   "var": "SQuests",
+   "step": 5,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 72
+   },
+   "grant": {
+    "items": 14
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:6",
+   "town": 0,
+   "var": "SQuests",
+   "step": 6,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 86
+   },
+   "grant": {
+    "items": 14
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:7",
+   "town": 0,
+   "var": "SQuests",
+   "step": 7,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 100
+   },
+   "grant": {
+    "items": 14
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:LQuests:0",
+   "town": 0,
+   "var": "LQuests",
+   "step": 0,
+   "dims": [
+    "Secrets"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 1
+   },
+   "grant": {
+    "items": 1
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:LQuests:1",
+   "town": 0,
+   "var": "LQuests",
+   "step": 1,
+   "dims": [
+    "Secrets"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 8
+   },
+   "grant": {
+    "items": 7
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:LQuests:2",
+   "town": 0,
+   "var": "LQuests",
+   "step": 2,
+   "dims": [
+    "Secrets"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 15
+   },
+   "grant": {
+    "items": 7
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:LQuests:3",
+   "town": 0,
+   "var": "LQuests",
+   "step": 3,
+   "dims": [
+    "Secrets"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 22
+   },
+   "grant": {
+    "items": 7
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:LQuests:4",
+   "town": 0,
+   "var": "LQuests",
+   "step": 4,
+   "dims": [
+    "Secrets"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 29
+   },
+   "grant": {
+    "items": 7
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:LQuests:5",
+   "town": 0,
+   "var": "LQuests",
+   "step": 5,
+   "dims": [
+    "Secrets"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 36
+   },
+   "grant": {
+    "items": 7
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:LQuests:6",
+   "town": 0,
+   "var": "LQuests",
+   "step": 6,
+   "dims": [
+    "Secrets"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 43
+   },
+   "grant": {
+    "items": 7
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:LQuests:7",
+   "town": 0,
+   "var": "LQuests",
+   "step": 7,
+   "dims": [
+    "Secrets"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 50
+   },
+   "grant": {
+    "items": 7
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:0",
+   "town": 1,
+   "var": "WildMana",
+   "step": 0,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 5
+   },
+   "grant": {
+    "items": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:1",
+   "town": 1,
+   "var": "WildMana",
+   "step": 1,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 147
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:2",
+   "town": 1,
+   "var": "WildMana",
+   "step": 2,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 289
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:3",
+   "town": 1,
+   "var": "WildMana",
+   "step": 3,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 431
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:4",
+   "town": 1,
+   "var": "WildMana",
+   "step": 4,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 574
+   },
+   "grant": {
+    "items": 143
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:5",
+   "town": 1,
+   "var": "WildMana",
+   "step": 5,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 716
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:6",
+   "town": 1,
+   "var": "WildMana",
+   "step": 6,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 858
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:7",
+   "town": 1,
+   "var": "WildMana",
+   "step": 7,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 1000
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:0",
+   "town": 1,
+   "var": "Herbs",
+   "step": 0,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 2
+   },
+   "grant": {
+    "items": 2
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:1",
+   "town": 1,
+   "var": "Herbs",
+   "step": 1,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 287
+   },
+   "grant": {
+    "items": 285
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:2",
+   "town": 1,
+   "var": "Herbs",
+   "step": 2,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 573
+   },
+   "grant": {
+    "items": 286
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:3",
+   "town": 1,
+   "var": "Herbs",
+   "step": 3,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 858
+   },
+   "grant": {
+    "items": 285
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:4",
+   "town": 1,
+   "var": "Herbs",
+   "step": 4,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 1144
+   },
+   "grant": {
+    "items": 286
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:5",
+   "town": 1,
+   "var": "Herbs",
+   "step": 5,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 1429
+   },
+   "grant": {
+    "items": 285
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:6",
+   "town": 1,
+   "var": "Herbs",
+   "step": 6,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 1715
+   },
+   "grant": {
+    "items": 286
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:7",
+   "town": 1,
+   "var": "Herbs",
+   "step": 7,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 2000
+   },
+   "grant": {
+    "items": 285
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Hunt:0",
+   "town": 1,
+   "var": "Hunt",
+   "step": 0,
+   "dims": [
+    "Forest"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 2
+   },
+   "grant": {
+    "items": 2
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Hunt:1",
+   "town": 1,
+   "var": "Hunt",
+   "step": 1,
+   "dims": [
+    "Forest"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 30
+   },
+   "grant": {
+    "items": 28
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Hunt:2",
+   "town": 1,
+   "var": "Hunt",
+   "step": 2,
+   "dims": [
+    "Forest"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 59
+   },
+   "grant": {
+    "items": 29
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Hunt:3",
+   "town": 1,
+   "var": "Hunt",
+   "step": 3,
+   "dims": [
+    "Forest"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 87
+   },
+   "grant": {
+    "items": 28
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Hunt:4",
+   "town": 1,
+   "var": "Hunt",
+   "step": 4,
+   "dims": [
+    "Forest"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 115
+   },
+   "grant": {
+    "items": 28
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Hunt:5",
+   "town": 1,
+   "var": "Hunt",
+   "step": 5,
+   "dims": [
+    "Forest"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 143
+   },
+   "grant": {
+    "items": 28
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Hunt:6",
+   "town": 1,
+   "var": "Hunt",
+   "step": 6,
+   "dims": [
+    "Forest"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 172
+   },
+   "grant": {
+    "items": 29
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Hunt:7",
+   "town": 1,
+   "var": "Hunt",
+   "step": 7,
+   "dims": [
+    "Forest"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 200
+   },
+   "grant": {
+    "items": 28
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:StonesZ1:0",
+   "town": 1,
+   "var": "StonesZ1",
+   "step": 0,
+   "dims": [
+    "RuinsZ1"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 2500
+   },
+   "grant": {
+    "items": 2500
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:StonesZ1:1",
+   "town": 1,
+   "var": "StonesZ1",
+   "step": 1,
+   "dims": [
+    "RuinsZ1"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 37857
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:StonesZ1:2",
+   "town": 1,
+   "var": "StonesZ1",
+   "step": 2,
+   "dims": [
+    "RuinsZ1"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 73214
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:StonesZ1:3",
+   "town": 1,
+   "var": "StonesZ1",
+   "step": 3,
+   "dims": [
+    "RuinsZ1"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 108571
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:StonesZ1:4",
+   "town": 1,
+   "var": "StonesZ1",
+   "step": 4,
+   "dims": [
+    "RuinsZ1"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 143929
+   },
+   "grant": {
+    "items": 35358
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:StonesZ1:5",
+   "town": 1,
+   "var": "StonesZ1",
+   "step": 5,
+   "dims": [
+    "RuinsZ1"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 179286
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:StonesZ1:6",
+   "town": 1,
+   "var": "StonesZ1",
+   "step": 6,
+   "dims": [
+    "RuinsZ1"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 214643
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:StonesZ1:7",
+   "town": 1,
+   "var": "StonesZ1",
+   "step": 7,
+   "dims": [
+    "RuinsZ1"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 250000
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:0",
+   "town": 2,
+   "var": "Gamble",
+   "step": 0,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 3
+   },
+   "grant": {
+    "items": 3
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:1",
+   "town": 2,
+   "var": "Gamble",
+   "step": 1,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 45
+   },
+   "grant": {
+    "items": 42
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:2",
+   "town": 2,
+   "var": "Gamble",
+   "step": 2,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 88
+   },
+   "grant": {
+    "items": 43
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:3",
+   "town": 2,
+   "var": "Gamble",
+   "step": 3,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 130
+   },
+   "grant": {
+    "items": 42
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:4",
+   "town": 2,
+   "var": "Gamble",
+   "step": 4,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 173
+   },
+   "grant": {
+    "items": 43
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:5",
+   "town": 2,
+   "var": "Gamble",
+   "step": 5,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 215
+   },
+   "grant": {
+    "items": 42
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:6",
+   "town": 2,
+   "var": "Gamble",
+   "step": 6,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 258
+   },
+   "grant": {
+    "items": 43
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:7",
+   "town": 2,
+   "var": "Gamble",
+   "step": 7,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 300
+   },
+   "grant": {
+    "items": 42
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:StonesZ3:0",
+   "town": 3,
+   "var": "StonesZ3",
+   "step": 0,
+   "dims": [
+    "RuinsZ3"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 2500
+   },
+   "grant": {
+    "items": 2500
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:StonesZ3:1",
+   "town": 3,
+   "var": "StonesZ3",
+   "step": 1,
+   "dims": [
+    "RuinsZ3"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 37857
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:StonesZ3:2",
+   "town": 3,
+   "var": "StonesZ3",
+   "step": 2,
+   "dims": [
+    "RuinsZ3"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 73214
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:StonesZ3:3",
+   "town": 3,
+   "var": "StonesZ3",
+   "step": 3,
+   "dims": [
+    "RuinsZ3"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 108571
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:StonesZ3:4",
+   "town": 3,
+   "var": "StonesZ3",
+   "step": 4,
+   "dims": [
+    "RuinsZ3"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 143929
+   },
+   "grant": {
+    "items": 35358
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:StonesZ3:5",
+   "town": 3,
+   "var": "StonesZ3",
+   "step": 5,
+   "dims": [
+    "RuinsZ3"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 179286
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:StonesZ3:6",
+   "town": 3,
+   "var": "StonesZ3",
+   "step": 6,
+   "dims": [
+    "RuinsZ3"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 214643
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:StonesZ3:7",
+   "town": 3,
+   "var": "StonesZ3",
+   "step": 7,
+   "dims": [
+    "RuinsZ3"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 250000
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Geysers:0",
+   "town": 3,
+   "var": "Geysers",
+   "step": 0,
+   "dims": [
+    "Mountain"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 10
+   },
+   "grant": {
+    "items": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Geysers:1",
+   "town": 3,
+   "var": "Geysers",
+   "step": 1,
+   "dims": [
+    "Mountain"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 151
+   },
+   "grant": {
+    "items": 141
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Geysers:2",
+   "town": 3,
+   "var": "Geysers",
+   "step": 2,
+   "dims": [
+    "Mountain"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 293
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Geysers:3",
+   "town": 3,
+   "var": "Geysers",
+   "step": 3,
+   "dims": [
+    "Mountain"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 434
+   },
+   "grant": {
+    "items": 141
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Geysers:4",
+   "town": 3,
+   "var": "Geysers",
+   "step": 4,
+   "dims": [
+    "Mountain"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 576
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Geysers:5",
+   "town": 3,
+   "var": "Geysers",
+   "step": 5,
+   "dims": [
+    "Mountain"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 717
+   },
+   "grant": {
+    "items": 141
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Geysers:6",
+   "town": 3,
+   "var": "Geysers",
+   "step": 6,
+   "dims": [
+    "Mountain"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 859
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Geysers:7",
+   "town": 3,
+   "var": "Geysers",
+   "step": 7,
+   "dims": [
+    "Mountain"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 1000
+   },
+   "grant": {
+    "items": 141
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:0",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 0,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 3
+   },
+   "grant": {
+    "items": 3
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:1",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 1,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 45
+   },
+   "grant": {
+    "items": 42
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:2",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 2,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 88
+   },
+   "grant": {
+    "items": 43
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:3",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 3,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 130
+   },
+   "grant": {
+    "items": 42
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:4",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 4,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 173
+   },
+   "grant": {
+    "items": 43
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:5",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 5,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 215
+   },
+   "grant": {
+    "items": 42
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:6",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 6,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 258
+   },
+   "grant": {
+    "items": 43
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:7",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 7,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 300
+   },
+   "grant": {
+    "items": 42
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:0",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 0,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 5
+   },
+   "grant": {
+    "items": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:1",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 1,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 76
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:2",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 2,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 146
+   },
+   "grant": {
+    "items": 70
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:3",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 3,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 217
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:4",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 4,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 288
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:5",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 5,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 359
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:6",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 6,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 429
+   },
+   "grant": {
+    "items": 70
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:7",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 7,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 500
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:0",
+   "town": 4,
+   "var": "Donations",
+   "step": 0,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 5
+   },
+   "grant": {
+    "items": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:1",
+   "town": 4,
+   "var": "Donations",
+   "step": 1,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 76
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:2",
+   "town": 4,
+   "var": "Donations",
+   "step": 2,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 146
+   },
+   "grant": {
+    "items": 70
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:3",
+   "town": 4,
+   "var": "Donations",
+   "step": 3,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 217
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:4",
+   "town": 4,
+   "var": "Donations",
+   "step": 4,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 288
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:5",
+   "town": 4,
+   "var": "Donations",
+   "step": 5,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 359
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:6",
+   "town": 4,
+   "var": "Donations",
+   "step": 6,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 429
+   },
+   "grant": {
+    "items": 70
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:7",
+   "town": 4,
+   "var": "Donations",
+   "step": 7,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 500
+   },
+   "grant": {
+    "items": 71
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Pylons:0",
+   "town": 5,
+   "var": "Pylons",
+   "step": 0,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 10
+   },
+   "grant": {
+    "items": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Pylons:1",
+   "town": 5,
+   "var": "Pylons",
+   "step": 1,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 151
+   },
+   "grant": {
+    "items": 141
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Pylons:2",
+   "town": 5,
+   "var": "Pylons",
+   "step": 2,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 293
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Pylons:3",
+   "town": 5,
+   "var": "Pylons",
+   "step": 3,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 434
+   },
+   "grant": {
+    "items": 141
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Pylons:4",
+   "town": 5,
+   "var": "Pylons",
+   "step": 4,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 576
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Pylons:5",
+   "town": 5,
+   "var": "Pylons",
+   "step": 5,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 717
+   },
+   "grant": {
+    "items": 141
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Pylons:6",
+   "town": 5,
+   "var": "Pylons",
+   "step": 6,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 859
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Pylons:7",
+   "town": 5,
+   "var": "Pylons",
+   "step": 7,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 1000
+   },
+   "grant": {
+    "items": 141
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Wells:0",
+   "town": 5,
+   "var": "Wells",
+   "step": 0,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 10
+   },
+   "grant": {
+    "items": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Wells:1",
+   "town": 5,
+   "var": "Wells",
+   "step": 1,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 151
+   },
+   "grant": {
+    "items": 141
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Wells:2",
+   "town": 5,
+   "var": "Wells",
+   "step": 2,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 293
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Wells:3",
+   "town": 5,
+   "var": "Wells",
+   "step": 3,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 434
+   },
+   "grant": {
+    "items": 141
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Wells:4",
+   "town": 5,
+   "var": "Wells",
+   "step": 4,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 576
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Wells:5",
+   "town": 5,
+   "var": "Wells",
+   "step": 5,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 717
+   },
+   "grant": {
+    "items": 141
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Wells:6",
+   "town": 5,
+   "var": "Wells",
+   "step": 6,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 859
+   },
+   "grant": {
+    "items": 142
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Wells:7",
+   "town": 5,
+   "var": "Wells",
+   "step": 7,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 1000
+   },
+   "grant": {
+    "items": 141
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:StonesZ5:0",
+   "town": 5,
+   "var": "StonesZ5",
+   "step": 0,
+   "dims": [
+    "RuinsZ5"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 2500
+   },
+   "grant": {
+    "items": 2500
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:StonesZ5:1",
+   "town": 5,
+   "var": "StonesZ5",
+   "step": 1,
+   "dims": [
+    "RuinsZ5"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 37857
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:StonesZ5:2",
+   "town": 5,
+   "var": "StonesZ5",
+   "step": 2,
+   "dims": [
+    "RuinsZ5"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 73214
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:StonesZ5:3",
+   "town": 5,
+   "var": "StonesZ5",
+   "step": 3,
+   "dims": [
+    "RuinsZ5"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 108571
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:StonesZ5:4",
+   "town": 5,
+   "var": "StonesZ5",
+   "step": 4,
+   "dims": [
+    "RuinsZ5"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 143929
+   },
+   "grant": {
+    "items": 35358
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:StonesZ5:5",
+   "town": 5,
+   "var": "StonesZ5",
+   "step": 5,
+   "dims": [
+    "RuinsZ5"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 179286
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:StonesZ5:6",
+   "town": 5,
+   "var": "StonesZ5",
+   "step": 6,
+   "dims": [
+    "RuinsZ5"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 214643
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:StonesZ5:7",
+   "town": 5,
+   "var": "StonesZ5",
+   "step": 7,
+   "dims": [
+    "RuinsZ5"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 250000
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:6:StonesZ6:0",
+   "town": 6,
+   "var": "StonesZ6",
+   "step": 0,
+   "dims": [
+    "RuinsZ6"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 2500
+   },
+   "grant": {
+    "items": 2500
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:6:StonesZ6:1",
+   "town": 6,
+   "var": "StonesZ6",
+   "step": 1,
+   "dims": [
+    "RuinsZ6"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 37857
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:6:StonesZ6:2",
+   "town": 6,
+   "var": "StonesZ6",
+   "step": 2,
+   "dims": [
+    "RuinsZ6"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 73214
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:6:StonesZ6:3",
+   "town": 6,
+   "var": "StonesZ6",
+   "step": 3,
+   "dims": [
+    "RuinsZ6"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 108571
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:6:StonesZ6:4",
+   "town": 6,
+   "var": "StonesZ6",
+   "step": 4,
+   "dims": [
+    "RuinsZ6"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 143929
+   },
+   "grant": {
+    "items": 35358
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:6:StonesZ6:5",
+   "town": 6,
+   "var": "StonesZ6",
+   "step": 5,
+   "dims": [
+    "RuinsZ6"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 179286
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:6:StonesZ6:6",
+   "town": 6,
+   "var": "StonesZ6",
+   "step": 6,
+   "dims": [
+    "RuinsZ6"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 214643
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:6:StonesZ6:7",
+   "town": 6,
+   "var": "StonesZ6",
+   "step": 7,
+   "dims": [
+    "RuinsZ6"
+   ],
+   "trigger": {
+    "vanillaTotalAtLeast": 250000
+   },
+   "grant": {
+    "items": 35357
+   },
+   "apEligible": true
+  }
+ ]
+}
