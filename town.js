@@ -98,6 +98,11 @@ class Town {
         if (level !== prevLevel) {
             view.requestUpdate("updateLockedHidden", null);
             adjustAll();
+            // fork: unlock diff pass. Every row reading this progress var —
+            // action gates, the exploreProgress aggregate, and the loot-batch
+            // quantity rows — can only have changed on a LEVEL change, which is
+            // the same reason adjustAll() sits in this branch.
+            Unlocks.check([Unlocks.dimKey.progress(this.index, varName)]);
             for (const action of totalActionList) {
                 if (towns[action.townNum].varNames.indexOf(action.varName) !== -1) {
                     view.requestUpdate("updateRegular", {name: action.varName, index: action.townNum});

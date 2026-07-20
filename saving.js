@@ -1581,6 +1581,12 @@ function doLoad(toLoad) {
 
     adjustAll();
 
+    // fork: unlock diff pass — the boot/reload baseline. A FULL pass, sited
+    // beside adjustAll() for the same reason: the load just replaced every dim
+    // at once. This is what establishes the "previously achieved" set that
+    // later incremental checks diff against.
+    Unlocks.check();
+
     Data.recordBase();
 
     view.updateLoadoutNames();

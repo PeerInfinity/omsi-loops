@@ -119,6 +119,11 @@ function prestigeWithNewValues(nextPrestigeValues, nextPrestigeBuffs) {
     prestigeValues["completedAnyPrestige"]     = nextPrestigeValues.completedAnyPrestige.valueOf();
     totals = nextTotals;
     totalOfflineMs = nextOfflineMs;
+    // fork: unlock diff pass — a FULL pass, after the prestige values land.
+    // The load(false)/restart() cycle above already ran one, but it ran before
+    // completedAnyPrestige was written, and the wipe moves every dim at once,
+    // so there is no useful subset to pass here.
+    Unlocks.check();
     view.updatePrestigeValues();
     save();
 }

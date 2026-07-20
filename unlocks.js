@@ -248,8 +248,22 @@ const Unlocks = (() => {
      * @param {(progressVar: string, where: string) => number} resolvers.townOfProgressVar
      * @returns {object[]} predicate rows, action order, unlocked before visible
      */
+    // Parsing the action XML is the single most expensive thing this module
+    // does, and build() needs the same document twice (predicates, then
+    // quantity provenance). Memoize on the text IDENTITY: the carrier is one
+    // constant string per context, so the second walk is free, while the
+    // generator's mutated-XML canaries pass a different string and reparse.
+    let lastText = null, lastDoc = null;
+    function parseDocument(xmlText) {
+        if (xmlText !== lastText) {
+            lastDoc = ActionListXml.parseDocument(xmlText);
+            lastText = xmlText;
+        }
+        return lastDoc;
+    }
+
     function walkPredicates(xmlText, { actionMeta, townOfProgressVar }) {
-        const doc = ActionListXml.parseDocument(xmlText);
+        const doc = parseDocument(xmlText);
         const rows = [];
         for (const [name, def] of Object.entries(doc.actions)) {
             const meta = actionMeta(name);
@@ -282,8 +296,56 @@ const Unlocks = (() => {
     // to hold the loot. Declarative here, cross-checked against the JS call
     // sites by the generator — the two must agree or the table is describing
     // a pacing the game does not run.
+    // The BASE-RATE curve, read as a linear form.
+    //
+    // Every <totalDiscovered> in the tree is a sum of scaled progress levels:
+    // a leading <progressLevel> with its <multiplier>/<divisor>, plus one
+    // <addition> per extra term. That makes the base total a dot product,
+    // `round(Σ coeff·level)`, which is what lets a quantity row's trigger be
+    // evaluated without running adjustAll() — the diff pass must answer
+    // "is batch k complete at BASE rates?", and the live total is inflated by
+    // prestige/survey/Spatiomancy.
+    //
+    // The coefficients are read here, but they are never TRUSTED here: the
+    // generator sweeps the live adjust*() functions and asserts this dot
+    // product reproduces them at every sampled point, so a future nonlinear
+    // formula fails generation loudly instead of skewing every threshold.
+    // Term structure is parsed positionally (a <multiplier> scales the term it
+    // follows) and anything outside the vocabulary is a hard error, same rule
+    // as the predicate walk.
+    const TERM_SCALARS = { multiplier: (c, n) => c * n, divisor: (c, n) => c / n };
+    // tags that end the term list — they modify the whole sum, not a term
+    const WHOLE_SUM_TAGS = new Set(["adjustment", "additiveBonus", "surveyBonus", "skillMod", "floor", "round"]);
+
+    function readQuantityTerms(children, where) {
+        const terms = [];
+        let cur = null;
+        for (const c of children) {
+            if (c.tag === "progressLevel") {
+                if (!c.attrs.varName) err(`${where}: <progressLevel> without varName`);
+                cur = { v: c.attrs.varName, coeff: 1 };
+                terms.push(cur);
+            } else if (c.tag in TERM_SCALARS) {
+                if (!cur) err(`${where}: <${c.tag}> does not follow a <progressLevel> term`);
+                const n = Number(c.attrs.value);
+                if (!Number.isFinite(n) || n === 0) err(`${where}: <${c.tag}> needs a nonzero numeric value`);
+                cur.coeff = TERM_SCALARS[c.tag](cur.coeff, n);
+            } else if (c.tag === "addition") {
+                const inner = readQuantityTerms(c.children, where);
+                if (!inner.length) err(`${where}: <addition> holds no <progressLevel> term`);
+                terms.push(...inner);
+                cur = null;
+            } else if (WHOLE_SUM_TAGS.has(c.tag)) {
+                cur = null; // a whole-sum modifier closes the current term
+            } else {
+                err(`${where}: unmapped <${c.tag}> inside <totalDiscovered> (closed vocabulary)`);
+            }
+        }
+        return terms;
+    }
+
     function walkQuantityDims(xmlText, { actionMeta }) {
-        const doc = ActionListXml.parseDocument(xmlText);
+        const doc = parseDocument(xmlText);
         const out = [];
         for (const [name, def] of Object.entries(doc.actions)) {
             const el = def.children.filter(c => c.tag === "totalDiscovered");
@@ -318,10 +380,89 @@ const Unlocks = (() => {
             if (!Number.isInteger(oneInEvery) || oneInEvery < 1) {
                 err(`${name}: <oneInEvery> must be a positive integer, got "${oieEl[0].text}"`);
             }
-            out.push({ action: meta.varName, name, town: meta.town, dims, modifiers, oneInEvery });
+            // the linear form, aligned to `dims`. Duplicate terms would make
+            // the alignment lossy, so require one term per dim rather than
+            // silently summing them.
+            const terms = readQuantityTerms(el[0].children, `${name}.totalDiscovered`);
+            if (terms.length !== dims.length) {
+                err(`${name}: <totalDiscovered> has ${terms.length} scaled terms for ${dims.length} dim(s)`);
+            }
+            const coeffs = dims.map(v => {
+                const matching = terms.filter(t => t.v === v);
+                if (matching.length !== 1) err(`${name}: dim ${v} appears in ${matching.length} terms, want exactly 1`);
+                return matching[0].coeff;
+            });
+            out.push({ action: meta.varName, name, town: meta.town, dims, coeffs, modifiers, oneInEvery,
+                       excluded: QUANTITY_EXCLUDED_VARS.includes(meta.varName) });
         }
         return out;
     }
+
+    /**
+     * The four soulstone hauls, excluded from randomization ENTIRELY — no AP
+     * locations, no AP items, no cross-game shuffling (USER RULING 2026-07-20,
+     * plan §3.5). At 2500 capacity per level over a 1000 ratio they would mint
+     * 250 rows each: 62% of the whole pool spent on four repetitive grinds.
+     *
+     * Owned here because the RUNTIME needs it too — the diff pass must not
+     * announce batch crossings for rows that are not in the pool. The
+     * generator cross-checks this list against its own copy of the ruling.
+     */
+    const QUANTITY_EXCLUDED_VARS = ["StonesZ1", "StonesZ3", "StonesZ5", "StonesZ6"];
+
+    // ---- quantity rows: the loot-batch model (plan §3.5) -------------------
+    // Minted here rather than in the generator so runtime and golden share ONE
+    // implementation — the same reason the predicate walk lives here. The
+    // generator calls this and then proves the result against a live sweep.
+    //
+    // Base-rate ceiling = the dot product at the level cap; a var mints one row
+    // per COMPLETE batch below it. A partial final batch carries no guaranteed
+    // loot, so it mints nothing.
+    const PROGRESS_LEVEL_CAP = 100;
+
+    /** the vanilla base-rate total, multipliers neutral: `round(Σ coeff·level)` */
+    const dotProduct = (coeffs, levels) =>
+        Math.round(coeffs.reduce((sum, c, i) => sum + c * levels[i], 0));
+
+    function quantityRows(curve) {
+        const { action, town, dims, coeffs, oneInEvery } = curve;
+        const baseMax = dotProduct(coeffs, dims.map(() => PROGRESS_LEVEL_CAP));
+        const batches = Math.floor(baseMax / oneInEvery);
+        const rows = [];
+        // k is 1-BASED: batch k is the k-th complete batch, so its trigger is
+        // literally k * oneInEvery and "step 0" would name nothing.
+        for (let k = 1; k <= batches; k++) {
+            rows.push({
+                id: `q:${town}:${action}:${k}`,
+                town, var: action, step: k, dims, coeffs,
+                trigger: { baseTotalAtLeast: k * oneInEvery },
+                grant: { batch: oneInEvery },
+            });
+        }
+        return rows;
+    }
+
+    /**
+     * A quantity row's live base-rate total.
+     *
+     * Deliberately NOT `towns[t]["total" + var]`: that is the bonus-inflated
+     * number the game displays, and the batch model is defined against base
+     * rates (a survey bonus must not hand the player a location early).
+     */
+    function quantityBaseTotal(row) {
+        const towns_ = row.dimTowns ?? resolveDimTowns(row);
+        return dotProduct(row.coeffs, row.dims.map((v, i) => towns[towns_[i]].getLevel(v)));
+    }
+
+    function resolveDimTowns(row) {
+        row.dimTowns = row.dims.map(v => {
+            for (const t of towns) if (t.progressVars.includes(v)) return t.index;
+            err(`${row.id}: no town owns progress var ${v}`);
+        });
+        return row.dimTowns;
+    }
+
+    const isQuantityRow = (row) => row.trigger !== undefined;
 
     // ---- live evaluation ---------------------------------------------------
     // Rows are evaluated live, never latched (plan §5.1): within a prestige
@@ -357,12 +498,123 @@ const Unlocks = (() => {
 
     /** local satisfaction of a row, evaluated against live game state */
     function achievedNow(row) {
+        // quantity rows are a threshold on the base-rate dot product, not a
+        // clause list (plan §3.5)
+        if (isQuantityRow(row)) return quantityBaseTotal(row) >= row.trigger.baseTotalAtLeast;
         switch (row.mode) {
             case "ALWAYS": return true;
             case "NEVER":  return false;
             case "OR":     return row.requires.some(clauseSatisfied);
             case "AND":    return row.requires.every(clauseSatisfied);
             default: err(`achievedNow: unmapped mode ${row.mode}`);
+        }
+    }
+
+    // ---- the dim index -----------------------------------------------------
+    // "which rows could possibly have changed when dim X moved" — derivable
+    // mechanically from the table, which is something the hand-written closures
+    // could never give us (plan §5.3).
+    //
+    // The index exists for FREQUENCY, not cost: a full pass is ~900 rows of
+    // 1-3 comparisons and takes microseconds, but finishProgress can fire
+    // hundreds of times a second under bonus speed. Do not add caching beyond
+    // this — a cache of row RESULTS would need invalidating on every dim, which
+    // is the bug this index avoids by being derived once and never mutated.
+    //
+    // Key shapes:
+    //   progress:{town}:{varName}   town progress AND survey vars (one
+    //                               namespace: callers hold a (town, varName)
+    //                               pair and should not have to know which)
+    //   skill:{name} · buff:{name} · storyFlag:{name} · storyMax · prestige
+    const dimKey = {
+        progress: (town, v) => `progress:${town}:${v}`,
+        skill: (v) => `skill:${v}`,
+        buff: (v) => `buff:${v}`,
+        storyFlag: (v) => `storyFlag:${v}`,
+        storyMax: "storyMax",
+        prestige: "prestige",
+    };
+
+    /** every survey progress key — what an exploreProgress clause depends on */
+    function surveyKeys() {
+        const keys = [];
+        for (const t of towns) {
+            for (const v of t.progressVars) if (v.startsWith("SurveyZ")) keys.push(dimKey.progress(t.index, v));
+        }
+        return keys;
+    }
+
+    function keysOfClause(c) {
+        switch (c.kind) {
+            case "townLevel":
+            case "surveyLevel":  return [dimKey.progress(c.town, c.v)];
+            case "skillLevel":   return [dimKey.skill(c.v)];
+            case "skillSum":     return c.vs.map(dimKey.skill);
+            case "buffLevel":    return [dimKey.buff(c.v)];
+            // the mean of every zone's survey level: any survey moves it
+            case "exploreProgress": return surveyKeys();
+            case "storyMax":     return [dimKey.storyMax];
+            case "storyFlag":    return [dimKey.storyFlag(c.v)];
+            case "prestige":     return [dimKey.prestige];
+            default: err(`keysOfClause: unmapped clause kind ${c.kind}`);
+        }
+    }
+
+    /** the dims a row reads; ALWAYS/NEVER rows read none and are constant */
+    function keysOfRow(row) {
+        if (isQuantityRow(row)) {
+            return row.dims.map((v, i) => dimKey.progress(resolveDimTowns(row)[i], v));
+        }
+        return row.requires.flatMap(keysOfClause);
+    }
+
+    function buildDimIndex(predicateRows, quantityRowSet) {
+        const index = new Map();
+        for (const row of [...predicateRows, ...quantityRowSet]) {
+            for (const key of new Set(keysOfRow(row))) {
+                if (!index.has(key)) index.set(key, []);
+                index.get(key).push(row);
+            }
+        }
+        return index;
+    }
+
+    // ---- the diff pass -----------------------------------------------------
+    // `achieved` is the previous answer per row, so check() can report
+    // TRANSITIONS. It is not persistence (plan §5.1): it is rebuilt by the full
+    // pass at load()/restart() and rows relock naturally on prestige because
+    // their dims wipe, so there is no reset path that has to remember to clear
+    // anything.
+    const achieved = new Set();
+
+    /**
+     * Re-evaluate rows and record every false -> true transition.
+     *
+     * @param {string[]} [dimKeys] only rows reading these dims; omit for a full
+     *   pass. A partial pass is sound because a row whose dims did not move
+     *   cannot have changed answer.
+     */
+    function check(dimKeys) {
+        ensure();
+        let target;
+        if (dimKeys === undefined) {
+            target = [...rows, ...quantities];
+        } else {
+            target = [];
+            const seen = new Set();
+            for (const key of dimKeys) {
+                for (const row of dimIndex.get(key) ?? []) {
+                    if (seen.has(row.id)) continue;
+                    seen.add(row.id);
+                    target.push(row);
+                }
+            }
+        }
+        for (const row of target) {
+            const now = achievedNow(row);
+            if (now === achieved.has(row.id)) continue;
+            if (!now) { achieved.delete(row.id); continue; }
+            achieved.add(row.id);
         }
     }
 
@@ -380,7 +632,9 @@ const Unlocks = (() => {
     // per context is enough, and prestige needs no invalidation: relocking
     // happens because the DIMS reset, not because the rows do.
     let rows = null;
+    let quantities = null;
     let byAction = null;
+    let dimIndex = null;
 
     function build() {
         const meta = new Map();
@@ -395,13 +649,28 @@ const Unlocks = (() => {
             // carrier (data/actionListXml.data.js)
             err("no XML text available (data/actionListXml.data.js not loaded?)");
         }
-        rows = walkPredicates(actionListXmlText, { actionMeta: (n) => meta.get(n), townOfProgressVar });
-        byAction = new Map();
-        for (const r of rows) {
-            const entry = byAction.get(r.action) ?? {};
+        // ATOMIC: everything lands in locals and is published together at the
+        // end. A build that throws half-way must leave the module untouched, so
+        // the next call retries and reports the REAL error — publishing `rows`
+        // early meant a failed build left `byAction`/`dimIndex` null while
+        // `ensure()` saw non-null rows and skipped the retry, turning every
+        // later call into a bare "Cannot read properties of null" that named
+        // neither the cause nor the file.
+        const nextRows = walkPredicates(actionListXmlText, { actionMeta: (n) => meta.get(n), townOfProgressVar });
+        const nextQuantities = walkQuantityDims(actionListXmlText, { actionMeta: (n) => meta.get(n) })
+            .filter(c => !c.excluded)
+            .flatMap(quantityRows);
+        const nextDimIndex = buildDimIndex(nextRows, nextQuantities);
+        const nextByAction = new Map();
+        for (const r of nextRows) {
+            const entry = nextByAction.get(r.action) ?? {};
             entry[r.pred] = r;
-            byAction.set(r.action, entry);
+            nextByAction.set(r.action, entry);
         }
+        rows = nextRows;
+        quantities = nextQuantities;
+        dimIndex = nextDimIndex;
+        byAction = nextByAction;
         return rows;
     }
 
@@ -437,9 +706,15 @@ const Unlocks = (() => {
         return effective(entry[pred]);
     }
 
-    return { walkPredicates, walkQuantityDims, isMonotoneClause, achievedNow,
-             clauseSatisfied, effective, predicate, getRows, suppressed, granted,
-             OPS, MONOTONE_OPS };
+    /** the quantity (loot-batch) rows, derived on first use */
+    const getQuantityRows = () => { ensure(); return quantities; };
+    /** the dim index, for tests that assert every row is reachable from its dims */
+    const getDimIndex = () => { ensure(); return dimIndex; };
+
+    return { walkPredicates, walkQuantityDims, quantityRows, quantityBaseTotal,
+             isMonotoneClause, achievedNow, clauseSatisfied, effective, predicate,
+             getRows, getQuantityRows, getDimIndex, check, achieved, dimKey,
+             suppressed, granted, OPS, MONOTONE_OPS, QUANTITY_EXCLUDED_VARS };
 })();
 
 if (typeof module !== "undefined") module.exports = Unlocks;

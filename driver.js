@@ -346,6 +346,9 @@ function restart() {
         towns[i].restart();
     }
     view.requestUpdate("updateSkills");
+    // fork: unlock diff pass — a full pass, because a restart resets every
+    // town's per-loop progress at once (towns[i].restart() above)
+    Unlocks.check();
     actions.restart();
     view.requestUpdate("updateCurrentActionsDivs");
     view.requestUpdate("updateTrials", null);

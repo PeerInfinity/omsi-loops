@@ -2202,6 +2202,7 @@ function unlockGlobalStory(num) {
         document.getElementById("newStory").style.display = "inline-block";
         storyMax = num;
         view.requestUpdate("updateGlobalStory", num);
+        Unlocks.check([Unlocks.dimKey.storyMax]); // fork: unlock diff pass
     }
 }
 
@@ -2210,6 +2211,7 @@ function setStoryFlag(name) {
     if (!storyFlags[name]) {
         storyFlags[name] = true;
         if (options.actionLog) view.requestUpdate("updateStories", false);
+        Unlocks.check([Unlocks.dimKey.storyFlag(name)]); // fork: unlock diff pass
     }
 }
 const unlockStory = setStoryFlag; // compatibility alias

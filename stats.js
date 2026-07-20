@@ -535,6 +535,9 @@ function addSkillExp(name, amount) {
     const newLevel = getSkillLevel(name);
     if (oldLevel !== newLevel) {
         actionLog.addSkillLevel(actions.currentAction, name, newLevel, oldLevel);
+        // fork: unlock diff pass — skill thresholds are integer levels, so only
+        // a level change can move a row (plan §5.3)
+        Unlocks.check([Unlocks.dimKey.skill(name)]);
     }
     view.requestUpdate("updateSkill", name);
     stateChanged("skill", {name, oldLevel, newLevel});
@@ -573,6 +576,10 @@ function addBuffAmt(name, amount, action, spendType, statsSpent) {
     if (action) {
         actionLog.addBuff(action, name, buffs[name].amt, oldBuffLevel, spendType, statsSpent);
     }
+    // fork: unlock diff pass. After the amt write, and unconditional: the early
+    // return above only skips when the buff is ALREADY at its hard cap, so a
+    // crossing can never be lost here.
+    Unlocks.check([Unlocks.dimKey.buff(name)]);
     view.requestUpdate("updateBuff",name);
     stateChanged("buff", {name});
 }

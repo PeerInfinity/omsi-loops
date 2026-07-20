@@ -112,10 +112,10 @@ export function makeContext(seed = 12345, extraFiles = [], { worldConfig = null 
     // (SyntaxError, not a silent override).
     const hasRealView = extraFiles.some(f => f.endsWith("main.view.js"));
     const storyShims = hasRealView ? "" : `
-        function setStoryFlag(name) { storyFlags[name] = true; }
+        function setStoryFlag(name) { storyFlags[name] = true; Unlocks.check([Unlocks.dimKey.storyFlag(name)]); }
         var unlockStory = setStoryFlag;
         function increaseStoryVarTo(name, value) { if (storyVars[name] < value) storyVars[name] = value; }
-        function unlockGlobalStory(num) { if (num > storyMax) storyMax = num; }
+        function unlockGlobalStory(num) { if (num > storyMax) { storyMax = num; Unlocks.check([Unlocks.dimKey.storyMax]); } }
     `;
 
     new vm.Script(`

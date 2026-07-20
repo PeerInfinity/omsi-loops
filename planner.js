@@ -47,10 +47,15 @@ const IdlePlanner = (() => {
 // Guarded so the real definitions win on the main page.
 // ---------------------------------------------------------------------------
 if (typeof globalThis.setStoryFlag === "undefined") {
-    globalThis.setStoryFlag = function setStoryFlag(name) { storyFlags[name] = true; };
+    // the Unlocks.check calls mirror the page-side originals (main.view.js):
+    // the diff pass is inert headless (nothing consumes its events there), but
+    // keeping the shims behaviourally identical preserves the invariant that
+    // EVERY mutation of a table-referenced dim triggers a check, in every one
+    // of the boot contexts.
+    globalThis.setStoryFlag = function setStoryFlag(name) { storyFlags[name] = true; Unlocks.check([Unlocks.dimKey.storyFlag(name)]); };
     globalThis.unlockStory = globalThis.setStoryFlag;
     globalThis.increaseStoryVarTo = function increaseStoryVarTo(name, value) { if (storyVars[name] < value) storyVars[name] = value; };
-    globalThis.unlockGlobalStory = function unlockGlobalStory(num) { if (num > storyMax) storyMax = num; };
+    globalThis.unlockGlobalStory = function unlockGlobalStory(num) { if (num > storyMax) { storyMax = num; Unlocks.check([Unlocks.dimKey.storyMax]); } };
 }
 
 // ---------------------------------------------------------------------------

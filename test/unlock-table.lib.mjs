@@ -83,11 +83,17 @@ export function walkRows(ctx, xmlText) {
         `JSON.stringify(Unlocks.walkPredicates(${JSON.stringify(xmlText)}, __ut))`));
 }
 
-/** Walk the <totalDiscovered> provenance (dims + modifiers) for the 18 vars. */
+/** Walk the <totalDiscovered> provenance (dims + coeffs + modifiers) for the 18 vars. */
 export function walkQuantityDims(ctx, xmlText) {
     ctx.ev(INSTALL_RESOLVERS);
     return JSON.parse(ctx.ev(
         `JSON.stringify(Unlocks.walkQuantityDims(${JSON.stringify(xmlText)}, __ut))`));
+}
+
+/** Mint loot-batch rows through the runtime's own implementation. */
+export function quantityRows(ctx, curves) {
+    return JSON.parse(ctx.ev(
+        `JSON.stringify(${JSON.stringify(curves)}.flatMap(c => Unlocks.quantityRows(c)))`));
 }
 
 // ---------------------------------------------------------------------------
@@ -244,9 +250,12 @@ export function buildTable(ctx, xmlText) {
     const dims = walkQuantityDims(ctx, xmlText);
     const curves = measureQuantityCurves(ctx, dims);
     checkQuantityProvenance(curves, dims);
-    const quantities = curves
-        .filter(c => !QUANTITY_EXCLUDED_VARS.includes(c.action))
-        .flatMap(c => quantityRows(c).map(r => ({ ...r, apEligible: true })));
+    // Minted by unlocks.js, not here: runtime evaluates these rows too (the
+    // diff pass has to answer "is batch k complete?"), and two mintings would
+    // be two things to keep in sync. checkQuantityProvenance above has already
+    // proven the coefficients this uses reproduce the live adjust*() sweep.
+    const quantities = quantityRows(ctx, dims.filter(d => !d.excluded))
+        .map(r => ({ ...r, apEligible: true }));
     return {
         version: 1,
         meta: {
@@ -705,6 +714,21 @@ export function checkQuantityProvenance(curves, quantityDims) {
         if (c.atZero !== 0) {
             problems.push(`${c.action}: base total is ${c.atZero} at zero progress, want 0`);
         }
+        // the LINEAR FORM the rows are minted from must reproduce the ceiling
+        // the live formula actually reaches. This is the assertion that makes
+        // reading coefficients off the XML safe: a nonlinear future formula
+        // fails generation here instead of silently skewing every threshold.
+        // (The per-point check across the whole sweep is verifyQuantityRows.)
+        const derivedMax = Math.round(declared.coeffs.reduce((s, k) => s + k * 100, 0));
+        if (derivedMax !== c.baseMax) {
+            problems.push(`${c.action}: coefficients give a base-rate ceiling of ${derivedMax}, `
+                + `live adjustAll() reaches ${c.baseMax} — the formula is not the declared linear form`);
+        }
+        // the exclusion ruling has two copies (runtime needs it in unlocks.js,
+        // the generator records it here); they must not drift apart
+        if (declared.excluded !== QUANTITY_EXCLUDED_VARS.includes(c.action)) {
+            problems.push(`${c.action}: unlocks.js and the generator disagree about the haul exclusion`);
+        }
         // the batch size the table mints locations from must be the batch size
         // the checking walk actually yields loot on
         if (c.jsOneInEvery === null) {
@@ -756,6 +780,7 @@ export function verifyQuantityRows(ctx, curves, quantities) {
         .filter(c => !QUANTITY_EXCLUDED_VARS.includes(c.action))
         .map(c => ({
             action: c.action, town: c.town, dims: c.dims, oneInEvery: c.oneInEvery,
+            coeffs: quantities.find(q => q.var === c.action && q.town === c.town)?.coeffs,
             thresholds: quantities.filter(q => q.var === c.action && q.town === c.town)
                 .map(q => q.trigger.baseTotalAtLeast),
         }));
@@ -793,6 +818,16 @@ JSON.stringify((() => {
                     setLevel(d.town, d.v, L);
                     const T = totalOf(q.town, q.action);
                     states++; checks++;
+                    // the dot product the RUNTIME evaluates triggers with must
+                    // equal the base-rate total the game just computed, at
+                    // every point — not merely at the ceiling. Same expression
+                    // as the live path (Unlocks.quantityBaseTotal), so this is
+                    // the formula-shape oracle, not a restatement.
+                    const dot = Unlocks.quantityBaseTotal({ id: q.action, dims: q.dims, coeffs: q.coeffs });
+                    if (dot !== T) {
+                        problems.push(q.action + " @" + d.v + "=" + L + ": dot product " + dot
+                            + " != live base total " + T + " (formula is not linear in the declared dims)");
+                    }
                     if (T < prev) problems.push(q.action + ": live total DECREASED (" + prev + " -> " + T + ") raising " + d.v);
                     prev = T;
                     const want = Math.min(cap, Math.floor(T / N));
@@ -828,48 +863,4 @@ JSON.stringify((() => {
     adjustAll();
     return { problems, states, checks, orderings };
 })())`));
-}
-
-/**
- * Turn a measured ceiling into LOOT-BATCH rows (plan §3.5, USER-RULED).
- *
- * One row per complete batch the base-rate game can reach:
- *   - the item is "a full batch of oneInEvery {var} to check, one of which is
- *     guaranteed to contain the loot" — it grants +oneInEvery BASE capacity,
- *     flat, with no multipliers applied (the v1 simplification, matched to
- *     the location cap below so owning every row reproduces exactly the
- *     base-rate vanilla ceiling);
- *   - the location fires when the base-rate total first reaches
- *     k * oneInEvery, i.e. when the k-th complete batch becomes checkable.
- *
- * Two consequences worth stating because they look like bugs and are not:
- *
- * 1. The cap is `floor(baseMax / oneInEvery)`, so a PARTIAL final batch mints
- *    no row. A partial batch carries no guaranteed loot, so there is nothing
- *    for a check to be attached to.
- * 2. A var whose baseMax is below its own batch size mints ZERO rows. That is
- *    the honest answer, not an omission: at base rates vanilla never completes
- *    a batch of that var either, so its loot is unreachable in both games.
- *    (No var is in this state today — the four 1000-ratio hauls clear it
- *    easily at 2500/level — but the rule is what makes the cap safe.)
- *
- * Bonus-inflated capacity beyond baseMax mints nothing: v1 stops at the
- * base-rate first-100%, and prestige/survey/Spatiomancy only make a player
- * reach the same rows sooner, which is vanilla pacing.
- */
-export function quantityRows(curve) {
-    const { action, town, dims, baseMax, oneInEvery } = curve;
-    const batches = Math.floor(baseMax / oneInEvery);
-    const rows = [];
-    // k is 1-BASED: batch k is the k-th complete batch, so its trigger is
-    // literally k * oneInEvery and "step 0" would name nothing.
-    for (let k = 1; k <= batches; k++) {
-        rows.push({
-            id: `q:${town}:${action}:${k}`,
-            town, var: action, step: k, dims,
-            trigger: { baseTotalAtLeast: k * oneInEvery },
-            grant: { batch: oneInEvery },
-        });
-    }
-    return rows;
 }

@@ -5634,6 +5634,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 10
    },
@@ -5649,6 +5652,9 @@
    "step": 2,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 20
@@ -5666,6 +5672,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 30
    },
@@ -5681,6 +5690,9 @@
    "step": 4,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 40
@@ -5698,6 +5710,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 50
    },
@@ -5713,6 +5728,9 @@
    "step": 6,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 60
@@ -5730,6 +5748,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 70
    },
@@ -5745,6 +5766,9 @@
    "step": 8,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 80
@@ -5762,6 +5786,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 90
    },
@@ -5777,6 +5804,9 @@
    "step": 10,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 100
@@ -5794,6 +5824,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 110
    },
@@ -5809,6 +5842,9 @@
    "step": 12,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 120
@@ -5826,6 +5862,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 130
    },
@@ -5841,6 +5880,9 @@
    "step": 14,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 140
@@ -5858,6 +5900,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 150
    },
@@ -5873,6 +5918,9 @@
    "step": 16,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 160
@@ -5890,6 +5938,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 170
    },
@@ -5905,6 +5956,9 @@
    "step": 18,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 180
@@ -5922,6 +5976,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 190
    },
@@ -5937,6 +5994,9 @@
    "step": 20,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 200
@@ -5954,6 +6014,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 210
    },
@@ -5969,6 +6032,9 @@
    "step": 22,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 220
@@ -5986,6 +6052,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 230
    },
@@ -6001,6 +6070,9 @@
    "step": 24,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 240
@@ -6018,6 +6090,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 250
    },
@@ -6033,6 +6108,9 @@
    "step": 26,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 260
@@ -6050,6 +6128,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 270
    },
@@ -6065,6 +6146,9 @@
    "step": 28,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 280
@@ -6082,6 +6166,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 290
    },
@@ -6097,6 +6184,9 @@
    "step": 30,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 300
@@ -6114,6 +6204,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 310
    },
@@ -6129,6 +6222,9 @@
    "step": 32,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 320
@@ -6146,6 +6242,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 330
    },
@@ -6161,6 +6260,9 @@
    "step": 34,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 340
@@ -6178,6 +6280,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 350
    },
@@ -6193,6 +6298,9 @@
    "step": 36,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 360
@@ -6210,6 +6318,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 370
    },
@@ -6225,6 +6336,9 @@
    "step": 38,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 380
@@ -6242,6 +6356,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 390
    },
@@ -6257,6 +6374,9 @@
    "step": 40,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 400
@@ -6274,6 +6394,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 410
    },
@@ -6289,6 +6412,9 @@
    "step": 42,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 420
@@ -6306,6 +6432,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 430
    },
@@ -6321,6 +6450,9 @@
    "step": 44,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 440
@@ -6338,6 +6470,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 450
    },
@@ -6353,6 +6488,9 @@
    "step": 46,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 460
@@ -6370,6 +6508,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 470
    },
@@ -6385,6 +6526,9 @@
    "step": 48,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 480
@@ -6402,6 +6546,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 490
    },
@@ -6417,6 +6564,9 @@
    "step": 50,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 500
@@ -6434,6 +6584,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 10
    },
@@ -6449,6 +6602,9 @@
    "step": 2,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 20
@@ -6466,6 +6622,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 30
    },
@@ -6481,6 +6640,9 @@
    "step": 4,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 40
@@ -6498,6 +6660,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 50
    },
@@ -6513,6 +6678,9 @@
    "step": 6,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 60
@@ -6530,6 +6698,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 70
    },
@@ -6545,6 +6716,9 @@
    "step": 8,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 80
@@ -6562,6 +6736,9 @@
    "dims": [
     "Wander"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 90
    },
@@ -6577,6 +6754,9 @@
    "step": 10,
    "dims": [
     "Wander"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 100
@@ -6594,6 +6774,9 @@
    "dims": [
     "Met"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 5
    },
@@ -6609,6 +6792,9 @@
    "step": 2,
    "dims": [
     "Met"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 10
@@ -6626,6 +6812,9 @@
    "dims": [
     "Met"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 15
    },
@@ -6641,6 +6830,9 @@
    "step": 4,
    "dims": [
     "Met"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 20
@@ -6658,6 +6850,9 @@
    "dims": [
     "Met"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 25
    },
@@ -6673,6 +6868,9 @@
    "step": 6,
    "dims": [
     "Met"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 30
@@ -6690,6 +6888,9 @@
    "dims": [
     "Met"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 35
    },
@@ -6705,6 +6906,9 @@
    "step": 8,
    "dims": [
     "Met"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 40
@@ -6722,6 +6926,9 @@
    "dims": [
     "Met"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 45
    },
@@ -6737,6 +6944,9 @@
    "step": 10,
    "dims": [
     "Met"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 50
@@ -6754,6 +6964,9 @@
    "dims": [
     "Met"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 55
    },
@@ -6769,6 +6982,9 @@
    "step": 12,
    "dims": [
     "Met"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 60
@@ -6786,6 +7002,9 @@
    "dims": [
     "Met"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 65
    },
@@ -6801,6 +7020,9 @@
    "step": 14,
    "dims": [
     "Met"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 70
@@ -6818,6 +7040,9 @@
    "dims": [
     "Met"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 75
    },
@@ -6833,6 +7058,9 @@
    "step": 16,
    "dims": [
     "Met"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 80
@@ -6850,6 +7078,9 @@
    "dims": [
     "Met"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 85
    },
@@ -6865,6 +7096,9 @@
    "step": 18,
    "dims": [
     "Met"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 90
@@ -6882,6 +7116,9 @@
    "dims": [
     "Met"
    ],
+   "coeffs": [
+    1
+   ],
    "trigger": {
     "baseTotalAtLeast": 95
    },
@@ -6897,6 +7134,9 @@
    "step": 20,
    "dims": [
     "Met"
+   ],
+   "coeffs": [
+    1
    ],
    "trigger": {
     "baseTotalAtLeast": 100
@@ -6914,6 +7154,9 @@
    "dims": [
     "Secrets"
    ],
+   "coeffs": [
+    0.5
+   ],
    "trigger": {
     "baseTotalAtLeast": 5
    },
@@ -6929,6 +7172,9 @@
    "step": 2,
    "dims": [
     "Secrets"
+   ],
+   "coeffs": [
+    0.5
    ],
    "trigger": {
     "baseTotalAtLeast": 10
@@ -6946,6 +7192,9 @@
    "dims": [
     "Secrets"
    ],
+   "coeffs": [
+    0.5
+   ],
    "trigger": {
     "baseTotalAtLeast": 15
    },
@@ -6961,6 +7210,9 @@
    "step": 4,
    "dims": [
     "Secrets"
+   ],
+   "coeffs": [
+    0.5
    ],
    "trigger": {
     "baseTotalAtLeast": 20
@@ -6978,6 +7230,9 @@
    "dims": [
     "Secrets"
    ],
+   "coeffs": [
+    0.5
+   ],
    "trigger": {
     "baseTotalAtLeast": 25
    },
@@ -6993,6 +7248,9 @@
    "step": 6,
    "dims": [
     "Secrets"
+   ],
+   "coeffs": [
+    0.5
    ],
    "trigger": {
     "baseTotalAtLeast": 30
@@ -7010,6 +7268,9 @@
    "dims": [
     "Secrets"
    ],
+   "coeffs": [
+    0.5
+   ],
    "trigger": {
     "baseTotalAtLeast": 35
    },
@@ -7025,6 +7286,9 @@
    "step": 8,
    "dims": [
     "Secrets"
+   ],
+   "coeffs": [
+    0.5
    ],
    "trigger": {
     "baseTotalAtLeast": 40
@@ -7042,6 +7306,9 @@
    "dims": [
     "Secrets"
    ],
+   "coeffs": [
+    0.5
+   ],
    "trigger": {
     "baseTotalAtLeast": 45
    },
@@ -7057,6 +7324,9 @@
    "step": 10,
    "dims": [
     "Secrets"
+   ],
+   "coeffs": [
+    0.5
    ],
    "trigger": {
     "baseTotalAtLeast": 50
@@ -7075,6 +7345,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 10
    },
@@ -7091,6 +7365,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 20
@@ -7109,6 +7387,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 30
    },
@@ -7125,6 +7407,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 40
@@ -7143,6 +7429,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 50
    },
@@ -7159,6 +7449,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 60
@@ -7177,6 +7471,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 70
    },
@@ -7193,6 +7491,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 80
@@ -7211,6 +7513,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 90
    },
@@ -7227,6 +7533,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 100
@@ -7245,6 +7555,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 110
    },
@@ -7261,6 +7575,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 120
@@ -7279,6 +7597,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 130
    },
@@ -7295,6 +7617,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 140
@@ -7313,6 +7639,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 150
    },
@@ -7329,6 +7659,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 160
@@ -7347,6 +7681,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 170
    },
@@ -7363,6 +7701,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 180
@@ -7381,6 +7723,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 190
    },
@@ -7397,6 +7743,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 200
@@ -7415,6 +7765,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 210
    },
@@ -7431,6 +7785,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 220
@@ -7449,6 +7807,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 230
    },
@@ -7465,6 +7827,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 240
@@ -7483,6 +7849,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 250
    },
@@ -7499,6 +7869,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 260
@@ -7517,6 +7891,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 270
    },
@@ -7533,6 +7911,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 280
@@ -7551,6 +7933,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 290
    },
@@ -7567,6 +7953,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 300
@@ -7585,6 +7975,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 310
    },
@@ -7601,6 +7995,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 320
@@ -7619,6 +8017,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 330
    },
@@ -7635,6 +8037,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 340
@@ -7653,6 +8059,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 350
    },
@@ -7669,6 +8079,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 360
@@ -7687,6 +8101,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 370
    },
@@ -7703,6 +8121,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 380
@@ -7721,6 +8143,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 390
    },
@@ -7737,6 +8163,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 400
@@ -7755,6 +8185,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 410
    },
@@ -7771,6 +8205,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 420
@@ -7789,6 +8227,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 430
    },
@@ -7805,6 +8247,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 440
@@ -7823,6 +8269,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 450
    },
@@ -7839,6 +8289,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 460
@@ -7857,6 +8311,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 470
    },
@@ -7873,6 +8331,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 480
@@ -7891,6 +8353,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 490
    },
@@ -7907,6 +8373,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 500
@@ -7925,6 +8395,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 510
    },
@@ -7941,6 +8415,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 520
@@ -7959,6 +8437,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 530
    },
@@ -7975,6 +8457,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 540
@@ -7993,6 +8479,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 550
    },
@@ -8009,6 +8499,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 560
@@ -8027,6 +8521,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 570
    },
@@ -8043,6 +8541,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 580
@@ -8061,6 +8563,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 590
    },
@@ -8077,6 +8583,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 600
@@ -8095,6 +8605,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 610
    },
@@ -8111,6 +8625,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 620
@@ -8129,6 +8647,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 630
    },
@@ -8145,6 +8667,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 640
@@ -8163,6 +8689,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 650
    },
@@ -8179,6 +8709,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 660
@@ -8197,6 +8731,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 670
    },
@@ -8213,6 +8751,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 680
@@ -8231,6 +8773,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 690
    },
@@ -8247,6 +8793,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 700
@@ -8265,6 +8815,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 710
    },
@@ -8281,6 +8835,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 720
@@ -8299,6 +8857,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 730
    },
@@ -8315,6 +8877,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 740
@@ -8333,6 +8899,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 750
    },
@@ -8349,6 +8919,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 760
@@ -8367,6 +8941,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 770
    },
@@ -8383,6 +8961,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 780
@@ -8401,6 +8983,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 790
    },
@@ -8417,6 +9003,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 800
@@ -8435,6 +9025,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 810
    },
@@ -8451,6 +9045,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 820
@@ -8469,6 +9067,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 830
    },
@@ -8485,6 +9087,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 840
@@ -8503,6 +9109,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 850
    },
@@ -8519,6 +9129,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 860
@@ -8537,6 +9151,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 870
    },
@@ -8553,6 +9171,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 880
@@ -8571,6 +9193,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 890
    },
@@ -8587,6 +9213,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 900
@@ -8605,6 +9235,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 910
    },
@@ -8621,6 +9255,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 920
@@ -8639,6 +9277,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 930
    },
@@ -8655,6 +9297,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 940
@@ -8673,6 +9319,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 950
    },
@@ -8689,6 +9339,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 960
@@ -8707,6 +9361,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 970
    },
@@ -8723,6 +9381,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 980
@@ -8741,6 +9403,10 @@
     "Forest",
     "Thicket"
    ],
+   "coeffs": [
+    5,
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 990
    },
@@ -8757,6 +9423,10 @@
    "dims": [
     "Forest",
     "Thicket"
+   ],
+   "coeffs": [
+    5,
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 1000
@@ -8776,6 +9446,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 10
    },
@@ -8793,6 +9468,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 20
@@ -8812,6 +9492,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 30
    },
@@ -8829,6 +9514,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 40
@@ -8848,6 +9538,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 50
    },
@@ -8865,6 +9560,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 60
@@ -8884,6 +9584,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 70
    },
@@ -8901,6 +9606,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 80
@@ -8920,6 +9630,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 90
    },
@@ -8937,6 +9652,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 100
@@ -8956,6 +9676,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 110
    },
@@ -8973,6 +9698,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 120
@@ -8992,6 +9722,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 130
    },
@@ -9009,6 +9744,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 140
@@ -9028,6 +9768,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 150
    },
@@ -9045,6 +9790,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 160
@@ -9064,6 +9814,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 170
    },
@@ -9081,6 +9836,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 180
@@ -9100,6 +9860,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 190
    },
@@ -9117,6 +9882,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 200
@@ -9136,6 +9906,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 210
    },
@@ -9153,6 +9928,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 220
@@ -9172,6 +9952,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 230
    },
@@ -9189,6 +9974,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 240
@@ -9208,6 +9998,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 250
    },
@@ -9225,6 +10020,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 260
@@ -9244,6 +10044,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 270
    },
@@ -9261,6 +10066,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 280
@@ -9280,6 +10090,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 290
    },
@@ -9297,6 +10112,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 300
@@ -9316,6 +10136,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 310
    },
@@ -9333,6 +10158,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 320
@@ -9352,6 +10182,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 330
    },
@@ -9369,6 +10204,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 340
@@ -9388,6 +10228,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 350
    },
@@ -9405,6 +10250,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 360
@@ -9424,6 +10274,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 370
    },
@@ -9441,6 +10296,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 380
@@ -9460,6 +10320,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 390
    },
@@ -9477,6 +10342,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 400
@@ -9496,6 +10366,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 410
    },
@@ -9513,6 +10388,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 420
@@ -9532,6 +10412,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 430
    },
@@ -9549,6 +10434,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 440
@@ -9568,6 +10458,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 450
    },
@@ -9585,6 +10480,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 460
@@ -9604,6 +10504,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 470
    },
@@ -9621,6 +10526,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 480
@@ -9640,6 +10550,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 490
    },
@@ -9657,6 +10572,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 500
@@ -9676,6 +10596,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 510
    },
@@ -9693,6 +10618,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 520
@@ -9712,6 +10642,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 530
    },
@@ -9729,6 +10664,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 540
@@ -9748,6 +10688,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 550
    },
@@ -9765,6 +10710,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 560
@@ -9784,6 +10734,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 570
    },
@@ -9801,6 +10756,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 580
@@ -9820,6 +10780,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 590
    },
@@ -9837,6 +10802,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 600
@@ -9856,6 +10826,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 610
    },
@@ -9873,6 +10848,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 620
@@ -9892,6 +10872,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 630
    },
@@ -9909,6 +10894,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 640
@@ -9928,6 +10918,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 650
    },
@@ -9945,6 +10940,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 660
@@ -9964,6 +10964,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 670
    },
@@ -9981,6 +10986,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 680
@@ -10000,6 +11010,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 690
    },
@@ -10017,6 +11032,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 700
@@ -10036,6 +11056,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 710
    },
@@ -10053,6 +11078,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 720
@@ -10072,6 +11102,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 730
    },
@@ -10089,6 +11124,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 740
@@ -10108,6 +11148,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 750
    },
@@ -10125,6 +11170,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 760
@@ -10144,6 +11194,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 770
    },
@@ -10161,6 +11216,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 780
@@ -10180,6 +11240,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 790
    },
@@ -10197,6 +11262,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 800
@@ -10216,6 +11286,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 810
    },
@@ -10233,6 +11308,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 820
@@ -10252,6 +11332,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 830
    },
@@ -10269,6 +11354,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 840
@@ -10288,6 +11378,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 850
    },
@@ -10305,6 +11400,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 860
@@ -10324,6 +11424,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 870
    },
@@ -10341,6 +11446,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 880
@@ -10360,6 +11470,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 890
    },
@@ -10377,6 +11492,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 900
@@ -10396,6 +11516,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 910
    },
@@ -10413,6 +11538,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 920
@@ -10432,6 +11562,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 930
    },
@@ -10449,6 +11584,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 940
@@ -10468,6 +11608,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 950
    },
@@ -10485,6 +11630,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 960
@@ -10504,6 +11654,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 970
    },
@@ -10521,6 +11676,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 980
@@ -10540,6 +11700,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 990
    },
@@ -10557,6 +11722,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1000
@@ -10576,6 +11746,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1010
    },
@@ -10593,6 +11768,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1020
@@ -10612,6 +11792,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1030
    },
@@ -10629,6 +11814,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1040
@@ -10648,6 +11838,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1050
    },
@@ -10665,6 +11860,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1060
@@ -10684,6 +11884,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1070
    },
@@ -10701,6 +11906,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1080
@@ -10720,6 +11930,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1090
    },
@@ -10737,6 +11952,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1100
@@ -10756,6 +11976,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1110
    },
@@ -10773,6 +11998,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1120
@@ -10792,6 +12022,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1130
    },
@@ -10809,6 +12044,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1140
@@ -10828,6 +12068,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1150
    },
@@ -10845,6 +12090,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1160
@@ -10864,6 +12114,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1170
    },
@@ -10881,6 +12136,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1180
@@ -10900,6 +12160,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1190
    },
@@ -10917,6 +12182,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1200
@@ -10936,6 +12206,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1210
    },
@@ -10953,6 +12228,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1220
@@ -10972,6 +12252,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1230
    },
@@ -10989,6 +12274,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1240
@@ -11008,6 +12298,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1250
    },
@@ -11025,6 +12320,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1260
@@ -11044,6 +12344,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1270
    },
@@ -11061,6 +12366,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1280
@@ -11080,6 +12390,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1290
    },
@@ -11097,6 +12412,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1300
@@ -11116,6 +12436,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1310
    },
@@ -11133,6 +12458,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1320
@@ -11152,6 +12482,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1330
    },
@@ -11169,6 +12504,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1340
@@ -11188,6 +12528,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1350
    },
@@ -11205,6 +12550,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1360
@@ -11224,6 +12574,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1370
    },
@@ -11241,6 +12596,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1380
@@ -11260,6 +12620,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1390
    },
@@ -11277,6 +12642,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1400
@@ -11296,6 +12666,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1410
    },
@@ -11313,6 +12688,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1420
@@ -11332,6 +12712,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1430
    },
@@ -11349,6 +12734,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1440
@@ -11368,6 +12758,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1450
    },
@@ -11385,6 +12780,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1460
@@ -11404,6 +12804,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1470
    },
@@ -11421,6 +12826,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1480
@@ -11440,6 +12850,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1490
    },
@@ -11457,6 +12872,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1500
@@ -11476,6 +12896,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1510
    },
@@ -11493,6 +12918,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1520
@@ -11512,6 +12942,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1530
    },
@@ -11529,6 +12964,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1540
@@ -11548,6 +12988,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1550
    },
@@ -11565,6 +13010,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1560
@@ -11584,6 +13034,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1570
    },
@@ -11601,6 +13056,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1580
@@ -11620,6 +13080,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1590
    },
@@ -11637,6 +13102,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1600
@@ -11656,6 +13126,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1610
    },
@@ -11673,6 +13148,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1620
@@ -11692,6 +13172,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1630
    },
@@ -11709,6 +13194,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1640
@@ -11728,6 +13218,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1650
    },
@@ -11745,6 +13240,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1660
@@ -11764,6 +13264,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1670
    },
@@ -11781,6 +13286,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1680
@@ -11800,6 +13310,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1690
    },
@@ -11817,6 +13332,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1700
@@ -11836,6 +13356,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1710
    },
@@ -11853,6 +13378,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1720
@@ -11872,6 +13402,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1730
    },
@@ -11889,6 +13424,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1740
@@ -11908,6 +13448,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1750
    },
@@ -11925,6 +13470,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1760
@@ -11944,6 +13494,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1770
    },
@@ -11961,6 +13516,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1780
@@ -11980,6 +13540,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1790
    },
@@ -11997,6 +13562,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1800
@@ -12016,6 +13586,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1810
    },
@@ -12033,6 +13608,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1820
@@ -12052,6 +13632,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1830
    },
@@ -12069,6 +13654,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1840
@@ -12088,6 +13678,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1850
    },
@@ -12105,6 +13700,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1860
@@ -12124,6 +13724,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1870
    },
@@ -12141,6 +13746,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1880
@@ -12160,6 +13770,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1890
    },
@@ -12177,6 +13792,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1900
@@ -12196,6 +13816,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1910
    },
@@ -12213,6 +13838,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1920
@@ -12232,6 +13862,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1930
    },
@@ -12249,6 +13884,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1940
@@ -12268,6 +13908,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1950
    },
@@ -12285,6 +13930,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1960
@@ -12304,6 +13954,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1970
    },
@@ -12321,6 +13976,11 @@
     "Forest",
     "Shortcut",
     "Flowers"
+   ],
+   "coeffs": [
+    5,
+    2,
+    13
    ],
    "trigger": {
     "baseTotalAtLeast": 1980
@@ -12340,6 +14000,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 1990
    },
@@ -12358,6 +14023,11 @@
     "Shortcut",
     "Flowers"
    ],
+   "coeffs": [
+    5,
+    2,
+    13
+   ],
    "trigger": {
     "baseTotalAtLeast": 2000
    },
@@ -12373,6 +14043,9 @@
    "step": 1,
    "dims": [
     "Forest"
+   ],
+   "coeffs": [
+    2
    ],
    "trigger": {
     "baseTotalAtLeast": 10
@@ -12390,6 +14063,9 @@
    "dims": [
     "Forest"
    ],
+   "coeffs": [
+    2
+   ],
    "trigger": {
     "baseTotalAtLeast": 20
    },
@@ -12405,6 +14081,9 @@
    "step": 3,
    "dims": [
     "Forest"
+   ],
+   "coeffs": [
+    2
    ],
    "trigger": {
     "baseTotalAtLeast": 30
@@ -12422,6 +14101,9 @@
    "dims": [
     "Forest"
    ],
+   "coeffs": [
+    2
+   ],
    "trigger": {
     "baseTotalAtLeast": 40
    },
@@ -12437,6 +14119,9 @@
    "step": 5,
    "dims": [
     "Forest"
+   ],
+   "coeffs": [
+    2
    ],
    "trigger": {
     "baseTotalAtLeast": 50
@@ -12454,6 +14139,9 @@
    "dims": [
     "Forest"
    ],
+   "coeffs": [
+    2
+   ],
    "trigger": {
     "baseTotalAtLeast": 60
    },
@@ -12469,6 +14157,9 @@
    "step": 7,
    "dims": [
     "Forest"
+   ],
+   "coeffs": [
+    2
    ],
    "trigger": {
     "baseTotalAtLeast": 70
@@ -12486,6 +14177,9 @@
    "dims": [
     "Forest"
    ],
+   "coeffs": [
+    2
+   ],
    "trigger": {
     "baseTotalAtLeast": 80
    },
@@ -12501,6 +14195,9 @@
    "step": 9,
    "dims": [
     "Forest"
+   ],
+   "coeffs": [
+    2
    ],
    "trigger": {
     "baseTotalAtLeast": 90
@@ -12518,6 +14215,9 @@
    "dims": [
     "Forest"
    ],
+   "coeffs": [
+    2
+   ],
    "trigger": {
     "baseTotalAtLeast": 100
    },
@@ -12533,6 +14233,9 @@
    "step": 11,
    "dims": [
     "Forest"
+   ],
+   "coeffs": [
+    2
    ],
    "trigger": {
     "baseTotalAtLeast": 110
@@ -12550,6 +14253,9 @@
    "dims": [
     "Forest"
    ],
+   "coeffs": [
+    2
+   ],
    "trigger": {
     "baseTotalAtLeast": 120
    },
@@ -12565,6 +14271,9 @@
    "step": 13,
    "dims": [
     "Forest"
+   ],
+   "coeffs": [
+    2
    ],
    "trigger": {
     "baseTotalAtLeast": 130
@@ -12582,6 +14291,9 @@
    "dims": [
     "Forest"
    ],
+   "coeffs": [
+    2
+   ],
    "trigger": {
     "baseTotalAtLeast": 140
    },
@@ -12597,6 +14309,9 @@
    "step": 15,
    "dims": [
     "Forest"
+   ],
+   "coeffs": [
+    2
    ],
    "trigger": {
     "baseTotalAtLeast": 150
@@ -12614,6 +14329,9 @@
    "dims": [
     "Forest"
    ],
+   "coeffs": [
+    2
+   ],
    "trigger": {
     "baseTotalAtLeast": 160
    },
@@ -12629,6 +14347,9 @@
    "step": 17,
    "dims": [
     "Forest"
+   ],
+   "coeffs": [
+    2
    ],
    "trigger": {
     "baseTotalAtLeast": 170
@@ -12646,6 +14367,9 @@
    "dims": [
     "Forest"
    ],
+   "coeffs": [
+    2
+   ],
    "trigger": {
     "baseTotalAtLeast": 180
    },
@@ -12661,6 +14385,9 @@
    "step": 19,
    "dims": [
     "Forest"
+   ],
+   "coeffs": [
+    2
    ],
    "trigger": {
     "baseTotalAtLeast": 190
@@ -12678,6 +14405,9 @@
    "dims": [
     "Forest"
    ],
+   "coeffs": [
+    2
+   ],
    "trigger": {
     "baseTotalAtLeast": 200
    },
@@ -12693,6 +14423,9 @@
    "step": 1,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 10
@@ -12710,6 +14443,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 20
    },
@@ -12725,6 +14461,9 @@
    "step": 3,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 30
@@ -12742,6 +14481,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 40
    },
@@ -12757,6 +14499,9 @@
    "step": 5,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 50
@@ -12774,6 +14519,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 60
    },
@@ -12789,6 +14537,9 @@
    "step": 7,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 70
@@ -12806,6 +14557,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 80
    },
@@ -12821,6 +14575,9 @@
    "step": 9,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 90
@@ -12838,6 +14595,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 100
    },
@@ -12853,6 +14613,9 @@
    "step": 11,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 110
@@ -12870,6 +14633,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 120
    },
@@ -12885,6 +14651,9 @@
    "step": 13,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 130
@@ -12902,6 +14671,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 140
    },
@@ -12917,6 +14689,9 @@
    "step": 15,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 150
@@ -12934,6 +14709,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 160
    },
@@ -12949,6 +14727,9 @@
    "step": 17,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 170
@@ -12966,6 +14747,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 180
    },
@@ -12981,6 +14765,9 @@
    "step": 19,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 190
@@ -12998,6 +14785,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 200
    },
@@ -13013,6 +14803,9 @@
    "step": 21,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 210
@@ -13030,6 +14823,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 220
    },
@@ -13045,6 +14841,9 @@
    "step": 23,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 230
@@ -13062,6 +14861,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 240
    },
@@ -13077,6 +14879,9 @@
    "step": 25,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 250
@@ -13094,6 +14899,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 260
    },
@@ -13109,6 +14917,9 @@
    "step": 27,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 270
@@ -13126,6 +14937,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 280
    },
@@ -13141,6 +14955,9 @@
    "step": 29,
    "dims": [
     "City"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 290
@@ -13158,6 +14975,9 @@
    "dims": [
     "City"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 300
    },
@@ -13173,6 +14993,9 @@
    "step": 1,
    "dims": [
     "Mountain"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 100
@@ -13190,6 +15013,9 @@
    "dims": [
     "Mountain"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 200
    },
@@ -13205,6 +15031,9 @@
    "step": 3,
    "dims": [
     "Mountain"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 300
@@ -13222,6 +15051,9 @@
    "dims": [
     "Mountain"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 400
    },
@@ -13237,6 +15069,9 @@
    "step": 5,
    "dims": [
     "Mountain"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 500
@@ -13254,6 +15089,9 @@
    "dims": [
     "Mountain"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 600
    },
@@ -13269,6 +15107,9 @@
    "step": 7,
    "dims": [
     "Mountain"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 700
@@ -13286,6 +15127,9 @@
    "dims": [
     "Mountain"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 800
    },
@@ -13301,6 +15145,9 @@
    "step": 9,
    "dims": [
     "Mountain"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 900
@@ -13318,6 +15165,9 @@
    "dims": [
     "Mountain"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 1000
    },
@@ -13333,6 +15183,9 @@
    "step": 1,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 10
@@ -13350,6 +15203,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 20
    },
@@ -13365,6 +15221,9 @@
    "step": 3,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 30
@@ -13382,6 +15241,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 40
    },
@@ -13397,6 +15259,9 @@
    "step": 5,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 50
@@ -13414,6 +15279,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 60
    },
@@ -13429,6 +15297,9 @@
    "step": 7,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 70
@@ -13446,6 +15317,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 80
    },
@@ -13461,6 +15335,9 @@
    "step": 9,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 90
@@ -13478,6 +15355,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 100
    },
@@ -13493,6 +15373,9 @@
    "step": 11,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 110
@@ -13510,6 +15393,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 120
    },
@@ -13525,6 +15411,9 @@
    "step": 13,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 130
@@ -13542,6 +15431,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 140
    },
@@ -13557,6 +15449,9 @@
    "step": 15,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 150
@@ -13574,6 +15469,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 160
    },
@@ -13589,6 +15487,9 @@
    "step": 17,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 170
@@ -13606,6 +15507,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 180
    },
@@ -13621,6 +15525,9 @@
    "step": 19,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 190
@@ -13638,6 +15545,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 200
    },
@@ -13653,6 +15563,9 @@
    "step": 21,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 210
@@ -13670,6 +15583,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 220
    },
@@ -13685,6 +15601,9 @@
    "step": 23,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 230
@@ -13702,6 +15621,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 240
    },
@@ -13717,6 +15639,9 @@
    "step": 25,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 250
@@ -13734,6 +15659,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 260
    },
@@ -13749,6 +15677,9 @@
    "step": 27,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 270
@@ -13766,6 +15697,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 280
    },
@@ -13781,6 +15715,9 @@
    "step": 29,
    "dims": [
     "Cavern"
+   ],
+   "coeffs": [
+    3
    ],
    "trigger": {
     "baseTotalAtLeast": 290
@@ -13798,6 +15735,9 @@
    "dims": [
     "Cavern"
    ],
+   "coeffs": [
+    3
+   ],
    "trigger": {
     "baseTotalAtLeast": 300
    },
@@ -13813,6 +15753,9 @@
    "step": 1,
    "dims": [
     "Illusions"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 25
@@ -13830,6 +15773,9 @@
    "dims": [
     "Illusions"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 50
    },
@@ -13845,6 +15791,9 @@
    "step": 3,
    "dims": [
     "Illusions"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 75
@@ -13862,6 +15811,9 @@
    "dims": [
     "Illusions"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 100
    },
@@ -13877,6 +15829,9 @@
    "step": 5,
    "dims": [
     "Illusions"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 125
@@ -13894,6 +15849,9 @@
    "dims": [
     "Illusions"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 150
    },
@@ -13909,6 +15867,9 @@
    "step": 7,
    "dims": [
     "Illusions"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 175
@@ -13926,6 +15887,9 @@
    "dims": [
     "Illusions"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 200
    },
@@ -13941,6 +15905,9 @@
    "step": 9,
    "dims": [
     "Illusions"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 225
@@ -13958,6 +15925,9 @@
    "dims": [
     "Illusions"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 250
    },
@@ -13973,6 +15943,9 @@
    "step": 11,
    "dims": [
     "Illusions"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 275
@@ -13990,6 +15963,9 @@
    "dims": [
     "Illusions"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 300
    },
@@ -14005,6 +15981,9 @@
    "step": 13,
    "dims": [
     "Illusions"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 325
@@ -14022,6 +16001,9 @@
    "dims": [
     "Illusions"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 350
    },
@@ -14037,6 +16019,9 @@
    "step": 15,
    "dims": [
     "Illusions"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 375
@@ -14054,6 +16039,9 @@
    "dims": [
     "Illusions"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 400
    },
@@ -14069,6 +16057,9 @@
    "step": 17,
    "dims": [
     "Illusions"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 425
@@ -14086,6 +16077,9 @@
    "dims": [
     "Illusions"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 450
    },
@@ -14101,6 +16095,9 @@
    "step": 19,
    "dims": [
     "Illusions"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 475
@@ -14118,6 +16115,9 @@
    "dims": [
     "Illusions"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 500
    },
@@ -14133,6 +16133,9 @@
    "step": 1,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 5
@@ -14150,6 +16153,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 10
    },
@@ -14165,6 +16171,9 @@
    "step": 3,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 15
@@ -14182,6 +16191,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 20
    },
@@ -14197,6 +16209,9 @@
    "step": 5,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 25
@@ -14214,6 +16229,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 30
    },
@@ -14229,6 +16247,9 @@
    "step": 7,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 35
@@ -14246,6 +16267,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 40
    },
@@ -14261,6 +16285,9 @@
    "step": 9,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 45
@@ -14278,6 +16305,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 50
    },
@@ -14293,6 +16323,9 @@
    "step": 11,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 55
@@ -14310,6 +16343,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 60
    },
@@ -14325,6 +16361,9 @@
    "step": 13,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 65
@@ -14342,6 +16381,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 70
    },
@@ -14357,6 +16399,9 @@
    "step": 15,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 75
@@ -14374,6 +16419,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 80
    },
@@ -14389,6 +16437,9 @@
    "step": 17,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 85
@@ -14406,6 +16457,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 90
    },
@@ -14421,6 +16475,9 @@
    "step": 19,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 95
@@ -14438,6 +16495,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 100
    },
@@ -14453,6 +16513,9 @@
    "step": 21,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 105
@@ -14470,6 +16533,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 110
    },
@@ -14485,6 +16551,9 @@
    "step": 23,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 115
@@ -14502,6 +16571,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 120
    },
@@ -14517,6 +16589,9 @@
    "step": 25,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 125
@@ -14534,6 +16609,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 130
    },
@@ -14549,6 +16627,9 @@
    "step": 27,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 135
@@ -14566,6 +16647,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 140
    },
@@ -14581,6 +16665,9 @@
    "step": 29,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 145
@@ -14598,6 +16685,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 150
    },
@@ -14613,6 +16703,9 @@
    "step": 31,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 155
@@ -14630,6 +16723,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 160
    },
@@ -14645,6 +16741,9 @@
    "step": 33,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 165
@@ -14662,6 +16761,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 170
    },
@@ -14677,6 +16779,9 @@
    "step": 35,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 175
@@ -14694,6 +16799,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 180
    },
@@ -14709,6 +16817,9 @@
    "step": 37,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 185
@@ -14726,6 +16837,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 190
    },
@@ -14741,6 +16855,9 @@
    "step": 39,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 195
@@ -14758,6 +16875,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 200
    },
@@ -14773,6 +16893,9 @@
    "step": 41,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 205
@@ -14790,6 +16913,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 210
    },
@@ -14805,6 +16931,9 @@
    "step": 43,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 215
@@ -14822,6 +16951,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 220
    },
@@ -14837,6 +16969,9 @@
    "step": 45,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 225
@@ -14854,6 +16989,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 230
    },
@@ -14869,6 +17007,9 @@
    "step": 47,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 235
@@ -14886,6 +17027,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 240
    },
@@ -14901,6 +17045,9 @@
    "step": 49,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 245
@@ -14918,6 +17065,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 250
    },
@@ -14933,6 +17083,9 @@
    "step": 51,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 255
@@ -14950,6 +17103,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 260
    },
@@ -14965,6 +17121,9 @@
    "step": 53,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 265
@@ -14982,6 +17141,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 270
    },
@@ -14997,6 +17159,9 @@
    "step": 55,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 275
@@ -15014,6 +17179,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 280
    },
@@ -15029,6 +17197,9 @@
    "step": 57,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 285
@@ -15046,6 +17217,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 290
    },
@@ -15061,6 +17235,9 @@
    "step": 59,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 295
@@ -15078,6 +17255,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 300
    },
@@ -15093,6 +17273,9 @@
    "step": 61,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 305
@@ -15110,6 +17293,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 310
    },
@@ -15125,6 +17311,9 @@
    "step": 63,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 315
@@ -15142,6 +17331,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 320
    },
@@ -15157,6 +17349,9 @@
    "step": 65,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 325
@@ -15174,6 +17369,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 330
    },
@@ -15189,6 +17387,9 @@
    "step": 67,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 335
@@ -15206,6 +17407,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 340
    },
@@ -15221,6 +17425,9 @@
    "step": 69,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 345
@@ -15238,6 +17445,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 350
    },
@@ -15253,6 +17463,9 @@
    "step": 71,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 355
@@ -15270,6 +17483,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 360
    },
@@ -15285,6 +17501,9 @@
    "step": 73,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 365
@@ -15302,6 +17521,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 370
    },
@@ -15317,6 +17539,9 @@
    "step": 75,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 375
@@ -15334,6 +17559,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 380
    },
@@ -15349,6 +17577,9 @@
    "step": 77,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 385
@@ -15366,6 +17597,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 390
    },
@@ -15381,6 +17615,9 @@
    "step": 79,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 395
@@ -15398,6 +17635,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 400
    },
@@ -15413,6 +17653,9 @@
    "step": 81,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 405
@@ -15430,6 +17673,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 410
    },
@@ -15445,6 +17691,9 @@
    "step": 83,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 415
@@ -15462,6 +17711,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 420
    },
@@ -15477,6 +17729,9 @@
    "step": 85,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 425
@@ -15494,6 +17749,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 430
    },
@@ -15509,6 +17767,9 @@
    "step": 87,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 435
@@ -15526,6 +17787,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 440
    },
@@ -15541,6 +17805,9 @@
    "step": 89,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 445
@@ -15558,6 +17825,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 450
    },
@@ -15573,6 +17843,9 @@
    "step": 91,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 455
@@ -15590,6 +17863,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 460
    },
@@ -15605,6 +17881,9 @@
    "step": 93,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 465
@@ -15622,6 +17901,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 470
    },
@@ -15637,6 +17919,9 @@
    "step": 95,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 475
@@ -15654,6 +17939,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 480
    },
@@ -15669,6 +17957,9 @@
    "step": 97,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 485
@@ -15686,6 +17977,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 490
    },
@@ -15701,6 +17995,9 @@
    "step": 99,
    "dims": [
     "Canvassed"
+   ],
+   "coeffs": [
+    5
    ],
    "trigger": {
     "baseTotalAtLeast": 495
@@ -15718,6 +18015,9 @@
    "dims": [
     "Canvassed"
    ],
+   "coeffs": [
+    5
+   ],
    "trigger": {
     "baseTotalAtLeast": 500
    },
@@ -15733,6 +18033,9 @@
    "step": 1,
    "dims": [
     "Meander"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 100
@@ -15750,6 +18053,9 @@
    "dims": [
     "Meander"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 200
    },
@@ -15765,6 +18071,9 @@
    "step": 3,
    "dims": [
     "Meander"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 300
@@ -15782,6 +18091,9 @@
    "dims": [
     "Meander"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 400
    },
@@ -15797,6 +18109,9 @@
    "step": 5,
    "dims": [
     "Meander"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 500
@@ -15814,6 +18129,9 @@
    "dims": [
     "Meander"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 600
    },
@@ -15829,6 +18147,9 @@
    "step": 7,
    "dims": [
     "Meander"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 700
@@ -15846,6 +18167,9 @@
    "dims": [
     "Meander"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 800
    },
@@ -15861,6 +18185,9 @@
    "step": 9,
    "dims": [
     "Meander"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 900
@@ -15878,6 +18205,9 @@
    "dims": [
     "Meander"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 1000
    },
@@ -15893,6 +18223,9 @@
    "step": 1,
    "dims": [
     "Meander"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 100
@@ -15910,6 +18243,9 @@
    "dims": [
     "Meander"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 200
    },
@@ -15925,6 +18261,9 @@
    "step": 3,
    "dims": [
     "Meander"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 300
@@ -15942,6 +18281,9 @@
    "dims": [
     "Meander"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 400
    },
@@ -15957,6 +18299,9 @@
    "step": 5,
    "dims": [
     "Meander"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 500
@@ -15974,6 +18319,9 @@
    "dims": [
     "Meander"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 600
    },
@@ -15989,6 +18337,9 @@
    "step": 7,
    "dims": [
     "Meander"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 700
@@ -16006,6 +18357,9 @@
    "dims": [
     "Meander"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 800
    },
@@ -16022,6 +18376,9 @@
    "dims": [
     "Meander"
    ],
+   "coeffs": [
+    10
+   ],
    "trigger": {
     "baseTotalAtLeast": 900
    },
@@ -16037,6 +18394,9 @@
    "step": 10,
    "dims": [
     "Meander"
+   ],
+   "coeffs": [
+    10
    ],
    "trigger": {
     "baseTotalAtLeast": 1000
