@@ -1,11 +1,17 @@
 {
  "version": 1,
  "meta": {
-  "granularity": 8,
+  "quantityModel": "loot-batch",
+  "excludedVars": [
+   "StonesZ1",
+   "StonesZ3",
+   "StonesZ5",
+   "StonesZ6"
+  ],
   "v1Pool": "quantity",
   "counts": {
    "predicates": 314,
-   "quantities": 144
+   "quantities": 620
   }
  },
  "rows": [
@@ -5621,22 +5627,6 @@
  ],
  "quantities": [
   {
-   "id": "q:0:Pots:0",
-   "town": 0,
-   "var": "Pots",
-   "step": 0,
-   "dims": [
-    "Wander"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 5
-   },
-   "grant": {
-    "items": 5
-   },
-   "apEligible": true
-  },
-  {
    "id": "q:0:Pots:1",
    "town": 0,
    "var": "Pots",
@@ -5645,10 +5635,10 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 76
+    "baseTotalAtLeast": 10
    },
    "grant": {
-    "items": 71
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5661,10 +5651,10 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 146
+    "baseTotalAtLeast": 20
    },
    "grant": {
-    "items": 70
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5677,10 +5667,10 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 217
+    "baseTotalAtLeast": 30
    },
    "grant": {
-    "items": 71
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5693,10 +5683,10 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 288
+    "baseTotalAtLeast": 40
    },
    "grant": {
-    "items": 71
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5709,10 +5699,10 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 359
+    "baseTotalAtLeast": 50
    },
    "grant": {
-    "items": 71
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5725,10 +5715,10 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 429
+    "baseTotalAtLeast": 60
    },
    "grant": {
-    "items": 70
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5741,26 +5731,698 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 500
+    "baseTotalAtLeast": 70
    },
    "grant": {
-    "items": 71
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:0:Locks:0",
+   "id": "q:0:Pots:8",
    "town": 0,
-   "var": "Locks",
-   "step": 0,
+   "var": "Pots",
+   "step": 8,
    "dims": [
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 1
+    "baseTotalAtLeast": 80
    },
    "grant": {
-    "items": 1
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:9",
+   "town": 0,
+   "var": "Pots",
+   "step": 9,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 90
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:10",
+   "town": 0,
+   "var": "Pots",
+   "step": 10,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 100
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:11",
+   "town": 0,
+   "var": "Pots",
+   "step": 11,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 110
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:12",
+   "town": 0,
+   "var": "Pots",
+   "step": 12,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 120
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:13",
+   "town": 0,
+   "var": "Pots",
+   "step": 13,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 130
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:14",
+   "town": 0,
+   "var": "Pots",
+   "step": 14,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 140
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:15",
+   "town": 0,
+   "var": "Pots",
+   "step": 15,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 150
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:16",
+   "town": 0,
+   "var": "Pots",
+   "step": 16,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 160
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:17",
+   "town": 0,
+   "var": "Pots",
+   "step": 17,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 170
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:18",
+   "town": 0,
+   "var": "Pots",
+   "step": 18,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 180
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:19",
+   "town": 0,
+   "var": "Pots",
+   "step": 19,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 190
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:20",
+   "town": 0,
+   "var": "Pots",
+   "step": 20,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 200
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:21",
+   "town": 0,
+   "var": "Pots",
+   "step": 21,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 210
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:22",
+   "town": 0,
+   "var": "Pots",
+   "step": 22,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 220
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:23",
+   "town": 0,
+   "var": "Pots",
+   "step": 23,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 230
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:24",
+   "town": 0,
+   "var": "Pots",
+   "step": 24,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 240
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:25",
+   "town": 0,
+   "var": "Pots",
+   "step": 25,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 250
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:26",
+   "town": 0,
+   "var": "Pots",
+   "step": 26,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 260
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:27",
+   "town": 0,
+   "var": "Pots",
+   "step": 27,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 270
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:28",
+   "town": 0,
+   "var": "Pots",
+   "step": 28,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 280
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:29",
+   "town": 0,
+   "var": "Pots",
+   "step": 29,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 290
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:30",
+   "town": 0,
+   "var": "Pots",
+   "step": 30,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 300
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:31",
+   "town": 0,
+   "var": "Pots",
+   "step": 31,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 310
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:32",
+   "town": 0,
+   "var": "Pots",
+   "step": 32,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 320
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:33",
+   "town": 0,
+   "var": "Pots",
+   "step": 33,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 330
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:34",
+   "town": 0,
+   "var": "Pots",
+   "step": 34,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 340
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:35",
+   "town": 0,
+   "var": "Pots",
+   "step": 35,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 350
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:36",
+   "town": 0,
+   "var": "Pots",
+   "step": 36,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 360
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:37",
+   "town": 0,
+   "var": "Pots",
+   "step": 37,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 370
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:38",
+   "town": 0,
+   "var": "Pots",
+   "step": 38,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 380
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:39",
+   "town": 0,
+   "var": "Pots",
+   "step": 39,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 390
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:40",
+   "town": 0,
+   "var": "Pots",
+   "step": 40,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 400
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:41",
+   "town": 0,
+   "var": "Pots",
+   "step": 41,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 410
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:42",
+   "town": 0,
+   "var": "Pots",
+   "step": 42,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 420
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:43",
+   "town": 0,
+   "var": "Pots",
+   "step": 43,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 430
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:44",
+   "town": 0,
+   "var": "Pots",
+   "step": 44,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 440
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:45",
+   "town": 0,
+   "var": "Pots",
+   "step": 45,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 450
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:46",
+   "town": 0,
+   "var": "Pots",
+   "step": 46,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 460
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:47",
+   "town": 0,
+   "var": "Pots",
+   "step": 47,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 470
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:48",
+   "town": 0,
+   "var": "Pots",
+   "step": 48,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 480
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:49",
+   "town": 0,
+   "var": "Pots",
+   "step": 49,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 490
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Pots:50",
+   "town": 0,
+   "var": "Pots",
+   "step": 50,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 500
+   },
+   "grant": {
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5773,10 +6435,10 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 15
+    "baseTotalAtLeast": 10
    },
    "grant": {
-    "items": 14
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5789,10 +6451,10 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 29
+    "baseTotalAtLeast": 20
    },
    "grant": {
-    "items": 14
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5805,10 +6467,10 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 43
+    "baseTotalAtLeast": 30
    },
    "grant": {
-    "items": 14
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5821,10 +6483,10 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 58
+    "baseTotalAtLeast": 40
    },
    "grant": {
-    "items": 15
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5837,10 +6499,10 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 72
+    "baseTotalAtLeast": 50
    },
    "grant": {
-    "items": 14
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5853,10 +6515,10 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 86
+    "baseTotalAtLeast": 60
    },
    "grant": {
-    "items": 14
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5869,26 +6531,58 @@
     "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 100
+    "baseTotalAtLeast": 70
    },
    "grant": {
-    "items": 14
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:0:SQuests:0",
+   "id": "q:0:Locks:8",
    "town": 0,
-   "var": "SQuests",
-   "step": 0,
+   "var": "Locks",
+   "step": 8,
    "dims": [
-    "Met"
+    "Wander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 1
+    "baseTotalAtLeast": 80
    },
    "grant": {
-    "items": 1
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Locks:9",
+   "town": 0,
+   "var": "Locks",
+   "step": 9,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 90
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:Locks:10",
+   "town": 0,
+   "var": "Locks",
+   "step": 10,
+   "dims": [
+    "Wander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 100
+   },
+   "grant": {
+    "batch": 10
    },
    "apEligible": true
   },
@@ -5901,10 +6595,10 @@
     "Met"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 15
+    "baseTotalAtLeast": 5
    },
    "grant": {
-    "items": 14
+    "batch": 5
    },
    "apEligible": true
   },
@@ -5917,10 +6611,10 @@
     "Met"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 29
+    "baseTotalAtLeast": 10
    },
    "grant": {
-    "items": 14
+    "batch": 5
    },
    "apEligible": true
   },
@@ -5933,10 +6627,10 @@
     "Met"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 43
+    "baseTotalAtLeast": 15
    },
    "grant": {
-    "items": 14
+    "batch": 5
    },
    "apEligible": true
   },
@@ -5949,10 +6643,10 @@
     "Met"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 58
+    "baseTotalAtLeast": 20
    },
    "grant": {
-    "items": 15
+    "batch": 5
    },
    "apEligible": true
   },
@@ -5965,10 +6659,10 @@
     "Met"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 72
+    "baseTotalAtLeast": 25
    },
    "grant": {
-    "items": 14
+    "batch": 5
    },
    "apEligible": true
   },
@@ -5981,10 +6675,10 @@
     "Met"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 86
+    "baseTotalAtLeast": 30
    },
    "grant": {
-    "items": 14
+    "batch": 5
    },
    "apEligible": true
   },
@@ -5997,26 +6691,218 @@
     "Met"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 100
+    "baseTotalAtLeast": 35
    },
    "grant": {
-    "items": 14
+    "batch": 5
    },
    "apEligible": true
   },
   {
-   "id": "q:0:LQuests:0",
+   "id": "q:0:SQuests:8",
    "town": 0,
-   "var": "LQuests",
-   "step": 0,
+   "var": "SQuests",
+   "step": 8,
    "dims": [
-    "Secrets"
+    "Met"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 1
+    "baseTotalAtLeast": 40
    },
    "grant": {
-    "items": 1
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:9",
+   "town": 0,
+   "var": "SQuests",
+   "step": 9,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 45
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:10",
+   "town": 0,
+   "var": "SQuests",
+   "step": 10,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 50
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:11",
+   "town": 0,
+   "var": "SQuests",
+   "step": 11,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 55
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:12",
+   "town": 0,
+   "var": "SQuests",
+   "step": 12,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 60
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:13",
+   "town": 0,
+   "var": "SQuests",
+   "step": 13,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 65
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:14",
+   "town": 0,
+   "var": "SQuests",
+   "step": 14,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 70
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:15",
+   "town": 0,
+   "var": "SQuests",
+   "step": 15,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 75
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:16",
+   "town": 0,
+   "var": "SQuests",
+   "step": 16,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 80
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:17",
+   "town": 0,
+   "var": "SQuests",
+   "step": 17,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 85
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:18",
+   "town": 0,
+   "var": "SQuests",
+   "step": 18,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 90
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:19",
+   "town": 0,
+   "var": "SQuests",
+   "step": 19,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 95
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:SQuests:20",
+   "town": 0,
+   "var": "SQuests",
+   "step": 20,
+   "dims": [
+    "Met"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 100
+   },
+   "grant": {
+    "batch": 5
    },
    "apEligible": true
   },
@@ -6029,10 +6915,10 @@
     "Secrets"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 8
+    "baseTotalAtLeast": 5
    },
    "grant": {
-    "items": 7
+    "batch": 5
    },
    "apEligible": true
   },
@@ -6045,10 +6931,10 @@
     "Secrets"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 15
+    "baseTotalAtLeast": 10
    },
    "grant": {
-    "items": 7
+    "batch": 5
    },
    "apEligible": true
   },
@@ -6061,10 +6947,10 @@
     "Secrets"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 22
+    "baseTotalAtLeast": 15
    },
    "grant": {
-    "items": 7
+    "batch": 5
    },
    "apEligible": true
   },
@@ -6077,10 +6963,10 @@
     "Secrets"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 29
+    "baseTotalAtLeast": 20
    },
    "grant": {
-    "items": 7
+    "batch": 5
    },
    "apEligible": true
   },
@@ -6093,10 +6979,10 @@
     "Secrets"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 36
+    "baseTotalAtLeast": 25
    },
    "grant": {
-    "items": 7
+    "batch": 5
    },
    "apEligible": true
   },
@@ -6109,10 +6995,10 @@
     "Secrets"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 43
+    "baseTotalAtLeast": 30
    },
    "grant": {
-    "items": 7
+    "batch": 5
    },
    "apEligible": true
   },
@@ -6125,27 +7011,58 @@
     "Secrets"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 50
+    "baseTotalAtLeast": 35
    },
    "grant": {
-    "items": 7
+    "batch": 5
    },
    "apEligible": true
   },
   {
-   "id": "q:1:WildMana:0",
-   "town": 1,
-   "var": "WildMana",
-   "step": 0,
+   "id": "q:0:LQuests:8",
+   "town": 0,
+   "var": "LQuests",
+   "step": 8,
    "dims": [
-    "Forest",
-    "Thicket"
+    "Secrets"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 5
+    "baseTotalAtLeast": 40
    },
    "grant": {
-    "items": 5
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:LQuests:9",
+   "town": 0,
+   "var": "LQuests",
+   "step": 9,
+   "dims": [
+    "Secrets"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 45
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:0:LQuests:10",
+   "town": 0,
+   "var": "LQuests",
+   "step": 10,
+   "dims": [
+    "Secrets"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 50
+   },
+   "grant": {
+    "batch": 5
    },
    "apEligible": true
   },
@@ -6159,10 +7076,10 @@
     "Thicket"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 147
+    "baseTotalAtLeast": 10
    },
    "grant": {
-    "items": 142
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6176,10 +7093,10 @@
     "Thicket"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 289
+    "baseTotalAtLeast": 20
    },
    "grant": {
-    "items": 142
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6193,10 +7110,10 @@
     "Thicket"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 431
+    "baseTotalAtLeast": 30
    },
    "grant": {
-    "items": 142
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6210,10 +7127,10 @@
     "Thicket"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 574
+    "baseTotalAtLeast": 40
    },
    "grant": {
-    "items": 143
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6227,10 +7144,10 @@
     "Thicket"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 716
+    "baseTotalAtLeast": 50
    },
    "grant": {
-    "items": 142
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6244,10 +7161,10 @@
     "Thicket"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 858
+    "baseTotalAtLeast": 60
    },
    "grant": {
-    "items": 142
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6261,28 +7178,1591 @@
     "Thicket"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 1000
+    "baseTotalAtLeast": 70
    },
    "grant": {
-    "items": 142
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:1:Herbs:0",
+   "id": "q:1:WildMana:8",
    "town": 1,
-   "var": "Herbs",
-   "step": 0,
+   "var": "WildMana",
+   "step": 8,
    "dims": [
     "Forest",
-    "Shortcut",
-    "Flowers"
+    "Thicket"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 2
+    "baseTotalAtLeast": 80
    },
    "grant": {
-    "items": 2
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:9",
+   "town": 1,
+   "var": "WildMana",
+   "step": 9,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 90
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:10",
+   "town": 1,
+   "var": "WildMana",
+   "step": 10,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 100
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:11",
+   "town": 1,
+   "var": "WildMana",
+   "step": 11,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 110
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:12",
+   "town": 1,
+   "var": "WildMana",
+   "step": 12,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 120
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:13",
+   "town": 1,
+   "var": "WildMana",
+   "step": 13,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 130
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:14",
+   "town": 1,
+   "var": "WildMana",
+   "step": 14,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 140
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:15",
+   "town": 1,
+   "var": "WildMana",
+   "step": 15,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 150
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:16",
+   "town": 1,
+   "var": "WildMana",
+   "step": 16,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 160
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:17",
+   "town": 1,
+   "var": "WildMana",
+   "step": 17,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 170
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:18",
+   "town": 1,
+   "var": "WildMana",
+   "step": 18,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 180
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:19",
+   "town": 1,
+   "var": "WildMana",
+   "step": 19,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 190
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:20",
+   "town": 1,
+   "var": "WildMana",
+   "step": 20,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 200
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:21",
+   "town": 1,
+   "var": "WildMana",
+   "step": 21,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 210
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:22",
+   "town": 1,
+   "var": "WildMana",
+   "step": 22,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 220
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:23",
+   "town": 1,
+   "var": "WildMana",
+   "step": 23,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 230
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:24",
+   "town": 1,
+   "var": "WildMana",
+   "step": 24,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 240
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:25",
+   "town": 1,
+   "var": "WildMana",
+   "step": 25,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 250
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:26",
+   "town": 1,
+   "var": "WildMana",
+   "step": 26,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 260
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:27",
+   "town": 1,
+   "var": "WildMana",
+   "step": 27,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 270
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:28",
+   "town": 1,
+   "var": "WildMana",
+   "step": 28,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 280
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:29",
+   "town": 1,
+   "var": "WildMana",
+   "step": 29,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 290
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:30",
+   "town": 1,
+   "var": "WildMana",
+   "step": 30,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 300
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:31",
+   "town": 1,
+   "var": "WildMana",
+   "step": 31,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 310
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:32",
+   "town": 1,
+   "var": "WildMana",
+   "step": 32,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 320
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:33",
+   "town": 1,
+   "var": "WildMana",
+   "step": 33,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 330
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:34",
+   "town": 1,
+   "var": "WildMana",
+   "step": 34,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 340
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:35",
+   "town": 1,
+   "var": "WildMana",
+   "step": 35,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 350
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:36",
+   "town": 1,
+   "var": "WildMana",
+   "step": 36,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 360
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:37",
+   "town": 1,
+   "var": "WildMana",
+   "step": 37,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 370
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:38",
+   "town": 1,
+   "var": "WildMana",
+   "step": 38,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 380
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:39",
+   "town": 1,
+   "var": "WildMana",
+   "step": 39,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 390
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:40",
+   "town": 1,
+   "var": "WildMana",
+   "step": 40,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 400
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:41",
+   "town": 1,
+   "var": "WildMana",
+   "step": 41,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 410
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:42",
+   "town": 1,
+   "var": "WildMana",
+   "step": 42,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 420
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:43",
+   "town": 1,
+   "var": "WildMana",
+   "step": 43,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 430
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:44",
+   "town": 1,
+   "var": "WildMana",
+   "step": 44,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 440
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:45",
+   "town": 1,
+   "var": "WildMana",
+   "step": 45,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 450
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:46",
+   "town": 1,
+   "var": "WildMana",
+   "step": 46,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 460
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:47",
+   "town": 1,
+   "var": "WildMana",
+   "step": 47,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 470
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:48",
+   "town": 1,
+   "var": "WildMana",
+   "step": 48,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 480
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:49",
+   "town": 1,
+   "var": "WildMana",
+   "step": 49,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 490
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:50",
+   "town": 1,
+   "var": "WildMana",
+   "step": 50,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 500
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:51",
+   "town": 1,
+   "var": "WildMana",
+   "step": 51,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 510
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:52",
+   "town": 1,
+   "var": "WildMana",
+   "step": 52,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 520
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:53",
+   "town": 1,
+   "var": "WildMana",
+   "step": 53,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 530
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:54",
+   "town": 1,
+   "var": "WildMana",
+   "step": 54,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 540
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:55",
+   "town": 1,
+   "var": "WildMana",
+   "step": 55,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 550
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:56",
+   "town": 1,
+   "var": "WildMana",
+   "step": 56,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 560
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:57",
+   "town": 1,
+   "var": "WildMana",
+   "step": 57,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 570
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:58",
+   "town": 1,
+   "var": "WildMana",
+   "step": 58,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 580
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:59",
+   "town": 1,
+   "var": "WildMana",
+   "step": 59,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 590
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:60",
+   "town": 1,
+   "var": "WildMana",
+   "step": 60,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 600
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:61",
+   "town": 1,
+   "var": "WildMana",
+   "step": 61,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 610
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:62",
+   "town": 1,
+   "var": "WildMana",
+   "step": 62,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 620
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:63",
+   "town": 1,
+   "var": "WildMana",
+   "step": 63,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 630
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:64",
+   "town": 1,
+   "var": "WildMana",
+   "step": 64,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 640
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:65",
+   "town": 1,
+   "var": "WildMana",
+   "step": 65,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 650
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:66",
+   "town": 1,
+   "var": "WildMana",
+   "step": 66,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 660
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:67",
+   "town": 1,
+   "var": "WildMana",
+   "step": 67,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 670
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:68",
+   "town": 1,
+   "var": "WildMana",
+   "step": 68,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 680
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:69",
+   "town": 1,
+   "var": "WildMana",
+   "step": 69,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 690
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:70",
+   "town": 1,
+   "var": "WildMana",
+   "step": 70,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 700
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:71",
+   "town": 1,
+   "var": "WildMana",
+   "step": 71,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 710
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:72",
+   "town": 1,
+   "var": "WildMana",
+   "step": 72,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 720
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:73",
+   "town": 1,
+   "var": "WildMana",
+   "step": 73,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 730
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:74",
+   "town": 1,
+   "var": "WildMana",
+   "step": 74,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 740
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:75",
+   "town": 1,
+   "var": "WildMana",
+   "step": 75,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 750
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:76",
+   "town": 1,
+   "var": "WildMana",
+   "step": 76,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 760
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:77",
+   "town": 1,
+   "var": "WildMana",
+   "step": 77,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 770
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:78",
+   "town": 1,
+   "var": "WildMana",
+   "step": 78,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 780
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:79",
+   "town": 1,
+   "var": "WildMana",
+   "step": 79,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 790
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:80",
+   "town": 1,
+   "var": "WildMana",
+   "step": 80,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 800
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:81",
+   "town": 1,
+   "var": "WildMana",
+   "step": 81,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 810
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:82",
+   "town": 1,
+   "var": "WildMana",
+   "step": 82,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 820
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:83",
+   "town": 1,
+   "var": "WildMana",
+   "step": 83,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 830
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:84",
+   "town": 1,
+   "var": "WildMana",
+   "step": 84,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 840
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:85",
+   "town": 1,
+   "var": "WildMana",
+   "step": 85,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 850
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:86",
+   "town": 1,
+   "var": "WildMana",
+   "step": 86,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 860
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:87",
+   "town": 1,
+   "var": "WildMana",
+   "step": 87,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 870
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:88",
+   "town": 1,
+   "var": "WildMana",
+   "step": 88,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 880
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:89",
+   "town": 1,
+   "var": "WildMana",
+   "step": 89,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 890
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:90",
+   "town": 1,
+   "var": "WildMana",
+   "step": 90,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 900
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:91",
+   "town": 1,
+   "var": "WildMana",
+   "step": 91,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 910
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:92",
+   "town": 1,
+   "var": "WildMana",
+   "step": 92,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 920
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:93",
+   "town": 1,
+   "var": "WildMana",
+   "step": 93,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 930
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:94",
+   "town": 1,
+   "var": "WildMana",
+   "step": 94,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 940
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:95",
+   "town": 1,
+   "var": "WildMana",
+   "step": 95,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 950
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:96",
+   "town": 1,
+   "var": "WildMana",
+   "step": 96,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 960
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:97",
+   "town": 1,
+   "var": "WildMana",
+   "step": 97,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 970
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:98",
+   "town": 1,
+   "var": "WildMana",
+   "step": 98,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 980
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:99",
+   "town": 1,
+   "var": "WildMana",
+   "step": 99,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 990
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:WildMana:100",
+   "town": 1,
+   "var": "WildMana",
+   "step": 100,
+   "dims": [
+    "Forest",
+    "Thicket"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1000
+   },
+   "grant": {
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6297,10 +8777,10 @@
     "Flowers"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 287
+    "baseTotalAtLeast": 10
    },
    "grant": {
-    "items": 285
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6315,10 +8795,10 @@
     "Flowers"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 573
+    "baseTotalAtLeast": 20
    },
    "grant": {
-    "items": 286
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6333,10 +8813,10 @@
     "Flowers"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 858
+    "baseTotalAtLeast": 30
    },
    "grant": {
-    "items": 285
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6351,10 +8831,10 @@
     "Flowers"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 1144
+    "baseTotalAtLeast": 40
    },
    "grant": {
-    "items": 286
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6369,10 +8849,10 @@
     "Flowers"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 1429
+    "baseTotalAtLeast": 50
    },
    "grant": {
-    "items": 285
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6387,10 +8867,10 @@
     "Flowers"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 1715
+    "baseTotalAtLeast": 60
    },
    "grant": {
-    "items": 286
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6405,26 +8885,3484 @@
     "Flowers"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 2000
+    "baseTotalAtLeast": 70
    },
    "grant": {
-    "items": 285
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:1:Hunt:0",
+   "id": "q:1:Herbs:8",
    "town": 1,
-   "var": "Hunt",
-   "step": 0,
+   "var": "Herbs",
+   "step": 8,
    "dims": [
-    "Forest"
+    "Forest",
+    "Shortcut",
+    "Flowers"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 2
+    "baseTotalAtLeast": 80
    },
    "grant": {
-    "items": 2
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:9",
+   "town": 1,
+   "var": "Herbs",
+   "step": 9,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 90
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:10",
+   "town": 1,
+   "var": "Herbs",
+   "step": 10,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 100
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:11",
+   "town": 1,
+   "var": "Herbs",
+   "step": 11,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 110
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:12",
+   "town": 1,
+   "var": "Herbs",
+   "step": 12,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 120
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:13",
+   "town": 1,
+   "var": "Herbs",
+   "step": 13,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 130
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:14",
+   "town": 1,
+   "var": "Herbs",
+   "step": 14,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 140
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:15",
+   "town": 1,
+   "var": "Herbs",
+   "step": 15,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 150
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:16",
+   "town": 1,
+   "var": "Herbs",
+   "step": 16,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 160
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:17",
+   "town": 1,
+   "var": "Herbs",
+   "step": 17,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 170
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:18",
+   "town": 1,
+   "var": "Herbs",
+   "step": 18,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 180
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:19",
+   "town": 1,
+   "var": "Herbs",
+   "step": 19,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 190
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:20",
+   "town": 1,
+   "var": "Herbs",
+   "step": 20,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 200
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:21",
+   "town": 1,
+   "var": "Herbs",
+   "step": 21,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 210
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:22",
+   "town": 1,
+   "var": "Herbs",
+   "step": 22,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 220
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:23",
+   "town": 1,
+   "var": "Herbs",
+   "step": 23,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 230
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:24",
+   "town": 1,
+   "var": "Herbs",
+   "step": 24,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 240
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:25",
+   "town": 1,
+   "var": "Herbs",
+   "step": 25,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 250
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:26",
+   "town": 1,
+   "var": "Herbs",
+   "step": 26,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 260
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:27",
+   "town": 1,
+   "var": "Herbs",
+   "step": 27,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 270
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:28",
+   "town": 1,
+   "var": "Herbs",
+   "step": 28,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 280
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:29",
+   "town": 1,
+   "var": "Herbs",
+   "step": 29,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 290
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:30",
+   "town": 1,
+   "var": "Herbs",
+   "step": 30,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 300
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:31",
+   "town": 1,
+   "var": "Herbs",
+   "step": 31,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 310
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:32",
+   "town": 1,
+   "var": "Herbs",
+   "step": 32,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 320
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:33",
+   "town": 1,
+   "var": "Herbs",
+   "step": 33,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 330
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:34",
+   "town": 1,
+   "var": "Herbs",
+   "step": 34,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 340
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:35",
+   "town": 1,
+   "var": "Herbs",
+   "step": 35,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 350
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:36",
+   "town": 1,
+   "var": "Herbs",
+   "step": 36,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 360
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:37",
+   "town": 1,
+   "var": "Herbs",
+   "step": 37,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 370
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:38",
+   "town": 1,
+   "var": "Herbs",
+   "step": 38,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 380
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:39",
+   "town": 1,
+   "var": "Herbs",
+   "step": 39,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 390
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:40",
+   "town": 1,
+   "var": "Herbs",
+   "step": 40,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 400
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:41",
+   "town": 1,
+   "var": "Herbs",
+   "step": 41,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 410
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:42",
+   "town": 1,
+   "var": "Herbs",
+   "step": 42,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 420
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:43",
+   "town": 1,
+   "var": "Herbs",
+   "step": 43,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 430
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:44",
+   "town": 1,
+   "var": "Herbs",
+   "step": 44,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 440
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:45",
+   "town": 1,
+   "var": "Herbs",
+   "step": 45,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 450
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:46",
+   "town": 1,
+   "var": "Herbs",
+   "step": 46,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 460
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:47",
+   "town": 1,
+   "var": "Herbs",
+   "step": 47,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 470
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:48",
+   "town": 1,
+   "var": "Herbs",
+   "step": 48,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 480
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:49",
+   "town": 1,
+   "var": "Herbs",
+   "step": 49,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 490
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:50",
+   "town": 1,
+   "var": "Herbs",
+   "step": 50,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 500
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:51",
+   "town": 1,
+   "var": "Herbs",
+   "step": 51,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 510
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:52",
+   "town": 1,
+   "var": "Herbs",
+   "step": 52,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 520
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:53",
+   "town": 1,
+   "var": "Herbs",
+   "step": 53,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 530
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:54",
+   "town": 1,
+   "var": "Herbs",
+   "step": 54,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 540
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:55",
+   "town": 1,
+   "var": "Herbs",
+   "step": 55,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 550
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:56",
+   "town": 1,
+   "var": "Herbs",
+   "step": 56,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 560
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:57",
+   "town": 1,
+   "var": "Herbs",
+   "step": 57,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 570
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:58",
+   "town": 1,
+   "var": "Herbs",
+   "step": 58,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 580
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:59",
+   "town": 1,
+   "var": "Herbs",
+   "step": 59,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 590
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:60",
+   "town": 1,
+   "var": "Herbs",
+   "step": 60,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 600
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:61",
+   "town": 1,
+   "var": "Herbs",
+   "step": 61,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 610
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:62",
+   "town": 1,
+   "var": "Herbs",
+   "step": 62,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 620
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:63",
+   "town": 1,
+   "var": "Herbs",
+   "step": 63,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 630
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:64",
+   "town": 1,
+   "var": "Herbs",
+   "step": 64,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 640
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:65",
+   "town": 1,
+   "var": "Herbs",
+   "step": 65,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 650
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:66",
+   "town": 1,
+   "var": "Herbs",
+   "step": 66,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 660
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:67",
+   "town": 1,
+   "var": "Herbs",
+   "step": 67,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 670
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:68",
+   "town": 1,
+   "var": "Herbs",
+   "step": 68,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 680
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:69",
+   "town": 1,
+   "var": "Herbs",
+   "step": 69,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 690
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:70",
+   "town": 1,
+   "var": "Herbs",
+   "step": 70,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 700
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:71",
+   "town": 1,
+   "var": "Herbs",
+   "step": 71,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 710
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:72",
+   "town": 1,
+   "var": "Herbs",
+   "step": 72,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 720
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:73",
+   "town": 1,
+   "var": "Herbs",
+   "step": 73,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 730
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:74",
+   "town": 1,
+   "var": "Herbs",
+   "step": 74,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 740
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:75",
+   "town": 1,
+   "var": "Herbs",
+   "step": 75,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 750
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:76",
+   "town": 1,
+   "var": "Herbs",
+   "step": 76,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 760
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:77",
+   "town": 1,
+   "var": "Herbs",
+   "step": 77,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 770
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:78",
+   "town": 1,
+   "var": "Herbs",
+   "step": 78,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 780
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:79",
+   "town": 1,
+   "var": "Herbs",
+   "step": 79,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 790
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:80",
+   "town": 1,
+   "var": "Herbs",
+   "step": 80,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 800
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:81",
+   "town": 1,
+   "var": "Herbs",
+   "step": 81,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 810
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:82",
+   "town": 1,
+   "var": "Herbs",
+   "step": 82,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 820
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:83",
+   "town": 1,
+   "var": "Herbs",
+   "step": 83,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 830
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:84",
+   "town": 1,
+   "var": "Herbs",
+   "step": 84,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 840
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:85",
+   "town": 1,
+   "var": "Herbs",
+   "step": 85,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 850
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:86",
+   "town": 1,
+   "var": "Herbs",
+   "step": 86,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 860
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:87",
+   "town": 1,
+   "var": "Herbs",
+   "step": 87,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 870
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:88",
+   "town": 1,
+   "var": "Herbs",
+   "step": 88,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 880
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:89",
+   "town": 1,
+   "var": "Herbs",
+   "step": 89,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 890
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:90",
+   "town": 1,
+   "var": "Herbs",
+   "step": 90,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 900
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:91",
+   "town": 1,
+   "var": "Herbs",
+   "step": 91,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 910
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:92",
+   "town": 1,
+   "var": "Herbs",
+   "step": 92,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 920
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:93",
+   "town": 1,
+   "var": "Herbs",
+   "step": 93,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 930
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:94",
+   "town": 1,
+   "var": "Herbs",
+   "step": 94,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 940
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:95",
+   "town": 1,
+   "var": "Herbs",
+   "step": 95,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 950
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:96",
+   "town": 1,
+   "var": "Herbs",
+   "step": 96,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 960
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:97",
+   "town": 1,
+   "var": "Herbs",
+   "step": 97,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 970
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:98",
+   "town": 1,
+   "var": "Herbs",
+   "step": 98,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 980
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:99",
+   "town": 1,
+   "var": "Herbs",
+   "step": 99,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 990
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:100",
+   "town": 1,
+   "var": "Herbs",
+   "step": 100,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1000
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:101",
+   "town": 1,
+   "var": "Herbs",
+   "step": 101,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1010
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:102",
+   "town": 1,
+   "var": "Herbs",
+   "step": 102,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1020
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:103",
+   "town": 1,
+   "var": "Herbs",
+   "step": 103,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1030
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:104",
+   "town": 1,
+   "var": "Herbs",
+   "step": 104,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1040
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:105",
+   "town": 1,
+   "var": "Herbs",
+   "step": 105,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1050
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:106",
+   "town": 1,
+   "var": "Herbs",
+   "step": 106,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1060
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:107",
+   "town": 1,
+   "var": "Herbs",
+   "step": 107,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1070
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:108",
+   "town": 1,
+   "var": "Herbs",
+   "step": 108,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1080
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:109",
+   "town": 1,
+   "var": "Herbs",
+   "step": 109,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1090
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:110",
+   "town": 1,
+   "var": "Herbs",
+   "step": 110,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1100
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:111",
+   "town": 1,
+   "var": "Herbs",
+   "step": 111,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1110
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:112",
+   "town": 1,
+   "var": "Herbs",
+   "step": 112,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1120
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:113",
+   "town": 1,
+   "var": "Herbs",
+   "step": 113,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1130
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:114",
+   "town": 1,
+   "var": "Herbs",
+   "step": 114,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1140
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:115",
+   "town": 1,
+   "var": "Herbs",
+   "step": 115,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1150
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:116",
+   "town": 1,
+   "var": "Herbs",
+   "step": 116,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1160
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:117",
+   "town": 1,
+   "var": "Herbs",
+   "step": 117,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1170
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:118",
+   "town": 1,
+   "var": "Herbs",
+   "step": 118,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1180
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:119",
+   "town": 1,
+   "var": "Herbs",
+   "step": 119,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1190
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:120",
+   "town": 1,
+   "var": "Herbs",
+   "step": 120,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1200
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:121",
+   "town": 1,
+   "var": "Herbs",
+   "step": 121,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1210
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:122",
+   "town": 1,
+   "var": "Herbs",
+   "step": 122,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1220
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:123",
+   "town": 1,
+   "var": "Herbs",
+   "step": 123,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1230
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:124",
+   "town": 1,
+   "var": "Herbs",
+   "step": 124,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1240
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:125",
+   "town": 1,
+   "var": "Herbs",
+   "step": 125,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1250
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:126",
+   "town": 1,
+   "var": "Herbs",
+   "step": 126,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1260
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:127",
+   "town": 1,
+   "var": "Herbs",
+   "step": 127,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1270
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:128",
+   "town": 1,
+   "var": "Herbs",
+   "step": 128,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1280
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:129",
+   "town": 1,
+   "var": "Herbs",
+   "step": 129,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1290
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:130",
+   "town": 1,
+   "var": "Herbs",
+   "step": 130,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1300
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:131",
+   "town": 1,
+   "var": "Herbs",
+   "step": 131,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1310
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:132",
+   "town": 1,
+   "var": "Herbs",
+   "step": 132,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1320
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:133",
+   "town": 1,
+   "var": "Herbs",
+   "step": 133,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1330
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:134",
+   "town": 1,
+   "var": "Herbs",
+   "step": 134,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1340
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:135",
+   "town": 1,
+   "var": "Herbs",
+   "step": 135,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1350
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:136",
+   "town": 1,
+   "var": "Herbs",
+   "step": 136,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1360
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:137",
+   "town": 1,
+   "var": "Herbs",
+   "step": 137,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1370
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:138",
+   "town": 1,
+   "var": "Herbs",
+   "step": 138,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1380
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:139",
+   "town": 1,
+   "var": "Herbs",
+   "step": 139,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1390
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:140",
+   "town": 1,
+   "var": "Herbs",
+   "step": 140,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1400
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:141",
+   "town": 1,
+   "var": "Herbs",
+   "step": 141,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1410
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:142",
+   "town": 1,
+   "var": "Herbs",
+   "step": 142,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1420
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:143",
+   "town": 1,
+   "var": "Herbs",
+   "step": 143,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1430
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:144",
+   "town": 1,
+   "var": "Herbs",
+   "step": 144,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1440
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:145",
+   "town": 1,
+   "var": "Herbs",
+   "step": 145,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1450
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:146",
+   "town": 1,
+   "var": "Herbs",
+   "step": 146,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1460
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:147",
+   "town": 1,
+   "var": "Herbs",
+   "step": 147,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1470
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:148",
+   "town": 1,
+   "var": "Herbs",
+   "step": 148,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1480
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:149",
+   "town": 1,
+   "var": "Herbs",
+   "step": 149,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1490
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:150",
+   "town": 1,
+   "var": "Herbs",
+   "step": 150,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1500
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:151",
+   "town": 1,
+   "var": "Herbs",
+   "step": 151,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1510
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:152",
+   "town": 1,
+   "var": "Herbs",
+   "step": 152,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1520
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:153",
+   "town": 1,
+   "var": "Herbs",
+   "step": 153,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1530
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:154",
+   "town": 1,
+   "var": "Herbs",
+   "step": 154,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1540
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:155",
+   "town": 1,
+   "var": "Herbs",
+   "step": 155,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1550
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:156",
+   "town": 1,
+   "var": "Herbs",
+   "step": 156,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1560
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:157",
+   "town": 1,
+   "var": "Herbs",
+   "step": 157,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1570
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:158",
+   "town": 1,
+   "var": "Herbs",
+   "step": 158,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1580
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:159",
+   "town": 1,
+   "var": "Herbs",
+   "step": 159,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1590
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:160",
+   "town": 1,
+   "var": "Herbs",
+   "step": 160,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1600
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:161",
+   "town": 1,
+   "var": "Herbs",
+   "step": 161,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1610
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:162",
+   "town": 1,
+   "var": "Herbs",
+   "step": 162,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1620
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:163",
+   "town": 1,
+   "var": "Herbs",
+   "step": 163,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1630
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:164",
+   "town": 1,
+   "var": "Herbs",
+   "step": 164,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1640
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:165",
+   "town": 1,
+   "var": "Herbs",
+   "step": 165,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1650
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:166",
+   "town": 1,
+   "var": "Herbs",
+   "step": 166,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1660
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:167",
+   "town": 1,
+   "var": "Herbs",
+   "step": 167,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1670
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:168",
+   "town": 1,
+   "var": "Herbs",
+   "step": 168,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1680
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:169",
+   "town": 1,
+   "var": "Herbs",
+   "step": 169,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1690
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:170",
+   "town": 1,
+   "var": "Herbs",
+   "step": 170,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1700
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:171",
+   "town": 1,
+   "var": "Herbs",
+   "step": 171,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1710
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:172",
+   "town": 1,
+   "var": "Herbs",
+   "step": 172,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1720
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:173",
+   "town": 1,
+   "var": "Herbs",
+   "step": 173,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1730
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:174",
+   "town": 1,
+   "var": "Herbs",
+   "step": 174,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1740
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:175",
+   "town": 1,
+   "var": "Herbs",
+   "step": 175,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1750
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:176",
+   "town": 1,
+   "var": "Herbs",
+   "step": 176,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1760
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:177",
+   "town": 1,
+   "var": "Herbs",
+   "step": 177,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1770
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:178",
+   "town": 1,
+   "var": "Herbs",
+   "step": 178,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1780
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:179",
+   "town": 1,
+   "var": "Herbs",
+   "step": 179,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1790
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:180",
+   "town": 1,
+   "var": "Herbs",
+   "step": 180,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1800
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:181",
+   "town": 1,
+   "var": "Herbs",
+   "step": 181,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1810
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:182",
+   "town": 1,
+   "var": "Herbs",
+   "step": 182,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1820
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:183",
+   "town": 1,
+   "var": "Herbs",
+   "step": 183,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1830
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:184",
+   "town": 1,
+   "var": "Herbs",
+   "step": 184,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1840
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:185",
+   "town": 1,
+   "var": "Herbs",
+   "step": 185,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1850
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:186",
+   "town": 1,
+   "var": "Herbs",
+   "step": 186,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1860
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:187",
+   "town": 1,
+   "var": "Herbs",
+   "step": 187,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1870
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:188",
+   "town": 1,
+   "var": "Herbs",
+   "step": 188,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1880
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:189",
+   "town": 1,
+   "var": "Herbs",
+   "step": 189,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1890
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:190",
+   "town": 1,
+   "var": "Herbs",
+   "step": 190,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1900
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:191",
+   "town": 1,
+   "var": "Herbs",
+   "step": 191,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1910
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:192",
+   "town": 1,
+   "var": "Herbs",
+   "step": 192,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1920
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:193",
+   "town": 1,
+   "var": "Herbs",
+   "step": 193,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1930
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:194",
+   "town": 1,
+   "var": "Herbs",
+   "step": 194,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1940
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:195",
+   "town": 1,
+   "var": "Herbs",
+   "step": 195,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1950
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:196",
+   "town": 1,
+   "var": "Herbs",
+   "step": 196,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1960
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:197",
+   "town": 1,
+   "var": "Herbs",
+   "step": 197,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1970
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:198",
+   "town": 1,
+   "var": "Herbs",
+   "step": 198,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1980
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:199",
+   "town": 1,
+   "var": "Herbs",
+   "step": 199,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1990
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Herbs:200",
+   "town": 1,
+   "var": "Herbs",
+   "step": 200,
+   "dims": [
+    "Forest",
+    "Shortcut",
+    "Flowers"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 2000
+   },
+   "grant": {
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6437,10 +12375,10 @@
     "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 30
+    "baseTotalAtLeast": 10
    },
    "grant": {
-    "items": 28
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6453,10 +12391,10 @@
     "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 59
+    "baseTotalAtLeast": 20
    },
    "grant": {
-    "items": 29
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6469,10 +12407,10 @@
     "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 87
+    "baseTotalAtLeast": 30
    },
    "grant": {
-    "items": 28
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6485,10 +12423,10 @@
     "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 115
+    "baseTotalAtLeast": 40
    },
    "grant": {
-    "items": 28
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6501,10 +12439,10 @@
     "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 143
+    "baseTotalAtLeast": 50
    },
    "grant": {
-    "items": 28
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6517,10 +12455,10 @@
     "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 172
+    "baseTotalAtLeast": 60
    },
    "grant": {
-    "items": 29
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6533,154 +12471,218 @@
     "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 200
+    "baseTotalAtLeast": 70
    },
    "grant": {
-    "items": 28
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:1:StonesZ1:0",
+   "id": "q:1:Hunt:8",
    "town": 1,
-   "var": "StonesZ1",
-   "step": 0,
+   "var": "Hunt",
+   "step": 8,
    "dims": [
-    "RuinsZ1"
+    "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 2500
+    "baseTotalAtLeast": 80
    },
    "grant": {
-    "items": 2500
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:1:StonesZ1:1",
+   "id": "q:1:Hunt:9",
    "town": 1,
-   "var": "StonesZ1",
-   "step": 1,
+   "var": "Hunt",
+   "step": 9,
    "dims": [
-    "RuinsZ1"
+    "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 37857
+    "baseTotalAtLeast": 90
    },
    "grant": {
-    "items": 35357
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:1:StonesZ1:2",
+   "id": "q:1:Hunt:10",
    "town": 1,
-   "var": "StonesZ1",
-   "step": 2,
+   "var": "Hunt",
+   "step": 10,
    "dims": [
-    "RuinsZ1"
+    "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 73214
+    "baseTotalAtLeast": 100
    },
    "grant": {
-    "items": 35357
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:1:StonesZ1:3",
+   "id": "q:1:Hunt:11",
    "town": 1,
-   "var": "StonesZ1",
-   "step": 3,
+   "var": "Hunt",
+   "step": 11,
    "dims": [
-    "RuinsZ1"
+    "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 108571
+    "baseTotalAtLeast": 110
    },
    "grant": {
-    "items": 35357
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:1:StonesZ1:4",
+   "id": "q:1:Hunt:12",
    "town": 1,
-   "var": "StonesZ1",
-   "step": 4,
+   "var": "Hunt",
+   "step": 12,
    "dims": [
-    "RuinsZ1"
+    "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 143929
+    "baseTotalAtLeast": 120
    },
    "grant": {
-    "items": 35358
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:1:StonesZ1:5",
+   "id": "q:1:Hunt:13",
    "town": 1,
-   "var": "StonesZ1",
-   "step": 5,
+   "var": "Hunt",
+   "step": 13,
    "dims": [
-    "RuinsZ1"
+    "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 179286
+    "baseTotalAtLeast": 130
    },
    "grant": {
-    "items": 35357
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:1:StonesZ1:6",
+   "id": "q:1:Hunt:14",
    "town": 1,
-   "var": "StonesZ1",
-   "step": 6,
+   "var": "Hunt",
+   "step": 14,
    "dims": [
-    "RuinsZ1"
+    "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 214643
+    "baseTotalAtLeast": 140
    },
    "grant": {
-    "items": 35357
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:1:StonesZ1:7",
+   "id": "q:1:Hunt:15",
    "town": 1,
-   "var": "StonesZ1",
-   "step": 7,
+   "var": "Hunt",
+   "step": 15,
    "dims": [
-    "RuinsZ1"
+    "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 250000
+    "baseTotalAtLeast": 150
    },
    "grant": {
-    "items": 35357
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:2:Gamble:0",
-   "town": 2,
-   "var": "Gamble",
-   "step": 0,
+   "id": "q:1:Hunt:16",
+   "town": 1,
+   "var": "Hunt",
+   "step": 16,
    "dims": [
-    "City"
+    "Forest"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 3
+    "baseTotalAtLeast": 160
    },
    "grant": {
-    "items": 3
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Hunt:17",
+   "town": 1,
+   "var": "Hunt",
+   "step": 17,
+   "dims": [
+    "Forest"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 170
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Hunt:18",
+   "town": 1,
+   "var": "Hunt",
+   "step": 18,
+   "dims": [
+    "Forest"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 180
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Hunt:19",
+   "town": 1,
+   "var": "Hunt",
+   "step": 19,
+   "dims": [
+    "Forest"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 190
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:1:Hunt:20",
+   "town": 1,
+   "var": "Hunt",
+   "step": 20,
+   "dims": [
+    "Forest"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 200
+   },
+   "grant": {
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6693,10 +12695,10 @@
     "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 45
+    "baseTotalAtLeast": 10
    },
    "grant": {
-    "items": 42
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6709,10 +12711,10 @@
     "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 88
+    "baseTotalAtLeast": 20
    },
    "grant": {
-    "items": 43
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6725,10 +12727,10 @@
     "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 130
+    "baseTotalAtLeast": 30
    },
    "grant": {
-    "items": 42
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6741,10 +12743,10 @@
     "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 173
+    "baseTotalAtLeast": 40
    },
    "grant": {
-    "items": 43
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6757,10 +12759,10 @@
     "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 215
+    "baseTotalAtLeast": 50
    },
    "grant": {
-    "items": 42
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6773,10 +12775,10 @@
     "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 258
+    "baseTotalAtLeast": 60
    },
    "grant": {
-    "items": 43
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6789,154 +12791,378 @@
     "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 300
+    "baseTotalAtLeast": 70
    },
    "grant": {
-    "items": 42
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:3:StonesZ3:0",
-   "town": 3,
-   "var": "StonesZ3",
-   "step": 0,
+   "id": "q:2:Gamble:8",
+   "town": 2,
+   "var": "Gamble",
+   "step": 8,
    "dims": [
-    "RuinsZ3"
+    "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 2500
+    "baseTotalAtLeast": 80
    },
    "grant": {
-    "items": 2500
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:3:StonesZ3:1",
-   "town": 3,
-   "var": "StonesZ3",
-   "step": 1,
+   "id": "q:2:Gamble:9",
+   "town": 2,
+   "var": "Gamble",
+   "step": 9,
    "dims": [
-    "RuinsZ3"
+    "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 37857
+    "baseTotalAtLeast": 90
    },
    "grant": {
-    "items": 35357
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:3:StonesZ3:2",
-   "town": 3,
-   "var": "StonesZ3",
-   "step": 2,
+   "id": "q:2:Gamble:10",
+   "town": 2,
+   "var": "Gamble",
+   "step": 10,
    "dims": [
-    "RuinsZ3"
+    "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 73214
+    "baseTotalAtLeast": 100
    },
    "grant": {
-    "items": 35357
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:3:StonesZ3:3",
-   "town": 3,
-   "var": "StonesZ3",
-   "step": 3,
+   "id": "q:2:Gamble:11",
+   "town": 2,
+   "var": "Gamble",
+   "step": 11,
    "dims": [
-    "RuinsZ3"
+    "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 108571
+    "baseTotalAtLeast": 110
    },
    "grant": {
-    "items": 35357
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:3:StonesZ3:4",
-   "town": 3,
-   "var": "StonesZ3",
-   "step": 4,
+   "id": "q:2:Gamble:12",
+   "town": 2,
+   "var": "Gamble",
+   "step": 12,
    "dims": [
-    "RuinsZ3"
+    "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 143929
+    "baseTotalAtLeast": 120
    },
    "grant": {
-    "items": 35358
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:3:StonesZ3:5",
-   "town": 3,
-   "var": "StonesZ3",
-   "step": 5,
+   "id": "q:2:Gamble:13",
+   "town": 2,
+   "var": "Gamble",
+   "step": 13,
    "dims": [
-    "RuinsZ3"
+    "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 179286
+    "baseTotalAtLeast": 130
    },
    "grant": {
-    "items": 35357
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:3:StonesZ3:6",
-   "town": 3,
-   "var": "StonesZ3",
-   "step": 6,
+   "id": "q:2:Gamble:14",
+   "town": 2,
+   "var": "Gamble",
+   "step": 14,
    "dims": [
-    "RuinsZ3"
+    "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 214643
+    "baseTotalAtLeast": 140
    },
    "grant": {
-    "items": 35357
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:3:StonesZ3:7",
-   "town": 3,
-   "var": "StonesZ3",
-   "step": 7,
+   "id": "q:2:Gamble:15",
+   "town": 2,
+   "var": "Gamble",
+   "step": 15,
    "dims": [
-    "RuinsZ3"
+    "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 250000
+    "baseTotalAtLeast": 150
    },
    "grant": {
-    "items": 35357
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:3:Geysers:0",
-   "town": 3,
-   "var": "Geysers",
-   "step": 0,
+   "id": "q:2:Gamble:16",
+   "town": 2,
+   "var": "Gamble",
+   "step": 16,
    "dims": [
-    "Mountain"
+    "City"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 10
+    "baseTotalAtLeast": 160
    },
    "grant": {
-    "items": 10
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:17",
+   "town": 2,
+   "var": "Gamble",
+   "step": 17,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 170
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:18",
+   "town": 2,
+   "var": "Gamble",
+   "step": 18,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 180
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:19",
+   "town": 2,
+   "var": "Gamble",
+   "step": 19,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 190
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:20",
+   "town": 2,
+   "var": "Gamble",
+   "step": 20,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 200
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:21",
+   "town": 2,
+   "var": "Gamble",
+   "step": 21,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 210
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:22",
+   "town": 2,
+   "var": "Gamble",
+   "step": 22,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 220
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:23",
+   "town": 2,
+   "var": "Gamble",
+   "step": 23,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 230
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:24",
+   "town": 2,
+   "var": "Gamble",
+   "step": 24,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 240
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:25",
+   "town": 2,
+   "var": "Gamble",
+   "step": 25,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 250
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:26",
+   "town": 2,
+   "var": "Gamble",
+   "step": 26,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 260
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:27",
+   "town": 2,
+   "var": "Gamble",
+   "step": 27,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 270
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:28",
+   "town": 2,
+   "var": "Gamble",
+   "step": 28,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 280
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:29",
+   "town": 2,
+   "var": "Gamble",
+   "step": 29,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 290
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:2:Gamble:30",
+   "town": 2,
+   "var": "Gamble",
+   "step": 30,
+   "dims": [
+    "City"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 300
+   },
+   "grant": {
+    "batch": 10
    },
    "apEligible": true
   },
@@ -6949,10 +13175,10 @@
     "Mountain"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 151
+    "baseTotalAtLeast": 100
    },
    "grant": {
-    "items": 141
+    "batch": 100
    },
    "apEligible": true
   },
@@ -6965,10 +13191,10 @@
     "Mountain"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 293
+    "baseTotalAtLeast": 200
    },
    "grant": {
-    "items": 142
+    "batch": 100
    },
    "apEligible": true
   },
@@ -6981,10 +13207,10 @@
     "Mountain"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 434
+    "baseTotalAtLeast": 300
    },
    "grant": {
-    "items": 141
+    "batch": 100
    },
    "apEligible": true
   },
@@ -6997,10 +13223,10 @@
     "Mountain"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 576
+    "baseTotalAtLeast": 400
    },
    "grant": {
-    "items": 142
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7013,10 +13239,10 @@
     "Mountain"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 717
+    "baseTotalAtLeast": 500
    },
    "grant": {
-    "items": 141
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7029,10 +13255,10 @@
     "Mountain"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 859
+    "baseTotalAtLeast": 600
    },
    "grant": {
-    "items": 142
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7045,26 +13271,58 @@
     "Mountain"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 1000
+    "baseTotalAtLeast": 700
    },
    "grant": {
-    "items": 141
+    "batch": 100
    },
    "apEligible": true
   },
   {
-   "id": "q:3:MineSoulstones:0",
+   "id": "q:3:Geysers:8",
    "town": 3,
-   "var": "MineSoulstones",
-   "step": 0,
+   "var": "Geysers",
+   "step": 8,
    "dims": [
-    "Cavern"
+    "Mountain"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 3
+    "baseTotalAtLeast": 800
    },
    "grant": {
-    "items": 3
+    "batch": 100
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Geysers:9",
+   "town": 3,
+   "var": "Geysers",
+   "step": 9,
+   "dims": [
+    "Mountain"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 900
+   },
+   "grant": {
+    "batch": 100
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Geysers:10",
+   "town": 3,
+   "var": "Geysers",
+   "step": 10,
+   "dims": [
+    "Mountain"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1000
+   },
+   "grant": {
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7077,10 +13335,10 @@
     "Cavern"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 45
+    "baseTotalAtLeast": 10
    },
    "grant": {
-    "items": 42
+    "batch": 10
    },
    "apEligible": true
   },
@@ -7093,10 +13351,10 @@
     "Cavern"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 88
+    "baseTotalAtLeast": 20
    },
    "grant": {
-    "items": 43
+    "batch": 10
    },
    "apEligible": true
   },
@@ -7109,10 +13367,10 @@
     "Cavern"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 130
+    "baseTotalAtLeast": 30
    },
    "grant": {
-    "items": 42
+    "batch": 10
    },
    "apEligible": true
   },
@@ -7125,10 +13383,10 @@
     "Cavern"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 173
+    "baseTotalAtLeast": 40
    },
    "grant": {
-    "items": 43
+    "batch": 10
    },
    "apEligible": true
   },
@@ -7141,10 +13399,10 @@
     "Cavern"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 215
+    "baseTotalAtLeast": 50
    },
    "grant": {
-    "items": 42
+    "batch": 10
    },
    "apEligible": true
   },
@@ -7157,10 +13415,10 @@
     "Cavern"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 258
+    "baseTotalAtLeast": 60
    },
    "grant": {
-    "items": 43
+    "batch": 10
    },
    "apEligible": true
   },
@@ -7173,26 +13431,378 @@
     "Cavern"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 300
+    "baseTotalAtLeast": 70
    },
    "grant": {
-    "items": 42
+    "batch": 10
    },
    "apEligible": true
   },
   {
-   "id": "q:3:Artifacts:0",
+   "id": "q:3:MineSoulstones:8",
    "town": 3,
-   "var": "Artifacts",
-   "step": 0,
+   "var": "MineSoulstones",
+   "step": 8,
    "dims": [
-    "Illusions"
+    "Cavern"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 5
+    "baseTotalAtLeast": 80
    },
    "grant": {
-    "items": 5
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:9",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 9,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 90
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:10",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 10,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 100
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:11",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 11,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 110
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:12",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 12,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 120
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:13",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 13,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 130
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:14",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 14,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 140
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:15",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 15,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 150
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:16",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 16,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 160
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:17",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 17,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 170
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:18",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 18,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 180
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:19",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 19,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 190
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:20",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 20,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 200
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:21",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 21,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 210
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:22",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 22,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 220
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:23",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 23,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 230
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:24",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 24,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 240
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:25",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 25,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 250
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:26",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 26,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 260
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:27",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 27,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 270
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:28",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 28,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 280
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:29",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 29,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 290
+   },
+   "grant": {
+    "batch": 10
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:MineSoulstones:30",
+   "town": 3,
+   "var": "MineSoulstones",
+   "step": 30,
+   "dims": [
+    "Cavern"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 300
+   },
+   "grant": {
+    "batch": 10
    },
    "apEligible": true
   },
@@ -7205,10 +13815,10 @@
     "Illusions"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 76
+    "baseTotalAtLeast": 25
    },
    "grant": {
-    "items": 71
+    "batch": 25
    },
    "apEligible": true
   },
@@ -7221,10 +13831,10 @@
     "Illusions"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 146
+    "baseTotalAtLeast": 50
    },
    "grant": {
-    "items": 70
+    "batch": 25
    },
    "apEligible": true
   },
@@ -7237,10 +13847,10 @@
     "Illusions"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 217
+    "baseTotalAtLeast": 75
    },
    "grant": {
-    "items": 71
+    "batch": 25
    },
    "apEligible": true
   },
@@ -7253,10 +13863,10 @@
     "Illusions"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 288
+    "baseTotalAtLeast": 100
    },
    "grant": {
-    "items": 71
+    "batch": 25
    },
    "apEligible": true
   },
@@ -7269,10 +13879,10 @@
     "Illusions"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 359
+    "baseTotalAtLeast": 125
    },
    "grant": {
-    "items": 71
+    "batch": 25
    },
    "apEligible": true
   },
@@ -7285,10 +13895,10 @@
     "Illusions"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 429
+    "baseTotalAtLeast": 150
    },
    "grant": {
-    "items": 70
+    "batch": 25
    },
    "apEligible": true
   },
@@ -7301,26 +13911,218 @@
     "Illusions"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 500
+    "baseTotalAtLeast": 175
    },
    "grant": {
-    "items": 71
+    "batch": 25
    },
    "apEligible": true
   },
   {
-   "id": "q:4:Donations:0",
-   "town": 4,
-   "var": "Donations",
-   "step": 0,
+   "id": "q:3:Artifacts:8",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 8,
    "dims": [
-    "Canvassed"
+    "Illusions"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 5
+    "baseTotalAtLeast": 200
    },
    "grant": {
-    "items": 5
+    "batch": 25
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:9",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 9,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 225
+   },
+   "grant": {
+    "batch": 25
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:10",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 10,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 250
+   },
+   "grant": {
+    "batch": 25
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:11",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 11,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 275
+   },
+   "grant": {
+    "batch": 25
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:12",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 12,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 300
+   },
+   "grant": {
+    "batch": 25
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:13",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 13,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 325
+   },
+   "grant": {
+    "batch": 25
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:14",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 14,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 350
+   },
+   "grant": {
+    "batch": 25
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:15",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 15,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 375
+   },
+   "grant": {
+    "batch": 25
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:16",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 16,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 400
+   },
+   "grant": {
+    "batch": 25
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:17",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 17,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 425
+   },
+   "grant": {
+    "batch": 25
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:18",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 18,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 450
+   },
+   "grant": {
+    "batch": 25
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:19",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 19,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 475
+   },
+   "grant": {
+    "batch": 25
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:3:Artifacts:20",
+   "town": 3,
+   "var": "Artifacts",
+   "step": 20,
+   "dims": [
+    "Illusions"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 500
+   },
+   "grant": {
+    "batch": 25
    },
    "apEligible": true
   },
@@ -7333,10 +14135,10 @@
     "Canvassed"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 76
+    "baseTotalAtLeast": 5
    },
    "grant": {
-    "items": 71
+    "batch": 5
    },
    "apEligible": true
   },
@@ -7349,10 +14151,10 @@
     "Canvassed"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 146
+    "baseTotalAtLeast": 10
    },
    "grant": {
-    "items": 70
+    "batch": 5
    },
    "apEligible": true
   },
@@ -7365,10 +14167,10 @@
     "Canvassed"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 217
+    "baseTotalAtLeast": 15
    },
    "grant": {
-    "items": 71
+    "batch": 5
    },
    "apEligible": true
   },
@@ -7381,10 +14183,10 @@
     "Canvassed"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 288
+    "baseTotalAtLeast": 20
    },
    "grant": {
-    "items": 71
+    "batch": 5
    },
    "apEligible": true
   },
@@ -7397,10 +14199,10 @@
     "Canvassed"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 359
+    "baseTotalAtLeast": 25
    },
    "grant": {
-    "items": 71
+    "batch": 5
    },
    "apEligible": true
   },
@@ -7413,10 +14215,10 @@
     "Canvassed"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 429
+    "baseTotalAtLeast": 30
    },
    "grant": {
-    "items": 70
+    "batch": 5
    },
    "apEligible": true
   },
@@ -7429,26 +14231,1498 @@
     "Canvassed"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 500
+    "baseTotalAtLeast": 35
    },
    "grant": {
-    "items": 71
+    "batch": 5
    },
    "apEligible": true
   },
   {
-   "id": "q:5:Pylons:0",
-   "town": 5,
-   "var": "Pylons",
-   "step": 0,
+   "id": "q:4:Donations:8",
+   "town": 4,
+   "var": "Donations",
+   "step": 8,
    "dims": [
-    "Meander"
+    "Canvassed"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 10
+    "baseTotalAtLeast": 40
    },
    "grant": {
-    "items": 10
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:9",
+   "town": 4,
+   "var": "Donations",
+   "step": 9,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 45
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:10",
+   "town": 4,
+   "var": "Donations",
+   "step": 10,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 50
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:11",
+   "town": 4,
+   "var": "Donations",
+   "step": 11,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 55
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:12",
+   "town": 4,
+   "var": "Donations",
+   "step": 12,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 60
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:13",
+   "town": 4,
+   "var": "Donations",
+   "step": 13,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 65
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:14",
+   "town": 4,
+   "var": "Donations",
+   "step": 14,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 70
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:15",
+   "town": 4,
+   "var": "Donations",
+   "step": 15,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 75
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:16",
+   "town": 4,
+   "var": "Donations",
+   "step": 16,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 80
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:17",
+   "town": 4,
+   "var": "Donations",
+   "step": 17,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 85
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:18",
+   "town": 4,
+   "var": "Donations",
+   "step": 18,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 90
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:19",
+   "town": 4,
+   "var": "Donations",
+   "step": 19,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 95
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:20",
+   "town": 4,
+   "var": "Donations",
+   "step": 20,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 100
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:21",
+   "town": 4,
+   "var": "Donations",
+   "step": 21,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 105
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:22",
+   "town": 4,
+   "var": "Donations",
+   "step": 22,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 110
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:23",
+   "town": 4,
+   "var": "Donations",
+   "step": 23,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 115
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:24",
+   "town": 4,
+   "var": "Donations",
+   "step": 24,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 120
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:25",
+   "town": 4,
+   "var": "Donations",
+   "step": 25,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 125
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:26",
+   "town": 4,
+   "var": "Donations",
+   "step": 26,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 130
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:27",
+   "town": 4,
+   "var": "Donations",
+   "step": 27,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 135
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:28",
+   "town": 4,
+   "var": "Donations",
+   "step": 28,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 140
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:29",
+   "town": 4,
+   "var": "Donations",
+   "step": 29,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 145
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:30",
+   "town": 4,
+   "var": "Donations",
+   "step": 30,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 150
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:31",
+   "town": 4,
+   "var": "Donations",
+   "step": 31,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 155
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:32",
+   "town": 4,
+   "var": "Donations",
+   "step": 32,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 160
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:33",
+   "town": 4,
+   "var": "Donations",
+   "step": 33,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 165
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:34",
+   "town": 4,
+   "var": "Donations",
+   "step": 34,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 170
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:35",
+   "town": 4,
+   "var": "Donations",
+   "step": 35,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 175
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:36",
+   "town": 4,
+   "var": "Donations",
+   "step": 36,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 180
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:37",
+   "town": 4,
+   "var": "Donations",
+   "step": 37,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 185
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:38",
+   "town": 4,
+   "var": "Donations",
+   "step": 38,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 190
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:39",
+   "town": 4,
+   "var": "Donations",
+   "step": 39,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 195
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:40",
+   "town": 4,
+   "var": "Donations",
+   "step": 40,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 200
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:41",
+   "town": 4,
+   "var": "Donations",
+   "step": 41,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 205
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:42",
+   "town": 4,
+   "var": "Donations",
+   "step": 42,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 210
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:43",
+   "town": 4,
+   "var": "Donations",
+   "step": 43,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 215
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:44",
+   "town": 4,
+   "var": "Donations",
+   "step": 44,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 220
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:45",
+   "town": 4,
+   "var": "Donations",
+   "step": 45,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 225
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:46",
+   "town": 4,
+   "var": "Donations",
+   "step": 46,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 230
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:47",
+   "town": 4,
+   "var": "Donations",
+   "step": 47,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 235
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:48",
+   "town": 4,
+   "var": "Donations",
+   "step": 48,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 240
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:49",
+   "town": 4,
+   "var": "Donations",
+   "step": 49,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 245
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:50",
+   "town": 4,
+   "var": "Donations",
+   "step": 50,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 250
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:51",
+   "town": 4,
+   "var": "Donations",
+   "step": 51,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 255
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:52",
+   "town": 4,
+   "var": "Donations",
+   "step": 52,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 260
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:53",
+   "town": 4,
+   "var": "Donations",
+   "step": 53,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 265
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:54",
+   "town": 4,
+   "var": "Donations",
+   "step": 54,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 270
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:55",
+   "town": 4,
+   "var": "Donations",
+   "step": 55,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 275
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:56",
+   "town": 4,
+   "var": "Donations",
+   "step": 56,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 280
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:57",
+   "town": 4,
+   "var": "Donations",
+   "step": 57,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 285
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:58",
+   "town": 4,
+   "var": "Donations",
+   "step": 58,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 290
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:59",
+   "town": 4,
+   "var": "Donations",
+   "step": 59,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 295
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:60",
+   "town": 4,
+   "var": "Donations",
+   "step": 60,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 300
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:61",
+   "town": 4,
+   "var": "Donations",
+   "step": 61,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 305
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:62",
+   "town": 4,
+   "var": "Donations",
+   "step": 62,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 310
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:63",
+   "town": 4,
+   "var": "Donations",
+   "step": 63,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 315
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:64",
+   "town": 4,
+   "var": "Donations",
+   "step": 64,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 320
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:65",
+   "town": 4,
+   "var": "Donations",
+   "step": 65,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 325
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:66",
+   "town": 4,
+   "var": "Donations",
+   "step": 66,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 330
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:67",
+   "town": 4,
+   "var": "Donations",
+   "step": 67,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 335
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:68",
+   "town": 4,
+   "var": "Donations",
+   "step": 68,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 340
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:69",
+   "town": 4,
+   "var": "Donations",
+   "step": 69,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 345
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:70",
+   "town": 4,
+   "var": "Donations",
+   "step": 70,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 350
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:71",
+   "town": 4,
+   "var": "Donations",
+   "step": 71,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 355
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:72",
+   "town": 4,
+   "var": "Donations",
+   "step": 72,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 360
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:73",
+   "town": 4,
+   "var": "Donations",
+   "step": 73,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 365
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:74",
+   "town": 4,
+   "var": "Donations",
+   "step": 74,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 370
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:75",
+   "town": 4,
+   "var": "Donations",
+   "step": 75,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 375
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:76",
+   "town": 4,
+   "var": "Donations",
+   "step": 76,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 380
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:77",
+   "town": 4,
+   "var": "Donations",
+   "step": 77,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 385
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:78",
+   "town": 4,
+   "var": "Donations",
+   "step": 78,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 390
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:79",
+   "town": 4,
+   "var": "Donations",
+   "step": 79,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 395
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:80",
+   "town": 4,
+   "var": "Donations",
+   "step": 80,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 400
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:81",
+   "town": 4,
+   "var": "Donations",
+   "step": 81,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 405
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:82",
+   "town": 4,
+   "var": "Donations",
+   "step": 82,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 410
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:83",
+   "town": 4,
+   "var": "Donations",
+   "step": 83,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 415
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:84",
+   "town": 4,
+   "var": "Donations",
+   "step": 84,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 420
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:85",
+   "town": 4,
+   "var": "Donations",
+   "step": 85,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 425
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:86",
+   "town": 4,
+   "var": "Donations",
+   "step": 86,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 430
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:87",
+   "town": 4,
+   "var": "Donations",
+   "step": 87,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 435
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:88",
+   "town": 4,
+   "var": "Donations",
+   "step": 88,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 440
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:89",
+   "town": 4,
+   "var": "Donations",
+   "step": 89,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 445
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:90",
+   "town": 4,
+   "var": "Donations",
+   "step": 90,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 450
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:91",
+   "town": 4,
+   "var": "Donations",
+   "step": 91,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 455
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:92",
+   "town": 4,
+   "var": "Donations",
+   "step": 92,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 460
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:93",
+   "town": 4,
+   "var": "Donations",
+   "step": 93,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 465
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:94",
+   "town": 4,
+   "var": "Donations",
+   "step": 94,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 470
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:95",
+   "town": 4,
+   "var": "Donations",
+   "step": 95,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 475
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:96",
+   "town": 4,
+   "var": "Donations",
+   "step": 96,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 480
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:97",
+   "town": 4,
+   "var": "Donations",
+   "step": 97,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 485
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:98",
+   "town": 4,
+   "var": "Donations",
+   "step": 98,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 490
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:99",
+   "town": 4,
+   "var": "Donations",
+   "step": 99,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 495
+   },
+   "grant": {
+    "batch": 5
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:4:Donations:100",
+   "town": 4,
+   "var": "Donations",
+   "step": 100,
+   "dims": [
+    "Canvassed"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 500
+   },
+   "grant": {
+    "batch": 5
    },
    "apEligible": true
   },
@@ -7461,10 +15735,10 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 151
+    "baseTotalAtLeast": 100
    },
    "grant": {
-    "items": 141
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7477,10 +15751,10 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 293
+    "baseTotalAtLeast": 200
    },
    "grant": {
-    "items": 142
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7493,10 +15767,10 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 434
+    "baseTotalAtLeast": 300
    },
    "grant": {
-    "items": 141
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7509,10 +15783,10 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 576
+    "baseTotalAtLeast": 400
    },
    "grant": {
-    "items": 142
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7525,10 +15799,10 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 717
+    "baseTotalAtLeast": 500
    },
    "grant": {
-    "items": 141
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7541,10 +15815,10 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 859
+    "baseTotalAtLeast": 600
    },
    "grant": {
-    "items": 142
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7557,26 +15831,58 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 1000
+    "baseTotalAtLeast": 700
    },
    "grant": {
-    "items": 141
+    "batch": 100
    },
    "apEligible": true
   },
   {
-   "id": "q:5:Wells:0",
+   "id": "q:5:Pylons:8",
    "town": 5,
-   "var": "Wells",
-   "step": 0,
+   "var": "Pylons",
+   "step": 8,
    "dims": [
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 10
+    "baseTotalAtLeast": 800
    },
    "grant": {
-    "items": 10
+    "batch": 100
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Pylons:9",
+   "town": 5,
+   "var": "Pylons",
+   "step": 9,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 900
+   },
+   "grant": {
+    "batch": 100
+   },
+   "apEligible": true
+  },
+  {
+   "id": "q:5:Pylons:10",
+   "town": 5,
+   "var": "Pylons",
+   "step": 10,
+   "dims": [
+    "Meander"
+   ],
+   "trigger": {
+    "baseTotalAtLeast": 1000
+   },
+   "grant": {
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7589,10 +15895,10 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 151
+    "baseTotalAtLeast": 100
    },
    "grant": {
-    "items": 141
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7605,10 +15911,10 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 293
+    "baseTotalAtLeast": 200
    },
    "grant": {
-    "items": 142
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7621,10 +15927,10 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 434
+    "baseTotalAtLeast": 300
    },
    "grant": {
-    "items": 141
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7637,10 +15943,10 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 576
+    "baseTotalAtLeast": 400
    },
    "grant": {
-    "items": 142
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7653,10 +15959,10 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 717
+    "baseTotalAtLeast": 500
    },
    "grant": {
-    "items": 141
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7669,10 +15975,10 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 859
+    "baseTotalAtLeast": 600
    },
    "grant": {
-    "items": 142
+    "batch": 100
    },
    "apEligible": true
   },
@@ -7685,266 +15991,58 @@
     "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 1000
+    "baseTotalAtLeast": 700
    },
    "grant": {
-    "items": 141
+    "batch": 100
    },
    "apEligible": true
   },
   {
-   "id": "q:5:StonesZ5:0",
+   "id": "q:5:Wells:8",
    "town": 5,
-   "var": "StonesZ5",
-   "step": 0,
+   "var": "Wells",
+   "step": 8,
    "dims": [
-    "RuinsZ5"
+    "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 2500
+    "baseTotalAtLeast": 800
    },
    "grant": {
-    "items": 2500
+    "batch": 100
    },
    "apEligible": true
   },
   {
-   "id": "q:5:StonesZ5:1",
+   "id": "q:5:Wells:9",
    "town": 5,
-   "var": "StonesZ5",
-   "step": 1,
+   "var": "Wells",
+   "step": 9,
    "dims": [
-    "RuinsZ5"
+    "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 37857
+    "baseTotalAtLeast": 900
    },
    "grant": {
-    "items": 35357
+    "batch": 100
    },
    "apEligible": true
   },
   {
-   "id": "q:5:StonesZ5:2",
+   "id": "q:5:Wells:10",
    "town": 5,
-   "var": "StonesZ5",
-   "step": 2,
+   "var": "Wells",
+   "step": 10,
    "dims": [
-    "RuinsZ5"
+    "Meander"
    ],
    "trigger": {
-    "vanillaTotalAtLeast": 73214
+    "baseTotalAtLeast": 1000
    },
    "grant": {
-    "items": 35357
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:5:StonesZ5:3",
-   "town": 5,
-   "var": "StonesZ5",
-   "step": 3,
-   "dims": [
-    "RuinsZ5"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 108571
-   },
-   "grant": {
-    "items": 35357
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:5:StonesZ5:4",
-   "town": 5,
-   "var": "StonesZ5",
-   "step": 4,
-   "dims": [
-    "RuinsZ5"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 143929
-   },
-   "grant": {
-    "items": 35358
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:5:StonesZ5:5",
-   "town": 5,
-   "var": "StonesZ5",
-   "step": 5,
-   "dims": [
-    "RuinsZ5"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 179286
-   },
-   "grant": {
-    "items": 35357
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:5:StonesZ5:6",
-   "town": 5,
-   "var": "StonesZ5",
-   "step": 6,
-   "dims": [
-    "RuinsZ5"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 214643
-   },
-   "grant": {
-    "items": 35357
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:5:StonesZ5:7",
-   "town": 5,
-   "var": "StonesZ5",
-   "step": 7,
-   "dims": [
-    "RuinsZ5"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 250000
-   },
-   "grant": {
-    "items": 35357
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:6:StonesZ6:0",
-   "town": 6,
-   "var": "StonesZ6",
-   "step": 0,
-   "dims": [
-    "RuinsZ6"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 2500
-   },
-   "grant": {
-    "items": 2500
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:6:StonesZ6:1",
-   "town": 6,
-   "var": "StonesZ6",
-   "step": 1,
-   "dims": [
-    "RuinsZ6"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 37857
-   },
-   "grant": {
-    "items": 35357
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:6:StonesZ6:2",
-   "town": 6,
-   "var": "StonesZ6",
-   "step": 2,
-   "dims": [
-    "RuinsZ6"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 73214
-   },
-   "grant": {
-    "items": 35357
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:6:StonesZ6:3",
-   "town": 6,
-   "var": "StonesZ6",
-   "step": 3,
-   "dims": [
-    "RuinsZ6"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 108571
-   },
-   "grant": {
-    "items": 35357
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:6:StonesZ6:4",
-   "town": 6,
-   "var": "StonesZ6",
-   "step": 4,
-   "dims": [
-    "RuinsZ6"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 143929
-   },
-   "grant": {
-    "items": 35358
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:6:StonesZ6:5",
-   "town": 6,
-   "var": "StonesZ6",
-   "step": 5,
-   "dims": [
-    "RuinsZ6"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 179286
-   },
-   "grant": {
-    "items": 35357
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:6:StonesZ6:6",
-   "town": 6,
-   "var": "StonesZ6",
-   "step": 6,
-   "dims": [
-    "RuinsZ6"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 214643
-   },
-   "grant": {
-    "items": 35357
-   },
-   "apEligible": true
-  },
-  {
-   "id": "q:6:StonesZ6:7",
-   "town": 6,
-   "var": "StonesZ6",
-   "step": 7,
-   "dims": [
-    "RuinsZ6"
-   ],
-   "trigger": {
-    "vanillaTotalAtLeast": 250000
-   },
-   "grant": {
-    "items": 35357
+    "batch": 100
    },
    "apEligible": true
   }

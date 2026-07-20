@@ -21,8 +21,27 @@ import { makeContext } from "./harness.mjs";
 export const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 export const TABLE_PATH = path.join(ROOT, "data", "unlockTable.json");
 
-/** default step count per quantity var (plan §3.5: G = 8) */
-export const GRANULARITY = 8;
+/** the quantity model this table implements (plan §3.5, USER-RULED 2026-07-19) */
+export const QUANTITY_MODEL = "loot-batch";
+
+/**
+ * Discovery vars excluded from randomization entirely — no AP locations, no AP
+ * items (USER RULING 2026-07-20).
+ *
+ * The four Hauls are the whole list. They are the game's soulstone grind: at
+ * 2500 capacity per progress level against a 1000-per-batch ratio, each one
+ * would mint 250 batch rows, so on the batch model alone they are 1,000 of
+ * 1,620 rows — 62% of the pool spent on four repetitive grind actions. They
+ * are excluded here at the source rather than filtered downstream so that no
+ * consumer has to remember the rule; meta.excludedVars keeps the decision
+ * visible in the committed artifact.
+ *
+ * This is the LOCATION/ITEM axis only. Cross-game loot shuffling is a
+ * different surface and already excludes them by construction —
+ * omsiSubstrateWrapper/generateAwardSchedule.js ships OMSI_LOOTABLES =
+ * ['Pots', 'Locks']. Anything widening that list must honour this ruling too.
+ */
+export const QUANTITY_EXCLUDED_VARS = Object.freeze(["StonesZ1", "StonesZ3", "StonesZ5", "StonesZ6"]);
 
 /** A context ready to walk and probe. The XML stack and unlocks.js are in the
  *  default SIM_FILES since the cutover, so a plain context already has both. */
@@ -97,22 +116,58 @@ globalThis.__uq = (() => {
 `;
 
 /**
- * Measure one var's capacity curve by driving the real adjustAll().
+ * Assert the sweep context is multiplier-NEUTRAL, so a measured total is the
+ * BASE-RATE total the loot-batch model is defined against (plan §3.5).
  *
- * Baseline state: all progress at zero, no prestige, no Spatiomancy. The
- * boundaries are therefore a property of the PROGRESS curve alone; the
- * skillMod/surveyBonus modifiers only ever raise the live total, so under AP
- * they make a player cross the same boundaries earlier. That is vanilla
- * pacing (more Spatiomancy has always meant more capacity sooner), not a
- * distortion introduced here.
+ * Neutral by construction rather than by stubbing: a fresh boot has no
+ * prestige, no Spatiomancy and no Survey progress, and each of the three
+ * modifiers is the identity there — `adjustContentFromPrestige()` is 1
+ * (prestige.js:203), `getSurveyBonus()` is `level * .005` = 0 (stats.js:484),
+ * and the Spatiomancy `getSkillMod` window bottoms out at 1. Asserting it
+ * means a future change to any of those defaults trips the generator loudly
+ * instead of quietly skewing every threshold in the golden.
  */
-export function measureQuantityCurves(ctx, quantityDims, granularity = GRANULARITY) {
+const ASSERT_NEUTRAL = `
+(() => {
+    const bad = [];
+    const prestige = adjustContentFromPrestige();
+    if (prestige !== 1) bad.push("adjustContentFromPrestige() = " + prestige + ", want 1");
+    const spatio = getSkillMod("Spatiomancy", 100, 300, .5);
+    if (spatio !== 1) bad.push("Spatiomancy skillMod = " + spatio + ", want 1");
+    for (const t of towns) {
+        const sb = getSurveyBonus(t);
+        if (sb !== 0) bad.push("getSurveyBonus(town " + t.index + ") = " + sb + ", want 0");
+    }
+    if (bad.length) throw new Error("unlock-table: sweep context is not multiplier-neutral:\\n  " + bad.join("\\n  "));
+})();
+`;
+
+/**
+ * Measure each var's BASE-RATE capacity ceiling by driving the real
+ * adjustAll() with every source dim at its cap (level 100) and all three
+ * multipliers neutral.
+ *
+ * That ceiling is the only number the loot-batch model needs from the game:
+ * a var mints `floor(baseMax / oneInEvery)` locations, and batch k's trigger
+ * is the plain scalar `k * oneInEvery` (plan §3.5). There is no boundary
+ * SEARCH here and deliberately so — because the trigger is a threshold on
+ * the same monotone scalar the game already computes, it is order-
+ * independent by construction for the multi-source vars (Herbs, Wild Mana)
+ * rather than by a sweep that happened to try the right orders. The verifier
+ * leg replays the orders anyway, as a check on that reasoning.
+ *
+ * The sensitivity probe below feeds checkQuantityProvenance: it is what
+ * catches <totalDiscovered> drifting away from the live formula.
+ */
+export function measureQuantityCurves(ctx, quantityDims) {
     ctx.ev(INSTALL_SWEEP);
-    const spec = quantityDims.map(q => ({ action: q.action, town: q.town, dims: q.dims }));
+    ctx.ev(ASSERT_NEUTRAL);
+    const spec = quantityDims.map(q => ({
+        action: q.action, town: q.town, dims: q.dims, name: q.name, oneInEvery: q.oneInEvery,
+    }));
     return JSON.parse(ctx.ev(`
 JSON.stringify((() => {
     const { setLevel, allDims, zeroProgress, totalOf, townOf } = __uq;
-    const G = ${granularity};
     const out = [];
     for (const q of ${JSON.stringify(spec)}) {
         zeroProgress();
@@ -145,31 +200,25 @@ JSON.stringify((() => {
         const spatioSensitive = totalOf(q.town, q.action) !== base;
         skills.Spatiomancy.levelExp.level = spatioBefore;
 
-        // --- sample the reachable range ---
-        // axes + the diagonal; the formulas are monotone non-decreasing in
-        // every dim, so the extremes are exact and the samples in between
-        // only need to be representative of the shape.
+        // --- the base-rate ceiling: every source dim at its level cap ---
         zeroProgress();
-        const values = new Set();
-        for (const d of dimTowns) {
-            for (let L = 0; L <= 100; L++) {
-                setLevel(d.town, d.v, L);
-                values.add(totalOf(q.town, q.action));
-            }
-            setLevel(d.town, d.v, 0);
-        }
-        for (let L = 0; L <= 100; L++) {
-            for (const d of dimTowns) setLevel(d.town, d.v, L);
-            values.add(totalOf(q.town, q.action));
-        }
+        const atZero = totalOf(q.town, q.action);
         for (const d of dimTowns) setLevel(d.town, d.v, 100);
-        const max = totalOf(q.town, q.action);
-        values.add(max);
+        const baseMax = totalOf(q.town, q.action);
         zeroProgress();
 
-        const positive = [...values].filter(v => v > 0).sort((a, b) => a - b);
-        out.push({ action: q.action, town: q.town, dims: q.dims, sensitive, spatioSensitive,
-                   firstNonzero: positive[0] ?? 0, max, G });
+        // --- the independent JS oracle for the batch size ---
+        // <oneInEvery> is XML; the ratio the game actually walks is the second
+        // argument of the action's finishRegular() call. Reading it out of the
+        // live function source keeps the two derivations independent, which is
+        // the whole point of cross-checking them in checkQuantityProvenance.
+        const act = totalActionList.find(a => a.name === q.name);
+        if (!act) throw new Error("unlock-table: no live Action named " + q.name);
+        const src = String(act.loopsFinished ?? act.finish ?? "");
+        const m = /finishRegular\\(\\s*this\\.varName\\s*,\\s*(\\d+)/.exec(src);
+        out.push({ action: q.action, name: q.name, town: q.town, dims: q.dims,
+                   sensitive, spatioSensitive, atZero, baseMax,
+                   oneInEvery: q.oneInEvery, jsOneInEvery: m ? Number(m[1]) : null });
     }
     zeroProgress();
     adjustAll();
@@ -188,18 +237,21 @@ JSON.stringify((() => {
  * eligible rows v1 actually uses is a separate, looser question, recorded in
  * meta.v1Pool rather than baked into the rows.
  */
-export function buildTable(ctx, xmlText, granularity = GRANULARITY) {
+export function buildTable(ctx, xmlText) {
     const predicates = walkRows(ctx, xmlText).map(r => ({
         ...r, apEligible: r.monotone && r.pred === "unlocked",
     }));
     const dims = walkQuantityDims(ctx, xmlText);
-    const curves = measureQuantityCurves(ctx, dims, granularity);
+    const curves = measureQuantityCurves(ctx, dims);
     checkQuantityProvenance(curves, dims);
-    const quantities = curves.flatMap(c => quantityRows(c).map(r => ({ ...r, apEligible: true })));
+    const quantities = curves
+        .filter(c => !QUANTITY_EXCLUDED_VARS.includes(c.action))
+        .flatMap(c => quantityRows(c).map(r => ({ ...r, apEligible: true })));
     return {
         version: 1,
         meta: {
-            granularity,
+            quantityModel: QUANTITY_MODEL,
+            excludedVars: [...QUANTITY_EXCLUDED_VARS],
             // the 2026-07-19 ruling: v1 randomizes discovery quantity steps
             // only. Action-unlock rows are carried here in full but are not
             // v1 locations.
@@ -645,6 +697,21 @@ export function checkQuantityProvenance(curves, quantityDims) {
                 ? `${c.action}: declares <skillMod> but Spatiomancy does not move the live total`
                 : `${c.action}: Spatiomancy moves the live total but no <skillMod> is declared`);
         }
+        // every formula must be 0 at zero progress. The batch model numbers
+        // rows from a standing start (batch k unlocks at k * oneInEvery), so a
+        // var that already had capacity before any progress would need a
+        // step-0 row the generator never mints — better to fail loudly than to
+        // ship a table that silently owes the player a batch.
+        if (c.atZero !== 0) {
+            problems.push(`${c.action}: base total is ${c.atZero} at zero progress, want 0`);
+        }
+        // the batch size the table mints locations from must be the batch size
+        // the checking walk actually yields loot on
+        if (c.jsOneInEvery === null) {
+            problems.push(`${c.action}: no finishRegular(this.varName, N, ...) call found in the live action`);
+        } else if (c.jsOneInEvery !== c.oneInEvery) {
+            problems.push(`${c.action}: <oneInEvery> is ${c.oneInEvery} but finishRegular walks ${c.jsOneInEvery}`);
+        }
     }
     if (problems.length) {
         throw new Error("unlock-table: <totalDiscovered> disagrees with the live adjust*() functions:\n  "
@@ -653,28 +720,156 @@ export function checkQuantityProvenance(curves, quantityDims) {
 }
 
 /**
- * Turn a measured curve into G step rows.
+ * Replay every quantity var's source dims 0 -> cap against the live
+ * adjustAll() and check the committed rows fire exactly when the game says
+ * the next complete batch became checkable.
  *
- * Boundaries are equally spaced across [firstNonzero, max]. Plan §3.5
- * decision 3 pins the first trigger to the first nonzero formula output so a
- * fresh AP game is never softlocked on a var the early economy needs; the
- * remaining boundaries divide the rest of the reachable range evenly, and the
- * grants sum to exactly the vanilla maximum, so owning every step reproduces
- * vanilla capacity.
+ * The claim under test, at every state along the path:
+ *
+ *     rows fired  ===  min(rowCount, floor(liveBaseTotal / oneInEvery))
+ *
+ * The left side comes from the TABLE (thresholds frozen in the golden); the
+ * right side is computed from the total the running game just wrote. So this
+ * is not the generator restating itself: it re-derives the batch count from
+ * the live formula and asserts the frozen thresholds agree, at 101 states per
+ * dim. The `min` is the v1 cap — past baseMax there is no further row, which
+ * is the one place the two sides are allowed to stop tracking.
+ *
+ * Two orderings are replayed for every multi-source var (declared order, then
+ * reversed, plus the diagonal), and the fired set at the end must be identical
+ * across all of them. Order-independence is already true by construction — the
+ * trigger is a threshold on a single monotone scalar — but that is exactly the
+ * kind of reasoning that is worth one cheap empirical check, since a
+ * non-monotone formula would silently break it.
+ *
+ * Also asserts the live total never DECREASES along a monotone path: a row
+ * that could un-fire would be a location that un-collects.
+ */
+export function verifyQuantityRows(ctx, curves, quantities) {
+    ctx.ev(INSTALL_SWEEP);
+    ctx.ev(ASSERT_NEUTRAL);
+    // Excluded vars mint no rows, so replaying them would compare an empty
+    // threshold list against itself and report a vacuous pass. Drop them here
+    // and assert every var that SHOULD have rows does — otherwise a var that
+    // silently stopped minting would look like a clean run.
+    const spec = curves
+        .filter(c => !QUANTITY_EXCLUDED_VARS.includes(c.action))
+        .map(c => ({
+            action: c.action, town: c.town, dims: c.dims, oneInEvery: c.oneInEvery,
+            thresholds: quantities.filter(q => q.var === c.action && q.town === c.town)
+                .map(q => q.trigger.baseTotalAtLeast),
+        }));
+    const empty = spec.filter(s => s.thresholds.length === 0).map(s => s.action);
+    if (empty.length) {
+        throw new Error(`unlock-table: non-excluded var(s) minted no batch rows: ${empty.join(", ")}`);
+    }
+    if (quantities.some(q => QUANTITY_EXCLUDED_VARS.includes(q.var))) {
+        throw new Error("unlock-table: an excluded var reached the row table");
+    }
+    return JSON.parse(ctx.ev(`
+JSON.stringify((() => {
+    const { setLevel, zeroProgress, totalOf, townOf } = __uq;
+    const problems = [];
+    let states = 0, checks = 0, orderings = 0;
+    for (const q of ${JSON.stringify(spec)}) {
+        const dims = q.dims.map(v => ({ v, town: townOf(v) }));
+        const N = q.oneInEvery, cap = q.thresholds.length;
+        // sorted ascending is an invariant of the row shape; rely on it
+        const fired = (T) => q.thresholds.filter(t => T >= t).length;
+
+        // paths: each dim alone 0->100 (leaving the others at 0), the
+        // declared order and its reverse walked cumulatively, and the diagonal
+        const paths = [];
+        for (const d of dims) paths.push([d]);
+        if (dims.length > 1) {
+            paths.push(dims, [...dims].reverse());
+        }
+        for (const path of paths) {
+            orderings++;
+            zeroProgress();
+            let prev = -1;
+            for (const d of path) {
+                for (let L = 0; L <= 100; L++) {
+                    setLevel(d.town, d.v, L);
+                    const T = totalOf(q.town, q.action);
+                    states++; checks++;
+                    if (T < prev) problems.push(q.action + ": live total DECREASED (" + prev + " -> " + T + ") raising " + d.v);
+                    prev = T;
+                    const want = Math.min(cap, Math.floor(T / N));
+                    const got = fired(T);
+                    if (got !== want) {
+                        problems.push(q.action + " @" + d.v + "=" + L + " total=" + T
+                            + ": " + got + " rows fired, live formula supports " + want + " complete batches");
+                    }
+                }
+            }
+        }
+        // all dims at 100, three ways in for multi-source vars
+        const finals = [];
+        for (const order of (dims.length > 1 ? [dims, [...dims].reverse(), null] : [dims])) {
+            zeroProgress();
+            if (order === null) {
+                for (let L = 0; L <= 100; L++) for (const d of dims) setLevel(d.town, d.v, L);
+            } else {
+                for (const d of order) setLevel(d.town, d.v, 100);
+            }
+            finals.push(fired(totalOf(q.town, q.action)));
+            states++;
+        }
+        if (new Set(finals).size !== 1) {
+            problems.push(q.action + ": source ORDER changed the fired set: " + finals.join(" vs "));
+        }
+        if (finals[0] !== cap) {
+            problems.push(q.action + ": at max progress " + finals[0] + " of " + cap + " rows fired — the cap is wrong");
+        }
+        zeroProgress();
+    }
+    zeroProgress();
+    adjustAll();
+    return { problems, states, checks, orderings };
+})())`));
+}
+
+/**
+ * Turn a measured ceiling into LOOT-BATCH rows (plan §3.5, USER-RULED).
+ *
+ * One row per complete batch the base-rate game can reach:
+ *   - the item is "a full batch of oneInEvery {var} to check, one of which is
+ *     guaranteed to contain the loot" — it grants +oneInEvery BASE capacity,
+ *     flat, with no multipliers applied (the v1 simplification, matched to
+ *     the location cap below so owning every row reproduces exactly the
+ *     base-rate vanilla ceiling);
+ *   - the location fires when the base-rate total first reaches
+ *     k * oneInEvery, i.e. when the k-th complete batch becomes checkable.
+ *
+ * Two consequences worth stating because they look like bugs and are not:
+ *
+ * 1. The cap is `floor(baseMax / oneInEvery)`, so a PARTIAL final batch mints
+ *    no row. A partial batch carries no guaranteed loot, so there is nothing
+ *    for a check to be attached to.
+ * 2. A var whose baseMax is below its own batch size mints ZERO rows. That is
+ *    the honest answer, not an omission: at base rates vanilla never completes
+ *    a batch of that var either, so its loot is unreachable in both games.
+ *    (No var is in this state today — the four 1000-ratio hauls clear it
+ *    easily at 2500/level — but the rule is what makes the cap safe.)
+ *
+ * Bonus-inflated capacity beyond baseMax mints nothing: v1 stops at the
+ * base-rate first-100%, and prestige/survey/Spatiomancy only make a player
+ * reach the same rows sooner, which is vanilla pacing.
  */
 export function quantityRows(curve) {
-    const { action, town, dims, firstNonzero, max, G } = curve;
+    const { action, town, dims, baseMax, oneInEvery } = curve;
+    const batches = Math.floor(baseMax / oneInEvery);
     const rows = [];
-    let granted = 0;
-    for (let i = 0; i < G; i++) {
-        const t = G === 1 ? max : Math.round(firstNonzero + (max - firstNonzero) * i / (G - 1));
+    // k is 1-BASED: batch k is the k-th complete batch, so its trigger is
+    // literally k * oneInEvery and "step 0" would name nothing.
+    for (let k = 1; k <= batches; k++) {
         rows.push({
-            id: `q:${town}:${action}:${i}`,
-            town, var: action, step: i, dims,
-            trigger: { vanillaTotalAtLeast: t },
-            grant: { items: t - granted },
+            id: `q:${town}:${action}:${k}`,
+            town, var: action, step: k, dims,
+            trigger: { baseTotalAtLeast: k * oneInEvery },
+            grant: { batch: oneInEvery },
         });
-        granted = t;
     }
     return rows;
 }

@@ -15,7 +15,10 @@
 //   2. the same, over the three ui-parity save fixtures (real progressed
 //      states, which catch anything the synthetic dim model gets wrong);
 //   3. an independent extraction by perturbation-probing the closures,
-//      compared structurally to the walked rows.
+//      compared structurally to the walked rows;
+//   4. the quantity rows: every discovery var's source dims replayed 0 -> cap
+//      against the live adjustAll(), asserting each loot batch's row fires
+//      exactly when the game's own base-rate total completes that batch.
 // Leg 3 shares no code and no input with the walk. That is the point: a
 // verifier built on the generator's own assumptions verifies nothing.
 
@@ -23,6 +26,7 @@ import fs from "node:fs";
 import {
     makeUnlockContext, readXml, buildTable, serializeTable, TABLE_PATH,
     verifyAgainstClosures, verifyAgainstFixtures, extractByProbing, compareWithProbe,
+    walkQuantityDims, measureQuantityCurves, verifyQuantityRows,
 } from "./unlock-table.lib.mjs";
 
 const t0 = performance.now();
@@ -64,6 +68,17 @@ check(cmp.diffs.length === 0,
     cmp.diffs.slice(0, 5).map(d => `${d.id}: ${d.why}`).join("; "));
 console.log(`      (${cmp.skippedNonMonotone} non-monotone row skipped — probing cannot see upper bounds; ` +
     `${cmp.redundantDropped} rows used the exploreProgress>=1 redundancy tolerance)`);
+
+// --- leg 4: quantity rows vs the live capacity formulas --------------------
+const curves = measureQuantityCurves(ctx, walkQuantityDims(ctx, xml));
+const q = verifyQuantityRows(ctx, curves, table.quantities);
+check(q.problems.length === 0,
+    `loot-batch rows === live adjustAll() over ${q.checks.toLocaleString()} states / ${q.orderings} dim orderings`,
+    q.problems.slice(0, 5).join("; "));
+
+const byVar = {};
+for (const r of table.quantities) byVar[`${r.town}:${r.var}`] = (byVar[`${r.town}:${r.var}`] ?? 0) + 1;
+console.log(`      batches per var: ${Object.entries(byVar).map(([k, v]) => `${k}×${v}`).join(" · ")}`);
 
 if (failures) {
     console.log(`\n${failures} FAILURE(S) — table NOT written`);

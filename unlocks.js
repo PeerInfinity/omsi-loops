@@ -275,6 +275,13 @@ const Unlocks = (() => {
     // PROVENANCE from it: which progress vars drive the curve (the dims), and
     // which modifiers apply. The curve itself is measured by sweeping the
     // real JS, so the table's numbers never come from a re-implementation.
+    //
+    // It also takes <oneInEvery>, the checking-walk loot ratio (town.js
+    // finishRegular yields loot on every N-th check). That ratio is the AP
+    // batch size: one item = one full batch of N, one of which is guaranteed
+    // to hold the loot. Declarative here, cross-checked against the JS call
+    // sites by the generator — the two must agree or the table is describing
+    // a pacing the game does not run.
     function walkQuantityDims(xmlText, { actionMeta }) {
         const doc = ActionListXml.parseDocument(xmlText);
         const out = [];
@@ -303,7 +310,15 @@ const Unlocks = (() => {
             };
             visit(el[0]);
             if (!dims.length) err(`${name}: <totalDiscovered> names no <progressLevel> dim`);
-            out.push({ action: meta.varName, name, town: meta.town, dims, modifiers });
+            const oieEl = def.children.filter(c => c.tag === "oneInEvery");
+            if (oieEl.length !== 1) {
+                err(`${name}: <totalDiscovered> requires exactly one <oneInEvery> (found ${oieEl.length})`);
+            }
+            const oneInEvery = Number(oieEl[0].text.trim());
+            if (!Number.isInteger(oneInEvery) || oneInEvery < 1) {
+                err(`${name}: <oneInEvery> must be a positive integer, got "${oieEl[0].text}"`);
+            }
+            out.push({ action: meta.varName, name, town: meta.town, dims, modifiers, oneInEvery });
         }
         return out;
     }
