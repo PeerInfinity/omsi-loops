@@ -454,6 +454,16 @@ globalThis.__fmDiff = (() => {
 
     const COLS = ["manaCost", "goldCost", "visible", "unlocked", "canStart", "allowed", "storyReqs"];
     const BOOL = new Set(["visible", "unlocked", "canStart"]);
+    // RETIRED at the unlock cutover (2026-07-19), same pattern as the
+    // session-34 grep-oracle retirement. compileAction no longer emits
+    // visible/unlocked — unlocks.js owns them on Action.prototype — so the
+    // compiled side has no field to compare and the JS side is answering from
+    // the very implementation the XML would have supplied. The columns stay in
+    // COLS (positions are load-bearing: COLS[i] pairs with row[i+1]) and stay
+    // recorded in the golden, where they now freeze the table-driven answers.
+    // Their live oracle is test/unlock-table.test.mjs, which checks the rows
+    // against the closures' own semantics over 655k comparisons.
+    const RETIRED = new Set(["visible", "unlocked"]);
     const same = (col, j, x) => {
         if ((j === null) !== (x === null)) return false;
         if (j === null) return true;
@@ -471,7 +481,7 @@ globalThis.__fmDiff = (() => {
             const nat = new Set(compiled[name].__nativeFields ?? []);
             const rj = __fm.rowFor(a), rx = __fm.rowFor(compiled[name]);
             for (let i = 0; i < 6; i++) {
-                if (nat.has(COLS[i])) continue;
+                if (RETIRED.has(COLS[i]) || nat.has(COLS[i])) continue;
                 if (!same(COLS[i], rj[i + 1], rx[i + 1])) out.push({ name, col: COLS[i], js: rj[i + 1], xml: rx[i + 1] });
             }
             if (!nat.has("storyReqs")) {
@@ -746,6 +756,12 @@ export const WIRED_PREP = `
 // real state divergence between the two contexts.
 const ROW_BOOL_COLS = new Set([3, 4, 5]);   // visible, unlocked, canStart
 const ROW_COL_NAMES = [null, "manaCost", "goldCost", "visible", "unlocked", "canStart", "allowed"];
+// RETIRED at the unlock cutover, for a different reason than the differential
+// above: here BOTH arms are live contexts, and since unlocks.js owns these
+// predicates unconditionally, the JS arm and the wired arm now run the SAME
+// implementation. The columns could not disagree, so asserting on them proves
+// nothing. Still recorded in the rows and frozen in the golden as history.
+const RETIRED_ROW_COLS = new Set([3, 4]);   // visible, unlocked
 function compareRows(rowsJs, rowsWired, stateId, out) {
     if (rowsJs.length !== rowsWired.length) {
         out.push({ state: stateId, name: "(corpus)", col: "(rowCount)", js: rowsJs.length, wired: rowsWired.length });
@@ -763,6 +779,7 @@ function compareRows(rowsJs, rowsWired, stateId, out) {
         const name = rj[0];
         if (name !== rx[0]) { out.push({ state: stateId, name, col: "(name)", js: name, wired: rx[0] }); continue; }
         for (let i = 1; i <= 6; i++) {
+            if (RETIRED_ROW_COLS.has(i)) continue;
             if (!same(ROW_BOOL_COLS.has(i), rj[i], rx[i])) {
                 out.push({ state: stateId, name, col: ROW_COL_NAMES[i], js: rj[i], wired: rx[i] });
             }

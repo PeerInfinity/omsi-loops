@@ -7,10 +7,22 @@
 // changing behavior — and so the XML migration can later compile actions
 // without silently breaking skill tooltips or the skills/buffs columns.
 //
-// This script derives the golden FROM the greps, so it only works while
-// actionList.js still defines actions as hand-written JS. After the XML
-// cutover the golden becomes hand-maintained (edit it alongside deliberate
-// content changes, like action-shapes.json).
+// TWO COLUMNS ARE FROZEN HISTORY AND ARE CARRIED FORWARD, NOT RECOMPUTED:
+//
+//   unlockSkillRefs  — its grep read getSkillLevel("X") out of unlocked()
+//                      source. The unlock cutover (2026-07-19) deleted those
+//                      closures, so the grep now answers [] for every action.
+//   finishGrantsBuff — its grep read updateBuff out of finish() source. The
+//                      view-subscribe refactor (2026-07-18) moved buff
+//                      refreshes to addBuffAmt's notification, so it answers
+//                      false for actions that do grant buffs.
+//
+// Both are still LIVE GUARDS: the test asserts the metadata that replaced them
+// (skillPrereqs, grantsBuff) answers exactly what the grep answered when it
+// was frozen. Recomputing them from today's source would quietly overwrite
+// that record with empty/false and disarm those assertions while leaving the
+// suite green — the failure mode a golden exists to prevent. The remaining
+// columns are still derived from the live game.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -18,28 +30,40 @@ import { makeContext } from "./harness.mjs";
 
 const goldenPath = path.join(path.dirname(fileURLToPath(import.meta.url)), "goldens", "introspection.json");
 
+const frozen = new Map(JSON.parse(fs.readFileSync(goldenPath, "utf8"))
+    .map(g => [g.name, { unlockSkillRefs: g.unlockSkillRefs, finishGrantsBuff: g.finishGrantsBuff }]));
+
 const ctx = makeContext();
 const rows = JSON.parse(ctx.ev(`JSON.stringify(totalActionList.map(a => {
-    const unlockedSrc = a.unlocked ? a.unlocked.toString() : "";
     const finishSrc = a.finish ? a.finish.toString() : "";
     const skills = a.skills ? Object.keys(a.skills).sort() : null;
-    // every skill referenced via getSkillLevel("X") in unlocked() source
-    const unlockSkillRefs = [...new Set([...unlockedSrc.matchAll(/getSkillLevel\\("(\\w+)"\\)/g)].map(m => m[1]))].sort();
     // teachesSkill over the full skill list, at the loadDefaults() baseline
     const teaches = skillList.filter(sk => a.teachesSkill(sk)).sort();
     return {
         name: a.name,
         skills,
-        unlockSkillRefs,
         finishGrantsSkillExp: finishSrc.includes("handleSkillExp"),
-        finishGrantsBuff: finishSrc.includes("updateBuff"),
         teaches,
     };
 }))`));
 
+const out = rows.map(r => {
+    const f = frozen.get(r.name);
+    if (!f) throw new Error(`introspection: "${r.name}" is new; add its frozen columns by hand ` +
+        `(unlockSkillRefs from its unlock condition, finishGrantsBuff from whether it grants a buff)`);
+    return {
+        name: r.name,
+        skills: r.skills,
+        unlockSkillRefs: f.unlockSkillRefs,
+        finishGrantsSkillExp: r.finishGrantsSkillExp,
+        finishGrantsBuff: f.finishGrantsBuff,
+        teaches: r.teaches,
+    };
+});
+
 fs.mkdirSync(path.dirname(goldenPath), { recursive: true });
-fs.writeFileSync(goldenPath, JSON.stringify(rows, null, 2) + "\n");
-console.log(`wrote introspection golden for ${rows.length} actions to ${goldenPath}`);
-console.log(`  finishGrantsSkillExp: ${rows.filter(r => r.finishGrantsSkillExp).length}`);
-console.log(`  finishGrantsBuff:     ${rows.filter(r => r.finishGrantsBuff).length}`);
-console.log(`  with unlockSkillRefs: ${rows.filter(r => r.unlockSkillRefs.length).length}`);
+fs.writeFileSync(goldenPath, JSON.stringify(out, null, 2) + "\n");
+console.log(`wrote introspection golden for ${out.length} actions to ${goldenPath}`);
+console.log(`  finishGrantsSkillExp: ${out.filter(r => r.finishGrantsSkillExp).length}  (derived)`);
+console.log(`  finishGrantsBuff:     ${out.filter(r => r.finishGrantsBuff).length}  (frozen, carried forward)`);
+console.log(`  with unlockSkillRefs: ${out.filter(r => r.unlockSkillRefs.length).length}  (frozen, carried forward)`);

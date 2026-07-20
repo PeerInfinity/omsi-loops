@@ -28,17 +28,23 @@ import { fileURLToPath } from "node:url";
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-// The importScripts list from predictor-worker.js, MINUS the fork's two
-// actionListXml entries (xmlLite.js + actionListXml.js + its data file). A
-// default context therefore never loads the XML interpreter — which is exactly
-// why driver.js typeof-guards its ActionListXml calls. Callers that need it
-// pass the files in `extraFiles` (see WIRED_FILES in field-matrix.lib.mjs), or
-// pass a `worldConfig` and let makeContext load them.
+// The importScripts list from predictor-worker.js.
+//
+// The XML files are in the DEFAULT list as of the unlock cutover: unlocks.js
+// owns visible()/unlocked() unconditionally and derives its rows from the XML
+// carrier, so there is no longer such a thing as a context that can skip the
+// XML text. (Before the cutover they were deliberately excluded, so a default
+// context never loaded the interpreter — which is why driver.js still
+// typeof-guards its ActionListXml calls, for the EFFECT slots that remain
+// opt-in behind options.useActionListXml.)
 export const SIM_FILES = ["data.js", "localization.js", "helpers.js", "actionList.js",
+    "xmlLite.js", "actionListXml.js", "data/actionListXml.data.js", "unlocks.js",
     "driver.js", "stats.js", "actions.js", "town.js", "prestige.js", "saving.js", "predictor.js"];
 
 // The files the XML interpreter (and therefore the P2 carrier) needs, in load
-// order — the fork's addition to the importScripts list above.
+// order. Kept as a named export because callers still use it to be explicit
+// about needing the interpreter; it is now a subset of SIM_FILES, so the
+// dedupe in makeContext is what keeps a caller passing it from double-loading.
 export const XML_SIM_FILES = ["xmlLite.js", "actionListXml.js", "data/actionListXml.data.js"];
 
 const noopProxy = () => new Proxy({}, { get: (t, p) => (p in t ? t[p] : () => {}) });
@@ -86,7 +92,15 @@ export function makeContext(seed = 12345, extraFiles = [], { worldConfig = null 
     };
     sandbox.self = sandbox; sandbox.globalThis = sandbox;
     vm.createContext(sandbox);
+    // Dedupe, keeping first occurrence: the XML files moved into SIM_FILES at
+    // the unlock cutover, and several callers still pass XML_SIM_FILES (or a
+    // superset) in extraFiles. Loading a sim file twice is not harmless — the
+    // modules are `const Foo = (() => {...})()` at top level, and re-running
+    // one is a redeclaration SyntaxError in the shared global lexical scope.
+    const seen = new Set();
     for (const f of [...SIM_FILES, ...extraFiles]) {
+        if (seen.has(f)) continue;
+        seen.add(f);
         new vm.Script(fs.readFileSync(path.join(ROOT, f), "utf8"), { filename: f })
             .runInContext(sandbox);
     }

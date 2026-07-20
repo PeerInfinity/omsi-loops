@@ -1294,10 +1294,13 @@ const ActionListXml = (() => {
             fields.goldCost = () => evalNumeric(primaryValue, ctx);
         }
 
-        const visible = need("visible");
-        if (!native(visible, "visible")) fields.visible = () => evalConditionList(visible.children, ctx);
-        const unlocked = need("unlocked");
-        if (!native(unlocked, "unlocked")) fields.unlocked = () => evalConditionList(unlocked.children, ctx);
+        // <visible>/<unlocked> are deliberately NOT compiled into fields here.
+        // unlocks.js owns those two predicates unconditionally now (it walks
+        // the same elements into the unlock table), so emitting them would
+        // double-own the same two methods: applyOverrides installs every
+        // function-valued field onto the live Action, and would shadow the
+        // prototype implementation whenever the XML option happened to be on.
+        // The elements themselves stay — they are the table's source.
 
         const allowed = child(def, "allowed");
         if (allowed && !native(allowed, "allowed")) fields.allowed = () => evalNumeric(allowed, ctx);

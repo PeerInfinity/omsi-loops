@@ -181,6 +181,13 @@
     <script src="schema.js"></script>
     <script src="uicomponents.js"></script>
     <script src="actionList.js"></script>
+    <!-- unlock predicates are table-driven (unlocks.js) and derive their rows
+         from the XML carrier, so any page that loads actionList.js needs the
+         XML stack too -- an Action cannot answer visible()/unlocked() without it -->
+    <script src="xmlLite.js"></script>
+    <script src="actionListXml.js"></script>
+    <script src="data/actionListXml.data.js"></script>
+    <script src="unlocks.js"></script>
     <script src="actionLog.js"></script>
     <script src="driver.js"></script>
     <script src="stats.js"></script>

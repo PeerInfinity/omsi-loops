@@ -72,9 +72,18 @@ test("teachesSkill and the view-column predicates match the committed golden", (
         const g = byName.get(a.name);
         assert.ok(g, `action "${a.name}" is not in the golden (new action? regen deliberately)`);
         assert.deepEqual(a.teaches, g.teaches, `"${a.name}".teachesSkill answers changed`);
-        // source-grep oracles — these three mirror the upstream introspection
-        // sites verbatim and stay valid while actionList.js is JS source
-        assert.deepEqual(a.unlockSkillRefs, g.unlockSkillRefs, `"${a.name}" unlocked() skill refs changed`);
+        // source-grep oracles — these mirror the upstream introspection sites
+        // verbatim and stay valid while actionList.js is JS source
+        //
+        // The unlocked() skill-refs grep is RETIRED (unlock cutover,
+        // 2026-07-19), for exactly the reason Phase 1 predicted: the 272
+        // visible()/unlocked() closures are gone, so there is no source text
+        // left to grep and it answers [] for every action. Its replacement,
+        // the explicit `skillPrereqs` metadata, is still checked against this
+        // same golden by the test above — that assertion, not this one, is the
+        // live guard, and regen-introspection.mjs carries the frozen column
+        // forward so it keeps its teeth. Same treatment the updateBuff grep
+        // got in the view-subscribe refactor.
         assert.equal(a.finishGrantsSkillExp, g.finishGrantsSkillExp, `"${a.name}" finish() handleSkillExp grep changed`);
         // The finish()/updateBuff grep is RETIRED (view-subscribe refactor,
         // 2026-07-18). It is dead for exactly the reason Phase 1 predicted for

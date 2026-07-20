@@ -6,6 +6,7 @@ importScripts(
     "xmlLite.js",
     "actionListXml.js",
     "data/actionListXml.data.js",
+    "unlocks.js",
     "driver.js",
     "stats.js",
     "actions.js",

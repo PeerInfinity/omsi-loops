@@ -16,7 +16,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { makeContext, XML_SIM_FILES } from "./harness.mjs";
+import { makeContext } from "./harness.mjs";
 
 export const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 export const TABLE_PATH = path.join(ROOT, "data", "unlockTable.json");
@@ -24,9 +24,10 @@ export const TABLE_PATH = path.join(ROOT, "data", "unlockTable.json");
 /** default step count per quantity var (plan §3.5: G = 8) */
 export const GRANULARITY = 8;
 
-/** A context with the XML stack + unlocks.js loaded, ready to walk and probe. */
+/** A context ready to walk and probe. The XML stack and unlocks.js are in the
+ *  default SIM_FILES since the cutover, so a plain context already has both. */
 export function makeUnlockContext(seed = 12345) {
-    return makeContext(seed, [...XML_SIM_FILES, "unlocks.js"]);
+    return makeContext(seed);
 }
 
 /** the XML text the walk reads — file bytes; the carrier guard proves the

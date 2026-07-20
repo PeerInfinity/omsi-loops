@@ -42,15 +42,15 @@ test("canary: a non-vanilla effortCost diverges for every migrated action", () =
 
 // targeted canaries: one per vocabulary family, proving the corpus can
 // distinguish a wrong translation through that construct
+// MOVED, not dropped: the `unlock threshold (Pick Locks, ifProgress 20 -> 21)`
+// canary lived here until the unlock cutover (2026-07-19). <visible>/<unlocked>
+// are no longer compiled into fields — unlocks.js walks them into the unlock
+// table instead — so mutating the compiled doc cannot move this differential.
+// The identical mutation now lives in test/unlock-table.test.mjs ("canary —
+// mutating an XML threshold moves the table"), which is where the ifProgress
+// predicate path is actually read; that file also carries a canary proving its
+// differential catches a corrupted row.
 const TARGETED_CANARIES = [
-    {
-        label: "unlock threshold (Pick Locks, ifProgress 20 -> 21)",
-        expect: { name: "Pick Locks", col: "unlocked" },
-        mutate: (doc) => {
-            const unlocked = doc.actions["Pick Locks"].children.find(c => c.tag === "unlocked");
-            unlocked.children.find(c => c.tag === "ifProgress").attrs.min = "21";
-        },
-    },
     {
         label: "talentLevel (Train Strength story 2, 100 -> 200)",
         expect: { name: "Train Strength", col: "storyReqs(2)" },

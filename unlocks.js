@@ -351,8 +351,80 @@ const Unlocks = (() => {
         }
     }
 
+    // ---- the live row set --------------------------------------------------
+    // Derived once, lazily, from the XML carrier.
+    //
+    // LAZY, not at script load: unlocks.js loads immediately after
+    // actionList.js so it is in place before anything can call a predicate,
+    // but `towns` is not built until town.js runs several files later, and the
+    // walk needs it to resolve which town owns a progress var. Deriving on
+    // first use sidesteps the load-order question in all four boot contexts
+    // (page, both workers, harness) instead of encoding a fragile ordering.
+    //
+    // Rows never change during a run — the XML is static — so one derivation
+    // per context is enough, and prestige needs no invalidation: relocking
+    // happens because the DIMS reset, not because the rows do.
+    let rows = null;
+    let byAction = null;
+
+    function build() {
+        const meta = new Map();
+        for (const a of totalActionList) meta.set(a.name, { varName: a.varName, town: a.townNum });
+        const townOfProgressVar = (v, where) => {
+            for (const t of towns) if (t.progressVars.includes(v)) return t.index;
+            err(`${where}: no town owns progress var ${v}`);
+        };
+        if (typeof actionListXmlText !== "string") {
+            // post-cutover there is no JS fallback to degrade to, so this is
+            // fatal rather than a warning: every boot context loads the
+            // carrier (data/actionListXml.data.js)
+            err("no XML text available (data/actionListXml.data.js not loaded?)");
+        }
+        rows = walkPredicates(actionListXmlText, { actionMeta: (n) => meta.get(n), townOfProgressVar });
+        byAction = new Map();
+        for (const r of rows) {
+            const entry = byAction.get(r.action) ?? {};
+            entry[r.pred] = r;
+            byAction.set(r.action, entry);
+        }
+        return rows;
+    }
+
+    const ensure = () => (rows ?? build());
+
+    /** the row set, derived on first use */
+    const getRows = () => ensure();
+
+    /**
+     * What visible()/unlocked() answer.
+     *
+     * `suppressed` and `granted` are the Archipelago overlay and are EMPTY in
+     * vanilla play, so effective() reduces exactly to achievedNow() and the
+     * game behaves identically — that inertness is what the byte-gate proves.
+     * They are in-memory only: the one thing that must survive a save/load for
+     * AP (which unlocks were granted) is host-authoritative and re-applied on
+     * connect, so there is no new save field and vanilla saves stay
+     * byte-identical.
+     */
+    const suppressed = new Set();
+    const granted = new Set();
+
+    function effective(row) {
+        if (!row) err("effective: no row");
+        return suppressed.has(row.id) ? granted.has(row.id) : achievedNow(row);
+    }
+
+    /** the predicate answer for one action, by varName */
+    function predicate(varName, pred) {
+        ensure();
+        const entry = byAction.get(varName);
+        if (!entry) err(`no unlock rows for action ${varName}`);
+        return effective(entry[pred]);
+    }
+
     return { walkPredicates, walkQuantityDims, isMonotoneClause, achievedNow,
-             clauseSatisfied, OPS, MONOTONE_OPS };
+             clauseSatisfied, effective, predicate, getRows, suppressed, granted,
+             OPS, MONOTONE_OPS };
 })();
 
 if (typeof module !== "undefined") module.exports = Unlocks;

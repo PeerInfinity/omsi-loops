@@ -290,6 +290,23 @@ class Action extends Localizable {
             : getXMLName(name);
     }
 
+    // Unlock gating is table-driven: the 272 hand-written visible()/unlocked()
+    // bodies that used to live on each action's extras were deleted in favour
+    // of one derivation from the structured conditions in data/actionList.xml.
+    // See unlocks.js for why, and data/unlockTable.json for the rows.
+    //
+    // These are prototype methods, so an action can still override either one
+    // in its extras if it ever needs to — nothing does today, and a new
+    // override would want a very good reason, since it would be invisible to
+    // the table and therefore to everything downstream of it.
+    visible() {
+        return Unlocks.predicate(this.varName, "visible");
+    }
+
+    unlocked() {
+        return Unlocks.predicate(this.varName, "unlocked");
+    }
+
     get imageName() {
         return camelize(this.name);
     }
@@ -625,8 +642,6 @@ class AssassinAction extends MultipartAction {
         let rep = Math.min((this.townNum + 1) * -250 + getSkillLevel("Assassin"), 0);
         addResource("reputation", rep);
     }
-    visible() {return getSkillLevel("Assassin") > 0;}
-    unlocked() {return getSkillLevel("Assassin") > 0;}
     // @ts-ignore
     storyReqs(storyNum) {
         switch (storyNum) {
@@ -657,12 +672,6 @@ function SurveyAction(townNum) {
         },
         manaCost() {
             return 10000 * (this.townNum + 1);
-        },
-        visible() {
-            return getExploreProgress() > 0;
-        },
-        unlocked() {
-            return getExploreProgress() > 0;
         },
         finish() {
             if (towns[this.townNum].getLevel("Survey") != 100) {
@@ -702,12 +711,6 @@ function RuinsAction(townNum) {
             return 100000;
         },
         affectedBy: ["SurveyZ1"],
-        visible() {
-            return towns[this.townNum].getLevel("Survey") >= 100;
-        },
-        unlocked() {
-            return towns[this.townNum].getLevel("Survey") >= 100;
-        },
         finish() {
             towns[this.townNum].finishProgress(this.varName, 1);
             adjustRocks(this.townNum);
@@ -764,12 +767,6 @@ function HaulAction(townNum) {
         },
         manaCost() {
             return 50000;
-        },
-        visible() {
-            return towns[this.townNum].getLevel("RuinsZ" + townNum ) > 0;
-        },
-        unlocked() {
-            return towns[this.townNum].getLevel("RuinsZ" + townNum) > 0;
         },
         finish() {
             stoneLoc = this.townNum;
@@ -853,12 +850,6 @@ Action.Map = new Action("Map", {
     canStart() {
         return resources.gold >= 15;
     },
-    visible() {
-        return getExploreProgress() > 0;
-    },
-    unlocked() {
-        return getExploreProgress() > 0;
-    },
     goldCost() {
         return 15;
     },
@@ -899,12 +890,6 @@ Action.Wander = new Action("Wander", {
     manaCost() {
         return 250;
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
-    },
     finish() {
         towns[0].finishProgress(this.varName, 200 * (resources.glasses ? 4 : 1));
     }
@@ -941,12 +926,6 @@ Action.SmashPots = new Action("Smash Pots", {
     },
     manaCost() {
         return Math.ceil(50 * getSkillBonus("Practical"));
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
     },
     // note this name is misleading: it is used for mana and gold gain.
     goldCost() {
@@ -987,12 +966,6 @@ Action.PickLocks = new Action("Pick Locks", {
     },
     manaCost() {
         return 400;
-    },
-    visible() {
-        return towns[0].getLevel("Wander") >= 3;
-    },
-    unlocked() {
-        return towns[0].getLevel("Wander") >= 20;
     },
     goldCost() {
         let base = 10;
@@ -1036,12 +1009,6 @@ Action.BuyGlasses = new Action("Buy Glasses", {
     manaCost() {
         return 50;
     },
-    visible() {
-        return towns[0].getLevel("Wander") >= 3 && getExploreProgress() < 100 && !prestigeValues["completedAnyPrestige"];
-    },
-    unlocked() {
-        return towns[0].getLevel("Wander") >= 20;
-    },
     finish() {
         addResource("glasses", true);
     },
@@ -1065,12 +1032,6 @@ Action.FoundGlasses = new Action("Found Glasses", {
     },
     manaCost() {
         return 0;
-    },
-    visible() {
-        return getExploreProgress() >= 100 || prestigeValues["completedAnyPrestige"];
-    },
-    unlocked() {
-        return false;
     },
     finish() {
     }
@@ -1096,12 +1057,6 @@ Action.BuyManaZ1 = new Action("Buy Mana Z1", {
     },
     manaCost() {
         return 100;
-    },
-    visible() {
-        return towns[0].getLevel("Wander") >= 3;
-    },
-    unlocked() {
-        return towns[0].getLevel("Wander") >= 20;
     },
     goldCost() {
         return Math.floor(50 * getSkillBonus("Mercantilism") * adjustGoldCostFromPrestige());
@@ -1142,12 +1097,6 @@ Action.MeetPeople = new Action("Meet People", {
     manaCost() {
         return 800;
     },
-    visible() {
-        return towns[0].getLevel("Wander") >= 10;
-    },
-    unlocked() {
-        return towns[0].getLevel("Wander") >= 22;
-    },
     finish() {
         towns[0].finishProgress(this.varName, 200);
     },
@@ -1181,12 +1130,6 @@ Action.TrainStrength = new Action("Train Strength", {
     },
     manaCost() {
         return 2000;
-    },
-    visible() {
-        return towns[0].getLevel("Met") >= 1;
-    },
-    unlocked() {
-        return towns[0].getLevel("Met") >= 5;
     },
     finish() {
 
@@ -1224,12 +1167,6 @@ Action.ShortQuest = new Action("Short Quest", {
     },
     manaCost() {
         return 600;
-    },
-    visible() {
-        return towns[0].getLevel("Met") >= 1;
-    },
-    unlocked() {
-        return towns[0].getLevel("Met") >= 5;
     },
     goldCost() {
         let base = 20;
@@ -1277,12 +1214,6 @@ Action.Investigate = new Action("Investigate", {
     manaCost() {
         return 1000;
     },
-    visible() {
-        return towns[0].getLevel("Met") >= 5;
-    },
-    unlocked() {
-        return towns[0].getLevel("Met") >= 25;
-    },
     finish() {
         towns[0].finishProgress(this.varName, 500);
     },
@@ -1319,12 +1250,6 @@ Action.LongQuest = new Action("Long Quest", {
     },
     manaCost() {
         return 1500;
-    },
-    visible() {
-        return towns[0].getLevel("Secrets") >= 1;
-    },
-    unlocked() {
-        return towns[0].getLevel("Secrets") >= 10;
     },
     goldCost() {
         let base = 30;
@@ -1370,12 +1295,6 @@ Action.ThrowParty = new Action("Throw Party", {
     cost() {
         addResource("reputation", -2);
     },
-    visible() {
-        return towns[this.townNum].getLevel("Secrets") >= 20;
-    },
-    unlocked() {
-        return towns[this.townNum].getLevel("Secrets") >= 30;
-    },
     finish() {
         towns[0].finishProgress("Met", 3200);
     },
@@ -1420,12 +1339,6 @@ Action.WarriorLessons = new Action("Warrior Lessons", {
     canStart() {
         return resources.reputation >= 2;
     },
-    visible() {
-        return towns[0].getLevel("Secrets") >= 10;
-    },
-    unlocked() {
-        return towns[0].getLevel("Secrets") >= 20;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -1469,12 +1382,6 @@ Action.MageLessons = new Action("Mage Lessons", {
     },
     canStart() {
         return resources.reputation >= 2;
-    },
-    visible() {
-        return towns[0].getLevel("Secrets") >= 10;
-    },
-    unlocked() {
-        return towns[0].getLevel("Secrets") >= 20;
     },
     finish() {
         handleSkillExp(this.skills);
@@ -1533,13 +1440,7 @@ Action.HealTheSick = new MultipartAction("Heal The Sick", {
     getPartName(loopCounter = towns[0].HealLoopCounter) {
         return `${_txt(`actions>${getXMLName(this.name)}>label_part`)} ${numberToWords(Math.floor((loopCounter + 0.0001) / this.segments + 1))}`;
     },
-    visible() {
-        return towns[0].getLevel("Secrets") >= 20;
-    },
     skillPrereqs: ["Magic"],
-    unlocked() {
-        return getSkillLevel("Magic") >= 12;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -1608,13 +1509,7 @@ Action.FightMonsters = new MultipartAction("Fight Monsters", {
     getSegmentName(segment) {
         return `${this.segmentModifiers[segment % 3]} ${this.getPartName()}`;
     },
-    visible() {
-        return towns[0].getLevel("Secrets") >= 20;
-    },
     skillPrereqs: ["Combat"],
-    unlocked() {
-        return getSkillLevel("Combat") >= 10;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -1676,13 +1571,7 @@ Action.SmallDungeon = new DungeonAction("Small Dungeon", 0, {
             unlockGlobalStory(2);
         }
     },
-    visible() {
-        return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 15;
-    },
     skillPrereqs: ["Combat", "Magic"],
-    unlocked() {
-        return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 35;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -1743,13 +1632,7 @@ Action.BuySupplies = new Action("Buy Supplies", {
     cost() {
         addResource("gold", -towns[0].suppliesCost);
     },
-    visible() {
-        return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 15;
-    },
     skillPrereqs: ["Combat", "Magic"],
-    unlocked() {
-        return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 35;
-    },
     finish() {
         addResource("supplies", true);
     },
@@ -1788,13 +1671,7 @@ Action.Haggle = new Action("Haggle", {
     cost() {
         addResource("reputation", -1);
     },
-    visible() {
-        return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 15;
-    },
     skillPrereqs: ["Combat", "Magic"],
-    unlocked() {
-        return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 35;
-    },
     finish() {
         towns[0].suppliesCost -= 20;
         if (towns[0].suppliesCost < 0) {
@@ -1837,13 +1714,7 @@ Action.StartJourney = new Action("Start Journey", {
     cost() {
         addResource("supplies", false);
     },
-    visible() {
-        return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 15;
-    },
     skillPrereqs: ["Combat", "Magic"],
-    unlocked() {
-        return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 35;
-    },
     finish() {
         unlockTown(1);
     },
@@ -1876,12 +1747,6 @@ Action.HitchRide = new Action("Hitch Ride", {
     canStart() {
         return true;
     },
-    visible() {
-        return getExploreProgress() > 1;
-    },
-    unlocked() {
-        return getExploreProgress() >= 25;
-    },
     finish() {
         unlockTown(2);
     },
@@ -1912,13 +1777,7 @@ Action.OpenRift = new Action("Open Rift", {
     manaCost() {
         return 50000;
     },
-    visible() {
-        return towns[5].getLevel("Meander") >= 1;
-    },
     skillPrereqs: ["Dark", "Spatiomancy"],
-    unlocked() {
-        return getSkillLevel("Dark") >= 300 && getSkillLevel("Spatiomancy") >= 100;
-    },
     finish() {
         handleSkillExp(this.skills);
         addResource("supplies", false);
@@ -1965,12 +1824,6 @@ Action.ExploreForest = new Action("Explore Forest", {
     manaCost() {
         return 400;
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
-    },
     finish() {
         towns[1].finishProgress(this.varName, 100 * (resources.glasses ? 2 : 1));
     },
@@ -2014,12 +1867,6 @@ Action.WildMana = new Action("Wild Mana", {
     manaCost() {
         return Math.ceil(150 * getSkillBonus("Practical"));
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return towns[1].getLevel("Forest") >= 2;
-    },
     goldCost() {
         return Math.floor(250 * getSkillBonus("Dark"));
     },
@@ -2056,12 +1903,6 @@ Action.GatherHerbs = new Action("Gather Herbs", {
     manaCost() {
         return Math.ceil(200 * (1 - towns[1].getLevel("Hermit") * 0.005));
     },
-    visible() {
-        return towns[1].getLevel("Forest") >= 2;
-    },
-    unlocked() {
-        return towns[1].getLevel("Forest") >= 10;
-    },
     finish() {
         towns[1].finishRegular(this.varName, 10, () => {
             addResource("herbs", 1);
@@ -2096,12 +1937,6 @@ Action.Hunt = new Action("Hunt", {
     manaCost() {
         return 800;
     },
-    visible() {
-        return towns[1].getLevel("Forest") >= 10;
-    },
-    unlocked() {
-        return towns[1].getLevel("Forest") >= 40;
-    },
     finish() {
         towns[1].finishRegular(this.varName, 10, () => {
             addResource("hide", 1);
@@ -2133,12 +1968,6 @@ Action.SitByWaterfall = new Action("Sit By Waterfall", {
     },
     manaCost() {
         return 2000;
-    },
-    visible() {
-        return towns[1].getLevel("Forest") >= 10;
-    },
-    unlocked() {
-        return towns[1].getLevel("Forest") >= 70;
     },
     finish() {
         setStoryFlag("satByWaterfall");
@@ -2178,12 +2007,6 @@ Action.OldShortcut = new Action("Old Shortcut", {
     manaCost() {
         return 800;
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return towns[1].getLevel("Forest") >= 20;
-    },
     finish() {
         towns[1].finishProgress(this.varName, 100);
     },
@@ -2221,13 +2044,7 @@ Action.TalkToHermit = new Action("Talk To Hermit", {
     manaCost() {
         return 1200;
     },
-    visible() {
-        return true;
-    },
     skillPrereqs: ["Magic"],
-    unlocked() {
-        return towns[1].getLevel("Shortcut") >= 20 && getSkillLevel("Magic") >= 40;
-    },
     finish() {
         towns[1].finishProgress(this.varName, 50 * (1 + towns[1].getLevel("Shortcut") / 100));
     },
@@ -2259,13 +2076,7 @@ Action.PracticalMagic = new Action("Practical Magic", {
     manaCost() {
         return Math.ceil(4000 * (1 - towns[1].getLevel("Hermit") * 0.005));
     },
-    visible() {
-        return towns[1].getLevel("Hermit") >= 10;
-    },
     skillPrereqs: ["Magic"],
-    unlocked() {
-        return towns[1].getLevel("Hermit") >= 20 && getSkillLevel("Magic") >= 50;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -2306,13 +2117,7 @@ Action.LearnAlchemy = new Action("Learn Alchemy", {
     manaCost() {
         return Math.ceil(5000 * (1 - towns[1].getLevel("Hermit") * 0.005));
     },
-    visible() {
-        return towns[1].getLevel("Hermit") >= 10;
-    },
     skillPrereqs: ["Magic"],
-    unlocked() {
-        return towns[1].getLevel("Hermit") >= 40 && getSkillLevel("Magic") >= 60;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -2353,13 +2158,7 @@ Action.BrewPotions = new Action("Brew Potions", {
     manaCost() {
         return Math.ceil(4000);
     },
-    visible() {
-        return getSkillLevel("Alchemy") >= 1;
-    },
     skillPrereqs: ["Alchemy"],
-    unlocked() {
-        return getSkillLevel("Alchemy") >= 10;
-    },
     finish() {
         addResource("potions", 1);
         handleSkillExp(this.skills);
@@ -2394,12 +2193,6 @@ Action.TrainDexterity = new Action("Train Dexterity", {
     manaCost() {
         return 2000;
     },
-    visible() {
-        return towns[1].getLevel("Forest") >= 20;
-    },
-    unlocked() {
-        return towns[1].getLevel("Forest") >= 60;
-    },
     finish() {
         setStoryFlag("dexterityTrained");
     },
@@ -2428,12 +2221,6 @@ Action.TrainSpeed = new Action("Train Speed", {
     },
     manaCost() {
         return 2000;
-    },
-    visible() {
-        return towns[1].getLevel("Forest") >= 20;
-    },
-    unlocked() {
-        return towns[1].getLevel("Forest") >= 80;
     },
     finish() {
         setStoryFlag("speedTrained");
@@ -2473,12 +2260,6 @@ Action.FollowFlowers = new Action("Follow Flowers", {
     manaCost() {
         return 300;
     },
-    visible() {
-        return towns[1].getLevel("Forest") >= 30;
-    },
-    unlocked() {
-        return towns[1].getLevel("Forest") >= 50;
-    },
     finish() {
         towns[1].finishProgress(this.varName, 100 * (resources.glasses ? 2 : 1));
     },
@@ -2511,12 +2292,6 @@ Action.BirdWatching = new Action("Bird Watching", {
     },
     canStart() {
         return resources.glasses;
-    },
-    visible() {
-        return towns[1].getLevel("Flowers") >= 30;
-    },
-    unlocked() {
-        return towns[1].getLevel("Flowers") >= 80;
     },
     finish() {
         setStoryFlag("birdsWatched");
@@ -2557,12 +2332,6 @@ Action.ClearThicket = new Action("Clear Thicket", {
     manaCost() {
         return 500;
     },
-    visible() {
-        return towns[1].getLevel("Flowers") >= 10;
-    },
-    unlocked() {
-        return towns[1].getLevel("Flowers") >= 20;
-    },
     finish() {
         towns[1].finishProgress(this.varName, 100);
     },
@@ -2602,13 +2371,7 @@ Action.TalkToWitch = new Action("Talk To Witch", {
     manaCost() {
         return 1500;
     },
-    visible() {
-        return towns[1].getLevel("Thicket") >= 20;
-    },
     skillPrereqs: ["Magic"],
-    unlocked() {
-        return towns[1].getLevel("Thicket") >= 60 && getSkillLevel("Magic") >= 80;
-    },
     finish() {
         towns[1].finishProgress(this.varName, 100);
     },
@@ -2650,13 +2413,7 @@ Action.DarkMagic = new Action("Dark Magic", {
     cost() {
         addResource("reputation", -1);
     },
-    visible() {
-        return towns[1].getLevel("Witch") >= 10;
-    },
     skillPrereqs: ["Magic"],
-    unlocked() {
-        return towns[1].getLevel("Witch") >= 20 && getSkillLevel("Magic") >= 100;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -2710,13 +2467,7 @@ Action.DarkRitual = new MultipartAction("Dark Ritual", {
     getPartName() {
         return "Perform Dark Ritual";
     },
-    visible() {
-        return towns[1].getLevel("Witch") >= 20;
-    },
     skillPrereqs: ["Dark"],
-    unlocked() {
-        return towns[1].getLevel("Witch") >= 50 && getSkillLevel("Dark") >= 50;
-    },
     goldCost() {
         return Math.ceil(50 * (getBuffLevel("Ritual") + 1) * getSkillBonus("Commune"));
     },
@@ -2847,12 +2598,6 @@ Action.ContinueOn = new Action("Continue On", {
     manaCost() {
         return Math.ceil(8000 - (60 * towns[1].getLevel("Shortcut")));
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
-    },
     finish() {
         unlockTown(2);
     },
@@ -2903,12 +2648,6 @@ Action.ExploreCity = new Action("Explore City", {
     manaCost() {
         return 750;
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
-    },
     finish() {
         towns[2].finishProgress(this.varName, 100 * (resources.glasses ? 2 : 1));
     },
@@ -2953,12 +2692,6 @@ Action.Gamble = new Action("Gamble", {
     },
     manaCost() {
         return 1000;
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return towns[2].getLevel("City") >= 10;
     },
     finish() {
         towns[2].finishRegular(this.varName, 10, () => {
@@ -3010,12 +2743,6 @@ Action.GetDrunk = new Action("Get Drunk", {
     manaCost() {
         return 1000;
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return towns[2].getLevel("City") >= 20;
-    },
     finish() {
         towns[2].finishProgress(this.varName, 100);
     },
@@ -3041,12 +2768,6 @@ Action.BuyManaZ3 = new Action("Buy Mana Z3", {
     },
     canStart() {
         return !portalUsed;
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
     },
     goldCost() {
         return Math.floor(50 * getSkillBonus("Mercantilism") * adjustGoldCostFromPrestige());
@@ -3082,12 +2803,6 @@ Action.SellPotions = new Action("Sell Potions", {
     },
     manaCost() {
         return 1000;
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
     },
     finish() {
         if (resources.potions >= 20) setStoryFlag("sell20PotionsInALoop");
@@ -3173,12 +2888,6 @@ Action.AdventureGuild = new MultipartAction("Adventure Guild", {
     getSegmentName(segment) {
         return `Rank ${getAdvGuildRank(segment % 3).name}`;
     },
-    visible() {
-        return towns[2].getLevel("Drunk") >= 5;
-    },
-    unlocked() {
-        return towns[2].getLevel("Drunk") >= 20;
-    },
     finish() {
         guild = "Adventure";
         setStoryFlag("advGuildTestsTaken");
@@ -3238,12 +2947,6 @@ Action.GatherTeam = new Action("Gather Team", {
     manaCost() {
         return 2000;
     },
-    visible() {
-        return towns[2].getLevel("Drunk") >= 10;
-    },
-    unlocked() {
-        return towns[2].getLevel("Drunk") >= 20;
-    },
     finish() {
         addResource("teamMembers", 1);
         setStoryFlag("teammateGathered");
@@ -3302,12 +3005,6 @@ Action.LargeDungeon = new DungeonAction("Large Dungeon", 1, {
     loopsFinished(loopCounter = towns[this.townNum].LDungeonLoopCounter) {
         const curFloor = Math.floor((loopCounter) / this.segments + 0.0000001 - 1);
         this.finishDungeon(curFloor);
-    },
-    visible() {
-        return towns[2].getLevel("Drunk") >= 5;
-    },
-    unlocked() {
-        return towns[2].getLevel("Drunk") >= 20;
     },
     finish() {
         handleSkillExp(this.skills);
@@ -3392,12 +3089,6 @@ Action.CraftingGuild = new MultipartAction("Crafting Guild", {
     getSegmentName(segment) {
         return `Rank ${getCraftGuildRank(segment % 3).name}`;
     },
-    visible() {
-        return towns[2].getLevel("Drunk") >= 5;
-    },
-    unlocked() {
-        return towns[2].getLevel("Drunk") >= 30;
-    },
     finish() {
         guild = "Crafting";
         setStoryFlag("craftGuildTestsTaken");
@@ -3455,12 +3146,6 @@ Action.CraftArmor = new Action("Craft Armor", {
     manaCost() {
         return 1000;
     },
-    visible() {
-        return towns[2].getLevel("Drunk") >= 15;
-    },
-    unlocked() {
-        return towns[2].getLevel("Drunk") >= 30;
-    },
     finish() {
         addResource("armor", 1);
         setStoryFlag("armorCrafted");
@@ -3509,12 +3194,6 @@ Action.Apprentice = new Action("Apprentice", {
     manaCost() {
         return 2000;
     },
-    visible() {
-        return towns[2].getLevel("Drunk") >= 20;
-    },
-    unlocked() {
-        return towns[2].getLevel("Drunk") >= 40;
-    },
     finish() {
         towns[2].finishProgress(this.varName, 30 * getCraftGuildRank().bonus);
         handleSkillExp(this.skills);
@@ -3560,12 +3239,6 @@ Action.Mason = new Action("Mason", {
     },
     manaCost() {
         return 2000;
-    },
-    visible() {
-        return towns[2].getLevel("Drunk") >= 40;
-    },
-    unlocked() {
-        return towns[2].getLevel("Drunk") >= 60 && towns[2].getLevel("Apprentice") >= 100;
     },
     finish() {
         towns[2].finishProgress(this.varName, 20 * getCraftGuildRank().bonus);
@@ -3613,12 +3286,6 @@ Action.Architect = new Action("Architect", {
     manaCost() {
         return 2000;
     },
-    visible() {
-        return towns[2].getLevel("Drunk") >= 60;
-    },
-    unlocked() {
-        return towns[2].getLevel("Drunk") >= 80 && towns[2].getLevel("Mason") >= 100;
-    },
     finish() {
         towns[2].finishProgress(this.varName, 10 * getCraftGuildRank().bonus);
         handleSkillExp(this.skills);
@@ -3653,12 +3320,6 @@ Action.ReadBooks = new Action("Read Books", {
     manaCost() {
         return 2000;
     },
-    visible() {
-        return towns[2].getLevel("City") >= 5;
-    },
-    unlocked() {
-        return towns[2].getLevel("City") >= 50;
-    },
     finish() {
         setStoryFlag("booksRead");
     },
@@ -3691,12 +3352,6 @@ Action.BuyPickaxe = new Action("Buy Pickaxe", {
     },
     manaCost() {
         return 3000;
-    },
-    visible() {
-        return towns[2].getLevel("City") >= 60;
-    },
-    unlocked() {
-        return towns[2].getLevel("City") >= 90;
     },
     finish() {
         addResource("pickaxe", true);
@@ -3759,12 +3414,6 @@ Action.HeroesTrial = new TrialAction("Heroes Trial", 0, {
         if (this.currentFloor() >= 25) setStoryFlag("heroTrial25Done");
         if (this.currentFloor() >= 50) setStoryFlag("heroTrial50Done");
     },
-    visible() {
-        return towns[this.townNum].getLevel("Survey") >= 100;
-    },
-    unlocked() {
-        return towns[this.townNum].getLevel("Survey") >= 100;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -3791,12 +3440,6 @@ Action.StartTrek = new Action("Start Trek", {
     },
     manaCost() {
         return Math.ceil(12000);
-    },
-    visible() {
-        return towns[2].getLevel("City") >= 30;
-    },
-    unlocked() {
-        return towns[2].getLevel("City") >= 60;
     },
     finish() {
         unlockTown(3);
@@ -3831,12 +3474,6 @@ Action.Underworld = new Action("Underworld", {
     },
     canStart() {
         return resources.gold >= 500;
-    },
-    visible() {
-        return getExploreProgress() > 25;
-    },
-    unlocked() {
-        return getExploreProgress() >= 50;
     },
     goldCost() {
         return 500;
@@ -3886,12 +3523,6 @@ Action.ClimbMountain = new Action("Climb Mountain", {
     manaCost() {
         return 800;
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
-    },
     finish() {
         towns[3].finishProgress(this.varName, 100 * (resources.pickaxe ? 2 : 1));
     },
@@ -3924,12 +3555,6 @@ Action.ManaGeyser = new Action("Mana Geyser", {
     },
     canStart() {
         return resources.pickaxe;
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return towns[3].getLevel("Mountain") >= 2;
     },
     finish() {
         towns[3].finishRegular(this.varName, 100, () => {
@@ -3978,12 +3603,6 @@ Action.DecipherRunes = new Action("Decipher Runes", {
     manaCost() {
         return 1200;
     },
-    visible() {
-        return towns[3].getLevel("Mountain") >= 2;
-    },
-    unlocked() {
-        return towns[3].getLevel("Mountain") >= 20;
-    },
     finish() {
         towns[3].finishProgress(this.varName, 100 * (resources.glasses ? 2 : 1));
     },
@@ -4017,13 +3636,7 @@ Action.Chronomancy = new Action("Chronomancy", {
     manaCost() {
         return Math.ceil(10000 * (1 - towns[3].getLevel("Runes") * 0.005));
     },
-    visible() {
-        return towns[3].getLevel("Runes") >= 8;
-    },
     skillPrereqs: ["Magic"],
-    unlocked() {
-        return towns[3].getLevel("Runes") >= 30 && getSkillLevel("Magic") >= 150;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -4057,13 +3670,7 @@ Action.LoopingPotion = new Action("Looping Potion", {
     manaCost() {
         return Math.ceil(30000);
     },
-    visible() {
-        return getSkillLevel("Spatiomancy") >= 1;
-    },
     skillPrereqs: ["Alchemy"],
-    unlocked() {
-        return getSkillLevel("Alchemy") >= 200;
-    },
     finish() {
         addResource("loopingPotion", true);
         handleSkillExp(this.skills);
@@ -4104,13 +3711,7 @@ Action.Pyromancy = new Action("Pyromancy", {
     manaCost() {
         return Math.ceil(14000 * (1 - towns[3].getLevel("Runes") * 0.005));
     },
-    visible() {
-        return towns[3].getLevel("Runes") >= 16;
-    },
     skillPrereqs: ["Magic"],
-    unlocked() {
-        return towns[3].getLevel("Runes") >= 60 && getSkillLevel("Magic") >= 200;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -4152,12 +3753,6 @@ Action.ExploreCavern = new Action("Explore Cavern", {
     manaCost() {
         return 1500;
     },
-    visible() {
-        return towns[3].getLevel("Mountain") >= 10;
-    },
-    unlocked() {
-        return towns[3].getLevel("Mountain") >= 40;
-    },
     finish() {
         towns[3].finishProgress(this.varName, 100);
     },
@@ -4191,12 +3786,6 @@ Action.MineSoulstones = new Action("Mine Soulstones", {
     },
     canStart() {
         return resources.pickaxe;
-    },
-    visible() {
-        return towns[3].getLevel("Cavern") >= 2;
-    },
-    unlocked() {
-        return towns[3].getLevel("Cavern") >= 20;
     },
     finish() {
         towns[3].finishRegular(this.varName, 10, () => {
@@ -4261,12 +3850,6 @@ Action.HuntTrolls = new MultipartAction("Hunt Trolls", {
     getPartName() {
         return "Hunt Troll";
     },
-    visible() {
-        return towns[3].getLevel("Cavern") >= 5;
-    },
-    unlocked() {
-        return towns[3].getLevel("Cavern") >= 50;
-    },
     finish() {
         //handleSkillExp(this.skills);
     },
@@ -4307,12 +3890,6 @@ Action.CheckWalls = new Action("Check Walls", {
     manaCost() {
         return 3000;
     },
-    visible() {
-        return towns[3].getLevel("Cavern") >= 40;
-    },
-    unlocked() {
-        return towns[3].getLevel("Cavern") >= 80;
-    },
     finish() {
         towns[3].finishProgress(this.varName, 100);
     },
@@ -4341,12 +3918,6 @@ Action.TakeArtifacts = new Action("Take Artifacts", {
     },
     manaCost() {
         return 1500;
-    },
-    visible() {
-        return towns[3].getLevel("Illusions") >= 1;
-    },
-    unlocked() {
-        return towns[3].getLevel("Illusions") >= 5;
     },
     finish() {
         towns[3].finishRegular(this.varName, 25, () => {
@@ -4407,13 +3978,7 @@ Action.ImbueMind = new MultipartAction("Imbue Mind", {
     getPartName() {
         return "Imbue Mind";
     },
-    visible() {
-        return towns[3].getLevel("Illusions") >= 50;
-    },
     skillPrereqs: ["Magic"],
-    unlocked() {
-        return towns[3].getLevel("Illusions") >= 70 && getSkillLevel("Magic") >= 300;
-    },
     goldCost() {
         return 20 * (getBuffLevel("Imbuement") + 1);
     },
@@ -4485,12 +4050,6 @@ Action.ImbueBody = new MultipartAction("Imbue Body", {
     getPartName() {
         return "Imbue Body";
     },
-    visible() {
-        return getBuffLevel("Imbuement") >= 1
-    },
-    unlocked() {
-        return getBuffLevel("Imbuement") >= 1;
-    },
     goldCost() {
         return getBuffLevel("Imbuement2") + 1;
     },
@@ -4524,12 +4083,6 @@ Action.FaceJudgement = new Action("Face Judgement", {
     },
     manaCost() {
         return 30000;
-    },
-    visible() {
-        return towns[3].getLevel("Mountain") >= 40;
-    },
-    unlocked() {
-        return towns[3].getLevel("Mountain") >= 100;
     },
     finish() {
         setStoryFlag("judgementFaced");
@@ -4572,12 +4125,6 @@ Action.Guru = new Action("Guru", {
     },
     canStart() {
         return resources.herbs >= 1000;
-    },
-    visible() {
-        return getExploreProgress() > 75;
-    },
-    unlocked() {
-        return getExploreProgress() >= 100;
     },
     finish() {
         unlockTown(4);
@@ -4633,12 +4180,6 @@ Action.GuidedTour = new Action("Guided Tour", {
     manaCost() {
         return 2500;
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
-    },
     finish() {
         towns[4].finishProgress(this.varName, 100 * (resources.glasses ? 2 : 1));
     },
@@ -4675,12 +4216,6 @@ Action.Canvass = new Action("Canvass", {
     manaCost() {
         return 4000;
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 10;
-    },
     finish() {
         towns[4].finishProgress(this.varName, 50);
     },
@@ -4708,12 +4243,6 @@ Action.Donate = new Action("Donate", {
     },
     manaCost() {
         return 2000;
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return towns[4].getLevel("Canvassed") >= 5;
     },
     finish() {
         addResource("gold", -20);
@@ -4750,12 +4279,6 @@ Action.AcceptDonations = new Action("Accept Donations", {
     },
     manaCost() {
         return 2000;
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return towns[4].getLevel("Canvassed") >= 5;
     },
     finish() {
         setStoryFlag("receivedDonation");
@@ -4812,12 +4335,6 @@ Action.TidyUp = new MultipartAction("Tidy Up", {
     getPartName(loopCounter = towns[4].TidyLoopCounter) {
         return `${_txt(`actions>${getXMLName(this.name)}>label_part`)} ${numberToWords(Math.floor((loopCounter + 0.0001) / this.segments + 1))}`;
     },
-    visible() {
-        return towns[4].getLevel("Canvassed") >= 10;
-    },
-    unlocked(){
-        return towns[4].getLevel("Canvassed") >= 30;
-    },
     finish(){
         setStoryFlag("tidiedUp");
     },
@@ -4842,12 +4359,6 @@ Action.BuyManaZ5 = new Action("Buy Mana Z5", {
     },
     canStart() {
         return !portalUsed;
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
     },
     goldCost() {
         return Math.floor(50 * getSkillBonus("Mercantilism") * adjustGoldCostFromPrestige());
@@ -4883,12 +4394,6 @@ Action.SellArtifact = new Action("Sell Artifact", {
     manaCost() {
         return 500;
     },
-    visible() {
-        return towns[4].getLevel("Tour") >= 10;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 20;
-    },
     finish() {
         setStoryFlag("artifactSold");
         addResource("gold", 50);
@@ -4919,12 +4424,6 @@ Action.GiftArtifact = new Action("Gift Artifact", {
     },
     manaCost() {
         return 500;
-    },
-    visible() {
-        return towns[4].getLevel("Tour") >= 10;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 20;
     },
     finish() {
         setStoryFlag("artifactDonated");
@@ -4963,12 +4462,6 @@ Action.Mercantilism = new Action("Mercantilism", {
     cost() {
         addResource("reputation", -1);
     },
-    visible() {
-        return towns[4].getLevel("Tour") >= 20;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 30;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -4997,12 +4490,6 @@ Action.CharmSchool = new Action("Charm School", {
     manaCost() {
         return 2000;
     },
-    visible() {
-        return towns[4].getLevel("Tour") >= 20;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 30;
-    },
     finish() {
         setStoryFlag("charmSchoolVisited");
     },
@@ -5030,12 +4517,6 @@ Action.Oracle = new Action("Oracle", {
     },
     manaCost() {
         return 2000;
-    },
-    visible() {
-        return towns[4].getLevel("Tour") >= 30;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 40;
     },
     finish() {
         setStoryFlag("oracleVisited");
@@ -5070,12 +4551,6 @@ Action.EnchantArmor = new Action("Enchant Armor", {
     cost() {
         addResource("favors", -1);
         addResource("armor", -1);
-    },
-    visible() {
-        return towns[4].getLevel("Tour") >= 30;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 40;
     },
     finish() {
         handleSkillExp(this.skills);
@@ -5145,12 +4620,6 @@ Action.WizardCollege = new MultipartAction("Wizard College", {
     },
     getSegmentName(segment) {
         return `${getWizCollegeRank(segment % 3).name}`;
-    },
-    visible() {
-        return towns[4].getLevel("Tour") >= 40;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 60;
     },
     finish() {
         resources.wizardCollege = true;
@@ -5222,12 +4691,6 @@ Action.Restoration = new Action("Restoration", {
     manaCost() {
         return 15000 / getWizCollegeRank().bonus;
     },
-    visible() {
-        return towns[4].getLevel("Tour") >= 40;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 60;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -5263,12 +4726,6 @@ Action.Spatiomancy = new Action("Spatiomancy", {
     manaCost() {
         return 20000 / getWizCollegeRank().bonus;
     },
-    visible() {
-        return towns[4].getLevel("Tour") >= 40;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 60;
-    },
     finish() {
         const oldSpatioSkill = getSkillLevel("Spatiomancy");
         handleSkillExp(this.skills);
@@ -5302,12 +4759,6 @@ Action.SeekCitizenship = new Action("Seek Citizenship", {
     },
     manaCost() {
         return 1500; // Temp
-    },
-    visible() {
-        return towns[4].getLevel("Tour") >= 60;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 80;
     },
     finish() {
         towns[4].finishProgress(this.varName, 100);
@@ -5346,12 +4797,6 @@ Action.BuildHousing = new Action("Build Housing", {
     manaCost() {
         return 2000;
     },
-    visible() {
-        return towns[4].getLevel("Citizen") >= 80;
-    },
-    unlocked() {
-        return towns[4].getLevel("Citizen") >= 100;
-    },
     finish() {
         addResource("houses", 1);
         handleSkillExp(this.skills);
@@ -5389,13 +4834,7 @@ Action.CollectTaxes = new Action("Collect Taxes", {
     manaCost() {
         return 10000;
     },
-    visible() {
-        return towns[4].getLevel("Citizen") >= 60;
-    },
     skillPrereqs: ["Mercantilism"],
-    unlocked() {
-        return towns[4].getLevel("Citizen") >= 100 && getSkillLevel("Mercantilism") > 0;
-    },
     finish() {
         const goldGain = Math.floor(resources.houses * getSkillLevel("Mercantilism") / 10);
         addResource("gold", goldGain);
@@ -5436,12 +4875,6 @@ Action.Pegasus = new Action("Pegasus", {
     cost() {
         addResource("favors", -20);
         addResource("gold", -200);
-    },
-    visible() {
-        return towns[4].getLevel("Tour") >= 70;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 90;
     },
     finish() {
         addResource("pegasus", true);
@@ -5520,12 +4953,6 @@ Action.FightFrostGiants = new MultipartAction("Fight Frost Giants", {
     getSegmentName(segment) {
         return `${getFrostGiantsRank(segment % 3).name}`;
     },
-    visible() {
-        return towns[4].getLevel("Citizen") >= 80 || storyFlags.acquiredPegasus;
-    },
-    unlocked() {
-        return towns[4].getLevel("Citizen") >= 100;
-    },
     finish() {
         setStoryFlag("giantGuildTestTaken");
     },
@@ -5597,12 +5024,6 @@ Action.SeekBlessing = new Action("Seek Blessing", {
     manaCost() {
         return 1000000;
     },
-    visible() {
-        return towns[4].getLevel("Citizen") >= 80 || storyFlags.acquiredPegasus;
-    },
-    unlocked() {
-        return towns[4].getLevel("Citizen") >= 100;
-    },
     finish() {
         setStoryFlag("blessingSought");
         if (getFrostGiantsRank().bonus >= 10) setStoryFlag("greatBlessingSought");
@@ -5651,12 +5072,6 @@ Action.GreatFeast = new MultipartAction("Great Feast", {
     getPartName() {
         return "Host Great Feast";
     },
-    visible() {
-        return towns[4].getLevel("Tour") >= 80;
-    },
-    unlocked() {
-        return towns[4].getLevel("Tour") >= 100;
-    },
     goldCost() {
         return Math.ceil(5000 * (getBuffLevel("Feast") + 1) * getSkillBonus("Gluttony"));
     },
@@ -5688,13 +5103,7 @@ Action.FallFromGrace = new Action("Fall From Grace", {
     manaCost() {
         return 30000;
     },
-    visible() {
-        return true;
-    },
     skillPrereqs: ["Pyromancy"],
-    unlocked() {
-        return getSkillLevel("Pyromancy") >= 200;
-    },
     finish() {
         if (resources.reputation >= 0) resources.reputation = -1;
         stateChanged("resource", {name: "reputation"});
@@ -5734,12 +5143,6 @@ Action.Meander = new Action("Meander", {
     manaCost() {
         return 2500;
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
-    },
     finish() {
         if (getBuffLevel("Imbuement") >= 100) setStoryFlag("meanderIM100");
         towns[5].finishProgress(this.varName, getBuffLevel("Imbuement"));
@@ -5774,12 +5177,6 @@ Action.ManaWell = new Action("Mana Well", {
     },
     canStart() {
         return true;
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return towns[5].getLevel("Meander") >= 2;
     },
     goldCost() { // in this case, "amount of mana in well"
         return Math.max(5000 - Math.floor(10 * effectiveTime), 0);
@@ -5824,12 +5221,6 @@ Action.DestroyPylons = new Action("Destroy Pylons", {
     manaCost() {
         return 10000;
     },
-    visible() {
-        return towns[5].getLevel("Meander") >= 1;
-    },
-    unlocked() {
-        return towns[5].getLevel("Meander") >= 5;
-    },
     finish() {
         towns[5].finishRegular(this.varName, 100, () => {
             addResource("pylons", 1);
@@ -5867,13 +5258,7 @@ Action.RaiseZombie = new Action("Raise Zombie", {
     manaCost() {
         return 10000;
     },
-    visible() {
-        return towns[5].getLevel("Meander") >= 15;
-    },
     skillPrereqs: ["Dark"],
-    unlocked() {
-        return getSkillLevel("Dark") >= 1000;
-    },
     finish() {
         setStoryFlag("attemptedRaiseZombie");
         handleSkillExp(this.skills);
@@ -5908,12 +5293,6 @@ Action.DarkSacrifice = new Action("Dark Sacrifice", {
     },
     manaCost() {
         return 20000;
-    },
-    visible() {
-        return towns[5].getLevel("Meander") >= 25;
-    },
-    unlocked() {
-        return getBuffLevel("Ritual") >= 60;
     },
     finish() {
         handleSkillExp(this.skills);
@@ -5972,13 +5351,7 @@ Action.TheSpire = new DungeonAction("The Spire", 2, {
         if (curFloor >= getBuffLevel("Aspirant")) addBuffAmt("Aspirant", 1, this);
         if (curFloor == dungeonFloors[this.dungeonNum]-1) setStoryFlag("clearedSpire");
     },
-    visible() {
-        return towns[5].getLevel("Meander") >= 5;
-    },
     skillPrereqs: ["Combat", "Magic"],
-    unlocked() {
-        return (getSkillLevel("Combat") + getSkillLevel("Magic")) >= 35;
-    },
     finish() {
         handleSkillExp(this.skills);
         setStoryFlag("spireAttempted")
@@ -6012,12 +5385,6 @@ Action.PurchaseSupplies = new Action("Purchase Supplies", {
     },
     cost() {
         addResource("gold", -500);
-    },
-    visible() {
-        return towns[5].getLevel("Meander") >= 50;
-    },
-    unlocked() {
-        return towns[5].getLevel("Meander") >= 75;
     },
     finish() {
         setStoryFlag("suppliesPurchased")
@@ -6061,12 +5428,6 @@ Action.DeadTrial = new TrialAction("Dead Trial", 4, {
     canStart() {
         return this.currentFloor() < trialFloors[this.trialNum];
     },
-    visible() {
-        return towns[this.townNum].getLevel("Survey") >= 100;
-    },
-    unlocked() {
-        return towns[this.townNum].getLevel("Survey") >= 100;
-    },
     finish() {
         if (this.currentFloor() >= 1) setStoryFlag("deadTrial1Done");
         if (this.currentFloor() >= 10) setStoryFlag("deadTrial10Done");
@@ -6099,12 +5460,6 @@ Action.JourneyForth = new Action("Journey Forth", {
     },
     cost() {
         addResource("supplies", false);
-    },
-    visible() {
-        return towns[5].getLevel("Meander") >= 75;
-    },
-    unlocked() {
-        return towns[5].getLevel("Meander") >= 100;
     },
     finish() {
         unlockTown(6);
@@ -6144,12 +5499,6 @@ Action.ExploreJungle = new Action("Explore Jungle", {
     affectedBy: ["Fight Jungle Monsters"],
     manaCost() {
         return 25000;
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
     },
     finish() {
         towns[6].finishProgress(this.varName, 20 * getFightJungleMonstersRank().bonus);
@@ -6226,12 +5575,6 @@ Action.FightJungleMonsters = new MultipartAction("Fight Jungle Monsters", {
     },
     getSegmentName(segment) {
         return `${getFightJungleMonstersRank(segment % 3).name}`;
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
     },
     finish() {
         setStoryFlag("monsterGuildTestTaken");
@@ -6318,12 +5661,6 @@ Action.RescueSurvivors = new MultipartAction("Rescue Survivors", {
     getPartName(loopCounter = towns[6].RescueLoopCounter) {
         return `${_txt(`actions>${getXMLName(this.name)}>label_part`)} ${numberToWords(Math.floor((loopCounter + 0.0001) / this.segments + 1))}`;
     },
-    visible() {
-        return towns[6].getLevel("ExploreJungle") >= 10;
-    },
-    unlocked() {
-        return towns[6].getLevel("ExploreJungle") >= 20;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -6360,12 +5697,6 @@ Action.PrepareBuffet = new Action("Prepare Buffet", {
     },
     manaCost() {
         return 30000;
-    },
-    visible() {
-        return towns[6].getLevel("ExploreJungle") >= 15;
-    },
-    unlocked() {
-        return towns[6].getLevel("ExploreJungle") >= 20;
     },
     finish() {
         // @ts-ignore
@@ -6406,12 +5737,6 @@ Action.Totem = new Action("Totem", {
     manaCost() {
         return 30000;
     },
-    visible() {
-        return towns[6].getLevel("ExploreJungle") >= 25;
-    },
-    unlocked() {
-        return towns[6].getLevel("ExploreJungle") >= 50;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -6443,12 +5768,6 @@ Action.Escape = new Action("Escape", {
     },
     manaCost() {
         return 50000;
-    },
-    visible() {
-        return towns[6].getLevel("ExploreJungle") >= 75;
-    },
-    unlocked() {
-        return towns[6].getLevel("ExploreJungle") >= 100;
     },
     finish() {
         unlockTown(7);
@@ -6483,13 +5802,7 @@ Action.OpenPortal = new Action("Open Portal", {
     manaCost() {
         return 50000;
     },
-    visible() {
-        return getExploreProgress() > 50;
-    },
     skillPrereqs: ["Restoration"],
-    unlocked() {
-        return getExploreProgress() >= 75 && getSkillLevel("Restoration") >= 1000;
-    },
     canStart() {
         return getSkillLevel("Restoration") >= 1000;
     },
@@ -6533,12 +5846,6 @@ Action.Excursion = new Action("Excursion", {
     },
     canStart() {
         return resources.gold >= this.goldCost();
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
     },
     goldCost() {
         return (guild === "Thieves" || guild === "Explorer") ? 2 : 10;
@@ -6597,12 +5904,6 @@ Action.ExplorersGuild = new Action("Explorers Guild", {
     },
     canStart() {
         return guild === "";
-    },
-    visible() {
-        return towns[7].getLevel("Excursion") >= 5;
-    },
-    unlocked() {
-        return towns[7].getLevel("Excursion") >= 10;
     },
     finish() {
         setStoryFlag("explorerGuildTestTaken");
@@ -6793,12 +6094,6 @@ Action.ThievesGuild = new MultipartAction("Thieves Guild", {
     getSegmentName(segment) {
         return `Rank ${getThievesGuildRank(segment % 3).name}`;
     },
-    visible() {
-        return towns[7].getLevel("Excursion") >= 20;
-    },
-    unlocked() {
-        return towns[7].getLevel("Excursion") >= 25;
-    },
     finish() {
         guild = "Thieves";
         stateChanged("guild");
@@ -6868,13 +6163,7 @@ Action.PickPockets = new Action("Pick Pockets", {
     manaCost() {
         return 20000;
     },
-    visible() {
-        return getSkillLevel("Thievery") > 0;
-    },
     skillPrereqs: ["Thievery"],
-    unlocked() {
-        return getSkillLevel("Thievery") > 0;
-    },
     goldCost() {
         return Math.floor(2 * getSkillBonus("Thievery"));
     },
@@ -6922,12 +6211,6 @@ Action.RobWarehouse = new Action("Rob Warehouse", {
     },
     manaCost() {
         return 50000;
-    },
-    visible() {
-        return towns[7].getLevel("PickPockets") >= 25;
-    },
-    unlocked() {
-        return towns[7].getLevel("PickPockets") >= 100;
     },
     goldCost() {
         return Math.floor(20 * getSkillBonus("Thievery"));
@@ -6977,12 +6260,6 @@ Action.InsuranceFraud = new Action("Insurance Fraud", {
     manaCost() {
         return 100000;
     },
-    visible() {
-        return towns[7].getLevel("RobWarehouse") >= 50;
-    },
-    unlocked() {
-        return towns[7].getLevel("RobWarehouse") >= 100;
-    },
     goldCost() {
         return Math.floor(200 * getSkillBonus("Thievery"));
     },
@@ -7026,12 +6303,6 @@ Action.GuildAssassin = new Action("Guild Assassin", {
     },
     canStart() {
         return guild === "";
-    },
-    visible() {
-        return towns[this.townNum].getLevel("InsuranceFraud") >= 75;
-    },
-    unlocked() {
-        return towns[this.townNum].getLevel("InsuranceFraud") >= 100;
     },
     finish() {
         if (resources.heart >= 1) setStoryFlag("assassinHeartDelivered");
@@ -7087,12 +6358,6 @@ Action.Invest = new Action("Invest", {
     canStart() {
         return resources.gold > 0;
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
-    },
     finish() {
         handleSkillExp(this.skills);
 
@@ -7141,12 +6406,6 @@ Action.CollectInterest = new Action("Collect Interest", {
     canStart() {
         return true;
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
-    },
     finish() {
         handleSkillExp(this.skills);
 
@@ -7189,12 +6448,6 @@ Action.Seminar = new Action("Seminar", {
     cost() {
         addResource("gold", -1000);
     },
-    visible() {
-        return towns[this.townNum].getLevel("Survey") >= 100;
-    },
-    unlocked() {
-        return towns[this.townNum].getLevel("Survey") >= 100;
-    },
     goldCost() {
         return 1000;
     },
@@ -7233,12 +6486,6 @@ Action.PurchaseKey = new Action("Purchase Key", {
     },
     cost() {
         addResource("gold", -1000000);
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
     },
     goldCost() {
         return 1000000;
@@ -7292,12 +6539,6 @@ Action.SecretTrial = new TrialAction("Secret Trial", 3, {
     floorReward() {
         //None
     },
-    visible() {
-        return storyMax >= 12 && getBuffLevel("Imbuement3") >= 7;
-    },
-    unlocked() {
-        return storyMax >= 12 && getBuffLevel("Imbuement3") >= 7;
-    },
     finish() {
         setStoryFlag("trailSecretFaced");
         let floor = this.currentFloor();
@@ -7334,12 +6575,6 @@ Action.LeaveCity = new Action("Leave City", {
     },
     canStart() {
         return resources.key;
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
     },
     finish() {
         unlockTown(8);
@@ -7403,12 +6638,6 @@ Action.ImbueSoul = new MultipartAction("Imbue Soul", {
     getPartName() {
         return "Imbue Soul";
     },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return getBuffLevel("Imbuement") > 499 && getBuffLevel("Imbuement2") > 499;
-    },
     finish() {
         setStoryFlag("soulInfusionAttempted")
         capAllTraining();
@@ -7456,12 +6685,6 @@ Action.BuildTower = new Action("Build Tower", {
     },
     canStart() {
         return resources.stone;
-    },
-    visible() {
-        return true;
-    },
-    unlocked() {
-        return true;
     },
     finish() {
         stonesUsed[stoneLoc]++;
@@ -7540,12 +6763,6 @@ Action.GodsTrial = new TrialAction("Gods Trial", 1, {
             addResource("power", 1);
         }
     },
-    visible() {
-        return towns[this.townNum].getLevel("BuildTower") >= 100;
-    },
-    unlocked() {
-        return towns[this.townNum].getLevel("BuildTower") >= 100;
-    },
     finish() {
         handleSkillExp(this.skills);
     },
@@ -7607,12 +6824,6 @@ Action.ChallengeGods = new TrialAction("Challenge Gods", 2, {
     },
     floorReward() {
         addResource("power", 1);
-    },
-    visible() {
-        return towns[this.townNum].getLevel("BuildTower") >= 100;
-    },
-    unlocked() {
-        return towns[this.townNum].getLevel("BuildTower") >= 100;
     },
     finish() {
         handleSkillExp(this.skills);
@@ -7701,12 +6912,6 @@ Action.RestoreTime = new Action("Restore Time", {
     },
     canStart() {
         return resources.power >= 8;
-    },
-    visible() {
-        return towns[this.townNum].getLevel("BuildTower") >= 100;
-    },
-    unlocked() {
-        return towns[this.townNum].getLevel("BuildTower") >= 100;
     },
     finish() {
         addResource("reputation", 9999999);

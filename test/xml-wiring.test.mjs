@@ -26,7 +26,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
-import { makeContext, ROOT } from "./harness.mjs";
+import { makeContext, ROOT, SIM_FILES } from "./harness.mjs";
 import { buildWiredDifferential, WIRED_FILES } from "./field-matrix.lib.mjs";
 
 const XML_FILES = ["xmlLite.js", "actionListXml.js"];
@@ -144,4 +144,34 @@ test("canary: a mutated <reward> changes what the LIVE finish() grants", () => {
     assert.ok(js.good > 0, "the fixture did not actually complete any rewards");
     assert.notEqual(mut.mana, js.mana,
         "a +1 mana reward in the XML produced no change on the LIVE finish() — the reward override is dead");
+});
+
+// ---------------------------------------------------------------------------
+// Boot wiring: every context that loads actionList.js must also load unlocks.js
+// ---------------------------------------------------------------------------
+// Since the unlock cutover, Action.prototype.visible/unlocked delegate to
+// Unlocks, which derives its rows from the XML carrier. A page or worker that
+// loads actionList.js WITHOUT the XML stack therefore has actions that cannot
+// answer their own predicates — a ReferenceError the moment anything asks.
+// That is easy to reintroduce (editor.html was exactly this gap when the
+// cutover landed and had to be wired), and no other test covers the editor,
+// so pin the invariant across every boot context at once.
+test("boot wiring: every context loading actionList.js also loads unlocks.js", () => {
+    const CONTEXTS = ["index.html", "editor.html", "predictor-worker.js", "planner-worker.js"];
+    const NEEDED = ["xmlLite.js", "actionListXml.js", "data/actionListXml.data.js", "unlocks.js"];
+    for (const f of CONTEXTS) {
+        const src = fs.readFileSync(path.join(ROOT, f), "utf8");
+        if (!src.includes("actionList.js")) continue;
+        for (const dep of NEEDED) {
+            assert.ok(src.includes(dep),
+                `${f} loads actionList.js but not ${dep} — its actions cannot answer visible()/unlocked()`);
+        }
+        // and in the right order: the predicates need their inputs defined first
+        assert.ok(src.indexOf("actionList.js") < src.indexOf("unlocks.js"),
+            `${f} must load unlocks.js after actionList.js`);
+    }
+    // the harness is the fourth context and is a JS array rather than a file list
+    for (const dep of NEEDED) {
+        assert.ok(SIM_FILES.includes(dep), `harness SIM_FILES is missing ${dep}`);
+    }
 });
