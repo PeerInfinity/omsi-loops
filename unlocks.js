@@ -766,13 +766,37 @@ const Unlocks = (() => {
         return effective(entry[pred]);
     }
 
+    /**
+     * Is this action AP-suppressed and not yet granted? (plan §6.1)
+     *
+     * The runtime enforcement gate, read once per skip-loop iteration in
+     * `getNextValidAction`. Deliberately scoped to SUPPRESSION, not to local
+     * unlock state: with `suppressed` empty (vanilla, and AP-off managed mode)
+     * this is a constant-false Set miss, which is what makes the change
+     * byte-inert. Gating on `!unlocked()` instead would change vanilla
+     * behavior, because the post-prestige loadout path legitimately executes
+     * locally-locked actions today.
+     *
+     * Only the `unlocked` row is consulted — visible and quantity rows never
+     * gate execution. An action with no row (a test double, or anything not in
+     * the XML) is never blocked.
+     *
+     * @param {{varName?: string}} action
+     */
+    function blocked(action) {
+        ensure();
+        const row = byAction.get(action?.varName)?.unlocked;
+        if (!row) return false;
+        return suppressed.has(row.id) && !granted.has(row.id);
+    }
+
     /** the quantity (loot-batch) rows, derived on first use */
     const getQuantityRows = () => { ensure(); return quantities; };
     /** the dim index, for tests that assert every row is reachable from its dims */
     const getDimIndex = () => { ensure(); return dimIndex; };
 
     return { walkPredicates, walkQuantityDims, quantityRows, quantityBaseTotal,
-             isMonotoneClause, achievedNow, clauseSatisfied, effective, predicate,
+             isMonotoneClause, achievedNow, clauseSatisfied, effective, predicate, blocked,
              getRows, getQuantityRows, getDimIndex, check, achieved, dimKey,
              seedReported, achievedReported, actionCompleted,
              // callback slots, via accessors so the null-default reads inside

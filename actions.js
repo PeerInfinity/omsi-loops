@@ -258,7 +258,8 @@ class Actions {
         }
         while (curAction.townNum !== curTown
             || (curAction.canStart && !curAction.canStart())
-            || (isMultipartAction(curAction) && !curAction.canMakeProgress(0))) {
+            || (isMultipartAction(curAction) && !curAction.canMakeProgress(0))
+            || Unlocks.blocked(curAction)) {
             curAction.errorMessage = this.getErrorMessage(curAction);
             view.requestUpdate("updateCurrentActionBar", this.currentPos);
             this.currentPos++;
@@ -280,6 +281,11 @@ class Actions {
     getErrorMessage(action) {
         if (action.townNum !== curTown) {
             return `You were in zone ${curTown + 1} when you tried this action, and needed to be in zone ${action.townNum + 1}`;
+        }
+        // before canStart: a suppressed action that also can't pay should show
+        // the truthful reason, not "could not make the cost" (plan §6.1)
+        if (Unlocks.blocked(action)) {
+            return "This action is locked.";
         }
         if (action.canStart && !action.canStart()) {
             return "You could not make the cost for this action.";
