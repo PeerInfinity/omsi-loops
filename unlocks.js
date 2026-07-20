@@ -694,6 +694,7 @@ const Unlocks = (() => {
     let rows = null;
     let quantities = null;
     let byAction = null;
+    let byId = null;
     let dimIndex = null;
 
     function build() {
@@ -727,11 +728,18 @@ const Unlocks = (() => {
             entry[r.pred] = r;
             nextByAction.set(r.action, entry);
         }
+        // id -> row, over BOTH families: the AP overlay seam (U5) is handed
+        // opaque host ids and has to tell a predicate row from a quantity row
+        // without knowing which list to search.
+        const nextById = new Map();
+        for (const r of nextRows) nextById.set(r.id, r);
+        for (const r of nextQuantities) nextById.set(r.id, r);
         rows = nextRows;
         quantities = nextQuantities;
         qMeta = null;
         dimIndex = nextDimIndex;
         byAction = nextByAction;
+        byId = nextById;
         return rows;
     }
 
@@ -803,6 +811,17 @@ const Unlocks = (() => {
      */
     const qManagedBatches = new Map();
 
+    /** shared validation for a qBatches entry, so the seam fails at INSTALL */
+    function checkQuantityBatch(where, varName, batches) {
+        if (QUANTITY_EXCLUDED_VARS.includes(varName)) {
+            err(`${where}: ${varName} is excluded from randomization and can never be AP-managed`);
+        }
+        if (!quantityMeta().has(varName)) err(`${where}: no quantity rows for ${varName}`);
+        if (!Number.isInteger(batches) || batches < 0) {
+            err(`${where}: ${varName} batch count must be a non-negative integer, got ${batches}`);
+        }
+    }
+
     /** varName -> { town, ratio, rowCount }, from the already-minted rows */
     let qMeta = null;
     function quantityMeta() {
@@ -850,6 +869,88 @@ const Unlocks = (() => {
         }
     }
 
+    // ---- the AP overlay seam (plan §7.2 / §9 U5) ---------------------------
+    /**
+     * Serialize the whole overlay for transport, or null when it is empty.
+     *
+     * Null — not an empty object — because `buildWorldConfig` decides on
+     * strict nullness whether the worldConfig itself exists, and a default
+     * world must keep sending literally the same (null) worker message it did
+     * before U5. Empty overlay in, null out; that is the byte-inert contract.
+     *
+     * @returns {{suppressed: string[], granted: string[], qBatches: Record<string, number>} | null}
+     */
+    function buildOverlay() {
+        if (suppressed.size === 0 && granted.size === 0 && qManagedBatches.size === 0) return null;
+        return {
+            suppressed: [...suppressed],
+            granted: [...granted],
+            qBatches: Object.fromEntries(qManagedBatches),
+        };
+    }
+
+    /**
+     * Install (or clear, with null) the whole AP overlay in THIS context.
+     *
+     * REPLACE-WHOLE, like the award schedule: the host is authoritative and
+     * re-pushes its complete view on connect/prestige/reconnect, so a partial
+     * merge could only preserve state the host has already disowned.
+     *
+     * Validates BEFORE mutating (build()'s atomicity rule): a rejected overlay
+     * leaves the previous one intact rather than half-applied. Quantity
+     * capacity rides `qBatches` ONLY — a `q:` id in suppressed/granted is a
+     * host bug worth a hard error, because the two families grant different
+     * things (an unlock flips a predicate; a quantity step buys capacity).
+     *
+     * Deliberately does NOT refresh: what "refresh" means is
+     * context-dependent (the page wants check() + view fan-out + adjustAll,
+     * a worker's sim runs both in its own loop), so the caller owns it.
+     */
+    function installOverlay(overlay) {
+        const empty = !overlay
+            || ((overlay.suppressed?.length ?? 0) === 0
+                && (overlay.granted?.length ?? 0) === 0
+                && Object.keys(overlay.qBatches ?? {}).length === 0);
+        // clearing an already-clear overlay must not even force the table
+        // build: installWorldConfig runs this on every default-world worker
+        // message, where byte-inertness means doing literally nothing
+        if (empty && suppressed.size === 0 && granted.size === 0 && qManagedBatches.size === 0) return;
+        ensure();
+        for (const [key, ids] of [["suppressed", overlay?.suppressed], ["granted", overlay?.granted]]) {
+            for (const id of ids ?? []) {
+                const row = byId.get(id);
+                if (!row) err(`installOverlay: unknown row id ${id}`);
+                if (isQuantityRow(row)) {
+                    err(`installOverlay: ${id} is a quantity row and cannot go in ${key} — quantity capacity rides qBatches`);
+                }
+            }
+        }
+        const batches = overlay?.qBatches ?? {};
+        for (const varName in batches) checkQuantityBatch("installOverlay", varName, batches[varName]);
+
+        suppressed.clear();
+        granted.clear();
+        qManagedBatches.clear();
+        for (const id of overlay?.suppressed ?? []) suppressed.add(id);
+        for (const id of overlay?.granted ?? []) granted.add(id);
+        for (const varName in batches) qManagedBatches.set(varName, batches[varName]);
+    }
+
+    /**
+     * One more granted batch for `varName` (the AP item arriving). Validated
+     * the same way as an install, so a bad var never lands in the Map.
+     * @returns {number} the new batch count
+     */
+    function grantQuantityStep(varName) {
+        const next = (qManagedBatches.get(varName) ?? 0) + 1;
+        checkQuantityBatch("grantQuantityStep", varName, next);
+        qManagedBatches.set(varName, next);
+        return next;
+    }
+
+    /** a row by id, across both families (null when unknown) */
+    const rowById = (id) => { ensure(); return byId.get(id) ?? null; };
+
     /** the quantity (loot-batch) rows, derived on first use */
     const getQuantityRows = () => { ensure(); return quantities; };
     /** the dim index, for tests that assert every row is reachable from its dims */
@@ -867,7 +968,8 @@ const Unlocks = (() => {
              get onQuantityStep() { return callbacks.onQuantityStep; },
              set onActionCompleted(cb) { callbacks.onActionCompleted = cb; },
              get onActionCompleted() { return callbacks.onActionCompleted; },
-             qManagedBatches, applyManagedTotals,
+             qManagedBatches, applyManagedTotals, quantityMeta, isQuantityRow, rowById,
+             buildOverlay, installOverlay, grantQuantityStep,
              suppressed, granted, OPS, MONOTONE_OPS, QUANTITY_EXCLUDED_VARS };
 })();
 

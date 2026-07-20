@@ -860,14 +860,26 @@ const ActionListXml = (() => {
 
     /**
      * The transport payload (cross-game P2-A): everything a sim context needs
-     * to run the world that actually exists. null when no schedule is
-     * installed — prefs alone are meaningless (the walk only runs under
-     * handlesLoot), and null keeps the whole feature byte-inert.
-     * @returns {{awardSchedule: object, lootPrefs: Record<string, {order: string[], disabled: string[]}>} | null}
+     * to run the world that actually exists. Two INDEPENDENT halves:
+     *
+     *   - the P2 award schedule (+ its prefs) — prefs alone are meaningless,
+     *     since the walk only runs under handlesLoot;
+     *   - the AP unlock overlay (§9 U5) — suppressed/granted rows and managed
+     *     batch capacity, which gate and re-price the world the sim runs.
+     *
+     * null when BOTH halves are empty, which is every world until an AP bridge
+     * pushes an overlay: the default path keeps sending the identical (null)
+     * worker message, and that is what keeps the feature byte-inert.
+     * @returns {{awardSchedule: object|null, lootPrefs: Record<string, {order: string[], disabled: string[]}>|null, unlocks: object|null} | null}
      */
     function buildWorldConfig() {
-        if (awardSchedule === null) return null;
-        return { awardSchedule, lootPrefs: getLootPrefs() };
+        const unlocks = typeof Unlocks !== "undefined" ? Unlocks.buildOverlay() : null;
+        if (awardSchedule === null && unlocks === null) return null;
+        return {
+            awardSchedule,
+            lootPrefs: awardSchedule === null ? null : getLootPrefs(),
+            unlocks,
+        };
     }
 
     /**
@@ -882,10 +894,22 @@ const ActionListXml = (() => {
      *
      * A null config against an already-clean context is a true no-op — it must
      * not touch `options` or the override backup, or the feature would stop
-     * being byte-inert on the default path.
+     * being byte-inert on the default path. That holds per HALF: the two
+     * halves (schedule+prefs, unlock overlay) install and clear independently,
+     * so a schedule-only or overlay-only world leaves the other half alone.
+     *
+     * The `useActionListXml` flip stays tied to the award schedule ONLY — the
+     * unlock table has been always-on since the U1 cutover, so an overlay
+     * needs no option change.
      * @returns {boolean} true when the config installed (or cleared) cleanly
      */
     function installWorldConfig(cfg) {
+        // ---- half 2: the AP unlock overlay (replace-whole; null clears) ----
+        // First, so a rejected overlay (bad row id / excluded var) throws
+        // before the schedule half has mutated anything.
+        if (typeof Unlocks !== "undefined") Unlocks.installOverlay(cfg?.unlocks ?? null);
+
+        // ---- half 1: the P2 award schedule + priority prefs ----------------
         if (cfg == null || cfg.awardSchedule == null) {
             if (awardSchedule === null && !hasLootPrefs()) return true;
             lootPrefs = { __proto__: null };
