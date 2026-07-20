@@ -156,6 +156,7 @@ class Actions {
                     // segment finished
                     if (curAction.segmentFinished) {
                         curAction.segmentFinished();
+                        Unlocks.actionCompleted(curAction.name, "segment");  // fork: action-completion hook (null default)
                         partUpdateRequired = true;
                     }
                     if (segment === curAction.segments - 1) {
@@ -168,6 +169,7 @@ class Actions {
                         segment -= curAction.segments;
                         loopCosts = {};
                         curAction.loopsFinished();
+                        Unlocks.actionCompleted(curAction.name, "loop");  // fork: action-completion hook (null default)
                         partUpdateRequired = true;
                         if (curAction.canStart && !curAction.canStart()) {
                             this.completedTicks += curAction.ticks;
@@ -177,6 +179,7 @@ class Actions {
                             curAction.manaRemaining = timeNeeded - timer;
                             curAction.goldRemaining = resources.gold;
                             curAction.finish();
+                            Unlocks.actionCompleted(curAction.name, "finish");  // fork: action-completion hook (null default)
                             totals.actions++;
                             break manaLoop;
                         }
@@ -213,6 +216,7 @@ class Actions {
             curAction.lastMana = curAction.rawTicks;
             this.completedTicks += curAction.adjustedTicks;
             curAction.finish();
+            Unlocks.actionCompleted(curAction.name, "finish");  // fork: action-completion hook (null default)
             totals.actions++;
             curAction.manaRemaining = timeNeeded - timer;
             

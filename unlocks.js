@@ -587,8 +587,58 @@ const Unlocks = (() => {
     // anything.
     const achieved = new Set();
 
+    // ---- events ------------------------------------------------------------
+    // Null by default and null in vanilla play: the diff pass computes either
+    // way, and with no callback installed the whole mechanism is a few hundred
+    // comparisons that write to a Set nobody reads. That inertness is what the
+    // byte-gate proves.
+    //
+    // Only `unlocked` rows fire. `visible` rows are cosmetic (plan §3.2) and
+    // nothing consumes them, so emitting them would be noise the host must
+    // filter.
+    const callbacks = { onUnlockAchieved: null, onQuantityStep: null, onActionCompleted: null };
+
+    /**
+     * Ids the HOST has already confirmed — an emission suppressor, not a record
+     * of what we emitted (plan §5.3).
+     *
+     * The distinction is the whole design. Emitting does NOT add to this set,
+     * so after a prestige wipe a re-crossed row fires again — wanted, because
+     * AP own-world re-completion must re-check locations idempotently and the
+     * server dedupes. What the set DOES suppress is a row the host already
+     * holds: U5 seeds it from `checkedLocations` on connect, which is what
+     * stops the full pass at load() from re-announcing an entire finished game.
+     *
+     * Deliberately NOT cleared on prestige: a location the server has banked
+     * stays banked across a wipe.
+     */
+    const achievedReported = new Set();
+
+    /** seed from the host's confirmed set (U5: checkedLocations) */
+    function seedReported(ids) {
+        for (const id of ids) achievedReported.add(id);
+    }
+
+    function emit(row) {
+        if (achievedReported.has(row.id)) return;
+        // suppression gates the EFFECT of a row, never the check (plan §7.1):
+        // an AP-suppressed row whose local conditions are met has still been
+        // achieved locally, and that is exactly the location trigger. Silencing
+        // it would leave a world unable to check the location granting the very
+        // item it is waiting for.
+        if (isQuantityRow(row)) callbacks.onQuantityStep?.(row.id);
+        else if (row.pred === "unlocked") callbacks.onUnlockAchieved?.(row.id);
+    }
+
     /**
      * Re-evaluate rows and record every false -> true transition.
+     *
+     * Emission order within one call is TABLE order — predicate rows in XML
+     * action order, then quantity rows in var order — because that is the order
+     * both the full pass and each dim bucket are built in. (Note this is the
+     * XML's action order, not threshold order: at Wander 20 that means u:Locks
+     * before u:BuyGlasses.) Callers moving several dims at once get the buckets
+     * in the order they passed the keys.
      *
      * @param {string[]} [dimKeys] only rows reading these dims; omit for a full
      *   pass. A partial pass is sound because a row whose dims did not move
@@ -615,8 +665,18 @@ const Unlocks = (() => {
             if (now === achieved.has(row.id)) continue;
             if (!now) { achieved.delete(row.id); continue; }
             achieved.add(row.id);
+            emit(row);
         }
     }
+
+    /**
+     * The action-completion hook (substrate plan Phase-E leftover).
+     *
+     * Lives here rather than on IdleLoopsManaged because the dispatch sites are
+     * in the sim, which has no page objects; U5 surfaces it. Null default, so
+     * in vanilla play this is one property read per completed action.
+     */
+    const actionCompleted = (name, kind) => callbacks.onActionCompleted?.(name, kind);
 
     // ---- the live row set --------------------------------------------------
     // Derived once, lazily, from the XML carrier.
@@ -714,6 +774,15 @@ const Unlocks = (() => {
     return { walkPredicates, walkQuantityDims, quantityRows, quantityBaseTotal,
              isMonotoneClause, achievedNow, clauseSatisfied, effective, predicate,
              getRows, getQuantityRows, getDimIndex, check, achieved, dimKey,
+             seedReported, achievedReported, actionCompleted,
+             // callback slots, via accessors so the null-default reads inside
+             // emit()/actionCompleted() stay on one shape
+             set onUnlockAchieved(cb) { callbacks.onUnlockAchieved = cb; },
+             get onUnlockAchieved() { return callbacks.onUnlockAchieved; },
+             set onQuantityStep(cb) { callbacks.onQuantityStep = cb; },
+             get onQuantityStep() { return callbacks.onQuantityStep; },
+             set onActionCompleted(cb) { callbacks.onActionCompleted = cb; },
+             get onActionCompleted() { return callbacks.onActionCompleted; },
              suppressed, granted, OPS, MONOTONE_OPS, QUANTITY_EXCLUDED_VARS };
 })();
 
