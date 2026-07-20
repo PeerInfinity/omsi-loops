@@ -545,6 +545,11 @@ function adjustAll() {
     adjustInsurance();
     adjustAllRocks();
     adjustTrainingExpMult();
+    // fork: AP-managed capacity substitution (unlock-discretization plan §9
+    // U4). The ONE choke point — every total{Var} write in the game passes
+    // through the adjust*() calls above, and load() re-runs adjustAll after
+    // restoring saved totals. With no managed vars this is a Map.size check.
+    Unlocks.applyManagedTotals();
     view.requestUpdate("adjustManaCost", "Continue On");
 }
 

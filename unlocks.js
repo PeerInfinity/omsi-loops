@@ -729,6 +729,7 @@ const Unlocks = (() => {
         }
         rows = nextRows;
         quantities = nextQuantities;
+        qMeta = null;
         dimIndex = nextDimIndex;
         byAction = nextByAction;
         return rows;
@@ -790,6 +791,65 @@ const Unlocks = (() => {
         return suppressed.has(row.id) && !granted.has(row.id);
     }
 
+    // ---- AP-managed capacity (plan §3.5 / §9 U4) ---------------------------
+    /**
+     * varName -> granted batch count. Presence in the Map = the var's capacity
+     * is AP-managed; absence = vanilla (totals track levels, untouched).
+     *
+     * In-memory overlay with NO save field, same §5.1 rationale as
+     * `suppressed`/`granted`: what was granted is host-authoritative and
+     * re-applied on connect, so vanilla saves stay byte-identical. The Map is
+     * empty until U5 wires the AP surface, which is what makes U4 byte-inert.
+     */
+    const qManagedBatches = new Map();
+
+    /** varName -> { town, ratio, rowCount }, from the already-minted rows */
+    let qMeta = null;
+    function quantityMeta() {
+        if (qMeta) return qMeta;
+        ensure();
+        qMeta = new Map();
+        for (const r of quantities) {
+            const m = qMeta.get(r.var);
+            if (m) m.rowCount++;
+            else qMeta.set(r.var, { town: r.town, ratio: r.grant.batch, rowCount: 1 });
+        }
+        return qMeta;
+    }
+
+    /**
+     * Substitute AP-granted capacity for the vanilla level-derived totals.
+     *
+     * Called from the END of `adjustAll()` — the ONE choke point that covers
+     * every write path: the 19 `adjust*()` functions are called only by
+     * adjustAll, and `load()` re-runs adjustAll after restoring saved totals,
+     * so recomputation overwrites every restore. Vanilla level growth
+     * re-pins managed totals for free (finishProgress -> adjustAll -> here).
+     *
+     * Substituted total = `min(batches, rowCount) x oneInEvery` — plain, no
+     * prestige/survey/spatiomancy multipliers (the v1 ruling); the min caps a
+     * host over-grant at the number of locations that actually exist.
+     *
+     * Location triggers are NOT affected: they read live LEVELS through the
+     * dot product, never totals (plan §3.5 decoupling). Do not unify them.
+     */
+    function applyManagedTotals() {
+        // the fast path vanilla takes on every adjustAll: no build, no work
+        if (qManagedBatches.size === 0) return;
+        const meta = quantityMeta();
+        for (const [varName, batches] of qManagedBatches) {
+            if (QUANTITY_EXCLUDED_VARS.includes(varName)) {
+                err(`applyManagedTotals: ${varName} is excluded from randomization and can never be AP-managed`);
+            }
+            const m = meta.get(varName);
+            if (!m) err(`applyManagedTotals: no quantity rows for ${varName}`);
+            if (!Number.isInteger(batches) || batches < 0) {
+                err(`applyManagedTotals: ${varName} batch count must be a non-negative integer, got ${batches}`);
+            }
+            towns[m.town][`total${varName}`] = Math.min(batches, m.rowCount) * m.ratio;
+        }
+    }
+
     /** the quantity (loot-batch) rows, derived on first use */
     const getQuantityRows = () => { ensure(); return quantities; };
     /** the dim index, for tests that assert every row is reachable from its dims */
@@ -807,6 +867,7 @@ const Unlocks = (() => {
              get onQuantityStep() { return callbacks.onQuantityStep; },
              set onActionCompleted(cb) { callbacks.onActionCompleted = cb; },
              get onActionCompleted() { return callbacks.onActionCompleted; },
+             qManagedBatches, applyManagedTotals,
              suppressed, granted, OPS, MONOTONE_OPS, QUANTITY_EXCLUDED_VARS };
 })();
 
