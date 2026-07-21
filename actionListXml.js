@@ -1497,6 +1497,67 @@ const ActionListXml = (() => {
         return out;
     }
 
+    // ---- vanilla-path quantity totals (arc B: town de-hardcoding) ---------
+    // Each of the 14 randomizable limited actions carries a <totalDiscovered>
+    // that ALREADY declares its full capacity formula — coeffs+divisors,
+    // prestigeContent (the base round), surveyBonus, skillMod (with its
+    // min/max/percentChange), and the floor/round — so the same evaluator that
+    // compiles <primaryValue> reproduces the old adjust*() functions to the
+    // bit (divisor is exact division; additiveBonus is base*skillMod +
+    // base*survey). This replaces the 14 hand-pinned towns[N] functions that
+    // driver.adjustAll() used to call.
+    //
+    // Unlike the applyOverrides() field cutover, this path is UNCONDITIONAL:
+    // adjustAll() runs on the vanilla game (options.useActionListXml defaults
+    // off), so the total closures must exist independent of the interpreter
+    // cutover. They reuse the same evaluator that cutover installs, driven by
+    // the always-loaded XML carrier — vanilla capacity stays byte-identical.
+    //
+    // The 4 HaulZ vars carry <totalDiscovered> too but are skipped here (via
+    // the unlock table's QUANTITY_EXCLUDED_VARS, the single shared source):
+    // adjustAllRocks() owns their good/goodTemp/usedStones bookkeeping and
+    // stays a retained JS call. Town resolution flows through townFor(varName)
+    // / ctx.action.townNum exactly as the evaluator already does — the seam a
+    // later region overlay redirects without touching this code.
+    /** @type {{varName: string, computeTotal: () => number}[] | null} */
+    let quantityTotalFns = null;
+    function getQuantityTotalFns(xmlText = globalThis.actionListXmlText) {
+        if (quantityTotalFns) return quantityTotalFns;
+        if (typeof xmlText !== "string") {
+            throw new Error("actionListXml: no XML carrier for quantity totals "
+                + "(data/actionListXml.data.js not loaded?)");
+        }
+        // QUANTITY_EXCLUDED_VARS lives in unlocks.js (loaded after this file);
+        // referenced at call time, by which point Unlocks exists.
+        const excluded = (typeof Unlocks !== "undefined" && Unlocks.QUANTITY_EXCLUDED_VARS) || [];
+        const doc = parseDocument(xmlText);
+        const fns = [];
+        for (const [name, def] of Object.entries(doc.actions)) {
+            if (def.attrs.type !== "limited") continue;
+            const td = child(def, "totalDiscovered");
+            if (!td) continue;
+            const varName = def.attrs.varName ?? name.replace(/ /gu, "");
+            if (excluded.includes(varName)) continue;
+            const townNum = def.attrs.townNum !== undefined ? num(def.attrs.townNum, "townNum") : 0;
+            const ctx = { doc, action: { name, varName, townNum } };
+            fns.push({ varName, computeTotal: () => evalNumeric(td, ctx) });
+        }
+        return (quantityTotalFns = fns);
+    }
+
+    /**
+     * Recompute total{Var} for every XML-declared quantity var. The town is
+     * resolved live per call (townFor), so a rebuilt towns array is picked up
+     * without rememoizing — only the compiled closures are cached, never a
+     * total. This is the one call driver.adjustAll() makes in place of the 14
+     * deleted adjust*() functions.
+     */
+    function applyQuantityTotals() {
+        for (const { varName, computeTotal } of getQuantityTotalFns()) {
+            townFor(varName)["total" + varName] = computeTotal();
+        }
+    }
+
     // ---- game-side wiring (options.useActionListXml) ---------------------
     // Overrides the compiled field closures onto the LIVE Action objects,
     // per-action, restorably. Only function-valued fields are overridden:
@@ -1575,6 +1636,7 @@ const ActionListXml = (() => {
     }
 
     return { SLOTS, parseDocument, compileAction, compileAll, applyOverrides, revertOverrides,
+        getQuantityTotalFns, applyQuantityTotals,
         setAwardSchedule, onLoopRestart, setForeignAwardHook,
         handlesLoot, lootIsShuffled, lootFinishRegular, setLootPriority, getLootView,
         getLootPrefs, buildWorldConfig, installWorldConfig,

@@ -105,7 +105,7 @@ function _town(townNum) {
 let curTown = 0;
 
 function initializeTowns() {
-    for (let i = 0; i <= 8; i++) {
+    for (let i = 0; i < TOWN_COUNT; i++) {
         // @ts-ignore
         towns[i] = new Town(i);
     }

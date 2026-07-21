@@ -177,7 +177,7 @@ const STATE_SUBSCRIPTIONS = {
 // written out nine times; exchangeMap() emits these directly (it writes survey
 // exp without going through finishProgress), and the Survey actions get them
 // via the funnel.
-for (let z = 0; z <= 8; z++) {
+for (let z = 0; z < TOWN_COUNT; z++) {
     STATE_SUBSCRIPTIONS[`progress:SurveyZ${z}`] = [
         {category: "updateActionTooltips", target: null},
         {category: "updateProgressAction",
@@ -2244,7 +2244,7 @@ const nextActionsDiv = document.getElementById("nextActionsList");
 const actionOptionsTown = [];
 const actionStoriesTown = [];
 const townInfos = [];
-for (let i = 0; i <= 8; i++) {
+for (let i = 0; i < TOWN_COUNT; i++) {
     actionOptionsTown[i] = document.getElementById(`actionOptionsTown${i}`);
     actionOptionsTown[i].append(Rendered.html`<div class="actionDiv"></div><div class="travelDiv">`);
     actionStoriesTown[i] = document.getElementById(`actionStoriesTown${i}`);

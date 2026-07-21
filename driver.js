@@ -1,5 +1,16 @@
 "use strict";
 
+// The number of towns. Centralizes the literal 9 / 8 the town loops used to
+// spell out (initializeTowns in saving.js, the two count loops in
+// main.view.js). It lives here rather than beside `const towns` in saving.js
+// because both saving.js and views/main.view.js load AFTER driver.js in every
+// boot context (index.html, the workers, and test/harness.mjs SIM_FILES), and
+// main.view.js's count loops run at top-level load time — a const in saving.js
+// would still be in its temporal dead zone when they execute. Byte-inert: 9
+// stays 9; varying it is arc E (multi-town), which also needs the dynamic DOM
+// and getTravelNum work this constant deliberately does not touch.
+const TOWN_COUNT = 9;
+
 // eslint-disable-next-line prefer-const
 let gameSpeed = 1;
 const baseManaPerSecond = 50;
@@ -526,25 +537,16 @@ function unlockTown(townNum) {
 }
 
 function adjustAll() {
-    adjustPots();
-    adjustLocks();
-    adjustSQuests();
-    adjustLQuests();
-    adjustWildMana();
-    adjustHerbs();
-    adjustHunt();
-    adjustSuckers();
-    adjustGeysers();
-    adjustMineSoulstones();
-    adjustArtifacts();
-    adjustDonations();
-    adjustWells();
-    adjustPylons();
-    adjustPockets();
-    adjustWarehouses();
-    adjustInsurance();
-    adjustAllRocks();
-    adjustTrainingExpMult();
+    // The 14 XML-declared quantity totals, recomputed from their
+    // <totalDiscovered> blocks (arc B). Byte-identical to the deleted
+    // adjustPots()..adjustWells() functions; town resolution stays inside the
+    // evaluator (townFor / ctx.action.townNum).
+    ActionListXml.applyQuantityTotals();
+    adjustPockets();          // retained — town-7 Excursion, no <totalDiscovered>
+    adjustWarehouses();       // retained
+    adjustInsurance();        // retained
+    adjustAllRocks();         // retained — hauls + good/goodTemp/usedStones
+    adjustTrainingExpMult();  // retained — sets expMult, not a town total
     // fork: AP-managed capacity substitution (unlock-discretization plan §9
     // U4). The ONE choke point — every total{Var} write in the game passes
     // through the adjust*() calls above, and load() re-runs adjustAll after

@@ -894,16 +894,6 @@ Action.Wander = new Action("Wander", {
         towns[0].finishProgress(this.varName, 200 * (resources.glasses ? 4 : 1));
     }
 });
-function adjustPots() {
-    let town = towns[0];
-    let basePots = Math.round(town.getLevel("Wander") * 5 * adjustContentFromPrestige());
-    town.totalPots = Math.floor(basePots + basePots * getSurveyBonus(town));
-}
-function adjustLocks() {
-    let town = towns[0];
-    let baseLocks = Math.round(town.getLevel("Wander") * adjustContentFromPrestige());
-    town.totalLocks = Math.floor(baseLocks * getSkillMod("Spatiomancy", 100, 300, .5) + baseLocks * getSurveyBonus(town));
-}
 
 Action.SmashPots = new Action("Smash Pots", {
     type: "limited",
@@ -1101,11 +1091,6 @@ Action.MeetPeople = new Action("Meet People", {
         towns[0].finishProgress(this.varName, 200);
     },
 });
-function adjustSQuests() {
-    let town = towns[0];
-    let baseSQuests = Math.round(town.getLevel("Met") * adjustContentFromPrestige());
-    town.totalSQuests = Math.floor(baseSQuests * getSkillMod("Spatiomancy", 200, 400, .5) + baseSQuests * getSurveyBonus(town));
-}
 
 Action.TrainStrength = new Action("Train Strength", {
     type: "normal",
@@ -1218,11 +1203,6 @@ Action.Investigate = new Action("Investigate", {
         towns[0].finishProgress(this.varName, 500);
     },
 });
-function adjustLQuests() {
-    let town = towns[0];
-    let baseLQuests = Math.round(town.getLevel("Secrets") / 2 * adjustContentFromPrestige());
-    town.totalLQuests = Math.floor(baseLQuests * getSkillMod("Spatiomancy", 300, 500, .5) + baseLQuests * getSurveyBonus(town));
-}
 
 Action.LongQuest = new Action("Long Quest", {
     type: "limited",
@@ -1828,21 +1808,6 @@ Action.ExploreForest = new Action("Explore Forest", {
         towns[1].finishProgress(this.varName, 100 * (resources.glasses ? 2 : 1));
     },
 });
-function adjustWildMana() {
-    let town = towns[1];
-    let baseWildMana = Math.round((town.getLevel("Forest") * 5 + town.getLevel("Thicket") * 5) * adjustContentFromPrestige());
-    town.totalWildMana = Math.floor(baseWildMana + baseWildMana * getSurveyBonus(town));
-}
-function adjustHunt() {
-    let town = towns[1];
-    let baseHunt = Math.round(town.getLevel("Forest") * 2 * adjustContentFromPrestige());
-    town.totalHunt = Math.floor(baseHunt * getSkillMod("Spatiomancy", 400, 600, .5) + baseHunt * getSurveyBonus(town));
-}
-function adjustHerbs() {
-    let town = towns[1];
-    let baseHerbs = Math.round((town.getLevel("Forest") * 5 + town.getLevel("Shortcut") * 2 + town.getLevel("Flowers") * 13) * adjustContentFromPrestige());
-    town.totalHerbs = Math.floor(baseHerbs * getSkillMod("Spatiomancy", 500, 700, .5) + baseHerbs * getSurveyBonus(town));
-}
 
 Action.WildMana = new Action("Wild Mana", {
     type: "limited",
@@ -2652,11 +2617,6 @@ Action.ExploreCity = new Action("Explore City", {
         towns[2].finishProgress(this.varName, 100 * (resources.glasses ? 2 : 1));
     },
 });
-function adjustSuckers() {
-    let town = towns[2];
-    let baseGamble = Math.round(town.getLevel("City") * 3 * adjustContentFromPrestige());
-    town.totalGamble = Math.floor(baseGamble * getSkillMod("Spatiomancy", 600, 800, .5) + baseGamble * getSurveyBonus(town));
-}
 
 Action.Gamble = new Action("Gamble", {
     type: "limited",
@@ -3563,11 +3523,6 @@ Action.ManaGeyser = new Action("Mana Geyser", {
         });
     },
 });
-function adjustGeysers() {
-    let town = towns[3];
-    let baseGeysers = Math.round(town.getLevel("Mountain") * 10 * adjustContentFromPrestige());
-    town.totalGeysers = Math.round(baseGeysers + baseGeysers * getSurveyBonus(town));
-}
 
 Action.DecipherRunes = new Action("Decipher Runes", {
     type: "progress",
@@ -3798,12 +3753,6 @@ Action.MineSoulstones = new Action("Mine Soulstones", {
     },
 });
 
-function adjustMineSoulstones() {
-    let town = towns[3];
-    let baseMine = Math.round(town.getLevel("Cavern") * 3 * adjustContentFromPrestige());
-    town.totalMineSoulstones = Math.floor(baseMine * getSkillMod("Spatiomancy", 700, 900, .5) + baseMine * getSurveyBonus(town));
-}
-
 Action.HuntTrolls = new MultipartAction("Hunt Trolls", {
     type: "multipart",
     expMult: 1.5,
@@ -3925,11 +3874,6 @@ Action.TakeArtifacts = new Action("Take Artifacts", {
         });
     },
 });
-function adjustArtifacts() {
-    let town = towns[3];
-    let baseArtifacts = Math.round(town.getLevel("Illusions") * 5 * adjustContentFromPrestige());
-    town.totalArtifacts = Math.floor(baseArtifacts * getSkillMod("Spatiomancy", 800, 1000, .5) + baseArtifacts * getSurveyBonus(town));
-}
 
 Action.ImbueMind = new MultipartAction("Imbue Mind", {
     type: "multipart",
@@ -4288,12 +4232,6 @@ Action.AcceptDonations = new Action("Accept Donations", {
         });
     },
 });
-
-function adjustDonations() {
-    let town = towns[4];
-    let base = Math.round(town.getLevel("Canvassed") * 5 * adjustContentFromPrestige());
-    town.totalDonations = Math.floor(base * getSkillMod("Spatiomancy", 900, 1100, .5) + base * getSurveyBonus(town));
-}
 
 Action.TidyUp = new MultipartAction("Tidy Up", {
     type: "multipart",
@@ -5148,11 +5086,6 @@ Action.Meander = new Action("Meander", {
         towns[5].finishProgress(this.varName, getBuffLevel("Imbuement"));
     }
 });
-function adjustPylons() {
-    let town = towns[5];
-    let base = Math.round(town.getLevel("Meander") * 10 * adjustContentFromPrestige());
-    town.totalPylons = Math.floor(base * getSkillMod("Spatiomancy", 1000, 1200, .5) + base * getSurveyBonus(town));
-}
 
 Action.ManaWell = new Action("Mana Well", {
     type: "limited",
@@ -5195,11 +5128,6 @@ Action.ManaWell = new Action("Mana Well", {
         if (towns[5].goodWells >= 15) setStoryFlag("drew15Wells");
     },
 });
-function adjustWells() {
-    let town = towns[5];
-    let base = Math.round(town.getLevel("Meander") * 10 * adjustContentFromPrestige());
-    town.totalWells = Math.floor(base + base * getSurveyBonus(town));
-}
 
 Action.DestroyPylons = new Action("Destroy Pylons", {
     type: "limited",
