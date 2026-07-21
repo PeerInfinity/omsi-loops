@@ -32,6 +32,63 @@ const IdleLoopsManaged = (() => {
     /** @type {(() => void)[]} */
     const restartCallbacks = [];
 
+    // ---- region overlay (fork addition, arc C) -----------------------------
+    // Region splitting is "region-overlay on ONE town": the town's structure
+    // (which vars exist) is shared across its regions; only the numeric VALUE
+    // props are per-region, swapped in/out on region entry. Per-region state
+    // lives HOST-side (the bridge holds the snapshots keyed by region id); this
+    // layer only knows how to read/write the active region's copy off the town
+    // object. All of this is managed-mode-only and off the vanilla path — no
+    // synthetic action is ever registered unless the host calls in.
+
+    /** The last region metadata the host installed (drives the exit gate). */
+    let activeRegionMeta = null;
+    /** withoutSpaces keys of the synthetic exit actions we registered. */
+    const syntheticActionKeys = new Set();
+
+    /** Progress vars cap at level 100 == 505000 exp (both scalings). */
+    const PROGRESS_EXP_CAP = 505000;
+
+    /**
+     * The swappable value-prop keys for a town, derived from its three var
+     * lists (NOT a hardcoded key list — future-proofs a different split town).
+     * Mirrors createVars/createProgressVars/createMultipartVars (town.js).
+     */
+    function regionStateKeys(town) {
+        const keys = [];
+        for (const v of town.varNames) {
+            keys.push(`checked${v}`, `goodTemp${v}`, `good${v}`, `lootFrom${v}`, `total${v}`);
+        }
+        for (const v of town.progressVars) keys.push(`exp${v}`);
+        for (const v of town.multipartVars) keys.push(`${v}`, `${v}LoopCounter`);
+        return keys;
+    }
+
+    /** Queue a per-var repaint for a swapped-in region (browser only). */
+    function refreshRegionViews(town) {
+        if (typeof view === "undefined") return;
+        view.requestUpdate("updateLockedHidden", null);
+        view.updateNextActions();
+        for (const v of town.varNames) view.requestUpdate("updateRegular", { name: v, index: town.index });
+        for (const v of town.progressVars) view.requestUpdate("updateProgressAction", { name: v, town });
+    }
+
+    /**
+     * Is the active region's exit runnable? True (no gate) when no region is
+     * active or the region declares no explore var. Otherwise the active
+     * region's Explore-var progress toward its cap must reach the configured
+     * threshold (default 1.0 = 100% explored).
+     */
+    function regionExitAvailable() {
+        if (!activeRegionMeta) return true;
+        const { townIndex = 0, exploreVar, exploreThreshold = 1.0 } = activeRegionMeta;
+        if (exploreVar == null) return true;
+        const town = towns[townIndex];
+        if (!town) return true;
+        const exp = town[`exp${exploreVar}`] ?? 0;
+        return Math.min(1, exp / PROGRESS_EXP_CAP) >= exploreThreshold;
+    }
+
     // ---- unlock view fan-out (page-only) -----------------------------------
     // unlocks.js is view-free on purpose (workers load it), so knowing which
     // panels a changed row invalidates is this layer's job. Both helpers are
@@ -239,6 +296,104 @@ const IdleLoopsManaged = (() => {
         },
         /** Per-completed-action hook (the Phase-E leftover unlocks.js reserves). */
         onActionCompleted(cb) { Unlocks.onActionCompleted = cb; },
+
+        // ---- region overlay (arc C) --------------------------------------
+        /**
+         * Read the active region's swappable value props off `towns[townIndex]`
+         * into a plain snapshot the host can stash. ZERO new fork save keys —
+         * the vanilla flat namespace only ever holds the ACTIVE region's copy.
+         */
+        dumpRegionState(townIndex) {
+            const town = towns[townIndex];
+            if (!town) throw new Error(`managed dumpRegionState: no town ${townIndex}`);
+            const snapshot = {};
+            for (const k of regionStateKeys(town)) snapshot[k] = town[k];
+            return snapshot;
+        },
+        /**
+         * Write a region's value props back onto `towns[townIndex]`. `null` =
+         * a fresh region (every minted var at its createVars zero-state). Runs
+         * `adjustAll()` on BOTH branches (re-derives levels/totals and re-pins
+         * managed totals — the region-swap generalization of "anything touching
+         * the overlay must nudge adjustAll") and a full `Unlocks.check()` so
+         * event/view state is provably fresh (a restore can't mint new crossings
+         * — levels don't move between dump and load — so this is belt-and-braces).
+         */
+        loadRegionState(townIndex, snapshot) {
+            const town = towns[townIndex];
+            if (!town) throw new Error(`managed loadRegionState: no town ${townIndex}`);
+            const fresh = snapshot == null;
+            for (const k of regionStateKeys(town)) town[k] = fresh ? 0 : (snapshot[k] ?? 0);
+            adjustAll();
+            Unlocks.check();
+            refreshRegionViews(town);
+        },
+        /**
+         * Install (or clear, with null) the active region's metadata: which
+         * explore var + threshold the exit gate reads. Clears any synthetic
+         * exit actions the previous region registered — the host re-injects the
+         * new region's exits right after (mirrors the jta clear-then-inject
+         * order on region change).
+         */
+        setActiveRegion(regionMeta) {
+            this.clearSyntheticActions();
+            activeRegionMeta = regionMeta ?? null;
+        },
+        /** Is the active region's exit gate open (Explore % >= threshold)? */
+        regionExitAvailable,
+        /**
+         * Register one synthetic exit action (managed-mode-only) queueable by
+         * NAME through the Action prototype, whose finish() invokes `cb`. It is
+         * registered AFTER initializeActions(), so it never enters
+         * `totalActionList`, the planner census, or the static/dynamic DOM — it
+         * is resolvable only via getActionPrototype (the queue's name lookup).
+         * The exit gate rides its canStart(): below threshold it reads as
+         * unrunnable, exactly like a locked action. Vanilla enumeration and the
+         * byte-exact replay gate never see it (they never enter managed mode).
+         */
+        injectSyntheticAction(def, cb) {
+            const name = def?.name;
+            if (typeof name !== "string" || !name) {
+                return { ok: false, error: "injectSyntheticAction: def.name (string) required" };
+            }
+            const key = name.replace(/ /gu, "");
+            if (key in Action) {
+                return { ok: false, error: `injectSyntheticAction: '${name}' collides with an existing action` };
+            }
+            const townNum = def.townNum ?? 0;
+            Action[key] = new Action(name, {
+                type: "normal",
+                expMult: 1,
+                townNum,
+                stats: {},                       // empty stats -> adjustedTicks 1 (completes fast)
+                manaCost() { return 1; },
+                visible() { return true; },
+                unlocked() { return true; },
+                canStart() { return regionExitAvailable(); },
+                finish() { if (typeof cb === "function") cb(); },
+            });
+            syntheticActionKeys.add(key);
+            return { ok: true, name };
+        },
+        /**
+         * Remove every synthetic exit action registered by injectSyntheticAction
+         * and purge any that are still sitting in the live queue (so a later
+         * restart's translateClassNames can't throw on a now-unknown name).
+         */
+        clearSyntheticActions() {
+            if (syntheticActionKeys.size === 0) return { removed: 0 };
+            if (typeof actions !== "undefined") {
+                actions.clearActions((a) => syntheticActionKeys.has(a.name.replace(/ /gu, "")));
+                if (Array.isArray(actions.current)) {
+                    actions.current = actions.current.filter(
+                        (a) => !syntheticActionKeys.has(a.name.replace(/ /gu, "")));
+                }
+            }
+            const removed = syntheticActionKeys.size;
+            for (const key of syntheticActionKeys) delete Action[key];
+            syntheticActionKeys.clear();
+            return { removed };
+        },
 
         // ---- callbacks ----------------------------------------------------
         /** Register a loop-reset callback (fired from driver restart()). */
