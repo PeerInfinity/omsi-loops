@@ -73,11 +73,72 @@ const IdleLoopsManaged = (() => {
         for (const v of town.progressVars) view.requestUpdate("updateProgressAction", { name: v, town });
     }
 
+    // ---- per-region Explore rescale (arc D2 slice 2b) ----------------------
+    // A region is a mini-town compressed into N levels: its exp caps at
+    // expForLevel(N) and its EFFECTIVE level (Town.getLevel) runs 0..100 across
+    // those N raw levels, so discovery schedules, action thresholds, the UI %
+    // and the exit gate all reach their end at the region's own maximum. The
+    // ladder itself lives in town.js (Town.regionScale, two views of level);
+    // this layer owns installing it for the ACTIVE region and keeping the
+    // stored exp inside the freshly-installed ceiling.
+    //
+    // Only the region's own exploreVar is rescaled — the town's other progress
+    // vars keep vanilla pace, which is what makes the knob a region-length dial
+    // rather than a difficulty multiplier.
+
+    /** The scale key currently installed (JSON), so a no-op swap stays a no-op. */
+    let installedScaleKey = null;
+
+    /** The active region's Explore max level, or 0 when it is not rescaled. */
+    function activeRegionMaxLevel() {
+        const n = Math.trunc(Number(activeRegionMeta?.exploreMaxLevel));
+        // >= 100 is mathematically the vanilla ladder (and expForLevel(100) is
+        // 505000 on both curves), so it installs nothing — one less state.
+        return activeRegionMeta?.exploreVar && Number.isFinite(n) && n >= 1 && n < 100 ? n : 0;
+    }
+
+    /**
+     * Install the active region's rescale (or clear it), clamp any stored exp
+     * that now sits above the new ceiling, and recompute everything that reads
+     * a level. The recompute is NOT redundant with loadRegionState's: the host
+     * swaps region state first and installs the region's metadata second, so
+     * the adjustAll() inside loadRegionState ran under the OUTGOING region's
+     * ladder. Runs only when the scale actually changed — a same-scale swap is
+     * already fully recomputed by loadRegionState.
+     */
+    function applyRegionScale() {
+        const max = activeRegionMaxLevel();
+        const scale = max
+            ? { [activeRegionMeta.townIndex ?? 0]: { [activeRegionMeta.exploreVar]: max } }
+            : null;
+        const key = scale ? JSON.stringify(scale) : null;
+        if (key === installedScaleKey) return;
+        installedScaleKey = key;
+        if (typeof Town !== "undefined") Town.setRegionScale(scale);
+        if (scale) {
+            const town = towns[activeRegionMeta.townIndex ?? 0];
+            const varName = activeRegionMeta.exploreVar;
+            // A config that LOWERS a region's max must not leave exp stranded
+            // above the new ceiling — finishProgress's capped-already equality
+            // would never match it and the var would never read as complete.
+            if (town) {
+                const cap = town.expCap(varName);
+                if ((town[`exp${varName}`] ?? 0) > cap) town[`exp${varName}`] = cap;
+            }
+        }
+        if (typeof adjustAll === "function") adjustAll();
+        if (typeof Unlocks !== "undefined") Unlocks.check();
+        const town = towns[activeRegionMeta?.townIndex ?? 0];
+        if (town) refreshRegionViews(town);
+    }
+
     /**
      * Is the active region's exit runnable? True (no gate) when no region is
      * active or the region declares no explore var. Otherwise the active
      * region's Explore-var progress toward its cap must reach the configured
-     * threshold (default 1.0 = 100% explored).
+     * threshold (default 1.0 = 100% explored). Under a rescale the cap is the
+     * REGION's own ceiling, so the threshold stays a fraction of "fully
+     * explored" and only the amount of exp that means changes.
      */
     function regionExitAvailable() {
         if (!activeRegionMeta) return true;
@@ -86,7 +147,9 @@ const IdleLoopsManaged = (() => {
         const town = towns[townIndex];
         if (!town) return true;
         const exp = town[`exp${exploreVar}`] ?? 0;
-        return Math.min(1, exp / PROGRESS_EXP_CAP) >= exploreThreshold;
+        const max = activeRegionMaxLevel();
+        const cap = max ? town.expForLevel(exploreVar, max) : PROGRESS_EXP_CAP;
+        return Math.min(1, exp / cap) >= exploreThreshold;
     }
 
     // ---- unlock view fan-out (page-only) -----------------------------------
@@ -330,14 +393,16 @@ const IdleLoopsManaged = (() => {
         },
         /**
          * Install (or clear, with null) the active region's metadata: which
-         * explore var + threshold the exit gate reads. Clears any synthetic
-         * exit actions the previous region registered — the host re-injects the
-         * new region's exits right after (mirrors the jta clear-then-inject
-         * order on region change).
+         * explore var + threshold the exit gate reads, and (slice 2b) how many
+         * levels the region's Explore ladder is compressed into. Clears any
+         * synthetic exit actions the previous region registered — the host
+         * re-injects the new region's exits right after (mirrors the jta
+         * clear-then-inject order on region change).
          */
         setActiveRegion(regionMeta) {
             this.clearSyntheticActions();
             activeRegionMeta = regionMeta ?? null;
+            applyRegionScale();
         },
         /** Is the active region's exit gate open (Explore % >= threshold)? */
         regionExitAvailable,

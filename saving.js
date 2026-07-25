@@ -19,7 +19,10 @@ function cheatSurvey()
     for(let i= 0; i<9; i++)
     {
         const varName = "SurveyZ" + i
-        towns[i][`exp${varName}`] = 505000;
+        // fork (arc D2 slice 2b): the var's OWN cap — a rescaled region's
+        // ceiling is lower, and exp above it would never match
+        // finishProgress's capped-already equality. 505000 when unscaled.
+        towns[i][`exp${varName}`] = towns[i].expCap(varName);
         view.updateProgressAction({name: varName, town: towns[i]});
     }
 }
@@ -30,7 +33,8 @@ function cheatProgress()
     {
         if (action.type == "progress")
         {
-            towns[action.townNum][`exp${action.varName}`] = 505000;
+            towns[action.townNum][`exp${action.varName}`] =
+                towns[action.townNum].expCap(action.varName);   // slice 2b: the var's own cap
             view.updateProgressAction({name: action.varName, town: towns[action.townNum]});
         }
     }

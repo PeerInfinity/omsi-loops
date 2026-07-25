@@ -51,6 +51,42 @@ class Town {
     /** @type {Set<string>} */
     hiddenVars = new Set();
 
+    /**
+     * fork (arc D2 slice 2b): the per-region Explore RESCALE, as
+     * `{ [townIndex]: { [varName]: maxLevel } }`, or null on the vanilla path.
+     *
+     * A "region" in the substrate's arc-C sense is an overlay on ONE town, and
+     * a region is meant to behave like a mini-town compressed into N levels:
+     * its exit timing, its discovery schedules and its UI % all reach their
+     * end at raw level N instead of 100. That gives level TWO VIEWS:
+     *
+     *   - EFFECTIVE (`getLevel`) = `min(100, floor(raw · 100 / N))` — what every
+     *     SCHEDULE consumer reads: unlock-row predicates, action
+     *     visible/unlocked thresholds, the UI percentage, and the exit gate.
+     *     Schedules therefore compress into the region's N levels.
+     *   - RAW (`getRawLevel`) = the vanilla level, capped at N by the exp clamp
+     *     — what the DISCOVERY-QUANTITY consumers read (the `<totalDiscovered>`
+     *     evaluator and the unlock table's quantity-row dot product). Those
+     *     curves are LINEAR in level, so capping the raw level at 100/count
+     *     hands each region ≈1/count of the town's unlockables: the partition
+     *     falls out of the cap, with no formula rewriting and no per-region
+     *     inflation of quantities.
+     *
+     * Deliberately CLASS-static rather than a Town instance property: the
+     * planner worker installs it via the worldConfig transport BEFORE
+     * `plRestoreSave`, which rebuilds the towns array — an instance property
+     * would not survive that, and would also need omitting from every save.
+     * Null is the vanilla path and costs one static read + a nullish check in
+     * `getLevel`, which is white-hot (the byte-gate proves the inertness).
+     * @type {Record<number, Record<string, number>> | null}
+     */
+    static regionScale = null;
+
+    /** Install (or clear, with null) the per-region Explore rescale. */
+    static setRegionScale(scale) {
+        Town.regionScale = scale ?? null;
+    }
+
     static {
         Data.omitProperties(this.prototype, ["hiddenVars"]);
     }
@@ -63,10 +99,48 @@ class Town {
         return level * (level + 1) * 50;
     };
 
-    getLevel(varName) {
+    /**
+     * This town's rescaled max level for a var, or 0 when it is not rescaled.
+     * Resolves the `Survey` alias itself, so every caller can pass whatever
+     * name it holds — the four entry points below do not agree on which.
+     */
+    regionMaxLevel(varName) {
+        if (varName === "Survey") varName = varName + "Z" + this.index;
+        const cap = Town.regionScale?.[this.index]?.[varName];
+        return cap > 0 ? cap : 0;
+    };
+
+    /** The exp a var holds at a given level, on whichever curve it scales on. */
+    expForLevel(varName, level) {
+        if (varName === "Survey") varName = varName + "Z" + this.index;
+        return this.progressScaling[varName] === "linear" ? level * 5050 : this.expFromLevel(level);
+    };
+
+    /**
+     * The exp ceiling for a var: `expForLevel(regionMax)` under a rescale,
+     * else the vanilla level-100 cap (505000 on BOTH curves).
+     */
+    expCap(varName) {
+        const max = this.regionMaxLevel(varName);
+        return max ? this.expForLevel(varName, max) : 505000;
+    };
+
+    /** The vanilla (unscaled) level — the DISCOVERY-QUANTITY view. */
+    getRawLevel(varName) {
         if (varName === "Survey") varName = varName + "Z" + this.index;
         if (this.progressScaling[varName] === "linear") return Math.floor(this[`exp${varName}`] / 5050);
         return Math.floor((Math.sqrt(8 * this[`exp${varName}`] / 100 + 1) - 1) / 2);
+    };
+
+    /**
+     * The EFFECTIVE level — the SCHEDULE view. The rescale is applied at this
+     * single return site, AFTER both scaling branches inside getRawLevel, so a
+     * linear-scaled var rescales on the same 100/N ladder a quadratic one does.
+     */
+    getLevel(varName) {
+        const level = this.getRawLevel(varName);
+        const max = this.regionMaxLevel(varName);
+        return max ? Math.min(100, Math.floor(level * 100 / max)) : level;
     };
 
     restart() {
@@ -82,15 +156,23 @@ class Town {
         // fork: testing gain multiplier (Extras menu). All town progress exp
         // funnels through here; 1 leaves expGain untouched (byte-inert).
         if ((options.expGainMultiplier ?? 1) !== 1) expGain *= options.expGainMultiplier;
+        // fork (arc D2 slice 2b): the ceiling is the var's own, which under a
+        // per-region Explore rescale is expForLevel(regionMax) and 505000
+        // otherwise. All THREE literal sites move together on purpose: taking
+        // only the two clamp sites below would still clamp exp correctly and
+        // would silently break this capped-already fast path for every
+        // rescaled region — the perf early-return AND the pauseOnComplete
+        // "Progress complete!" branch both hang off this equality.
+        const expCap = this.expCap(varName);
         // return if capped, for performance
-        if (this[`exp${varName}`] === 505000) {
+        if (this[`exp${varName}`] === expCap) {
             if (options.pauseOnComplete) pauseGame(true, "Progress complete! (Game paused)");
             else return;
         }
 
         const prevLevel = this.getLevel(varName);
-        if (this[`exp${varName}`] + expGain > 505000) {
-            this[`exp${varName}`] = 505000;
+        if (this[`exp${varName}`] + expGain > expCap) {
+            this[`exp${varName}`] = expCap;
         } else {
             this[`exp${varName}`] += expGain;
         }
@@ -114,8 +196,14 @@ class Town {
     };
 
     getPrcToNext(varName) {
-        const level = this.getLevel(varName);
-        if (level >= 100) return 100;
+        // fork (arc D2 slice 2b): within-level progress is a RAW-level
+        // quantity — the bar fills toward the next raw step while the level
+        // the UI prints beside it jumps in 100/N increments. Reading the
+        // effective level here would index expFromLevel() with a level the
+        // stored exp has never been near. Vanilla: regionMaxLevel is 0, so
+        // this is the level-100 guard against the unscaled level, unchanged.
+        const level = this.getRawLevel(varName);
+        if (level >= (this.regionMaxLevel(varName) || 100)) return 100;
         if (this.progressScaling[varName] === "linear") return this[`exp${varName}`] / 5050 % 1 * 100;
         const expOfCurLevel = this.expFromLevel(level);
         const curLevelProgress = this[`exp${varName}`] - expOfCurLevel;

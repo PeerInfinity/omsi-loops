@@ -448,10 +448,18 @@ const Unlocks = (() => {
      * Deliberately NOT `towns[t]["total" + var]`: that is the bonus-inflated
      * number the game displays, and the batch model is defined against base
      * rates (a survey bonus must not hand the player a location early).
+     *
+     * And deliberately the RAW level (arc D2 slice 2b): quantities are the one
+     * thing a per-region Explore rescale must NOT compress. These curves are
+     * linear in level, so a region whose raw level caps at 100/count discovers
+     * ≈1/count of the town's items — the partition across regions falls out of
+     * the cap. Reading the effective level here would hand EVERY region the
+     * town's full complement. The SCHEDULE consumers below (clauseValue's
+     * townLevel/surveyLevel) keep the effective view on purpose.
      */
     function quantityBaseTotal(row) {
         const towns_ = row.dimTowns ?? resolveDimTowns(row);
-        return dotProduct(row.coeffs, row.dims.map((v, i) => towns[towns_[i]].getLevel(v)));
+        return dotProduct(row.coeffs, row.dims.map((v, i) => towns[towns_[i]].getRawLevel(v)));
     }
 
     function resolveDimTowns(row) {

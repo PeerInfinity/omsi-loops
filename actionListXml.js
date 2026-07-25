@@ -326,7 +326,17 @@ const ActionListXml = (() => {
                 if (!g) throw new Error(`actionListXml: unknown guildSegment ${node.attrs.name}`);
                 return g();
             }
-            case "progressLevel": return townFor(node.attrs.varName).getLevel(node.attrs.varName);
+            // arc D2 slice 2b: `ctx.rawLevels` marks a DISCOVERY-QUANTITY
+            // evaluation (the <totalDiscovered> closures getQuantityTotalFns
+            // compiles). Those curves must read the raw level so a per-region
+            // Explore rescale PARTITIONS the town's quantities instead of
+            // handing each region the full complement; every other context —
+            // <primaryValue>, predicates, effects — is a schedule consumer and
+            // reads the effective level. Vanilla: no rescale, the two agree.
+            case "progressLevel": {
+                const t = townFor(node.attrs.varName);
+                return ctx.rawLevels ? t.getRawLevel(node.attrs.varName) : t.getLevel(node.attrs.varName);
+            }
             case "goodItems": return townFor(ownVar(node, ctx))["good" + ownVar(node, ctx)];
             case "discoveredItems": return townFor(ownVar(node, ctx))["total" + ownVar(node, ctx)];
             case "checkedItems": return townFor(ownVar(node, ctx))["checked" + ownVar(node, ctx)];
@@ -860,25 +870,32 @@ const ActionListXml = (() => {
 
     /**
      * The transport payload (cross-game P2-A): everything a sim context needs
-     * to run the world that actually exists. Two INDEPENDENT halves:
+     * to run the world that actually exists. Three INDEPENDENT halves:
      *
      *   - the P2 award schedule (+ its prefs) — prefs alone are meaningless,
      *     since the walk only runs under handlesLoot;
      *   - the AP unlock overlay (§9 U5) — suppressed/granted rows and managed
-     *     batch capacity, which gate and re-price the world the sim runs.
+     *     batch capacity, which gate and re-price the world the sim runs;
+     *   - the per-region Explore rescale (arc D2 slice 2b) — the town's level
+     *     ladder is compressed for the active region, which moves every unlock
+     *     threshold and the exit gate. A worker simming vanilla levels would
+     *     plan against schedules the live game does not run, so the scale rides
+     *     the same transport the overlay does.
      *
-     * null when BOTH halves are empty, which is every world until an AP bridge
+     * null when ALL halves are empty, which is every world until an AP bridge
      * pushes an overlay: the default path keeps sending the identical (null)
      * worker message, and that is what keeps the feature byte-inert.
-     * @returns {{awardSchedule: object|null, lootPrefs: Record<string, {order: string[], disabled: string[]}>|null, unlocks: object|null} | null}
+     * @returns {{awardSchedule: object|null, lootPrefs: Record<string, {order: string[], disabled: string[]}>|null, unlocks: object|null, regionScale: object|null} | null}
      */
     function buildWorldConfig() {
         const unlocks = typeof Unlocks !== "undefined" ? Unlocks.buildOverlay() : null;
-        if (awardSchedule === null && unlocks === null) return null;
+        const regionScale = typeof Town !== "undefined" ? (Town.regionScale ?? null) : null;
+        if (awardSchedule === null && unlocks === null && regionScale === null) return null;
         return {
             awardSchedule,
             lootPrefs: awardSchedule === null ? null : getLootPrefs(),
             unlocks,
+            regionScale,
         };
     }
 
@@ -904,9 +921,19 @@ const ActionListXml = (() => {
      * @returns {boolean} true when the config installed (or cleared) cleanly
      */
     function installWorldConfig(cfg) {
+        // ---- half 3: the per-region Explore rescale (null clears) ----------
+        // Before the overlay, because unlock rows are evaluated against levels:
+        // installing the scale first means a subsequent overlay install (and
+        // the plRestoreSave + adjustAll that follows in every worker) already
+        // sees the region's ladder. Class-static, so it survives the towns
+        // rebuild plRestoreSave does right after this call.
+        if (typeof Town !== "undefined" && typeof Town.setRegionScale === "function") {
+            Town.setRegionScale(cfg?.regionScale ?? null);
+        }
+
         // ---- half 2: the AP unlock overlay (replace-whole; null clears) ----
-        // First, so a rejected overlay (bad row id / excluded var) throws
-        // before the schedule half has mutated anything.
+        // First of the two original halves, so a rejected overlay (bad row id /
+        // excluded var) throws before the schedule half has mutated anything.
         if (typeof Unlocks !== "undefined") Unlocks.installOverlay(cfg?.unlocks ?? null);
 
         // ---- half 1: the P2 award schedule + priority prefs ----------------
@@ -1539,7 +1566,9 @@ const ActionListXml = (() => {
             const varName = def.attrs.varName ?? name.replace(/ /gu, "");
             if (excluded.includes(varName)) continue;
             const townNum = def.attrs.townNum !== undefined ? num(def.attrs.townNum, "townNum") : 0;
-            const ctx = { doc, action: { name, varName, townNum } };
+            // rawLevels: this is the discovery-quantity context (slice 2b) —
+            // <progressLevel> reads the raw, region-capped level here.
+            const ctx = { doc, action: { name, varName, townNum }, rawLevels: true };
             fns.push({ varName, computeTotal: () => evalNumeric(td, ctx) });
         }
         return (quantityTotalFns = fns);
