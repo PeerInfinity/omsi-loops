@@ -84,6 +84,19 @@ full state snapshot is bit-identical before and after. Results feed the
 frontier scoring term and push timing. Re-probed every loop by default
 (stale thresholds mis-time unlock pushes — measured, not assumed).
 
+Both sides of a progress dimension speak **raw** level (`getRawLevel` to
+read, `expForLevel` to write, `regionMaxLevel || 100` as the ceiling). That
+matters only under the substrate's per-region Explore rescale, where
+`getLevel` returns a compressed *effective* level: reading one ladder and
+writing the other seeded the binary search from the wrong floor and reported
+levels the exp cap forbids. Raw is also the unit `reqFraction` converts
+`need` back to exp in, so it is the view that survives the whole round trip.
+`test()` stays effective-driven — that is what the predicates read — and
+effective is monotone in raw, so the searches are unaffected. Vanilla has no
+rescale, so raw ≡ effective and this is byte-inert. (`plProbePoolCap` is raw
+on both sides too, but for the opposite reason: its read side is
+`total<Var>`, a raw-level `<totalDiscovered>` consumer.)
+
 ### 3.3 Knowledge refresh (`refreshKnowledge` / `measureAction`)
 
 The knowledge table maps action name → an empirical profile: execs achieved,

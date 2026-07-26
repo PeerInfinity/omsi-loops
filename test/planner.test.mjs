@@ -49,6 +49,64 @@ test("threshold probing is exact and leaves state untouched", () => {
     assert.ok(sess.needs("Start Journey").includes("supplies"), "Start Journey canStart needs supplies");
 });
 
+// fork (arc D2 slice 2b follow-up): the probe used to READ the EFFECTIVE view
+// (getLevel) while WRITING exp on the RAW curve. Vanilla never noticed — the
+// two ladders coincide — but under a per-region Explore rescale the mismatch
+// seeds the binary search's lower bound from the wrong ladder, and hands
+// `reqFraction` (which converts `need` back to exp on the raw curve) a number
+// from the other one.
+//
+// The state that exposes it is a region with SOME progress already banked: at
+// raw Wander 1 of a 10-level region the effective level is 10, so the pre-fix
+// search started at lo=10 over a raw-level space where every answer is <= 10.
+// It reported 11 — one above its own floor — for EVERY Wander gate: unreachable
+// (the exp cap is level 10) and identical for gates that are ten raw levels
+// apart. Both halves are checked below, because a need that merely lands in
+// range would still be useless if the probe had lost its resolution.
+test("threshold probing stays on the RAW ladder under a region rescale", () => {
+    const ctx = makePlanner(778);
+    const sess = ctx.ev("new IdlePlanner.Session()");
+
+    // Town 0's Explore compressed into 10 levels: effective = floor(raw*10).
+    ctx.ev('Town.setRegionScale({ 0: { Wander: 10 } })');
+    ctx.ev("towns[0].expWander = 100");   // raw level 1 => effective 10
+    assert.equal(ctx.ev('towns[0].getRawLevel("Wander")'), 1);
+    assert.equal(ctx.ev('towns[0].getLevel("Wander")'), 10);
+
+    const before = sess.snapshot();
+    const th = sess.probe();
+    assert.equal(sess.snapshot(), before, "probe must not mutate state");
+
+    const wander = (name) => th[name]?.requires?.find(r => r.v === "Wander");
+    // The two gates the vanilla test pins, reached a tenth of the way up:
+    // effective 20 first holds at raw 2, effective 22 at raw 3. Distinct
+    // answers are the resolution the pre-fix probe threw away (both were 11).
+    assert.equal(wander("Pick Locks")?.need, 2, "vanilla Wander>=20 compresses to raw 2");
+    assert.equal(wander("Meet People")?.need, 3, "vanilla Wander>=22 compresses to raw 3");
+    assert.equal(wander("Pick Locks")?.cur, 1, "`cur` is the RAW level, not the effective 10");
+
+    // ...and every reported level is one the save can actually hold.
+    const cap = ctx.ev('towns[0].regionMaxLevel("Wander")');
+    const capExp = ctx.ev('towns[0].expCap("Wander")');
+    assert.equal(cap, 10);
+    const wanderRows = Object.entries(th)
+        .flatMap(([name, t]) => (t.requires ?? []).filter(r => r.kind === "p" && r.v === "Wander")
+            .map(r => [name, r]));
+    assert.ok(wanderRows.length >= 4, `expected Wander gates to probe (got ${wanderRows.length})`);
+    for (const [name, r] of wanderRows) {
+        assert.ok(r.need <= cap, `${name}: need ${r.need} exceeds the region cap ${cap}`);
+        assert.ok(ctx.ev(`towns[0].expForLevel("Wander", ${r.need})`) <= capExp,
+            `${name}: need ${r.need} costs more exp than the region can hold`);
+    }
+
+    // Control: clearing the rescale puts the vanilla answers back, so the
+    // numbers above are the compression and not a probe that lost its way.
+    ctx.ev("Town.setRegionScale(null)");
+    const vanilla = sess.probe();
+    assert.equal(vanilla["Pick Locks"]?.requires?.find(r => r.v === "Wander")?.need, 20);
+    assert.equal(sess.snapshot(), before, "the second probe is non-mutating too");
+});
+
 test("predictor scores queues headlessly", async () => {
     const ctx = makePlanner(779);
     const sess = ctx.ev("new IdlePlanner.Session()");

@@ -320,21 +320,42 @@ function plProbeThresholds(maxSkillLevel) {
     }
     for (const s in skills) dims.push({ kind: "s", v: s });
 
-    const expOfProgressLevel = (town, v, L) =>
-        towns[town].progressScaling[v] === "linear" ? 5050 * L : 100 * L * (L + 1) / 2;
-    const levelOfSavedExp = (d, exp) =>
-        towns[d.town].progressScaling[d.v] === "linear" ? Math.floor(exp / 5050) : getLevelFromExp(exp);
-    const getDim = (d) => d.kind === "p" ? towns[d.town].getLevel(d.v) : getSkillLevel(d.v);
+    // fork (arc D2 slice 2b follow-up): the probe speaks RAW level on BOTH
+    // sides. It used to READ the effective view (`getLevel`) while WRITING exp
+    // through a raw-level formula — harmless in vanilla, where the two ladders
+    // coincide, but wrong under a per-region Explore rescale, where
+    // effective = floor(raw·100/N). There the search explored effective levels
+    // the stored exp can never hold (exp is hard-capped at `expForLevel(N)`),
+    // and the `need` it reported went straight back through `reqFraction`,
+    // which converts a level to exp on the raw curve.
+    //
+    // RAW is the view that survives that round trip: it is the unit the exp cap
+    // is expressed in, the unit a grinder actually has to reach, and the unit
+    // every downstream consumer of `need` already assumes. `test()` stays
+    // effective-driven — the visible()/unlocked() predicates read `getLevel` —
+    // and effective is monotone in raw, so the binary searches are unaffected.
+    // The ceiling is now the region's own, so the probe only ever visits states
+    // the save can actually be in, and never writes exp above `expCap`.
+    //
+    // Vanilla: `regionMaxLevel` is 0 ⇒ raw === effective and the ceiling is
+    // MAXP, so this is byte-identical to the pre-fix probe (the V0 reference in
+    // CC/scripts/omsi-stats/run-planner.mjs is the gate on that claim).
+    const getDim = (d) => d.kind === "p" ? towns[d.town].getRawLevel(d.v) : getSkillLevel(d.v);
     const saved = dims.map(d => d.kind === "p" ? towns[d.town]["exp" + d.v] : skills[d.v].levelExp.level);
+    // Pristine levels, captured before anything is perturbed: pass B needs each
+    // dim's OWN current level while every other dim is maxed, so it cannot
+    // re-read them live. Taking them through `getDim` is what keeps pass B's
+    // `cur` in the same view as pass A's.
+    const savedLevel = dims.map(getDim);
     const setDim = (d, L) => {
-        if (d.kind === "p") towns[d.town]["exp" + d.v] = expOfProgressLevel(d.town, d.v, L);
+        if (d.kind === "p") towns[d.town]["exp" + d.v] = towns[d.town].expForLevel(d.v, L);
         else skills[d.v].levelExp.level = L;
     };
     const restoreAll = () => dims.forEach((d, i) => {
         if (d.kind === "p") towns[d.town]["exp" + d.v] = saved[i];
         else skills[d.v].levelExp.level = saved[i];
     });
-    const maxOf = (d) => d.kind === "p" ? MAXP : maxSkillLevel;
+    const maxOf = (d) => d.kind === "p" ? (towns[d.town].regionMaxLevel(d.v) || MAXP) : maxSkillLevel;
 
     const out = {};
     try {
@@ -371,8 +392,7 @@ function plProbeThresholds(maxSkillLevel) {
                 if (test()) {
                     probeable = true;
                     for (const d of dims) {
-                        const cur0 = saved[dims.indexOf(d)];
-                        const cur = d.kind === "p" ? levelOfSavedExp(d, cur0) : cur0;
+                        const cur = savedLevel[dims.indexOf(d)];
                         setDim(d, cur);
                         if (!test()) {
                             let lo = cur, hi = maxOf(d);
@@ -413,8 +433,6 @@ function plProbeThresholds(maxSkillLevel) {
 function plProbePoolCap(varName, townIdx, candidatesJson) {
     const candidates = JSON.parse(candidatesJson);   // [{kind:'p'|'s', v, town?}]
     const totalKey = "total" + varName;
-    const expOfProgressLevel = (t, v, L) =>
-        towns[t].progressScaling[v] === "linear" ? 5050 * L : 100 * L * (L + 1) / 2;
     const readTotal = () => { adjustAll(); return towns[townIdx][totalKey] ?? 0; };
     const out = [];
     try {
@@ -424,7 +442,15 @@ function plProbePoolCap(varName, townIdx, candidatesJson) {
             if (d.kind === "p") {
                 const dt = d.town ?? 0;
                 const saved = towns[dt]["exp" + d.v];
-                towns[dt]["exp" + d.v] = expOfProgressLevel(dt, d.v, 100);   // MAXP
+                // RAW level, deliberately: unlike plProbeThresholds (whose
+                // test() reads the effective view) this probe's read side is
+                // `total<Var>` — the <totalDiscovered> evaluator, a RAW-level
+                // consumer. And the bump stays MAXP rather than the region's
+                // own ceiling on purpose: this is a Δ>0 SENSITIVITY test, not a
+                // reachability claim, and a compressed region's ceiling can be
+                // low enough to leave a weak driver's Δ at zero. Restoration is
+                // exact either way, so the out-of-range exp never escapes.
+                towns[dt]["exp" + d.v] = towns[dt].expForLevel(d.v, 100);   // MAXP
                 restore = () => { towns[dt]["exp" + d.v] = saved; };
             } else {
                 const saved = skills[d.v].levelExp.level;
