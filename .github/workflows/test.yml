@@ -1,11 +1,12 @@
 # Headless sim test suite (test/harness.mjs — Node vm, no browser, no deps).
-# Runs on the fork's integration branches; the upstream Pages deploy
-# (static.yml) is untouched and still keyed to the dmchurch branch.
+# Runs on the fork's integration branches. substrate is now the default branch
+# and the one GitHub Pages publishes (static.yml); dmchurch remains the
+# untouched upstream parity/fork point.
 name: Tests
 
 on:
   push:
-    branches: ["substrate", "automation", "automation-*", "xml-migration"]
+    branches: ["substrate", "automation", "automation-*"]
   pull_request:
   workflow_dispatch:
 
