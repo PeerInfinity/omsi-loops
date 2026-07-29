@@ -2,9 +2,14 @@
 name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
+  # Runs on pushes targeting this fork's default branch. Upstream keyed this to
+  # dmchurch; the fork deploys substrate, which became the default branch when
+  # Pages was enabled here. The dmchurch branch keeps upstream's copy of this
+  # file unchanged (it is the parity/fork point), so a push there still matches
+  # its own trigger — the github-pages environment is restricted to substrate
+  # so such a run cannot overwrite this site.
   push:
-    branches: ["dmchurch"]
+    branches: ["substrate"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
