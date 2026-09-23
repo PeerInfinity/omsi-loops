@@ -63,7 +63,11 @@ check(await page.evaluate(() => options.basicAutomationEnabled === true && optio
 for (const id of ["plannerModeInput", "plannerScreenKInput", "plannerWeightTravelReliefInput", "plannerWeightHeadroomInput",
                   // §11.10 targeted mode UI (plannerTargets is now a row editor, not a textarea)
                   "plannerStrategyInput", "plannerAutoRankTargetsInput", "plannerTargetsEditor",
-                  "plannerTargetsUnlockedOnlyInput", "plannerAntiFixationInput"]) {
+                  "plannerTargetsUnlockedOnlyInput", "plannerAntiFixationInput",
+                  // the four formerly hard-coded planner knobs
+                  "plannerAntiFixKInput", "plannerDroughtLimitInput", "plannerGoalStallKInput", "plannerUnlockStallKInput",
+                  // planner-state readouts (internals)
+                  "autoIntPursuitBody", "autoIntAntiFixBody", "autoIntPerfBody"]) {
     check(await page.$eval(`#automationView #${id}`, () => true).catch(() => false), `${id} lives in the automation view`);
 }
 check(await page.$eval("#expGainMultiplierInput", el => !el.closest("#automationView")), "expGainMultiplier stays in Extras");
@@ -91,6 +95,16 @@ await page.evaluate(() => setOption("plannerScreenK", 12));
 check(await page.$eval("#plannerScreenKInput", el => (loadOption("plannerScreenK", options.plannerScreenK), el.value === "12")),
     "moved input syncs from loadOption");
 await page.evaluate(() => setOption("plannerScreenK", 8));
+// 6b. the four knob options: defaults = the historical constants, inputs round-trip
+check(await page.evaluate(() => [options.plannerGoalStallK, options.plannerUnlockStallK, options.plannerAntiFixK,
+    options.plannerDroughtLimit].join() === "20,64,256,256"), "planner knob defaults = 20/64/256/256");
+for (const [opt, v] of [["plannerGoalStallK", 30], ["plannerUnlockStallK", 70], ["plannerAntiFixK", 300], ["plannerDroughtLimit", 400]]) {
+    await page.evaluate(([o, x]) => setOption(o, x), [opt, v]);
+    check(await page.$eval(`#${opt}Input`, (el, [o, x]) => (loadOption(o, options[o]), el.value === String(x)), [opt, v]),
+        `${opt} input syncs from loadOption`);
+}
+await page.evaluate(() => { setOption("plannerGoalStallK", 20); setOption("plannerUnlockStallK", 64);
+    setOption("plannerAntiFixK", 256); setOption("plannerDroughtLimit", 256); });
 
 // 7. internals: no worker yet -> hint text
 await page.evaluate(() => AdvancedAutomation.refreshInternals());
@@ -104,6 +118,22 @@ await page.waitForTimeout(500);
 check(await page.$eval("#autoIntLastPlanBody", el => /score/.test(el.textContent)), "last-plan section populated");
 check(await page.$eval("#autoIntKnowledgeBody", el => el.querySelectorAll("tr").length > 3), "knowledge table populated");
 check(await page.$eval("#autoIntThresholdsBody", el => el.textContent.length > 20), "thresholds populated");
+// 8-bis. planner-state readouts: round kind + projection in Last plan round;
+//        targeted pursuit, anti-fixation counters and per-phase timing from
+//        the dump (the result's refreshInternals triggers it)
+check(await page.$eval("#autoIntRoundKind", el => /round: heuristic/.test(el.textContent)),
+    "last plan names its round kind (heuristic)");
+check(await page.$eval("#autoIntProjected", el => /\d+ ticks, \d+ mana total/.test(el.textContent)),
+    "last plan shows projected ticks + mana");
+await page.waitForFunction(() => /active goal/.test(document.getElementById("autoIntPursuitBody")?.textContent ?? ""),
+    null, { timeout: 20000 }).catch(() => {});
+check(await page.$eval("#autoIntPursuitBody", el => /active goal/.test(el.textContent) && /active leaf/.test(el.textContent)
+    && /branch stall/.test(el.textContent) && /unlock-dim clocks/.test(el.textContent) && /abandoned/.test(el.textContent)),
+    "targeted-pursuit readout rendered (goal, leaf, stall, clocks, abandoned)");
+check(await page.$eval("#autoIntAntiFixBody", el => /streak \d+ \/ K 256/.test(el.textContent) && /drought \d+ \/ limit 256/.test(el.textContent)),
+    "anti-fixation readout shows streak/K and drought/limit");
+check(await page.$eval("#autoIntPerfBody", el => el.querySelectorAll("tbody tr").length === 6 && /rounds/.test(el.textContent)),
+    "per-phase timing table rendered (6 phases)");
 
 // 8b. lootable-first control ON (default): the step-8 plan set every box
 const togglerIds = await page.evaluate(() => {
@@ -187,6 +217,28 @@ const editorRows = await page.$eval("#plannerTargetsEditor",
 check(editorRows === 2, `priority-list editor renders a row per goal (${editorRows})`);
 check(await page.$eval("#plannerTargetsEditor", el => el.classList.contains("tg-locked")),
     "editor greys out when auto-rank is on");
+// abandoned-goal readout + badge: a synthetic dump through the real renderer
+// (a short run never abandons). The badge lands on the matching row only.
+await page.evaluate(() => AdvancedAutomation._debug.injectDump({
+    planning: { activeGoal: { kind: "b", target: { type: "skill", name: "Magic" }, value: 50 },
+                activeLeaf: { kind: "b", target: { type: "progress", name: "Wander", town: 0 }, value: 2 },
+                branchStall: { "b:progress:Wander:2": 7, "a:Continue On": 3 },
+                unlockProg: { "a:Continue On": { base: 0.2, last: 0.5 } },
+                abandonedGoals: ["a:Continue On"] },
+    readouts: { streak: 4, drought: 9, antiFixK: 512, antiFixKBase: 256, droughtLimit: 256,
+                antiFixation: true, strategy: "heuristic", goalStallK: 20, unlockStallK: 64 },
+}));
+check(await page.$$eval("#plannerTargetsEditor .tg-row", rows => rows.map(r => !!r.querySelector(".tg-abandoned")).join()) === "true,false",
+    "abandoned badge on the matching priority-list row only");
+check(await page.$eval("#autoIntAbandoned", el => /action Continue On/.test(el.textContent) && /until the planner worker restarts/.test(el.textContent)),
+    "abandoned goals listed, with the restart note");
+check(await page.$eval("#autoIntBranchStall", el => /Wander \u2265 2: 7 \/ 20/.test(el.textContent) && /Continue On: 3 \/ 64/.test(el.textContent)),
+    "branch stall shown against goalStallK / unlockStallK");
+check(await page.$eval("#autoIntUnlockClocks", el => /armed/.test(el.textContent)), "unlock-dim clock shows armed");
+check(await page.$eval("#autoIntAntiFixBody", el => /streak 4 \/ K 512/.test(el.textContent) && /base 256/.test(el.textContent)),
+    "anti-fixation shows the doubled working K against its base");
+await page.evaluate(() => AdvancedAutomation._debug.injectDump({ planning: { abandonedGoals: [] } }));
+check(await page.$$eval("#plannerTargetsEditor .tg-abandoned", els => els.length) === 0, "badge clears when the dump has none");
 
 // 9b-2. editor mutations round-trip to the plannerTargets option: add, edit a
 //       value box, disable (park) a row, and reorder by priority.

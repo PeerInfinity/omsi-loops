@@ -790,6 +790,18 @@ const options = {
     // §6 stagnation trigger: auto-enter ONE targeted escalation round from the
     // heuristic when the committed queue fixates (streak/drought). Default off.
     plannerAntiFixation: false,
+    // the four planner knobs that used to be hard-coded in newPlanningState
+    // (defaults = those constants, so a default run is byte-identical).
+    // goalStallK: rounds a pursued branch may stall before its goal is
+    // abandoned; unlockStallK: the same for a LOCKED goal's armed unlock-dim
+    // clock; antiFixK: the anti-fixation streak threshold's BASE (the worker
+    // doubles its working copy after a failed escalation and resets it only
+    // when this option changes); droughtLimit: rounds with no new action
+    // becoming available before the guard fires.
+    plannerGoalStallK: 20,
+    plannerUnlockStallK: 64,
+    plannerAntiFixK: 256,
+    plannerDroughtLimit: 256,
     plannerWeightTown: 1e12,
     plannerWeightUnlockAction: 1000,
     plannerWeightVisibleAction: 300,
@@ -832,6 +844,10 @@ const numericOptions = [
     "plannerScreenK",
     "plannerProbeEvery",
     "plannerReplanEvery",
+    "plannerGoalStallK",
+    "plannerUnlockStallK",
+    "plannerAntiFixK",
+    "plannerDroughtLimit",
     "plannerWeightTown",
     "plannerWeightUnlockAction",
     "plannerWeightVisibleAction",
@@ -981,6 +997,10 @@ const isStandardOption = {
     plannerAutoRankTargets: false,
     plannerTargetsUnlockedOnly: false,
     plannerAntiFixation: false,
+    plannerGoalStallK: false,
+    plannerUnlockStallK: false,
+    plannerAntiFixK: false,
+    plannerDroughtLimit: false,
     plannerWeightTown: false,
     plannerWeightUnlockAction: false,
     plannerWeightVisibleAction: false,

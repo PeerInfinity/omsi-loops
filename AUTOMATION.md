@@ -270,8 +270,12 @@ when nothing on the list can be advanced.
   the goals below it — measured on the Round-20 donor: dead goal + Start
   Journey escaped in 9 loops with abandon fully disabled, where the old
   top-goal-scoped path was a DNF. Abandon still prunes dead entries at
-  `goalStallK` (default 20) stalled rounds, but it is list hygiene now,
-  not the escape mechanism.
+  `goalStallK` (default 20, setting **Goal stall K**) stalled rounds, but
+  it is list hygiene now, not the escape mechanism. **An abandoned goal
+  stays skipped until the planner worker restarts** (Planner mode Off and
+  back, untick Advanced Automation, or reload the page); re-adding it to
+  the list does not revive it. The editor marks such a row with an
+  *abandoned* badge, and Planner internals → Targeted pursuit lists them.
 - **A LOCKED goal's abandon clock runs on its unlock dims (§U, session
   29, armed).** While a kind-a goal's action is locked, progress is
   measured as the mean unlock-requirement fraction (the frontier term's
@@ -280,8 +284,9 @@ when nothing on the list can be advanced.
   Combat/Magic sit at zero for ~236 loops before the first grind, so any
   flat-window accrual would false-abandon Start Journey on every fresh
   run. Once armed, rising rounds reset the clock and flat rounds accrue
-  it, abandoning at `unlockStallK` (default 64; the healthy armed window's
-  worst flat stretch measures 25 rounds). Goals with unprobeable
+  it, abandoning at `unlockStallK` (default 64, setting **Unlock stall
+  K**; the healthy armed window's worst flat stretch measures 25 rounds).
+  Goals with unprobeable
   (story-gated) unlock dims keep the unconditional freeze.
 - **Sub-priorities (Tier 2)**: for the active goal the planner derives a
   prerequisite chain by regressing over its measured graph (e.g. Start
@@ -308,6 +313,21 @@ when nothing on the list can be advanced.
   planner advances down your list, then falls back to the auto chain. A pin
   that can't install at all (nothing reachable grows it) is skipped
   harmlessly; a stale override never dead-ends the run.
+- **The anti-fixation guard (heuristic strategy only)** fires one all-in
+  targeted round when the same queue has been committed **Anti-fixation K**
+  rounds running (`plannerAntiFixK`, default 256) or no action has newly
+  become visible/unlocked for **Drought limit** rounds (`plannerDroughtLimit`,
+  default 256). The setting is the BASE: an escalation that re-commits the
+  same queue doubles the planner's working K, the doubled value is kept
+  across rounds, and only changing the setting resets it to the new base.
+
+The four knobs (`plannerGoalStallK` 20, `plannerUnlockStallK` 64,
+`plannerAntiFixK` 256, `plannerDroughtLimit` 256) sit next to the
+Anti-fixation guard in the Automation view. Their defaults are the constants
+the planner used before they were settings, so a default run is
+byte-identical. Headless callers can still pass `goalStallK` / `unlockStallK`
+(and now `antiFixK` / `droughtLimit`) to `newPlanningState` /
+`runStandalone`.
 
 ## 5. Observing it live
 
@@ -318,6 +338,34 @@ breakdowns (including capacity and pump cost per candidate), the full
 knowledge table, probed thresholds, and predictor divergences. It refreshes
 after every plan; the tooltips on each element are the short version of this
 document.
+
+The planner's cross-round state is shown too (display only; nothing here is
+sent back to the planner):
+
+- **Last plan round** also names the **round kind**: goal push, setup
+  round, anti-fixation escalation, plain heuristic, or the heuristic as a
+  fallback (of the targeted strategy when no goal installed, or of an
+  escalation that found no escape). It also names the goal the round served
+  (and the leaf, for a setup round) and shows the **projected** loop length
+  in ticks and the loop's total mana. The kind is a tag the planner writes
+  on its result for the UI. No planning code reads it
+  (`test/planner-readouts.test.mjs` pins that).
+- **Targeted pursuit**: the sticky active goal, the active leaf (the Tier-2
+  prerequisite its setup rounds grow), each branch's stall counter against
+  the threshold that abandons it (Goal stall K, or Unlock stall K for a
+  locked goal's armed clock), the unlock-dim clocks (frozen/armed with
+  base and last fraction), and the abandoned goals.
+- **Anti-fixation**: the streak against the working K (and its base, once
+  doubled) and the drought against the Drought limit. The counters run
+  even while the guard is off.
+- **Planner timing**: wall ms per phase (probe, knowledge, generation,
+  screen, confirm, score), summed since the worker started, with per-round
+  averages and shares.
+
+The first three come from the worker's `dump` reply: `planning` (the resume
+format, `serializePlanningState`, unchanged) plus a separate `readouts`
+field (`plannerReadouts`: counters and thresholds) and `perf`. Every
+`result` message also carries `round`, `readouts` and `perf`.
 
 ## 6. Testing multipliers (fork option)
 

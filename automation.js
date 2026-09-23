@@ -238,6 +238,13 @@ function requestPlan(reason, { pipeline = false } = {}) {
             targets: parsePlannerTargets(),
             autoRankTargets: options.plannerAutoRankTargets,
             antiFixation: options.plannerAntiFixation,
+            // the four formerly hard-coded planner knobs. antiFixK is the BASE:
+            // the worker keeps its doubled working value across rounds and
+            // resets it only when this value changes (IdlePlanner.applyTunables)
+            goalStallK: options.plannerGoalStallK,
+            unlockStallK: options.plannerUnlockStallK,
+            antiFixK: options.plannerAntiFixK,
+            droughtLimit: options.plannerDroughtLimit,
             // game-sim option, not planner state: the worker's engine copy
             // must gain exp at the live game's rate or measured profiles
             // diverge from committed play
@@ -258,6 +265,10 @@ function installQueue(q) {
 function onResult(msg) {
     awaitingPlan = false;
     suggestion = msg;
+    // the result carries the within-run counters + timing too, so those
+    // readouts are fresh even before the follow-up dump lands
+    if (msg.readouts) lastReadouts = msg.readouts;
+    if (msg.perf) lastPerf = msg.perf;
     const div = msg.divergenceCount ? `, ${msg.divergenceCount} predictor divergence${msg.divergenceCount === 1 ? "" : "s"}` : "";
     setStatus(`plan: ${msg.label} (score ${Math.round(msg.score)}, ${(msg.wallMs / 1000).toFixed(1)}s${div})`);
     if (msg.boundaryHash != null) {
@@ -686,7 +697,10 @@ function tgRowHtml(g, i, n) {
     const up = `<button type="button" class="tg-btn" data-tg="up" data-i="${i}"${i === 0 ? " disabled" : ""} title="raise priority">&uarr;</button>`;
     const dn = `<button type="button" class="tg-btn" data-tg="dn" data-i="${i}"${i === n - 1 ? " disabled" : ""} title="lower priority">&darr;</button>`;
     const rm = `<button type="button" class="tg-btn" data-tg="rm" data-i="${i}" title="remove">&times;</button>`;
-    return `<div class="tg-row${off ? " tg-off" : ""}">${exp}${en}${kind}${body}${up}${dn}${rm}</div>`;
+    const abandoned = lastAbandoned.has(tgGoalKey(g))
+        ? `<span class="tg-abandoned" title="${esc(`The planner abandoned this goal after its branch stalled. ${ABANDON_NOTE}`)}">abandoned</span>`
+        : "";
+    return `<div class="tg-row${off ? " tg-off" : ""}">${exp}${en}${kind}${body}${up}${dn}${rm}${abandoned}</div>`;
 }
 
 // §V4 two-tier UI: goalKey mirror (planner.js goalKey) so the read-only Tier-2
@@ -790,8 +804,12 @@ let lastDumpTrees = new Map();
 // Re-render the editor when fresh trees arrive, but only if a row is expanded
 // and the user isn't mid-edit inside it (don't nuke focus/caret).
 function tgMaybeRerender() {
+    if (!tgExpanded.size) return;
+    tgRerenderUnlessEditing();
+}
+function tgRerenderUnlessEditing() {
     const el = document.getElementById("plannerTargetsEditor");
-    if (!el || !tgExpanded.size) return;
+    if (!el) return;
     if (document.activeElement && el.contains(document.activeElement)) return;
     renderTargetsEditor();
 }
@@ -879,6 +897,7 @@ function tgEnsureStyle() {
         `#plannerTargetsEditor .tg-lbl{display:inline-flex;align-items:center;gap:2px}` +
         `#plannerTargetsEditor .tg-btn{cursor:pointer;padding:0 5px}` +
         `#plannerTargetsEditor .tg-off{opacity:.45}` +
+        `#plannerTargetsEditor .tg-abandoned{color:#fff;background:#b44;border-radius:3px;padding:0 4px;font-size:90%}` +
         `#plannerTargetsEditor.tg-locked .tg-rows,#plannerTargetsEditor.tg-locked .tg-add{opacity:.5;pointer-events:none}` +
         `#plannerTargetsEditor .tg-note{color:#c80;margin-bottom:3px}` +
         `#plannerTargetsEditor .tg-empty{color:#888;margin:2px 0}` +
@@ -907,6 +926,9 @@ let statsRefreshTimer = null;
 function onViewShown() {
     renderCompactStats();
     renderLastPlan();
+    renderPursuit();
+    renderAntiFix();
+    renderPerf();
     renderPools();
     renderOptimize();
     renderTargetsEditor();
@@ -941,6 +963,9 @@ function renderLastPlan() {
     if (!suggestion) { el.innerHTML = "No plan computed yet."; return; }
     const head = `<div>loop ${suggestion.loop}: <b>${esc(suggestion.label)}</b> score ${fmt(suggestion.score)}, ` +
         `${suggestion.nCands} candidates &rarr; ${suggestion.nScreened} confirmed, ${(suggestion.wallMs / 1000).toFixed(1)}s</div>` +
+        `<div id="autoIntRoundKind">round: ${esc(roundKindText(suggestion.round))}</div>` +
+        `<div id="autoIntProjected">projected: ${fmt(suggestion.projectedTicks ?? "-")} ticks, ` +
+        `${fmt(suggestion.projectedMana ?? "-")} mana total (base + gained)</div>` +
         `<div>queue: ${esc(suggestion.queue.map(([n, l]) => `${n} x${l}`).join(", "))}</div>`;
     const evalRows = (suggestion.evals ?? []).map(e =>
         `<tr><td>${esc(e.label)}</td><td>${fmt(e.score)}</td><td>${fmt(e.capacity ?? "-")}</td><td>${fmt(e.probeTicks ?? "-")}</td></tr>` +
@@ -949,6 +974,97 @@ function renderLastPlan() {
     el.innerHTML = head + (evalRows
         ? `<div class="auto-scroll"><table class="automation-table"><thead><tr><th>candidate</th><th>score</th><th>capacity</th><th>pump</th></tr></thead><tbody>${evalRows}</tbody></table></div>`
         : "<div>(no per-candidate evals in this result)</div>");
+}
+
+// ---- planner-state readouts (Targeted pursuit / Anti-fixation / timing) -----
+// Display only: everything here comes from the worker's dump/result and is
+// never sent back.
+const ROUND_KIND_TEXT = {
+    "goal-push": "goal push",
+    "setup": "setup round",
+    "targeted-fallback": "heuristic fallback (targeted strategy: no goal could install this round)",
+    "escalation": "anti-fixation escalation",
+    "escalation-fallback": "heuristic fallback (anti-fixation escalation found no escape)",
+    "heuristic": "heuristic",
+};
+// A goalKey string (planner.js goalKey / tgGoalKey) as readable text.
+function goalKeyText(key) {
+    if (!key) return "(none)";
+    const parts = String(key).split(":");
+    if (parts[0] === "a") return `action ${parts.slice(1).join(":")}`;
+    if (parts[0] === "b" && parts.length >= 4) {
+        const value = parts[parts.length - 1], name = parts.slice(2, -1).join(":");
+        return `${parts[1]}${name ? ` ${name}` : ""}${value !== "" ? ` \u2265 ${value}` : ""}`;
+    }
+    return String(key);
+}
+function goalText(g) { return g ? (g.label ?? goalKeyText(tgGoalKey(g))) : "(none)"; }
+function roundKindText(round) {
+    if (!round) return "(not reported)";
+    let t = ROUND_KIND_TEXT[round.kind] ?? round.kind;
+    if (round.goal) t += `, serving ${goalKeyText(round.goal)}`;
+    if (round.leaf) t += ` via leaf ${goalKeyText(round.leaf)}`;
+    return t;
+}
+let lastPlanning = null, lastReadouts = null, lastPerf = null;
+let lastAbandoned = new Set();
+const ABANDON_NOTE = "Abandoned goals stay skipped until the planner worker restarts " +
+    "(Planner mode Off and back, untick Advanced Automation, or reload the page).";
+function renderPursuit() {
+    const el = document.getElementById("autoIntPursuitBody");
+    if (!el) return;
+    const p = lastPlanning;
+    if (!p) { el.innerHTML = "No data yet — run a plan first."; return; }
+    const r = lastReadouts ?? {};
+    const goalK = r.goalStallK ?? 20, unlockK = r.unlockStallK ?? 64;
+    const unlockProg = p.unlockProg ?? {};
+    const blocks = [];
+    blocks.push(`<div id="autoIntActiveGoal"><b>active goal</b> ${esc(goalText(p.activeGoal))}</div>`);
+    blocks.push(`<div id="autoIntActiveLeaf"><b>active leaf</b> ${esc(p.activeLeaf ? goalText(p.activeLeaf) : "(the goal itself)")}</div>`);
+    const stall = Object.entries(p.branchStall ?? {});
+    blocks.push(`<div id="autoIntBranchStall"><b>branch stall</b> ` + (stall.length
+        ? stall.map(([k, n]) => {
+            const locked = k in unlockProg;
+            return `${esc(goalKeyText(k))}: ${n} / ${locked ? unlockK : goalK}${locked ? " (unlock stall K)" : ""}`;
+        }).join("; ")
+        : "(no counters)") + `</div>`);
+    const clocks = Object.entries(unlockProg);
+    blocks.push(`<div id="autoIntUnlockClocks"><b>unlock-dim clocks</b> ` + (clocks.length
+        ? clocks.map(([k, c]) => `${esc(goalKeyText(k))}: ${c.last > c.base ? "armed" : "frozen"} ` +
+            `(base ${fmt(c.base)}, last ${fmt(c.last)})`).join("; ")
+        : "(none: no locked goal tracked)") + `</div>`);
+    const ab = p.abandonedGoals ?? [];
+    blocks.push(`<div id="autoIntAbandoned"><b>abandoned</b> ` + (ab.length
+        ? esc(ab.map(goalKeyText).join("; ")) + `<div class="tg-note">${esc(ABANDON_NOTE)}</div>`
+        : "(none)") + `</div>`);
+    el.innerHTML = blocks.join("");
+}
+function renderAntiFix() {
+    const el = document.getElementById("autoIntAntiFixBody");
+    if (!el) return;
+    const r = lastReadouts;
+    if (!r) { el.innerHTML = "No data yet — run a plan first."; return; }
+    const state = r.antiFixation
+        ? (r.strategy === "targeted" ? "on, but idle under the targeted strategy" : "on")
+        : "off (counters still run)";
+    el.innerHTML =
+        `<div>guard: ${esc(state)}</div>` +
+        `<div id="autoIntStreak">streak ${fmt(r.streak)} / K ${fmt(r.antiFixK)}` +
+        (r.antiFixK !== r.antiFixKBase ? ` (base ${fmt(r.antiFixKBase)}, doubled after failed escalations)` : "") + `</div>` +
+        `<div id="autoIntDrought">drought ${fmt(r.drought)} / limit ${fmt(r.droughtLimit)}</div>`;
+}
+function renderPerf() {
+    const el = document.getElementById("autoIntPerfBody");
+    if (!el) return;
+    const f = lastPerf;
+    if (!f || !f.rounds) { el.innerHTML = "No data yet — run a plan first."; return; }
+    const phases = ["probe", "know", "gen", "screen", "confirm", "score"];
+    const total = phases.reduce((s, k) => s + (f[k] ?? 0), 0);
+    const rows = phases.map(k => `<tr><td>${k}</td><td>${fmt(f[k] ?? 0)}</td><td>${fmt(Math.round((f[k] ?? 0) / f.rounds))}</td>` +
+        `<td>${total ? Math.round(100 * (f[k] ?? 0) / total) : 0}%</td></tr>`).join("");
+    el.innerHTML = `<div>${fmt(f.rounds)} rounds, ${fmt(total)} ms total</div>` +
+        `<div class="auto-scroll"><table class="automation-table"><thead><tr><th>phase</th><th>ms</th><th>ms/round</th><th>share</th></tr></thead>` +
+        `<tbody>${rows}</tbody></table></div>`;
 }
 
 let lastDumpKnow = null;
@@ -1038,6 +1154,18 @@ function refreshInternals() {
 function onDump(msg) {
     const p = msg.planning ?? {};
     lastDumpKnow = p.know ?? lastDumpKnow;
+    lastPlanning = p;
+    if (msg.readouts) lastReadouts = msg.readouts;
+    if (msg.perf) lastPerf = msg.perf;
+    renderPursuit();
+    renderAntiFix();
+    renderPerf();
+    // abandoned-goal badges on the priority-list editor rows: repaint only when
+    // the set changed (focus-guarded like the Tier-2 refresh)
+    const ab = new Set(p.abandonedGoals ?? []);
+    const abChanged = ab.size !== lastAbandoned.size || [...ab].some(k => !lastAbandoned.has(k));
+    lastAbandoned = ab;
+    if (abChanged) tgRerenderUnlessEditing();
     // §V4: cache the per-goal read-only Tier-2 trees (keyed by goalKey) and
     // refresh any expanded editor panels (focus-guarded so edits aren't nuked).
     if (Array.isArray(msg.tier2)) {
@@ -1157,6 +1285,9 @@ return {
               getOptimizeSuggestion: () => optimizeSuggestion, requestOptimize,
               // §11.7 pipeline observability (smoke tests / debugging)
               getPipePending: () => pipePending, getPipeWindowLeft: () => pipeWindowLeft,
-              isPipelineOn: () => pipelineOn() },
+              isPipelineOn: () => pipelineOn(),
+              // feed a synthetic worker dump through the real renderer (smoke
+              // tests: e.g. an abandoned goal, which a short run never reaches)
+              injectDump: (msg) => onDump(msg) },
 };
 })();

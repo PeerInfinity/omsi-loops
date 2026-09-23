@@ -140,6 +140,11 @@ onmessage = async (e) => {
             postMessage({
                 type: "dumpResult",
                 planning: IdlePlanner.serializePlanningState(P),
+                // within-run counters + knobs (anti-fixation streak/drought vs
+                // their thresholds, stall thresholds) and per-phase timing: a
+                // SEPARATE field, not part of the resume format above
+                readouts: IdlePlanner.plannerReadouts(P),
+                perf: P.perf ? { ...P.perf } : null,
                 divergences: P.divergenceLog,
                 tier2,
             });
@@ -180,6 +185,11 @@ onmessage = async (e) => {
                     P.targets = data.params.targets ?? P.targets;
                     P.autoRankTargets = data.params.autoRankTargets ?? P.autoRankTargets;
                     P.antiFixation = data.params.antiFixation ?? P.antiFixation;
+                    // the four formerly hard-coded knobs (plannerGoalStallK /
+                    // plannerUnlockStallK / plannerAntiFixK / plannerDroughtLimit).
+                    // antiFixK is a BASE: applyTunables keeps the doubled working
+                    // value across rounds and resets it only when the base changes.
+                    IdlePlanner.applyTunables(P, data.params);
                     // sim option (plRestoreSave never loads options): keep the
                     // worker's engine gaining exp at the live game's rate
                     if (data.params.expGainMultiplier !== undefined) options.expGainMultiplier = data.params.expGainMultiplier;
@@ -220,6 +230,12 @@ onmessage = async (e) => {
                     divergenceCount: P.divergenceLog.length,
                     recentDivergences: P.divergenceLog.slice(-5),
                     wallMs: Date.now() - t0,
+                    // Automation-view readouts (display only): which path made
+                    // this plan and which goal it served, the within-run
+                    // counters, and the cumulative per-phase timing
+                    round: result.round ?? null,
+                    readouts: IdlePlanner.plannerReadouts(P),
+                    perf: P.perf ? { ...P.perf } : null,
                 });
             } catch (err) {
                 postMessage({ type: "error", reqId: data.reqId, message: err?.message ?? String(err) });

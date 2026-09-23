@@ -302,10 +302,39 @@
                             <input id='plannerAntiFixationInput' type='checkbox' onchange='setOption("plannerAntiFixation", this.checked)'>
                             <label class='showthat' for='plannerAntiFixationInput'>Anti-fixation guard
                                 <div class='showthis' style="width:280px">§6: when the heuristic scorer fixates — the same queue
-                                committed 256 rounds running, or 256 rounds with no new action becoming available — auto-enter ONE
-                                all-in targeted round toward the blocked travel frontier, then return to the scorer. A failed escape
-                                doubles the streak threshold (backoff). Byte-inert by margin (healthy runs never fixate this long).</div>
+                                committed Anti-fixation K rounds running (default 256), or Drought limit rounds with no new action
+                                becoming available (default 256) — auto-enter ONE all-in targeted round toward the blocked travel
+                                frontier, then return to the scorer. A failed escape doubles the streak threshold (backoff).
+                                Byte-inert by margin (healthy runs never fixate this long).</div>
                             </label>
+                            <br>
+                            <label class="showthat" for="plannerAntiFixKInput">Anti-fixation K
+                                <div class="showthis" style="width:280px">Streak threshold BASE: the guard fires after the same queue
+                                is committed this many rounds running (default 256). A failed escalation doubles the planner's working
+                                threshold, and the doubled value is kept across rounds; changing this setting resets it to the new
+                                base. Only matters with the Anti-fixation guard on. The current streak and working K are shown under
+                                Planner internals &rarr; Anti-fixation.</div>
+                            </label>
+                            <input id='plannerAntiFixKInput' type='number' value='256' min='1' max='100000' style='width: 55px;' oninput='setOption("plannerAntiFixK", parseInt(this.value))'>
+                            <label class="showthat" for="plannerDroughtLimitInput" style="margin-left:8px">Drought limit
+                                <div class="showthis" style="width:280px">The guard also fires after this many rounds in which no
+                                action newly became visible or unlocked (default 256). Only matters with the Anti-fixation guard on.</div>
+                            </label>
+                            <input id='plannerDroughtLimitInput' type='number' value='256' min='1' max='100000' style='width: 55px;' oninput='setOption("plannerDroughtLimit", parseInt(this.value))'>
+                            <br>
+                            <label class="showthat" for="plannerGoalStallKInput">Goal stall K
+                                <div class="showthis" style="width:280px">Targeted strategy: how many rounds the pursued branch of the
+                                active goal may make no measured progress before the goal is ABANDONED (default 20). An abandoned goal
+                                is skipped until the planner worker restarts (set Planner mode to Off and back, untick Advanced Automation, or reload the page). The
+                                per-branch counters are shown under Planner internals &rarr; Targeted pursuit.</div>
+                            </label>
+                            <input id='plannerGoalStallKInput' type='number' value='20' min='1' max='10000' style='width: 45px;' oninput='setOption("plannerGoalStallK", parseInt(this.value))'>
+                            <label class="showthat" for="plannerUnlockStallKInput" style="margin-left:8px">Unlock stall K
+                                <div class="showthis" style="width:280px">Targeted strategy: the same abandon threshold for a LOCKED
+                                goal whose unlock requirements have started moving (its unlock-dim clock is armed) and then stop
+                                rising (default 64). A locked goal whose requirements never moved stays frozen and is never abandoned.</div>
+                            </label>
+                            <input id='plannerUnlockStallKInput' type='number' value='64' min='1' max='10000' style='width: 45px;' oninput='setOption("plannerUnlockStallK", parseInt(this.value))'>
                             <br>
                             <input id='plannerControlLootFirstInput' type='checkbox' checked onchange='setOption("plannerControlLootFirst", this.checked)'>
                             <label class='showthat' for='plannerControlLootFirstInput'>Control "Lootable first" checkboxes
@@ -403,9 +432,42 @@
                                 <summary class="showthat">Last plan round
                                     <div class="showthis" style="width:260px">Every candidate the last round confirmed with the real engine:
                                     its score and the per-term breakdown (parts), capacity-probe result and pump cost. The winner is what
-                                    got suggested/installed.</div>
+                                    got suggested/installed. "round" says which path produced it (goal push, setup round, anti-fixation
+                                    escalation, plain heuristic, or the heuristic as a fallback) and which goal it served; "projected" is
+                                    the engine-confirmed loop length in ticks and the loop's total mana (base mana plus everything gained during it).</div>
                                 </summary>
                                 <div id="autoIntLastPlanBody" class="small"></div>
+                            </details>
+                            <details id="autoIntPursuit">
+                                <summary class="showthat">Targeted pursuit
+                                    <div class="showthis" style="width:280px">Targeted strategy's cross-round state: the sticky ACTIVE
+                                    goal (the priority-list entry being pursued), the ACTIVE LEAF (the Tier-2 prerequisite its setup
+                                    rounds are growing), each branch's stall counter against the threshold that abandons it (Goal stall
+                                    K, or Unlock stall K for a locked goal's armed clock), the unlock-dim clocks of locked goals (frozen
+                                    until their requirements first move, then armed), and the ABANDONED goals. An abandoned goal stays
+                                    skipped until the planner worker restarts (Planner mode Off and back, untick Advanced Automation,
+                                    or reload).</div>
+                                </summary>
+                                <div id="autoIntPursuitBody" class="small"></div>
+                            </details>
+                            <details id="autoIntAntiFix">
+                                <summary class="showthat">Anti-fixation
+                                    <div class="showthis" style="width:280px">The §6 guard's counters: the STREAK (rounds the same queue
+                                    was committed running) against the working K, and the DROUGHT (rounds with no action newly visible
+                                    or unlocked) against the Drought limit. The working K starts at the Anti-fixation K setting and
+                                    doubles after each failed escalation. The counters run even while the guard is off; it only
+                                    fires when it is on and the strategy is heuristic.</div>
+                                </summary>
+                                <div id="autoIntAntiFixBody" class="small"></div>
+                            </details>
+                            <details id="autoIntPerf">
+                                <summary class="showthat">Planner timing
+                                    <div class="showthis" style="width:280px">Wall time the planning worker has spent in each phase,
+                                    summed over every round since it started: threshold probing, knowledge refresh (micro-evals),
+                                    candidate generation (incl. targeted assembly), predictor screen, engine confirms, scoring. Resets
+                                    when the worker restarts.</div>
+                                </summary>
+                                <div id="autoIntPerfBody" class="small"></div>
                             </details>
                             <details id="autoIntKnowledge">
                                 <summary class="showthat">Knowledge table

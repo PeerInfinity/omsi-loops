@@ -3216,6 +3216,9 @@ async function planTargeted(sess, P, snap, pre, opts = {}) {
     // reset the top branch). Achieving the top goal resets its branch to the goal
     // itself (leaf ← null); a lower goal winning leaves the leaf untouched.
     if (result) {
+        // round-kind tag (UI readout; METADATA ONLY — nothing reads it back)
+        result.round = { kind: opts.escalate ? "escalation" : "goal-push",
+                         goal: goalKey(result.best.c.goal), leaf: null };
         if (!opts.escalate) {
             const achieved = goalKey(assembled.spineGoal) === goalKey(topGoal);
             updateGoalStall(P, topGoal, pre, result.best.post, achieved, achieved ? null : undefined);
@@ -3250,6 +3253,8 @@ async function planTargeted(sess, P, snap, pre, opts = {}) {
         for (const leaf of leaves) {
             const setup = await planSetupRound(sess, P, snap, pre, leaf);
             if (!setup) continue;
+            // round-kind tag (UI readout; METADATA ONLY — nothing reads it back)
+            setup.result.round = { kind: "setup", goal: goalKey(g), leaf: goalKey(leaf) };
             if (goalKey(g) === goalKey(topGoal)) {
                 updateGoalStall(P, topGoal, pre, setup.post, false, leaf);
                 maybeAbandonGoal(P);
@@ -3384,7 +3389,16 @@ async function planRound(sess, P) {
     // restore the pre-round state; the CALLER decides how to commit (the
     // standalone driver restores best.postSnap; the live game plays the queue)
     sess.restore(snap);
-    return { best, snap, pre, nCands: cands.length, nScreened: screened.length, evals };
+    // Round-kind tag for the Automation view: which path produced this plan.
+    // The heuristic scorer ran either as the plain strategy, as the targeted
+    // strategy's fallback (no goal installed anything), or as the fallback of
+    // an anti-fixation escalation that found no escape. METADATA ONLY: written
+    // on the returned result, never read by any planning code (pinned by a
+    // source scan in test/planner-readouts.test.mjs).
+    const round = { kind: escalate ? "escalation-fallback"
+                        : P.strategy === "targeted" ? "targeted-fallback" : "heuristic",
+                    goal: null, leaf: null };
+    return { best, snap, pre, nCands: cands.length, nScreened: screened.length, evals, round };
 }
 
 // §11.7 Design B (live no-pause pipelining): plan from the state the live game
@@ -3454,6 +3468,45 @@ function restorePlanningState(P, s) {
     P.unlockProg = s.unlockProg ?? {};
 }
 
+// The four planner knobs exposed as options (plannerGoalStallK /
+// plannerUnlockStallK / plannerAntiFixK / plannerDroughtLimit), applied to an
+// EXISTING planning state on every plan request. goalStallK, unlockStallK and
+// droughtLimit are plain overwrites (like screenK). antiFixK is different: the
+// option is the BASE, and updateStagnation doubles the working P.antiFixK after
+// a failed escalation. Overwriting it on every request would silently undo
+// that backoff, so the working value is reset to the base only when the base
+// itself CHANGES. Non-finite / non-positive values are ignored (an emptied
+// number input parses to NaN).
+function applyTunables(P, t = {}) {
+    const ok = (v) => typeof v === "number" && Number.isFinite(v) && v > 0;
+    if (ok(t.goalStallK)) P.goalStallK = t.goalStallK;
+    if (ok(t.unlockStallK)) P.unlockStallK = t.unlockStallK;
+    if (ok(t.droughtLimit)) P.droughtLimit = t.droughtLimit;
+    if (ok(t.antiFixK) && t.antiFixK !== (P.antiFixKBase ?? 256)) {
+        P.antiFixKBase = t.antiFixK;
+        P.antiFixK = t.antiFixK;
+    }
+}
+
+// Read-only view of the within-run counters and knobs the Automation view
+// shows (anti-fixation streak/drought against their thresholds, the stall
+// thresholds). A SEPARATE channel from serializePlanningState on purpose: that
+// one is the resume format (headless resume, goldens), and none of these are
+// resumed (like perf, they restart with a fresh run).
+function plannerReadouts(P) {
+    return {
+        streak: P.streak ?? 0,
+        drought: P.drought ?? 0,
+        antiFixK: P.antiFixK ?? 256,
+        antiFixKBase: P.antiFixKBase ?? 256,
+        droughtLimit: P.droughtLimit ?? 256,
+        antiFixation: !!P.antiFixation,
+        strategy: P.strategy ?? "heuristic",
+        goalStallK: P.goalStallK ?? 20,
+        unlockStallK: P.unlockStallK ?? 64,
+    };
+}
+
 function newPlanningState(opts = {}) {
     return {
         know: new Map(),
@@ -3486,7 +3539,12 @@ function newPlanningState(opts = {}) {
         // §6 stagnation trigger (auto-enter a targeted escalation round from the
         // heuristic when the queue fixates). Default off; counters live below.
         antiFixation: opts.antiFixation ?? false,
-        streak: 0, drought: 0, antiFixK: 256, droughtLimit: 256, seenAvail: new Set(),
+        // antiFixK is the WORKING threshold (doubles after a failed escalation);
+        // antiFixKBase is the configured base it was last reset to (see
+        // applyTunables). Defaults = the historical constants.
+        streak: 0, drought: 0, seenAvail: new Set(),
+        antiFixK: opts.antiFixK ?? 256, antiFixKBase: opts.antiFixK ?? 256,
+        droughtLimit: opts.droughtLimit ?? 256,
         // §V1 targeted-mode v2 persistence scaffolding: a STICKY top goal + the
         // currently-pursued leaf + per-branch stall counters + abandoned goals.
         // All byte-inert at defaults (touched only inside the targeted driver).
@@ -3801,6 +3859,7 @@ return {
     boundaryHash,
     optimizeEconomy, classifyEconomy,
     serializePlanningState, restorePlanningState,
+    applyTunables, plannerReadouts,
     setRngHooks, setEvalPool, confirmCandidate, evalLoopOnly,
     // exposed for tests and the automation controller
     emptyProfile, measureAction, refreshKnowledge, generateCandidates,
