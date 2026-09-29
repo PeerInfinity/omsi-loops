@@ -437,6 +437,22 @@ const IdleLoopsManaged = (() => {
                 canStart() { return regionExitAvailable(); },
                 finish() { if (typeof cb === "function") cb(); },
             });
+            // A synthetic action has no localization entry and no image. Its
+            // texts are OWN data properties of the base, so the queue's
+            // Object.create(base) copies find them on the prototype chain
+            // before Localizable's getters — which read a private field a
+            // derived object does not carry and would throw (#txtsObj).
+            // Upstream actions get the same effect from memoize() running on
+            // the base at startup; a synthetic one is made later.
+            const text = (value) => ({ value, configurable: true });
+            Object.defineProperties(Action[key], {
+                label: text(name),
+                labelDone: text(name),
+                labelGlobal: text(name),
+                tooltip: text(""),
+                tooltip2: text(""),
+                imageName: text("map"),
+            });
             syntheticActionKeys.add(key);
             return { ok: true, name };
         },

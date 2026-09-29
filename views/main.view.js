@@ -979,7 +979,7 @@ class View {
             const action = actions.current[i];
             const actionLoops = action.loops > 99999 ? toSuffix(action.loops) : formatNumber(action.loops);
             const actionLoopsDone = (action.loops - action.loopsLeft) > 99999 ? toSuffix(action.loops - action.loopsLeft) : formatNumber(action.loops - action.loopsLeft);
-            const imageName = action.name.startsWith("Assassin") ? "assassin" : camelize(action.name);
+            const imageName = action.imageName ?? (action.name.startsWith("Assassin") ? "assassin" : camelize(action.name));
             totalDivText +=
                 `<div class='curActionContainer small' onmouseover='view.mouseoverAction(${i}, true)' onmouseleave='view.mouseoverAction(${i}, false)'>
                     <div class='curActionBar' id='action${i}Bar'></div>
@@ -1665,7 +1665,7 @@ class View {
         }
         const isTravel = getTravelNum(action.name) != 0;
         const divClass = `${isTravel ? "travelContainer" : "actionContainer"} ${isTraining(action.name) || hasLimit(action.name) ? "cappableActionContainer" : ""}`;
-        const imageName = action.name.startsWith("Assassin") ? "assassin" : camelize(action.name);
+        const imageName = action.imageName ?? (action.name.startsWith("Assassin") ? "assassin" : camelize(action.name));
         const unlockConditions = /<br>\s*Unlocked (.*?)(?:<br>|$)/is.exec(`${action.tooltip}${action.goldCost === undefined ? "" : action.tooltip2}`)?.[1]; // I hate this but wygd
         const lockedText = unlockConditions ? `${_txt("actions>tooltip>locked_tooltip")}<br>Will unlock ${unlockConditions}` : `${action.tooltip}${action.goldCost === undefined ? "" : action.tooltip2}`;
         const totalDivText =
